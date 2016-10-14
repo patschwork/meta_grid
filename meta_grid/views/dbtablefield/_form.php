@@ -30,7 +30,7 @@ use yii\widgets\ActiveForm;
 
 	<?php
 		// autogeneriert ueber gii/CRUD
-		echo $form->field($model, 'fk_db_table_id')->dropDownList($db_tableList, ['id'=>'name']);
+		echo $form->field($model, 'fk_db_table_id')->dropDownList($db_tableList, ['id'=>'name', 'options' => [ $fk_db_table_id => ['selected ' => true]]]);
 	?>
  <!--  	// automatisch auskommentiert ueber gii/CRUD    <?= $form->field($model, 'fk_db_table_id')->textInput() ?>  -->
 

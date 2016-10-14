@@ -11,13 +11,13 @@ use yii\data\ActiveDataProvider;
 // Kommentierung pro Object ...}
 
 /* @var $this yii\web\View */
-/* @var $model app\models\DBTable */
+/* @var $model app\models\Keyfigure */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Dbtables'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Keyfigures'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="dbtable-view">
+<div class="keyfigure-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -48,15 +48,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'name:ntext',
             'description:html',
-            'location:ntext',
-            [
-             'label' => 'Db Table Context',
-             'value' =>              		$model->fk_db_table_context_id == "" ? $model->fk_db_table_context_id : $model->fkDbTableContext->name
-            ],
-            [
-             'label' => 'Db Table Type',
-             'value' =>              		$model->fk_db_table_type_id == "" ? $model->fk_db_table_type_id : $model->fkDbTableType->name
-            ],
+            'formula:ntext',
         ],
     ]) ?>
 
@@ -86,18 +78,6 @@ $this->params['breadcrumbs'][] = $this->title;
         ]);
 
         
-        $dbTableFieldSearchModel = new app\models\DbTableFieldSearch();
-        $querydbTableField = app\models\DbTableFieldSearch::find();
-        $dbTableFieldDataProvider = new ActiveDataProvider([
-        		'query' => $querydbTableField,
-        ]);
-        $querydbTableField->andFilterWhere([
-        		'fk_db_table_id' => $model->id,
-//         		'filter_ref_fk_object_type_id' => $model->fk_object_type_id,
-        ]);
-        
-        
-        
 		echo Tabs::widget([
 			'items' => 
 			[
@@ -115,16 +95,6 @@ $this->params['breadcrumbs'][] = $this->title;
 							'searchModel' => $mapObject2ObjectSearchModel,
 							'dataProvider' => $mapObject2ObjectDataProvider,
 					]),
-					'active' => false
-				],				
-				[
-					'label' => Yii::t('app', 'Fields'),
-					'content' => $this->render('../dbtablefield/_index_external', [
-							'searchModel' => $dbTableFieldSearchModel,
-							'dataProvider' => $dbTableFieldDataProvider,
-
-// 					'content' => 	$this->render('../dbtablefield/index', ['fk_db_table_id'=>'164'], 'dataProvider' => $dbTableFieldDataProvider),
-		]),
 					'active' => false
 				],				
 			],

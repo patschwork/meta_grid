@@ -49,12 +49,14 @@ $this->params['breadcrumbs'][] = $this->title;
             'name:ntext',
             'description:html',
             [
-             'label' => 'Db Table',
-             'value' =>              		$model->fk_db_table_id == "" ? $model->fk_db_table_id : $model->fkDbTable->name
+	            'attribute'=>'Db Table',
+	            'format'=>'raw',
+            	'value' => Html::a(Yii::t('app', $model->fk_db_table_id == "" ? $model->fk_db_table_id : $model->fkDbTable->name), ['dbtable/view', 'id' => $model->fk_db_table_id], ['class' => 'btn btn-default'])
             ],
             'datatype:ntext',
         ],
     ]) ?>
+
 
     	<?php
 		// {... Kommentierung pro Object
@@ -82,6 +84,19 @@ $this->params['breadcrumbs'][] = $this->title;
         ]);
 
         
+        $bracket_widget = \vendor\meta_grid\bracket_list\BracketListWidget::widget(
+					    	[
+				  				'object_type' => 'db_table_field',
+					    		'fk_object_type_id' => $model->fk_object_type_id,
+					    		'fk_object_id' => $model->id,
+					    		'show_Matches' => true  
+					    	]);
+        
+		// Wenn keine Bracket Elemente gefunden werden, liefert das Widget nichts zurück.
+		// In diesem Fall soll der Tab deaktivert werden, um kenntlich zu machen, das keine Einträge existieren
+        $bracket_tab_disabled = "";
+        if ($bracket_widget=="") $bracket_tab_disabled = 'disabled';
+        
 		echo Tabs::widget([
 			'items' => 
 			[
@@ -100,7 +115,15 @@ $this->params['breadcrumbs'][] = $this->title;
 							'dataProvider' => $mapObject2ObjectDataProvider,
 					]),
 					'active' => false
-				],				
+				],
+				[
+					'headerOptions' => [
+						'class'=> $bracket_tab_disabled
+					],
+					
+					'label' => Yii::t('app', 'Brackets'),
+					'content' => $bracket_widget,
+				],
 			],
 		]);
 		// Kommentierung pro Object ...}

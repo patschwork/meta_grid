@@ -2,14 +2,13 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use vendor\meta_grid\contactgroup_select\ContactGroupSelectWidget;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Sourcesystem */
+/* @var $model app\models\Keyfigure */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="sourcesystem-form">
+<div class="keyfigure-form">
 
     <?php $form = ActiveForm::begin(); ?>
 
@@ -29,14 +28,7 @@ use vendor\meta_grid\contactgroup_select\ContactGroupSelectWidget;
 		echo $form->field($model, 'description')->widget(\yii\redactor\widgets\Redactor::className());	?>
  <!--  	// automatisch auskommentiert ueber gii/CRUD    <?= $form->field($model, 'description') ?>  -->
 
-    <?php
-		echo $form->field($model, 'fk_contact_group_id_as_supporter')->widget(\vendor\meta_grid\contactgroup_select\ContactGroupSelectWidget::className());
-	?>
- 
-
-	
-	
- <!--  	// automatisch auskommentiert ueber gii/CRUD    <?= $form->field($model, 'fk_contact_group_id_as_supporter')->textInput() ?>  -->
+    <?= $form->field($model, 'formula') ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

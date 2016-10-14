@@ -26,10 +26,11 @@ AppAsset::register($this);
     <div class="wrap">
         <?php
             NavBar::begin([
-                'brandLabel' => 'Meta#Grid',
+                'brandLabel' => 'Meta#Grid'.(stristr(Yii::$app->homeUrl, 'dev') ? ' DEV' : ''),
                 'brandUrl' => Yii::$app->homeUrl,
                 'options' => [
                     'class' => 'navbar-inverse navbar-fixed-top',
+                    'style' => (stristr(Yii::$app->homeUrl, 'dev') ? 'background-color: darkblue;' : ''),
                 ],
             ]);
             echo Nav::widget([
@@ -47,11 +48,11 @@ AppAsset::register($this);
 // 			            ['label' => '_DB Database', 'url' => ['/dbdatabase']],
 //                 		['label' => '_Map', 'url' => ['/mapobject2object']],
 
-//                 		Yii::$app->user->isGuest ?
-//                         ['label' => 'Login', 'url' => ['/site/login']] :
-//                         ['label' => 'Logout (' . Yii::$app->user->identity->username . ')',
-//                             'url' => ['/site/logout'],
-//                             'linkOptions' => ['data-method' => 'post']],
+//                		Yii::$app->user->isGuest ?
+//                        ['label' => 'Login', 'url' => ['/site/login']] :
+//                        ['label' => 'Logout (' . Yii::$app->user->identity->username . ')',
+//                            'url' => ['/site/logout'],
+//                            'linkOptions' => ['data-method' => 'post']],
                 ],
             ]);
             NavBar::end();

@@ -36,7 +36,7 @@
 
 <?php
 /* @var $this yii\web\View */
-$this->title = 'Meta#Grid';
+$this->title = 'Meta#Grid'.(stristr(Yii::$app->homeUrl, 'dev') ? ' DEV' : '');
 
 $wa_gui_url = Yii::$app->urlManager->baseUrl . "/../../../../../dwh_meta_v2_wa_gui/";
 
@@ -96,7 +96,8 @@ if ($foundIssues>0)
                 <p><a style="width: 250px;" class="btn btn-default" data-tooltip="Kunden-/Mandanteneinstellung" href="<?= Yii::$app->urlManager->createUrl('client') ?>">Client &raquo;</a></p>
                 <p><a style="width: 250px;" class="btn btn-default" data-tooltip="Projekte" href="<?= Yii::$app->urlManager->createUrl('project') ?>">Project &raquo;</a></p>
                 <h2>Business Rules</h2>
-                <p><a style="width: 250px;" class="btn btn-warning" href="<?= $wa_gui_url ?>keyfigure.php">Keyfigure &raquo;</a></p>
+                <!--  <p><a style="width: 250px;" class="btn btn-warning" href="<?= $wa_gui_url ?>keyfigure.php">Keyfigure &raquo;</a></p> -->
+                <p><a style="width: 250px;" class="btn btn-default" data-tooltip="Kennzahlen und KPIs" href="<?= Yii::$app->urlManager->createUrl('keyfigure') ?>">Keyfigure &raquo;</a></p>
                 <p><a style="width: 250px;" class="btn btn-default" data-tooltip="Attribute und Kennzeichen" href="<?= Yii::$app->urlManager->createUrl('attribute') ?>">Attribute &raquo;</a></p>
                 <!--  <p><a style="width: 250px;" class="btn btn-danger" href="<?= $wa_gui_url ?>attribute.php">Attribute &raquo;</a></p> -->
             </div>
@@ -141,6 +142,7 @@ if ($foundIssues>0)
                 <h2>Relations</h2>
                 <p><a style="width: 250px;" class="btn btn-default" data-tooltip="Verknuepfungen zu Objekten" href="<?= Yii::$app->urlManager->createUrl('mapobject2object') ?>">Mappings &raquo;</a></p>
                 <p><a style="width: 250px;" class="btn btn-default" data-tooltip="Glossar" href="<?= Yii::$app->urlManager->createUrl('glossary') ?>">Glossary &raquo;</a></p>
+                <p><a style="width: 250px;" class="btn btn-default" data-tooltip="Zusammenfassen von Objekten" href="<?= Yii::$app->urlManager->createUrl('bracket') ?>">Bracket &raquo;</a></p>
             </div>
             <div class="col-lg-4">
                 <h2>Organisation</h2>

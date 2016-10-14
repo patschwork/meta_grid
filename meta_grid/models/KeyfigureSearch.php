@@ -5,12 +5,12 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\DbTable;
+use app\models\Keyfigure;
 
 /**
- * DBTableSearch represents the model behind the search form about `app\models\DBTable`.
+ * KeyfigureSearch represents the model behind the search form about `app\models\Keyfigure`.
  */
-class DbTableSearch extends DbTable
+class KeyfigureSearch extends Keyfigure
 {
     /**
      * @inheritdoc
@@ -18,8 +18,8 @@ class DbTableSearch extends DbTable
     public function rules()
     {
         return [
-            [['id', 'fk_object_type_id', 'fk_project_id', 'fk_db_table_context_id', 'fk_db_table_type_id'], 'integer'],
-            [['uuid', 'name', 'description', 'location'], 'safe'],
+            [['id', 'fk_object_type_id', 'fk_project_id'], 'integer'],
+            [['uuid', 'name', 'description', 'formula'], 'safe'],
         ];
     }
 
@@ -41,7 +41,7 @@ class DbTableSearch extends DbTable
      */
     public function search($params)
     {
-        $query = DBTable::find();
+        $query = Keyfigure::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -59,14 +59,12 @@ class DbTableSearch extends DbTable
             'id' => $this->id,
             'fk_object_type_id' => $this->fk_object_type_id,
             'fk_project_id' => $this->fk_project_id,
-            'fk_db_table_context_id' => $this->fk_db_table_context_id,
-            'fk_db_table_type_id' => $this->fk_db_table_type_id,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
             ->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['like', 'description', $this->description])
-            ->andFilterWhere(['like', 'location', $this->location]);
+            ->andFilterWhere(['like', 'formula', $this->formula]);
 
         return $dataProvider;
     }

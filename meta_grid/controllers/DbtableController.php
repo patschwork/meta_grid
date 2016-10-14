@@ -3,8 +3,8 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\DBTable;
-use app\models\DBTableSearch;
+use app\models\DbTable;
+use app\models\DbTableSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -91,7 +91,7 @@ class DbtableController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new DBTableSearch();
+        $searchModel = new DbTableSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -179,7 +179,7 @@ class DbtableController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = DBTable::findOne($id)) !== null) {
+        if (($model = DbTable::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

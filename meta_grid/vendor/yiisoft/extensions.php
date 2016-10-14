@@ -103,4 +103,49 @@ return array (
       '@kartik/base' => $vendorDir . '/kartik-v/yii2-krajee-base',
     ),
   ),
+  'yiisoft/yii2-jui' => 
+  array (
+    'name' => 'yiisoft/yii2-jui',
+    'version' => '2.0.3.0',
+    'alias' => 
+    array (
+      '@yii/jui' => $vendorDir . '/yiisoft/yii2-jui',
+    ),
+  ),
+  'lajax/yii2-translate-manager' => 
+  array (
+    'name' => 'lajax/yii2-translate-manager',
+    'version' => '1.5.2.0',
+    'alias' => 
+    array (
+      '@lajax/translatemanager' => $vendorDir . '/lajax/yii2-translate-manager',
+    ),
+  ),
+  'sitawit/yii2-piwik' => 
+  array (
+    'name' => 'sitawit/yii2-piwik',
+    'version' => '9999999-dev',
+    'alias' => 
+    array (
+      '@sitawit/piwik' => $vendorDir . '/sitawit/yii2-piwik',
+    ),
+  ),
+  'sheershoff/yii2-sentry-component' => 
+  array (
+    'name' => 'sheershoff/yii2-sentry-component',
+    'version' => '9999999-dev',
+    'alias' => 
+    array (
+      '@sheershoff/sentry' => $vendorDir . '/sheershoff/yii2-sentry-component/src',
+    ),
+  ),
+  'wbraganca/yii2-dynamicform' => 
+  array (
+    'name' => 'wbraganca/yii2-dynamicform',
+    'version' => '2.0.2.0',
+    'alias' => 
+    array (
+      '@wbraganca/dynamicform' => $vendorDir . '/wbraganca/yii2-dynamicform',
+    ),
+  ),
 );

@@ -2,18 +2,15 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
-use app\models\DbTable;
-use yii\helpers\ArrayHelper;
-use kartik\select2\Select2;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\DbTableFieldSearch */
+/* @var $searchModel app\models\BracketSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Db Table Fields');
+$this->title = Yii::t('app', 'Brackets');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="db-table-field-index">
+<div class="bracket-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -32,7 +29,7 @@ else
 
     <p>
         <?= Html::a(Yii::t('app', 'Create {modelClass}', [
-    'modelClass' => 'Db Table Field',
+    'modelClass' => 'Bracket',
 ]), ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
@@ -51,28 +48,23 @@ else
             [
              'label' => 'Project',
              'value' => function($model) {
-             		return $model->fk_project_id == "" ? $model->fk_project_id : isset($_GET["searchShow"]) ? $model->fkProject->name . ' [' . $model->fk_project_id . ']' : $model->fkProject->name;
+             		return $model->fk_project_id == "" ? $model->fk_project_id : (isset($_GET["searchShow"]) ? $model->fkProject->name . ' [' . $model->fk_project_id . ']' : $model->fkProject->name);
              		},
             ],
             'name:ntext',
             'description:html',
             [
-             'label' => 'Db Table',
+             'label' => 'Attribute',
              'value' => function($model) {
-             		return $model->fk_db_table_id == "" ? $model->fk_db_table_id : isset($_GET["searchShow"]) ? $model->fkDbTable->name . ' [' . $model->fk_db_table_id . ']' : $model->fkDbTable->name;
+             		return $model->fk_attribute_id == "" ? $model->fk_attribute_id : (isset($_GET["searchShow"]) ? $model->fkAttribute->name . ' [' . $model->fk_attribute_id . ']' : $model->fkAttribute->name);
              		},
-//              'filter' => Html::activeDropDownList($searchModel, 'fk_db_table_id', ArrayHelper::map(DbTable::find()->asArray()->all(), 'id', 'name'),['class'=>'form-control','prompt' => '']),
-				'filter' => Select2::widget([
-    				'model' => $searchModel,
-    				'attribute' => 'fk_db_table_id',
-    				'data' => ArrayHelper::map(DbTable::find()->asArray()->all(), 'id', 'name'),
-    				'options' => ['placeholder' => 'Select ...'],
-    				'pluginOptions' => [
-    						'allowClear' => true
-    				],
-				 ])
             ],
-            'datatype:ntext',
+            [
+             'label' => 'Object Type As Search Filter',
+             'value' => function($model) {
+             		return $model->fk_object_type_id_as_searchFilter == "" ? $model->fk_object_type_id_as_searchFilter : (isset($_GET["searchShow"]) ? $model->fkObjectTypeAsSearchFilter->name . ' [' . $model->fk_object_type_id_as_searchFilter . ']' : $model->fkObjectTypeIdAsSearchFilter->name);
+             		},
+            ],
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

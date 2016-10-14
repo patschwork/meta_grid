@@ -5,12 +5,12 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\DbTable;
+use app\models\Bracket;
 
 /**
- * DBTableSearch represents the model behind the search form about `app\models\DBTable`.
+ * BracketSearch represents the model behind the search form about `app\models\Bracket`.
  */
-class DbTableSearch extends DbTable
+class BracketSearch extends Bracket
 {
     /**
      * @inheritdoc
@@ -18,8 +18,8 @@ class DbTableSearch extends DbTable
     public function rules()
     {
         return [
-            [['id', 'fk_object_type_id', 'fk_project_id', 'fk_db_table_context_id', 'fk_db_table_type_id'], 'integer'],
-            [['uuid', 'name', 'description', 'location'], 'safe'],
+            [['id', 'fk_object_type_id', 'fk_project_id', 'fk_attribute_id', 'fk_object_type_id_as_searchFilter'], 'integer'],
+            [['uuid', 'name', 'description'], 'safe'],
         ];
     }
 
@@ -41,7 +41,7 @@ class DbTableSearch extends DbTable
      */
     public function search($params)
     {
-        $query = DBTable::find();
+        $query = Bracket::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -59,14 +59,13 @@ class DbTableSearch extends DbTable
             'id' => $this->id,
             'fk_object_type_id' => $this->fk_object_type_id,
             'fk_project_id' => $this->fk_project_id,
-            'fk_db_table_context_id' => $this->fk_db_table_context_id,
-            'fk_db_table_type_id' => $this->fk_db_table_type_id,
+            'fk_attribute_id' => $this->fk_attribute_id,
+            'fk_object_type_id_as_searchFilter' => $this->fk_object_type_id_as_searchFilter,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
             ->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'description', $this->description])
-            ->andFilterWhere(['like', 'location', $this->location]);
+            ->andFilterWhere(['like', 'description', $this->description]);
 
         return $dataProvider;
     }

@@ -38,7 +38,7 @@ class DataTransferProcess extends \yii\db\ActiveRecord
             [['uuid'], 'string'],
             [['fk_object_type_id', 'fk_project_id', 'fk_data_transfer_type_id'], 'integer'],
             [['name'], 'string', 'max' => 250],
-            [['description'], 'string', 'max' => 500]
+            [['description'], 'string', 'max' => 4000]
         ];
     }
 

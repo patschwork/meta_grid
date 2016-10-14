@@ -5,7 +5,7 @@ namespace app\models\base;
 use Yii;
 
 /**
- * This is the base-model class for table "attribute".
+ * This is the base-model class for table "keyfigure".
  *
  * @property integer $id
  * @property string $uuid
@@ -15,18 +15,17 @@ use Yii;
  * @property string $description
  * @property string $formula
  *
- * @property Bracket[] $brackets
  * @property Project $fkProject
  * @property ObjectType $fkObjectType
  */
-class Attribute extends \yii\db\ActiveRecord
+class Keyfigure extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'attribute';
+        return 'keyfigure';
     }
 
     /**
@@ -38,8 +37,7 @@ class Attribute extends \yii\db\ActiveRecord
             [['uuid'], 'string'],
             [['fk_object_type_id', 'fk_project_id'], 'integer'],
             [['name'], 'string', 'max' => 250],
-            [['description'], 'string', 'max' => 4000],
-            [['formula'], 'string', 'max' => 4000]
+            [['description', 'formula'], 'string', 'max' => 4000]
         ];
     }
 
@@ -57,14 +55,6 @@ class Attribute extends \yii\db\ActiveRecord
             'description' => Yii::t('app', 'Description'),
             'formula' => Yii::t('app', 'Formula'),
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getBrackets()
-    {
-        return $this->hasMany(\app\models\Bracket::className(), ['fk_attribute_id' => 'id']);
     }
 
     /**

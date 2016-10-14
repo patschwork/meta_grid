@@ -5,15 +5,15 @@ use yii\helpers\Html;
 
 
 /* @var $this yii\web\View */
-/* @var $model app\models\DbTableField */
+/* @var $model app\models\Keyfigure */
 
 $this->title = Yii::t('app', 'Create {modelClass}', [
-    'modelClass' => 'Db Table Field',
+    'modelClass' => 'Keyfigure',
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Db Table Fields'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Keyfigures'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="db-table-field-create">
+<div class="keyfigure-create">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -22,8 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
 		//'projectList' => $projectList,		// autogeneriert ueber gii/CRUD
 		'object_typeList' => $object_typeList,		// autogeneriert ueber gii/CRUD
 'projectList' => $projectList,		// autogeneriert ueber gii/CRUD
-'db_tableList' => $db_tableList,		// autogeneriert ueber gii/CRUD
-    		'fk_db_table_id' => isset($fk_db_table_id) ? $fk_db_table_id : null,        
+        
     ]) ?>
 
 </div>
