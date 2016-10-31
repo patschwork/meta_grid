@@ -1,0 +1,743 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- SQL XML created by WWW SQL Designer, http://code.google.com/p/wwwsqldesigner/ -->
+<!-- Active URL: http://localhost:81/sqldesigner/ -->
+<sql>
+<datatypes db="sqlite">
+	<group label="Affinity">
+		<type label="Text" default="" length="1" sql="TEXT" quote="'" color="rgb(255,200,200)"/>
+		<type label="Numeric" default="0" length="0" sql="NUMERIC" quote="" color="rgb(238,238,170)"/>
+		<type label="Integer" default="0" length="0" sql="INTEGER" quote="" color="rgb(238,238,170)"/>
+		<type label="Real" default="0" length="0" sql="REAL" quote="" color="rgb(238,238,170)"/>
+		<type label="None" default="" length="0" sql="NONE" quote="" color="rgb(200,255,200)"/>
+	</group>
+</datatypes><table x="495" y="119" name="keyfigure">
+<row name="id" null="0" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_object_type_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>1</default><relation table="object_type" row="id" />
+<comment>Foreign Key for definition of the type of object</comment>
+</row>
+<row name="fk_project_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="project" row="id" />
+</row>
+<row name="name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT(4000)</datatype>
+<default>NULL</default></row>
+<row name="formula" null="1" autoincrement="0">
+<datatype>TEXT(4000)</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+<comment>Named keyfigures/measures with description and if possible with a formular (pseudo code formular) or SQL or MDX statement.</comment>
+</table>
+<table x="800" y="372" name="object_type">
+<row name="id" null="0" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+<comment>Types of objects - used for the mappings (keyfigures, sourcesystems, ...)</comment>
+</table>
+<table x="92" y="261" name="client">
+<row name="id" null="0" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT(500)</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="pk_id_client">
+<part>id</part>
+</key>
+<comment>Client information</comment>
+</table>
+<table x="149" y="474" name="project">
+<row name="id" null="0" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_client_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="client" row="id" />
+</row>
+<row name="name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT(500)</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="pk_id_project">
+<part>id</part>
+</key>
+<comment>Project information for a specific client</comment>
+</table>
+<table x="495" y="325" name="sourcesystem">
+<row name="id" null="0" autoincrement="1">
+<datatype>INTEGER</datatype>
+</row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_object_type_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>2</default><relation table="object_type" row="id" />
+</row>
+<row name="fk_project_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="project" row="id" />
+</row>
+<row name="name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT(500)</datatype>
+<default>NULL</default></row>
+<row name="fk_contact_group_id_as_supporter" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="contact_group" row="id" />
+<comment>Ansprechpartner</comment>
+</row>
+<key type="PRIMARY" name="pk_id_sourcesystem">
+<part>id</part>
+</key>
+<comment>Quellsystem</comment>
+</table>
+<table x="492" y="584" name="data_delivery_object">
+<row name="id" null="0" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_object_type_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>3</default><relation table="object_type" row="id" />
+</row>
+<row name="fk_project_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="project" row="id" />
+</row>
+<row name="name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT(500)</datatype>
+<default>NULL</default></row>
+<row name="fk_tool_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="tool" row="id" />
+</row>
+<row name="fk_data_delivery_type_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="data_delivery_type" row="id" />
+</row>
+<row name="fk_contact_group_id_as_data_owner" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="contact_group" row="id" />
+<comment>Wer verantwortet die Daten</comment>
+</row>
+<key type="PRIMARY" name="pk_id_report">
+<part>id</part>
+</key>
+<comment>German = Datenliefergegenstand
+This is an object which provides data for exporting out of an dispositive system such a data warehouse. This is only meant for delivery, not for using a data source.    
+Examples: Report, flatfile export, view with external access...,  </comment>
+</table>
+<table x="1206" y="244" name="map_object_2_object">
+<row name="id" null="0" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="ref_fk_object_id_1" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="ref_fk_object_type_id_1" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_type" row="id" />
+</row>
+<row name="ref_fk_object_id_2" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="ref_fk_object_type_id_2" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_type" row="id" />
+</row>
+<key type="UNIQUE" name="unique_id_map_object_2_object">
+<part>ref_fk_object_id_1</part>
+<part>ref_fk_object_type_id_1</part>
+<part>ref_fk_object_id_2</part>
+<part>ref_fk_object_type_id_2</part>
+</key>
+<key type="PRIMARY" name="pk_id_object2object">
+<part>id</part>
+</key>
+</table>
+<table x="896" y="775" name="tool">
+<row name="id" null="0" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_tool_type_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="tool_type" row="id" />
+</row>
+<row name="tool_name" null="1" autoincrement="0">
+<datatype>TEXT(255)</datatype>
+<default>NULL</default></row>
+<row name="vendor" null="1" autoincrement="0">
+<datatype>TEXT(255)</datatype>
+<default>NULL</default></row>
+<row name="version" null="1" autoincrement="0">
+<datatype>TEXT(255)</datatype>
+<default>NULL</default></row>
+<row name="comment" null="1" autoincrement="0">
+<datatype>TEXT(500)</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="pk_id_tool">
+<part>id</part>
+</key>
+<comment>BI or DWH tool which is used to do the job e.g. Report, ETL, DQ, OLAP...</comment>
+</table>
+<table x="91" y="654" name="object_depends_on">
+<row name="id" null="0" autoincrement="1">
+<datatype>INTEGER</datatype>
+</row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="ref_fk_object_id_parent" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="ref_fk_object_type_id_parent" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="ref_fk_object_id_child" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="ref_fk_object_type_id_child" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="pk_id_object_depends_on">
+<part>id</part>
+</key>
+<comment>Abhängigkeit zu Objecten</comment>
+</table>
+<table x="789" y="94" name="attribute">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_object_type_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>9</default><relation table="object_type" row="id" />
+</row>
+<row name="fk_project_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="project" row="id" />
+</row>
+<row name="name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT(4000)</datatype>
+<default>NULL</default></row>
+<row name="formula" null="1" autoincrement="0">
+<datatype>TEXT(4000)</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+<comment>Kennzeichen - zB Wenn Feld im ersten Zeichen ein A ernthaelt, dann ist es ein besonderer Artikel...</comment>
+</table>
+<table x="1106" y="718" name="tool_type">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT(500)</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+<comment>Welcher Typ ist das Programm: Reporting, Dataquality, ETL, Semantic-Layer, Scheduler, Portal, Dashboard, DBMS, OLAP</comment>
+</table>
+<table x="502" y="890" name="db_table">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_object_type_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>4</default><relation table="object_type" row="id" />
+</row>
+<row name="fk_project_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="project" row="id" />
+</row>
+<row name="name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT(500)</datatype>
+<default>NULL</default></row>
+<row name="location" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default><comment>Schema, Path, URL</comment>
+</row>
+<row name="fk_db_table_context_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="db_table_context" row="id" />
+</row>
+<row name="fk_db_table_type_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="db_table_type" row="id" />
+</row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+<comment>Database table</comment>
+</table>
+<table x="504" y="1171" name="db_table_field">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_object_type_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>5</default><relation table="object_type" row="id" />
+</row>
+<row name="fk_project_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="project" row="id" />
+</row>
+<row name="name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT(500)</datatype>
+<default>NULL</default></row>
+<row name="fk_db_table_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="db_table" row="id" />
+</row>
+<row name="datatype" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="bulk_load_checksum" null="1" autoincrement="0">
+<datatype>TEXT(200)</datatype>
+<default>NULL</default><comment>checksum from bulk load with kettle pdi</comment>
+</row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+</table>
+<table x="828" y="1106" name="db_table_context">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_object_type_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>6</default><relation table="object_type" row="id" />
+</row>
+<row name="fk_project_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="project" row="id" />
+</row>
+<row name="name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT(500)</datatype>
+<default>NULL</default></row>
+<row name="prefix" null="1" autoincrement="0">
+<datatype>TEXT(100)</datatype>
+<default>NULL</default><comment>Prefix for Tablenames</comment>
+</row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+<comment>Which kind of table is it in a BI context? (staging table, temp, fact, datamart, dimension, ...)</comment>
+</table>
+<table x="1311" y="942" name="db_database">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_object_type_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>11</default><relation table="object_type" row="id" />
+</row>
+<row name="fk_project_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="project" row="id" />
+</row>
+<row name="name" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_tool_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="tool" row="id" />
+</row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+<comment>Generic information which databases is used in context (vendor database, name of the database, kind of use (production, test, dev, ...), IP, type (operational, reporting, analytical, dwh), database-technologie (OLTP, OLAP, NoSQL, ...)</comment>
+</table>
+<table x="1208" y="440" name="scheduling">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_object_type_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>8</default><relation table="object_type" row="id" />
+</row>
+<row name="fk_project_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="project" row="id" />
+</row>
+<row name="name" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_tool_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="tool" row="id" />
+</row>
+<row name="scheduling_series" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default><comment>When does the scheduling starts</comment>
+</row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+<comment>Scheduling of BI items (report bursting, copy of files, ETL-jobs, ...)</comment>
+</table>
+<table x="1372" y="630" name="parameter">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_object_type_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>7</default><relation table="object_type" row="id" />
+</row>
+<row name="fk_project_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="project" row="id" />
+</row>
+<row name="name" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="is_optional" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><comment>true or false</comment>
+</row>
+<row name="default_value" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="datatype" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="range" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+<comment>Parameter which can be set e.g. on report execution, scheduling, ETL jobs, ...</comment>
+</table>
+<table x="196" y="983" name="db_table_type">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="name" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+<comment>Typ der Tabelle: Normale Tabelle, View, CSV Datei, XML-Datei, SOAP Methode</comment>
+</table>
+<table x="1205" y="20" name="object_comment">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_object_type_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>12</default><relation table="object_type" row="id" />
+</row>
+<row name="ref_fk_object_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><comment>Dies ist das referenzierte Objekt</comment>
+</row>
+<row name="ref_fk_object_type_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_type" row="id" />
+<comment>Dies ist das referenzierte Objekt-Typ ID</comment>
+</row>
+<row name="comment" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="created_at_datetime" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+<comment>Kommentar zu dem Object</comment>
+</table>
+<table x="282" y="85" name="glossary">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_object_type_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>10</default><relation table="object_type" row="id" />
+</row>
+<row name="fk_project_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="project" row="id" />
+</row>
+<row name="name" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+<comment>Glosar für Projektspezifische Begriffe oder Eigennamen</comment>
+</table>
+<table x="843" y="586" name="data_delivery_type">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT(500)</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+<comment>Which types: e.g. report, flatfile export, view, REST or SOAP WebService, ...</comment>
+</table>
+<table x="1126" y="1180" name="data_transfer_process">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_object_type_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>13</default><relation table="object_type" row="id" />
+</row>
+<row name="fk_project_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="project" row="id" />
+</row>
+<row name="name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT(500)</datatype>
+<default>NULL</default></row>
+<row name="fk_data_transfer_type_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="data_transfer_type" row="id" />
+</row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+<comment>This is an object for describing a data transfer oder data manipulation such as ETL, Script, SQL query, ...</comment>
+</table>
+<table x="1477" y="1185" name="data_transfer_type">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT(500)</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+<comment>Lookup-List for data transfer processef to describe the kind</comment>
+</table>
+<table x="92" y="67" name="app_config">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="key" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="valueINT" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="valueSTRING" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+<comment>Applikationsconfigutation</comment>
+</table>
+<table x="155" y="1170" name="contact_group">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_object_type_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>14</default><relation table="object_type" row="id" />
+</row>
+<row name="fk_client_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="client" row="id" />
+</row>
+<row name="name" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="short_name" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+<comment>Kontaktgruppe (Abteilung, Team, ...)</comment>
+</table>
+<table x="156" y="1401" name="contact">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_object_type_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>15</default><relation table="object_type" row="id" />
+</row>
+<row name="fk_contact_group_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="contact_group" row="id" />
+</row>
+<row name="fk_client_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="client" row="id" />
+</row>
+<row name="givenname" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="surname" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="email" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="phone" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="mobile" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="ldap_cn" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+<comment>Einzelner Kontakt oder Ansprechpartner</comment>
+</table>
+</sql>

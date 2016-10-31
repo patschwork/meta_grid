@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.7"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.7
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.7.xsd" logicalFilePath="000002/changelog.xml">
+
+	<!-- 	 
+	<changeSet author="patrick_schmitz" id="2">
+		<dropIndex 
+				indexName="map_object_2_object_filter_1"
+				tableName="map_object_2_object"/>
+	</changeSet>
+	-->
+	<changeSet author="patrick_schmitz" id="2">
+		<comment>Index erstellen f&#252;r Tabelle map_object_2_object (Anwendung durch v_All_Mappings_Union)</comment>
+		<createIndex 
+			indexName="map_object_2_object_filter_1"
+			tableName="map_object_2_object">
+			<column name="ref_fk_object_id_1"/>
+			<column name="ref_fk_object_type_id_1"/>
+		</createIndex>
+	</changeSet>
+	<!-- 	 
+	<changeSet author="patrick_schmitz" id="4">
+		<preconditions onFail="MARK_RAN"><not><indexExists/></not></preconditions>
+		<dropIndex 
+				indexName="map_object_2_object_filter_2"
+				tableName="map_object_2_object"/>
+	</changeSet>
+	-->
+	<changeSet author="patrick_schmitz" id="3">
+		<comment>Index erstellen f&#252;r Tabelle map_object_2_object (Anwendung durch v_All_Mappings_Union)</comment>
+		<createIndex 
+			indexName="map_object_2_object_filter_2"
+			tableName="map_object_2_object">
+			<column name="ref_fk_object_id_2"/>
+			<column name="ref_fk_object_type_id_2"/>
+		</createIndex>
+	</changeSet>
+</databaseChangeLog>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.7"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.7
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.7.xsd" logicalFilePath="000001/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="1">
+		<comment>View v_All_Mappings_Union aktualisieren</comment>
+		<createView replaceIfExists="true" viewName="v_All_Mappings_Union">
+			WITH cte_v_All_Objects_Union AS
+			(
+			  SELECT 
+						 v_All_Objects_Union.listvalue_1
+						,v_All_Objects_Union.listvalue_2
+						,v_All_Objects_Union.name
+						,v_All_Objects_Union.object_type_name
+						,v_All_Objects_Union.listkey
+						,v_All_Objects_Union.id
+						,v_All_Objects_Union.fk_object_type_id
+			  FROM v_All_Objects_Union
+			)
+			,
+			cte_map_object_2_object AS
+			(
+				SELECT 			
+					 ref_fk_object_id_1
+					,ref_fk_object_type_id_1
+					,ref_fk_object_id_2
+					,ref_fk_object_type_id_2
+					,ref_fk_object_id_1  
+				FROM map_object_2_object
+			)
+			  SELECT  *
+				FROM
+				(
+					SELECT 
+						 &apos;-&gt;&apos; 							AS connectiondirection
+						,v_All_Objects_Union.listvalue_1
+						,v_All_Objects_Union.listvalue_2
+						,v_All_Objects_Union.name
+						,v_All_Objects_Union.object_type_name
+						,v_All_Objects_Union.listkey
+						,ref_fk_object_id_1
+						,ref_fk_object_type_id_1
+						,ref_fk_object_id_2
+						,ref_fk_object_type_id_2
+						,ref_fk_object_id_1 			AS filter_ref_fk_object_id
+						,ref_fk_object_type_id_1 		AS filter_ref_fk_object_type_id
+						,parent.ref_fk_object_id_parent
+						,parent.ref_fk_object_type_id_parent
+						,parentAttr.name				AS parentAttr_name
+						,parentAttr.object_type_name	AS parentAttr_object_type_name
+						,child.ref_fk_object_id_child	
+						,child.ref_fk_object_type_id_child
+						,childAttr.name 				AS childAttr_name
+						,childAttr.object_type_name		AS childAttr_object_type_name
+					FROM cte_map_object_2_object map_object_2_object
+					LEFT JOIN cte_v_All_Objects_Union v_All_Objects_Union
+						ON v_All_Objects_Union.id							=	map_object_2_object.ref_fk_object_id_2 
+						AND v_All_Objects_Union.fk_object_type_id			=	map_object_2_object.ref_fk_object_type_id_2
+
+					LEFT JOIN object_depends_on parent
+						ON parent.ref_fk_object_id_parent					=	map_object_2_object.ref_fk_object_id_2 
+						AND parent.ref_fk_object_type_id_parent				=	map_object_2_object.ref_fk_object_type_id_2
+					LEFT JOIN cte_v_All_Objects_Union parentAttr
+						ON parentAttr.id									=	parent.ref_fk_object_id_parent 
+						AND parentAttr.fk_object_type_id					=	parent.ref_fk_object_type_id_parent
+
+					LEFT JOIN object_depends_on child
+						ON child.ref_fk_object_id_child						=	map_object_2_object.ref_fk_object_id_2 
+						AND child.ref_fk_object_type_id_child				=	map_object_2_object.ref_fk_object_type_id_2
+					LEFT JOIN cte_v_All_Objects_Union childAttr
+						ON childAttr.id										=	child.ref_fk_object_id_parent 
+						AND childAttr.fk_object_type_id						=	child.ref_fk_object_type_id_parent
+				UNION
+					SELECT 
+						 &apos;&lt;-&apos; 							AS connectiondirection
+						,v_All_Objects_Union.listvalue_1
+						,v_All_Objects_Union.listvalue_2
+						,v_All_Objects_Union.name
+						,v_All_Objects_Union.object_type_name
+						,v_All_Objects_Union.listkey
+						,ref_fk_object_id_1
+						,ref_fk_object_type_id_1
+						,ref_fk_object_id_2
+						,ref_fk_object_type_id_2
+						,ref_fk_object_id_2 			AS filter_ref_fk_object_id
+						,ref_fk_object_type_id_2 		AS filter_ref_fk_object_type_id
+						,parent.ref_fk_object_id_parent
+						,parent.ref_fk_object_type_id_parent
+						,parentAttr.name
+						,parentAttr.object_type_name
+						,child.ref_fk_object_id_child
+						,child.ref_fk_object_type_id_child
+						,childAttr.name 				AS childAttr_name
+						,childAttr.object_type_name		AS childAttr_object_type_name
+					FROM cte_map_object_2_object map_object_2_object
+					LEFT JOIN cte_v_All_Objects_Union v_All_Objects_Union 
+						ON v_All_Objects_Union.id							=	map_object_2_object.ref_fk_object_id_1 
+						AND v_All_Objects_Union.fk_object_type_id			=	map_object_2_object.ref_fk_object_type_id_1
+
+					LEFT JOIN object_depends_on parent
+						ON parent.ref_fk_object_id_parent					=	map_object_2_object.ref_fk_object_id_1 
+						AND parent.ref_fk_object_type_id_parent				=	map_object_2_object.ref_fk_object_type_id_1
+					LEFT JOIN cte_v_All_Objects_Union parentAttr
+						ON parentAttr.id									=	parent.ref_fk_object_id_parent 
+						AND parentAttr.fk_object_type_id					=	parent.ref_fk_object_type_id_parent
+
+					LEFT JOIN object_depends_on child
+						ON child.ref_fk_object_id_child						=	map_object_2_object.ref_fk_object_id_1 
+						AND child.ref_fk_object_type_id_child				=	map_object_2_object.ref_fk_object_type_id_1
+					LEFT JOIN cte_v_All_Objects_Union childAttr
+						ON childAttr.id										=	child.ref_fk_object_id_parent 
+						AND childAttr.fk_object_type_id						=	child.ref_fk_object_type_id_parent
+				) AS un
+		</createView>
+	</changeSet>
+</databaseChangeLog>
