@@ -5,7 +5,7 @@ namespace app\models\base;
 use Yii;
 
 /**
- * This is the base-model class for table "bracket".
+ * This is the model class for table "bracket".
  *
  * @property integer $id
  * @property string $uuid
@@ -41,7 +41,11 @@ class Bracket extends \yii\db\ActiveRecord
             [['uuid'], 'string'],
             [['fk_object_type_id', 'fk_project_id', 'fk_attribute_id', 'fk_object_type_id_as_searchFilter'], 'integer'],
             [['name'], 'string', 'max' => 250],
-            [['description'], 'string', 'max' => 500]
+            [['description'], 'string', 'max' => 4000],
+            [['fk_object_type_id_as_searchFilter'], 'exist', 'skipOnError' => true, 'targetClass' => ObjectType::className(), 'targetAttribute' => ['fk_object_type_id_as_searchFilter' => 'id']],
+            [['fk_attribute_id'], 'exist', 'skipOnError' => true, 'targetClass' => Attribute::className(), 'targetAttribute' => ['fk_attribute_id' => 'id']],
+            [['fk_project_id'], 'exist', 'skipOnError' => true, 'targetClass' => Project::className(), 'targetAttribute' => ['fk_project_id' => 'id']],
+            [['fk_object_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => ObjectType::className(), 'targetAttribute' => ['fk_object_type_id' => 'id']],
         ];
     }
 
@@ -67,7 +71,7 @@ class Bracket extends \yii\db\ActiveRecord
      */
     public function getFkObjectTypeIdAsSearchFilter()
     {
-        return $this->hasOne(\app\models\ObjectType::className(), ['id' => 'fk_object_type_id_as_searchFilter']);
+        return $this->hasOne(ObjectType::className(), ['id' => 'fk_object_type_id_as_searchFilter']);
     }
 
     /**
@@ -75,7 +79,7 @@ class Bracket extends \yii\db\ActiveRecord
      */
     public function getFkAttribute()
     {
-        return $this->hasOne(\app\models\Attribute::className(), ['id' => 'fk_attribute_id']);
+        return $this->hasOne(Attribute::className(), ['id' => 'fk_attribute_id']);
     }
 
     /**
@@ -83,7 +87,7 @@ class Bracket extends \yii\db\ActiveRecord
      */
     public function getFkProject()
     {
-        return $this->hasOne(\app\models\Project::className(), ['id' => 'fk_project_id']);
+        return $this->hasOne(Project::className(), ['id' => 'fk_project_id']);
     }
 
     /**
@@ -91,7 +95,7 @@ class Bracket extends \yii\db\ActiveRecord
      */
     public function getFkObjectType()
     {
-        return $this->hasOne(\app\models\ObjectType::className(), ['id' => 'fk_object_type_id']);
+        return $this->hasOne(ObjectType::className(), ['id' => 'fk_object_type_id']);
     }
 
     /**
@@ -99,6 +103,15 @@ class Bracket extends \yii\db\ActiveRecord
      */
     public function getBracketSearchPatterns()
     {
-        return $this->hasMany(\app\models\BracketSearchPattern::className(), ['fk_bracket_id' => 'id']);
+        return $this->hasMany(BracketSearchPattern::className(), ['fk_bracket_id' => 'id']);
+    }
+
+    /**
+     * @inheritdoc
+     * @return BracketQuery the active query used by this AR class.
+     */
+    public static function find()
+    {
+        return new BracketQuery(get_called_class());
     }
 }

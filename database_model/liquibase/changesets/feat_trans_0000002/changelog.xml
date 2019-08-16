@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="feat_trans_0000002/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="feat_trans_0000002" context="translatemanager,i18n">
+		<sql splitStatements="true">
+		<![CDATA[
+			CREATE TABLE language_source (
+				id  INT NOT NULL,
+				category     VARCHAR (32),
+				message      TEXT,
+				PRIMARY KEY (
+					id
+				)
+			);
+		]]>
+		</sql>
+			
+		<comment>
+		<![CDATA[
+		language_source table from deployed yii2 (m141002_030233_translate_manager).
+		Used objects:
+			language_source
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

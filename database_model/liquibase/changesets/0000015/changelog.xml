@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000015/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000015" context="RBAC,2amigos-Usario">
+		<!-- <createTable tableName="auth_assignment" remarks="RBAC authentication rule table">  -->
+			<!-- <column name="item_name"		type="VARCHAR(64)"> -->
+				<!-- <constraints -->
+					<!-- primaryKey="true" -->
+					<!-- nullable="false" -->
+					<!-- foreignKeyName ="fk_item_name" -->
+					<!-- references="auth_item(name)" -->
+					<!-- onDelete="CASCADE" -->
+					<!-- onUpdate="CASCADE"/> -->
+			<!-- </column> -->
+			<!-- <column name="user_id"			type="VARCHAR(64)"> -->
+				<!-- <constraints 					 -->
+					<!-- primaryKey="true" -->
+					<!-- nullable="false"/> -->
+			<!-- </column> -->
+			<!-- <column name="created_at"		type="INTEGER"/> -->
+		<!-- </createTable> -->
+		<sql splitStatements="true">
+			CREATE TABLE auth_assignment (
+				item_name  VARCHAR (64) NOT NULL,
+				user_id    VARCHAR (64) NOT NULL,
+				created_at INTEGER,
+				PRIMARY KEY (
+					item_name,
+					user_id
+				),
+				FOREIGN KEY (
+					item_name
+				)
+				REFERENCES auth_item (name) ON DELETE CASCADE
+											ON UPDATE CASCADE
+			);
+		</sql>
+			
+		<comment>
+		<![CDATA[
+		auth_assignment table from deployed yii2 (m140506_102106_rbac_init).
+		Used objects:
+			auth_assignment
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

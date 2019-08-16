@@ -1,3 +1,17 @@
+<?php if($generator->modelClass === "app\models\Attribute"): ?>
+
+<style>
+pre {
+    white-space: pre-wrap;       /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+</style>
+
+<?php endif;?>
+
 <?php
 
 use yii\helpers\Inflector;
@@ -14,13 +28,18 @@ echo "<?php\n";
 
 use yii\helpers\Html;
 use <?= $generator->indexWidgetType === 'grid' ? "yii\\grid\\GridView" : "yii\\widgets\\ListView" ?>;
+use app\models\Project; 
+use yii\helpers\ArrayHelper; 
+use kartik\select2\Select2; 
+use app\models\Client; 
+use vendor\meta_grid\helper\RBACHelper;
 
 /* @var $this yii\web\View */
 <?= !empty($generator->searchModelClass) ? "/* @var \$searchModel " . ltrim($generator->searchModelClass, '\\') . " */\n" : '' ?>
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = <?= $generator->generateString(Inflector::pluralize(Inflector::camel2words(StringHelper::basename($generator->modelClass)))) ?>;
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = Yii::t('app', $this->title);
 ?>
 <div class="<?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>-index">
 
@@ -38,27 +57,103 @@ $this->params['breadcrumbs'][] = $this->title;
     	echo "}"."\n";
     	echo "else"."\n"; 
     	echo "{"."\n";
-    	echo '	echo "<a' . " class='btn btn-default' href='index.php" . '?r=".$_GET["r"]."&' . "searchShow=1'>Advanced" . ' Search</a></br></br>";'."\n";
+    	echo '	echo "<a' . " class='btn btn-default' href='index.php" . '?r=".$_GET["r"]."&' . "searchShow=1'>\".Yii::t('app', 'Advanced Search').\"" . '</a></br></br>";'."\n";
     	echo "}"."\n";
     	?>
 ?>
 
     <p>
-        <?= "<?= " ?>Html::a(<?= $generator->generateString('Create {modelClass}', ['modelClass' => Inflector::camel2words(StringHelper::basename($generator->modelClass))]) ?>, ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+		<?= "<?= Yii::\$app->user->identity->isAdmin || Yii::\$app->User->can('create-" . str_replace("controller", "", strtolower ( StringHelper::basename($generator->controllerClass) ) ) . "')  ? " ?>Html::a(
+		<?php echo "Yii::t('app', 'Create {modelClass}', ['modelClass' => Yii::t('app', '" . Inflector::camel2words(StringHelper::basename($generator->modelClass)) . "'),])"; ?>, ['create'], ['class' => 'btn btn-success']) : "" ?>
+	</p>
 
+	<?php echo "<?php"; ?>
+	// Inform user about set perspective_filter
+	if (array_key_exists("fk_object_type_id",  $searchModel->attributes) === true && (isset($searchModel->find()->select(['fk_object_type_id'])->one()->fk_object_type_id) === true))
+	{
+		$fk_object_type_id=$searchModel->find()->select(['fk_object_type_id'])->one()->fk_object_type_id;
+		$session = Yii::$app->session;
+		if ($session->hasFlash('perspective_filter_for_' . $fk_object_type_id))
+		{	
+			echo yii\bootstrap\Alert::widget([
+					'options' => [
+									'class' => 'alert-info',
+					],
+					'body' => $session->getFlash('perspective_filter_for_' . $fk_object_type_id),
+			]);
+		}		
+	}
+	<?php echo "?>"; ?>
+	
+	
 <?php if ($generator->indexWidgetType === 'grid'): ?>
+	<?php //echo "<div class=\"table-responsive\">\n"; ?>
     <?= "<?= " ?>GridView::widget([
         'dataProvider' => $dataProvider,
+		'pager' => [
+			'firstPageLabel' => '<span class="glyphicon glyphicon-chevron-left"></span><span class="glyphicon glyphicon-chevron-left"></span>',
+			'lastPageLabel' => '<span class="glyphicon glyphicon-chevron-right"></span><span class="glyphicon glyphicon-chevron-right"></span>',
+			'prevPageLabel' => '<span class="glyphicon glyphicon-chevron-left"></span>',
+			'nextPageLabel' => '<span class="glyphicon glyphicon-chevron-right"></span>',
+			'maxButtonCount' => 15,
+		],
+		'layout' => "{pager}\n{summary}{items}\n{pager}",
+       	'rowOptions' => function ($model, $key, $index, $grid) {
+       		$controller = Yii::$app->controller->id;
+       		return [
+       				'ondblclick' => 'location.href="'
+       				. Yii::$app->urlManager->createUrl([$controller . '/view','id'=>$key])
+       				. '"',
+       		];
+       	},    
         <?= !empty($generator->searchModelClass) ? "'filterModel' => \$searchModel,\n        'columns' => [\n" : "'columns' => [\n"; ?>
-            ['class' => 'yii\grid\SerialColumn'],
+        	['class' => 'yii\grid\ActionColumn', 'contentOptions'=>[ 'style'=>'white-space: nowrap;']
+            <?php
+            	if ($generator->modelClass === "app\models\Project")
+            	{
+            		echo ",\n";
+            		// echo "\t\t\t\t" . "'template' => '{view} {update} {delete} {documentation}'," . "\n";
+            		echo "\t\t\t\t" . "'template' => RBACHelper::filterActionColumn_meta_grid('{view} {update} {delete} {documentation}')," . "\n";
+            		echo "\t\t\t\t" . "'buttons' => [" . "\n";
+            		echo "\t\t\t\t" . "		'documentation' => function (" . '$url, $model' . ") {" . "\n";
+            		echo "\t\t\t\t" . "			return Html::a('<span class=\"glyphicon glyphicon-list-alt\"></span>', " . '$url' . ", [" . "\n";
+            		echo "\t\t\t\t" . "					'title' => Yii::t('app', 'Documentation')," . "\n";
+            		echo "\t\t\t\t" . "			]);" . "\n";
+            		echo "\t\t\t\t" . "		}" . "\n";
+            		echo "\t\t\t\t" . "]," . "\n";
+            		echo "\t\t\t\t" . "'urlCreator' => function (" . '$action, $model, $key, $index' . ") {" . "\n";
+            		echo "\t\t\t\t" . '	$controller = Yii::$app->controller->id;' . "\n";
+            		echo "\t\t\t\t" . "" . "\n";
+            		echo "\t\t\t\t" . "	if (" . '$action' . " === 'view') {" . "\n";
+            		echo "\t\t\t\t" . '    	return Yii::$app->urlManager->createUrl([$controller' . " . '/' . " . '$action' . " ,'id'=>" . '$key' . "]);" . "\n";
+            		echo "\t\t\t\t" . "    }" . "\n";
+            		echo "\t\t\t\t" . "    if (" . '$action' . " === 'update') {" . "\n";
+            		echo "\t\t\t\t" . "    	return Yii::" . '$app->urlManager->createUrl([$controller' . " . '/' . " . '$action ,' . "'id'=>" . '$key' . "]);" . "\n";
+            		echo "\t\t\t\t" . "    }" . "\n";
+            		echo "\t\t\t\t" . '    if ($action === ' . "'delete') {" . "\n";
+            		echo "\t\t\t\t" . '    	return Yii::$app->urlManager->createUrl([$controller . ' . "'/' . " . '$action ,' . "'id'=>" . '$key' . "]);" . "\n";
+            		echo "\t\t\t\t" . "    }" . "\n";
+            		echo "\t\t\t\t" . '	if ($action === \'documentation\') {' . "\n";
+            		echo "\t\t\t\t" . '		$url = "?r=documentation/createdocumentation&project_id=" . $key; ' . "\n";
+            		echo "\t\t\t\t" . '		return $url;' . "\n";
+            		echo "\t\t\t\t" . "	}" . "\n";
+            		echo "\t\t\t\t" . "}" . "\n";
+				}
+				else
+				{
+            		echo ",\n";
+            		echo "\t\t\t\t" . "'template' => RBACHelper::filterActionColumn_meta_grid('{view} {update} {delete}')," . "\n";
+				}            
+            ?>
+            ],
+        	
+        	['class' => 'yii\grid\SerialColumn'],
 
 <?php
 $count = 0;
 if (($tableSchema = $generator->getTableSchema()) === false) {
     foreach ($generator->getColumnNames() as $name) {
         if (++$count < 6) {
-//         	echo "// ABC";
             echo "            '" . $name . "',\n";
         } else {
             echo "            // '" . $name . "',\n";
@@ -66,15 +161,23 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
     }
 } else {
     foreach ($tableSchema->columns as $column) {
+//     	if ($column->name === "fk_db_table_context_id") {
+	    	// echo "<pre>";
+	    	// var_dump($generator->modelClass);
+	    	// echo "</pre>";
+	    	// exit;
+//     	}
         $format = $generator->generateColumnFormat($column);
         
         // Patrick, 2016-01-16, ueberspringen der Felder welche nicht angezeigt werden sollen.
         if ($column->name=="id") continue;
         if ($column->name=="uuid") continue;
         if ($column->name=="fk_object_type_id") continue;
+        if ($column->name=="location") continue;
 
         // Patrick, 2016-01-16, "related" Infos anzeigen
         $setRelationInformation = 0;
+		$useGenCode = 0;
         if (substr($column->name,0,3)=="fk_")
         {
         	$setRelationInformation = 1;
@@ -82,6 +185,7 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
         	// Der Name muss gewandelt werden, damit es zu dem Property im Model passt
         	// fk_tabellen_name -> fkTabellenName
         	$relFieldname = "";
+        	$relModelClassName = "";
         	$relFieldname = str_replace("_id","",$column->name);
         	$relFieldnameSplit = explode("_",$relFieldname);
         	foreach ($relFieldnameSplit as $rElement)
@@ -92,35 +196,109 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
         			continue;
         		}
         		$relFieldname .= strtoupper(substr($rElement,0,1)).substr($rElement,1,strlen($rElement)-1);
+        		$relModelClassName .= strtoupper(substr($rElement,0,1)).substr($rElement,1,strlen($rElement)-1); 
         	}
+
+//         	if ($column->name === "fk_db_table_context_id") {
+//         		echo "<pre>";
+//         		var_dump($relModelClassName);
+//         		echo "</pre>";
+//         		exit;
+//         	}        	
+        	
         	
         	$relFieldnameLabel = Inflector::camel2words(str_replace("fk_","",str_replace("_id","",$column->name)));
-
+			
+        	$multiple = ", 'multiple' => true";
         	$genCode = "";
         	if ($column->name=="fk_project_id")
         	{
 	        	$genCode .= "            [\n";
-	        	$genCode .= "             'label' => 'Client',\n";
+	        	$genCode .= "             'label' => Yii::t('app', 'Client'),\n";
 	        	$genCode .= "             'value' => function(\$model) {\n";
 	        	$genCode .= "             		return \$model->".$column->name." == \"\" ? \$model->".$column->name." : \$model->".$relFieldname."->fkClient->name;\n";
 	        	$genCode .= "             		},\n";
+	        	
+	        	$genCode .= "             		'filter' => Select2::widget([" . "\n";
+	        	$genCode .= "             				'model' => " . '$searchModel' . "," . "\n";
+	        	$genCode .= "             				'attribute' => 'fk_project_id'," . "\n";
+	        	$genCode .= "             				'data' => ArrayHelper::map(Project::find()->select('project.id, client.name, project.fk_client_id')->distinct()->joinWith('fkClient')->asArray()->all(), 'id', 'name')," . "\n";
+	        	$genCode .= "             				'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_client_id']," . "\n";
+	        	$genCode .= "             				'pluginOptions' => [" . "\n";
+	        	$genCode .= "             						'allowClear' => true" . "\n";
+	        	$genCode .= "             				]," . "\n";
+	        	$genCode .= "             		])," . "\n";
+	        	
 	        	$genCode .= "            ],\n";
+				
+				$multiple = "";
         	}
-
+			
+			
         	$nameFieldProperty = "name";
         	// Ausnahmen definieren
         	if ($column->name=="fk_tool_id") $nameFieldProperty = "tool_name";
 
+            if ($column->name=="fk_contact_group_id_as_supporter")
+            {
+                $relFieldname="fkContactGroupIdAsSupporter";
+				$relModelClassName="ContactGroup";
+            }
+            if ($column->name=="fk_contact_group_id_as_data_owner")
+            {
+                $relFieldname="fkContactGroupIdAsDataOwner";
+				$relModelClassName="ContactGroup";
+            }
+            if ($column->name=="fk_object_type_id_as_searchFilter")
+            {
+                $relFieldname="fkObjectTypeIdAsSearchFilter";
+				$relModelClassName="ObjectType";
+            }
+
         	$genCode .= "            [\n";
-        	$genCode .= "             'label' => '$relFieldnameLabel',\n";
+        	$genCode .= "             'label' => Yii::t('app', '$relFieldnameLabel'),\n";
         	$genCode .= "             'value' => function(\$model) {\n";
         	// $genCode .= "             		return \$model->".$column->name." == \"\" ? \$model->".$column->name." : \$model->".$relFieldname."->$nameFieldProperty;\n";
         	$genCode .= "             		return \$model->".$column->name." == \"\" ? \$model->".$column->name." : ".'(isset($_GET["searchShow"]) ? '."\$model->".$relFieldname."->$nameFieldProperty . ' [' . \$model->".$column->name .  " . ']'" . " : " . "\$model->".$relFieldname."->$nameFieldProperty)";
         	$genCode .= ";\n";
         	$genCode .= "             		},\n";
+        	
+			$genCode .= "            'filter' => Select2::widget([" . "\n";
+			$genCode .= "            		'model' => " . '$searchModel' . "," . "\n";
+			$genCode .= "            		'attribute' => '" . $column->name . "'," . "\n";
+			$genCode .= "            		'data' => ArrayHelper::map(app\\models\\" . $relModelClassName . "::find()->asArray()->all(), 'id', '$nameFieldProperty')," . "\n";
+			$genCode .= "            		'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_" . $relFieldname . "'$multiple]," . "\n";
+			$genCode .= "            		'pluginOptions' => [" . "\n";
+			$genCode .= "            				'allowClear' => true" . "\n";
+			$genCode .= "            		]," . "\n";
+			$genCode .= "			])," . "\n";        		
+
+// Als Vorbereitung
+// 			$genCode .= "             'contentOptions' => function(" . '$data) {' . "\n";
+// 			$genCode .= "             	return [" . "\n";
+// 			$genCode .= "             			'class' => 'cell-with-tooltip'," . "\n";
+// 			$genCode .= "             			'data-toggle' => 'tooltip'," . "\n";
+// 			$genCode .= "             			'data-placement' => 'bottom'," . "\n"; // top, bottom, left, right
+// 			$genCode .= "             			'data-container' => 'body'," . "\n"; // to prevent breaking table on hover
+// 			$genCode .= "             			'title' => " . '$data->' . $column->name . "," . "\n";
+// 			$genCode .= "             	];" . "\n";
+// 			$genCode .= "             }" . "\n";
+        	        		
         	$genCode .= "            ],\n";
         
         }
+
+		if ($column->name=="formula" && $generator->modelClass=="app\models\Attribute")
+		{
+			$useGenCode = 1;
+			$genCode .= "            [\n";
+			$genCode .= "             'label' => Yii::t('app', 'Formula'),\n";
+			$genCode .= "             'value' => function(\$model) {\n";
+			$genCode .= "             		return \$model->".$column->name." == \"\" ? NULL : \"<pre>\" . \$model->formulaWithLinks . \"</pre>\";\n";
+			$genCode .= "             		},\n";
+			$genCode .= "             'format' => 'html'\n";
+			$genCode .= "            ],\n";
+		}
         
 		// Formate für Splaten anpassen. z.B. gibt eine email Spalte
         $fieldFormat = "";
@@ -129,11 +307,12 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
         	$fieldFormat = ":" . $format;
         	if ($column->name=="email") $fieldFormat = ":email";
         	if ($column->name=="description") $fieldFormat = ":html";
+        	if ($column->name=="comment") $fieldFormat = ":html";
         }
         
         if (++$count < 6) {
 		
-        	if ($setRelationInformation==1)
+        	if ($setRelationInformation==1 || $useGenCode==1)
 			{
 				echo $genCode;
 			}
@@ -157,10 +336,9 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
     }
 }
 ?>
-
-            ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
+	<?php // echo "</div>\n"; ?>
 <?php else: ?>
     <?= "<?= " ?>ListView::widget([
         'dataProvider' => $dataProvider,

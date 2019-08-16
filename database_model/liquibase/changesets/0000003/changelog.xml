@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.7"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.7
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.7.xsd" logicalFilePath="000003/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="4">
+		<comment>ALTER TABLE sourcesystem, description TEXT(500) to description TEXT(4000)</comment>
+		<executeCommand executable="deploy_helper_exec_sql.bat"> 
+			<arg value="changesets/0000003/exec_change.sql"/>
+		</executeCommand>
+	</changeSet>
+</databaseChangeLog>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000012/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000012" context="RBAC,2amigos-Usario">
+		<createTable tableName="auth_rule" remarks="RBAC authentication rule table"> 
+			<column name="name"			type="VARCHAR(64)">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="data"			type="BLOB"/>
+			<column name="created_at"   type=" INTEGER"/>
+			<column name="updated_at"   type=" INTEGER"/>
+		</createTable>
+		
+		<comment>
+		<![CDATA[
+		Auth_rule table from deployed yii2 (m140506_102106_rbac_init).
+		Used objects:
+			auth_rule
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

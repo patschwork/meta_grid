@@ -38,8 +38,9 @@ default value `@webroot/uploads`
     'modules' => [
         'redactor' => [
             'class' => 'yii\redactor\RedactorModule',
-            'uploadDir' => '@webroot/path/to/uploadfolder'
-            'uploadUrl' => 'http://domain/path/to/uploadfolder'
+            'uploadDir' => '@webroot/path/to/uploadfolder',
+            'uploadUrl' => '@web/path/to/uploadfolder',
+            'imageAllowExtensions'=>['jpg','png','gif']
         ],
     ],
 ```
@@ -67,11 +68,11 @@ or config advanced redactor reference [Docs](http://imperavi.com/redactor/docs/)
 ```
 <?= $form->field($model, 'body')->widget(\yii\redactor\widgets\Redactor::className(), [
     'clientOptions' => [
-        'imageManagerJson' => \yii\helpers\Url::toRoute('/redactor/upload/imagejson'),
-        'imageUpload' => \yii\helpers\Url::toRoute('/redactor/upload/image'),
-        'fileUpload' => \yii\helpers\Url::toRoute('/redactor/upload/file'),
+        'imageManagerJson' => ['/redactor/upload/image-json'],
+        'imageUpload' => ['/redactor/upload/image'],
+        'fileUpload' => ['/redactor/upload/file'],
         'lang' => 'zh_cn',
-        'plugins' => ['clips', 'fontcolor']
+        'plugins' => ['clips', 'fontcolor','imagemanager']
     ]
 ])?>
 ```

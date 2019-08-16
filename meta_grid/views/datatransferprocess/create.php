@@ -7,9 +7,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\DataTransferProcess */
 
-$this->title = Yii::t('app', 'Create {modelClass}', [
-    'modelClass' => 'Data Transfer Process',
-]);
+$this->title = Yii::t('app', 'Create {modelClass}', ['modelClass' => Yii::t('app', 'Data Transfer Process')]); 
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Data Transfer Processes'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -23,7 +21,6 @@ $this->params['breadcrumbs'][] = $this->title;
 		'object_typeList' => $object_typeList,		// autogeneriert ueber gii/CRUD
 'projectList' => $projectList,		// autogeneriert ueber gii/CRUD
 'data_transfer_typeList' => $data_transfer_typeList,		// autogeneriert ueber gii/CRUD
-        
-    ]) ?>
+					]) ?>
 
 </div>

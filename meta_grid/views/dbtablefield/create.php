@@ -7,9 +7,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\DbTableField */
 
-$this->title = Yii::t('app', 'Create {modelClass}', [
-    'modelClass' => 'Db Table Field',
-]);
+$this->title = Yii::t('app', 'Create {modelClass}', ['modelClass' => Yii::t('app', 'Db Table Field')]); 
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Db Table Fields'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -23,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
 		'object_typeList' => $object_typeList,		// autogeneriert ueber gii/CRUD
 'projectList' => $projectList,		// autogeneriert ueber gii/CRUD
 'db_tableList' => $db_tableList,		// autogeneriert ueber gii/CRUD
-    		'fk_db_table_id' => isset($fk_db_table_id) ? $fk_db_table_id : null,        
-    ]) ?>
+			'fk_db_table_id' => isset($fk_db_table_id) ? $fk_db_table_id : null,
+					]) ?>
 
 </div>

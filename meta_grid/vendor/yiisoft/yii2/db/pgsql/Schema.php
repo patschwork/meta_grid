@@ -10,6 +10,7 @@ namespace yii\db\pgsql;
 use yii\db\Expression;
 use yii\db\TableSchema;
 use yii\db\ColumnSchema;
+use yii\db\ViewFinderTrait;
 
 /**
  * Schema is the class for retrieving metadata from a PostgreSQL database
@@ -20,6 +21,8 @@ use yii\db\ColumnSchema;
  */
 class Schema extends \yii\db\Schema
 {
+    use ViewFinderTrait;
+
     /**
      * @var string the default schema used for the current session.
      */
@@ -45,8 +48,9 @@ class Schema extends \yii\db\Schema
         'polygon' => self::TYPE_STRING,
         'path' => self::TYPE_STRING,
 
-        'character' => self::TYPE_STRING,
-        'char' => self::TYPE_STRING,
+        'character' => self::TYPE_CHAR,
+        'char' => self::TYPE_CHAR,
+        'bpchar' => self::TYPE_CHAR,
         'character varying' => self::TYPE_STRING,
         'varchar' => self::TYPE_STRING,
         'text' => self::TYPE_TEXT,
@@ -59,8 +63,8 @@ class Schema extends \yii\db\Schema
 
         'real' => self::TYPE_FLOAT,
         'float4' => self::TYPE_FLOAT,
-        'double precision' => self::TYPE_FLOAT,
-        'float8' => self::TYPE_FLOAT,
+        'double precision' => self::TYPE_DOUBLE,
+        'float8' => self::TYPE_DOUBLE,
         'decimal' => self::TYPE_DECIMAL,
         'numeric' => self::TYPE_DECIMAL,
 
@@ -104,7 +108,7 @@ class Schema extends \yii\db\Schema
         'uuid' => self::TYPE_STRING,
         'json' => self::TYPE_STRING,
         'jsonb' => self::TYPE_STRING,
-        'xml' => self::TYPE_STRING
+        'xml' => self::TYPE_STRING,
     ];
 
 
@@ -159,11 +163,28 @@ class Schema extends \yii\db\Schema
         $this->resolveTableNames($table, $name);
         if ($this->findColumns($table)) {
             $this->findConstraints($table);
-
             return $table;
         } else {
             return null;
         }
+    }
+
+    /**
+     * Returns all schema names in the database, including the default one but not system schemas.
+     * This method should be overridden by child classes in order to support this feature
+     * because the default implementation simply throws an exception.
+     * @return array all schema names in the database, except system schemas
+     * @since 2.0.4
+     */
+    protected function findSchemaNames()
+    {
+        $sql = <<<SQL
+SELECT ns.nspname AS schema_name
+FROM pg_namespace ns
+WHERE ns.nspname != 'information_schema' AND ns.nspname NOT LIKE 'pg_%'
+ORDER BY ns.nspname
+SQL;
+        return $this->db->createCommand($sql)->queryColumn();
     }
 
     /**
@@ -176,19 +197,32 @@ class Schema extends \yii\db\Schema
         if ($schema === '') {
             $schema = $this->defaultSchema;
         }
-        $sql = <<<EOD
-SELECT table_name, table_schema FROM information_schema.tables
-WHERE table_schema=:schema AND table_type='BASE TABLE'
-EOD;
-        $command = $this->db->createCommand($sql);
-        $command->bindParam(':schema', $schema);
-        $rows = $command->queryAll();
-        $names = [];
-        foreach ($rows as $row) {
-            $names[] = $row['table_name'];
-        }
+        $sql = <<<SQL
+SELECT c.relname AS table_name
+FROM pg_class c
+INNER JOIN pg_namespace ns ON ns.oid = c.relnamespace
+WHERE ns.nspname = :schemaName AND c.relkind IN ('r','v','m','f')
+ORDER BY c.relname
+SQL;
+        return $this->db->createCommand($sql, [':schemaName' => $schema])->queryColumn();
+    }
 
-        return $names;
+    /**
+     * @inheritdoc
+     */
+    protected function findViewNames($schema = '')
+    {
+        if ($schema === '') {
+            $schema = $this->defaultSchema;
+        }
+        $sql = <<<SQL
+SELECT c.relname AS table_name
+FROM pg_class c
+INNER JOIN pg_namespace ns ON ns.oid = c.relnamespace
+WHERE ns.nspname = :schemaName AND (c.relkind = 'v' OR c.relkind = 'm')
+ORDER BY c.relname
+SQL;
+        return $this->db->createCommand($sql, [':schemaName' => $schema])->queryColumn();
     }
 
     /**
@@ -197,7 +231,6 @@ EOD;
      */
     protected function findConstraints($table)
     {
-
         $tableName = $this->quoteValue($table->name);
         $tableSchema = $this->quoteValue($table->schemaName);
 
@@ -206,104 +239,112 @@ EOD;
 
         $sql = <<<SQL
 select
-    (select string_agg(attname,',') attname from pg_attribute where attrelid=ct.conrelid and attnum = any(ct.conkey)) as columns,
+    ct.conname as constraint_name,
+    a.attname as column_name,
     fc.relname as foreign_table_name,
     fns.nspname as foreign_table_schema,
-    (select string_agg(attname,',') attname from pg_attribute where attrelid=ct.confrelid and attnum = any(ct.confkey)) as foreign_columns
+    fa.attname as foreign_column_name
 from
-    pg_constraint ct
+    (SELECT ct.conname, ct.conrelid, ct.confrelid, ct.conkey, ct.contype, ct.confkey, generate_subscripts(ct.conkey, 1) AS s
+       FROM pg_constraint ct
+    ) AS ct
     inner join pg_class c on c.oid=ct.conrelid
     inner join pg_namespace ns on c.relnamespace=ns.oid
+    inner join pg_attribute a on a.attrelid=ct.conrelid and a.attnum = ct.conkey[ct.s]
     left join pg_class fc on fc.oid=ct.confrelid
     left join pg_namespace fns on fc.relnamespace=fns.oid
-
+    left join pg_attribute fa on fa.attrelid=ct.confrelid and fa.attnum = ct.confkey[ct.s]
 where
     ct.contype='f'
     and c.relname={$tableName}
     and ns.nspname={$tableSchema}
+order by
+    fns.nspname, fc.relname, a.attnum
 SQL;
 
-        $constraints = $this->db->createCommand($sql)->queryAll();
-        foreach ($constraints as $constraint) {
-            $columns = explode(',', $constraint['columns']);
-            $fcolumns = explode(',', $constraint['foreign_columns']);
+        $constraints = [];
+        foreach ($this->db->createCommand($sql)->queryAll() as $constraint) {
+            if ($this->db->slavePdo->getAttribute(\PDO::ATTR_CASE) === \PDO::CASE_UPPER) {
+                $constraint = array_change_key_case($constraint, CASE_LOWER);
+            }
             if ($constraint['foreign_table_schema'] !== $this->defaultSchema) {
                 $foreignTable = $constraint['foreign_table_schema'] . '.' . $constraint['foreign_table_name'];
             } else {
                 $foreignTable = $constraint['foreign_table_name'];
             }
-            $citem = [$foreignTable];
-            foreach ($columns as $idx => $column) {
-                $citem[$column] = $fcolumns[$idx];
+            $name = $constraint['constraint_name'];
+            if (!isset($constraints[$name])) {
+                $constraints[$name] = [
+                    'tableName' => $foreignTable,
+                    'columns' => [],
+                ];
             }
-            $table->foreignKeys[] = $citem;
+            $constraints[$name]['columns'][$constraint['column_name']] = $constraint['foreign_column_name'];
+        }
+        foreach ($constraints as $name => $constraint) {
+            $table->foreignKeys[$name] = array_merge([$constraint['tableName']], $constraint['columns']);
         }
     }
 
     /**
      * Gets information about given table unique indexes.
      * @param TableSchema $table the table metadata
-     * @return array with index names, columns and if it is an expression tree
+     * @return array with index and column names
      */
     protected function getUniqueIndexInformation($table)
     {
-        $tableName = $this->quoteValue($table->name);
-        $tableSchema = $this->quoteValue($table->schemaName);
-
         $sql = <<<SQL
 SELECT
     i.relname as indexname,
-    ARRAY(
-        SELECT pg_get_indexdef(idx.indexrelid, k + 1, True)
-        FROM generate_subscripts(idx.indkey, 1) AS k
-        ORDER BY k
-    ) AS indexcolumns,
-    idx.indexprs IS NOT NULL AS indexprs
-FROM pg_index idx
+    pg_get_indexdef(idx.indexrelid, k + 1, TRUE) AS columnname
+FROM (
+  SELECT *, generate_subscripts(indkey, 1) AS k
+  FROM pg_index
+) idx
 INNER JOIN pg_class i ON i.oid = idx.indexrelid
 INNER JOIN pg_class c ON c.oid = idx.indrelid
 INNER JOIN pg_namespace ns ON c.relnamespace = ns.oid
-WHERE idx.indisprimary != True
-AND idx.indisunique = True
-AND c.relname = {$tableName}
-AND ns.nspname = {$tableSchema}
-;
+WHERE idx.indisprimary = FALSE AND idx.indisunique = TRUE
+AND c.relname = :tableName AND ns.nspname = :schemaName
+ORDER BY i.relname, k
 SQL;
 
-        return $this->db->createCommand($sql)->queryAll();
+        return $this->db->createCommand($sql, [
+            ':schemaName' => $table->schemaName,
+            ':tableName' => $table->name,
+        ])->queryAll();
     }
 
     /**
      * Returns all unique indexes for the given table.
      * Each array element is of the following structure:
      *
-     * ~~~
+     * ```php
      * [
-     *  'IndexName1' => ['col1' [, ...]],
-     *  'IndexName2' => ['col2' [, ...]],
+     *     'IndexName1' => ['col1' [, ...]],
+     *     'IndexName2' => ['col2' [, ...]],
      * ]
-     * ~~~
+     * ```
      *
      * @param TableSchema $table the table metadata
      * @return array all unique indexes for the given table.
      */
     public function findUniqueIndexes($table)
     {
-        $indexes = $this->getUniqueIndexInformation($table);
         $uniqueIndexes = [];
 
-        foreach ($indexes as $index) {
-            $indexName = $index['indexname'];
-
-            if ($index['indexprs']) {
-                // Index is an expression like "lower(colname::text)"
-                $indexColumns = preg_replace("/.*\(([^\:]+).*/mi", "$1", $index['indexcolumns']);
-            } else {
-                $indexColumns = array_map('trim', explode(',', str_replace(['{', '}', '"', '\\'], '', $index['indexcolumns'])));
+        $rows = $this->getUniqueIndexInformation($table);
+        foreach ($rows as $row) {
+            if ($this->db->slavePdo->getAttribute(\PDO::ATTR_CASE) === \PDO::CASE_UPPER) {
+                $row = array_change_key_case($row, CASE_LOWER);
             }
-
-            $uniqueIndexes[$indexName] = $indexColumns;
-
+            $column = $row['columnname'];
+            if (!empty($column) && $column[0] === '"') {
+                // postgres will quote names that are not lowercase-only
+                // https://github.com/yiisoft/yii2/issues/10613
+                $column = substr($column, 1, -1);
+            }
+            $uniqueIndexes[$row['indexname']][] = $column;
         }
 
         return $uniqueIndexes;
@@ -312,7 +353,7 @@ SQL;
     /**
      * Collects the metadata of table columns.
      * @param TableSchema $table the table metadata
-     * @return boolean whether the table exists in the database
+     * @return bool whether the table exists in the database
      */
     protected function findColumns($table)
     {
@@ -378,6 +419,9 @@ SQL;
             return false;
         }
         foreach ($columns as $column) {
+            if ($this->db->slavePdo->getAttribute(\PDO::ATTR_CASE) === \PDO::CASE_UPPER) {
+                $column = array_change_key_case($column, CASE_LOWER);
+            }
             $column = $this->loadColumnSchema($column);
             $table->columns[$column->name] = $column;
             if ($column->isPrimaryKey) {
@@ -395,8 +439,12 @@ SQL;
                     $column->defaultValue = bindec(trim($column->defaultValue, 'B\''));
                 } elseif (preg_match("/^'(.*?)'::/", $column->defaultValue, $matches)) {
                     $column->defaultValue = $matches[1];
-                } elseif (preg_match("/^(.*?)::/", $column->defaultValue, $matches)) {
-                    $column->defaultValue = $column->phpTypecast($matches[1]);
+                } elseif (preg_match('/^(?:\()?(.*?)(?(1)\))(?:::.+)?$/', $column->defaultValue, $matches)) {
+                    if ($matches[1] === 'NULL') {
+                        $column->defaultValue = null;
+                    } else {
+                        $column->defaultValue = $column->phpTypecast($matches[1]);
+                    }
                 } else {
                     $column->defaultValue = $column->phpTypecast($column->defaultValue);
                 }
@@ -434,5 +482,28 @@ SQL;
         $column->phpType = $this->getColumnPhpType($column);
 
         return $column;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function insert($table, $columns)
+    {
+        $params = [];
+        $sql = $this->db->getQueryBuilder()->insert($table, $columns, $params);
+        $returnColumns = $this->getTableSchema($table)->primaryKey;
+        if (!empty($returnColumns)) {
+            $returning = [];
+            foreach ((array) $returnColumns as $name) {
+                $returning[] = $this->quoteColumnName($name);
+            }
+            $sql .= ' RETURNING ' . implode(', ', $returning);
+        }
+
+        $command = $this->db->createCommand($sql, $params);
+        $command->prepare(false);
+        $result = $command->queryOne();
+
+        return !$command->pdoStatement->rowCount() ? false : $result;
     }
 }

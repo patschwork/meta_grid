@@ -1,5 +1,6 @@
 <?php
 
+
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
@@ -17,7 +18,9 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
+        'model' => $model, 
+       'object_typeList' => $object_typeList,		// autogeneriert ueber gii/CRUD
+        
+				    ]) ?>
 
 </div>

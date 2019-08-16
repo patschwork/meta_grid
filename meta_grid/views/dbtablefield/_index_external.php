@@ -15,8 +15,7 @@ use yii\helpers\VarDumper;
     <br>
 
         <?php
-        	$fk_db_table_id = $dataProvider->query->where['fk_db_table_id'];	// @ToDo: Ob das der richtige Weg ist?!?! 
-			echo Html::a(Yii::t('app', 'Create new field'), ['dbtablefield/createexternal', 'fk_db_table_id' => $fk_db_table_id ], ['class' => 'btn btn-primary'], [
+			echo Html::a(Yii::t('app', 'Create new field'), ['dbtablefield/createexternal', 'fk_db_table_id' => $fk_db_table_id], ['class' => 'btn btn-primary'], [
 					'data' => [
 							'method' => 'post',
 					],
@@ -26,13 +25,15 @@ use yii\helpers\VarDumper;
 	<p></p>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
+		'pager' => [
+			'firstPageLabel' => '<span class="glyphicon glyphicon-chevron-left"></span><span class="glyphicon glyphicon-chevron-left"></span>',
+			'lastPageLabel' => '<span class="glyphicon glyphicon-chevron-right"></span><span class="glyphicon glyphicon-chevron-right"></span>',
+			'prevPageLabel' => '<span class="glyphicon glyphicon-chevron-left"></span>',
+			'nextPageLabel' => '<span class="glyphicon glyphicon-chevron-right"></span>',
+			'maxButtonCount' => 15,
+		],
         'filterModel' => $searchModel,
         'columns' => [
-			            ['class' => 'yii\grid\SerialColumn'],
-			
-			            'name:ntext',
-			            'description:html',
-			            'datatype:ntext',
 						[
 				            'class' => 'yii\grid\ActionColumn',
 				            'template' => '{view}',
@@ -50,7 +51,11 @@ use yii\helpers\VarDumper;
 				            	}
 				            }
 				             
-			            ]
+			            ],
+			            ['class' => 'yii\grid\SerialColumn'],
+			            'name:ntext',
+			            'description:html',
+			            'datatype:ntext',
                     ],
     ]); ?>
 

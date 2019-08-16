@@ -38,7 +38,7 @@ class Schema extends \yii\db\Schema
         'integer' => self::TYPE_INTEGER,
         'bigint' => self::TYPE_BIGINT,
         'float' => self::TYPE_FLOAT,
-        'double' => self::TYPE_FLOAT,
+        'double' => self::TYPE_DOUBLE,
         'real' => self::TYPE_FLOAT,
         'decimal' => self::TYPE_DECIMAL,
         'numeric' => self::TYPE_DECIMAL,
@@ -48,7 +48,7 @@ class Schema extends \yii\db\Schema
         'text' => self::TYPE_TEXT,
         'varchar' => self::TYPE_STRING,
         'string' => self::TYPE_STRING,
-        'char' => self::TYPE_STRING,
+        'char' => self::TYPE_CHAR,
         'blob' => self::TYPE_BINARY,
         'datetime' => self::TYPE_DATETIME,
         'year' => self::TYPE_DATE,
@@ -67,7 +67,7 @@ class Schema extends \yii\db\Schema
      */
     public function quoteSimpleTableName($name)
     {
-        return strpos($name, "`") !== false ? $name : "`" . $name . "`";
+        return strpos($name, '`') !== false ? $name : "`$name`";
     }
 
     /**
@@ -78,7 +78,7 @@ class Schema extends \yii\db\Schema
      */
     public function quoteSimpleColumnName($name)
     {
-        return strpos($name, '`') !== false || $name === '*' ? $name : '`' . $name . '`';
+        return strpos($name, '`') !== false || $name === '*' ? $name : "`$name`";
     }
 
     /**
@@ -92,13 +92,22 @@ class Schema extends \yii\db\Schema
     }
 
     /**
+     * @inheritdoc
+     * @return ColumnSchemaBuilder column schema builder instance
+     */
+    public function createColumnSchemaBuilder($type, $length = null)
+    {
+        return new ColumnSchemaBuilder($type, $length);
+    }
+
+    /**
      * Returns all table names in the database.
      * @param string $schema the schema of the tables. Defaults to empty string, meaning the current or default schema.
      * @return array all table names in the database. The names have NO schema name prefix.
      */
     protected function findTableNames($schema = '')
     {
-        $sql = "SELECT DISTINCT tbl_name FROM sqlite_master WHERE tbl_name<>'sqlite_sequence'";
+        $sql = "SELECT DISTINCT tbl_name FROM sqlite_master WHERE tbl_name<>'sqlite_sequence' ORDER BY tbl_name";
 
         return $this->db->createCommand($sql)->queryColumn();
     }
@@ -126,11 +135,11 @@ class Schema extends \yii\db\Schema
     /**
      * Collects the table column metadata.
      * @param TableSchema $table the table metadata
-     * @return boolean whether the table exists in the database
+     * @return bool whether the table exists in the database
      */
     protected function findColumns($table)
     {
-        $sql = "PRAGMA table_info(" . $this->quoteSimpleTableName($table->name) . ')';
+        $sql = 'PRAGMA table_info(' . $this->quoteSimpleTableName($table->name) . ')';
         $columns = $this->db->createCommand($sql)->queryAll();
         if (empty($columns)) {
             return false;
@@ -157,7 +166,7 @@ class Schema extends \yii\db\Schema
      */
     protected function findConstraints($table)
     {
-        $sql = "PRAGMA foreign_key_list(" . $this->quoteSimpleTableName($table->name) . ')';
+        $sql = 'PRAGMA foreign_key_list(' . $this->quoteSimpleTableName($table->name) . ')';
         $keys = $this->db->createCommand($sql)->queryAll();
         foreach ($keys as $key) {
             $id = (int) $key['id'];
@@ -174,25 +183,25 @@ class Schema extends \yii\db\Schema
      * Returns all unique indexes for the given table.
      * Each array element is of the following structure:
      *
-     * ~~~
+     * ```php
      * [
-     *  'IndexName1' => ['col1' [, ...]],
-     *  'IndexName2' => ['col2' [, ...]],
+     *     'IndexName1' => ['col1' [, ...]],
+     *     'IndexName2' => ['col2' [, ...]],
      * ]
-     * ~~~
+     * ```
      *
      * @param TableSchema $table the table metadata
      * @return array all unique indexes for the given table.
      */
     public function findUniqueIndexes($table)
     {
-        $sql = "PRAGMA index_list(" . $this->quoteSimpleTableName($table->name) . ')';
+        $sql = 'PRAGMA index_list(' . $this->quoteSimpleTableName($table->name) . ')';
         $indexes = $this->db->createCommand($sql)->queryAll();
         $uniqueIndexes = [];
 
         foreach ($indexes as $index) {
             $indexName = $index['name'];
-            $indexInfo = $this->db->createCommand("PRAGMA index_info(" . $this->quoteValue($index['name']) . ")")->queryAll();
+            $indexInfo = $this->db->createCommand('PRAGMA index_info(' . $this->quoteValue($index['name']) . ')')->queryAll();
 
             if ($index['unique']) {
                 $uniqueIndexes[$indexName] = [];
@@ -270,14 +279,13 @@ class Schema extends \yii\db\Schema
      */
     public function setTransactionIsolationLevel($level)
     {
-        switch($level)
-        {
+        switch ($level) {
             case Transaction::SERIALIZABLE:
-                $this->db->createCommand("PRAGMA read_uncommitted = False;")->execute();
-            break;
+                $this->db->createCommand('PRAGMA read_uncommitted = False;')->execute();
+                break;
             case Transaction::READ_UNCOMMITTED:
-                $this->db->createCommand("PRAGMA read_uncommitted = True;")->execute();
-            break;
+                $this->db->createCommand('PRAGMA read_uncommitted = True;')->execute();
+                break;
             default:
                 throw new NotSupportedException(get_class($this) . ' only supports transaction isolation levels READ UNCOMMITTED and SERIALIZABLE.');
         }

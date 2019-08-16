@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000018/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000018" context="RBAC">
+
+		<sql splitStatements="true">
+			INSERT INTO auth_item_child (parent, child) VALUES ('author', 'global-view');
+			INSERT INTO auth_item_child (parent, child) VALUES ('author', 'global-create');
+			INSERT INTO auth_item_child (parent, child) VALUES ('author', 'global-delete');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-view', 'view-client');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-create', 'create-client');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-delete', 'delete-client');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-view', 'view-project');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-create', 'create-project');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-delete', 'delete-project');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-view', 'view-keyfigure');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-create', 'create-keyfigure');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-delete', 'delete-keyfigure');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-view', 'view-attribute');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-create', 'create-attribute');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-delete', 'delete-attribute');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-view', 'view-contact');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-create', 'create-contact');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-delete', 'delete-contact');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-view', 'view-contact-group');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-create', 'create-contact-group');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-delete', 'delete-contact-group');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-view', 'view-sourcesystem');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-create', 'create-sourcesystem');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-delete', 'delete-sourcesystem');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-view', 'view-dbtable');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-create', 'create-dbtable');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-delete', 'delete-dbtable');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-view', 'view-dbtablefield');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-create', 'create-dbtablefield');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-delete', 'delete-dbtablefield');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-view', 'view-dbtablecontext');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-create', 'create-dbtablecontext');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-delete', 'delete-dbtablecontext');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-view', 'view-dbtabletype');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-create', 'create-dbtabletype');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-delete', 'delete-dbtabletype');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-view', 'view-tool');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-create', 'create-tool');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-delete', 'delete-tool');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-view', 'view-tooltype');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-create', 'create-tooltype');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-delete', 'delete-tooltype');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-view', 'view-datatransferprocess');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-create', 'create-datatransferprocess');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-delete', 'delete-datatransferprocess');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-view', 'view-datatransfertype');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-create', 'create-datatransfertype');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-delete', 'delete-datatransfertype');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-view', 'view-datadeliveryobject');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-create', 'create-datadeliveryobject');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-delete', 'delete-datadeliveryobject');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-view', 'view-datadeliverytype');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-create', 'create-datadeliverytype');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-delete', 'delete-datadeliverytype');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-view', 'view-scheduling');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-create', 'create-scheduling');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-delete', 'delete-scheduling');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-view', 'view-mapper');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-create', 'create-mapper');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-delete', 'delete-mapper');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-view', 'view-objectdependson');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-create', 'create-objectdependson');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-delete', 'delete-objectdependson');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-view', 'view-glossary');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-create', 'create-glossary');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-delete', 'delete-glossary');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-view', 'view-bracket');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-create', 'create-bracket');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-delete', 'delete-bracket');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-view', 'view-dbdatabase');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-create', 'create-dbdatabase');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-delete', 'delete-dbdatabase');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-view', 'view-global-search');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-view', 'view-documentation');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-view', 'view-objectcomment');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-create', 'create-objectcomment');
+			INSERT INTO auth_item_child (parent, child) VALUES ('global-delete', 'delete-objectcomment');
+		</sql>
+		<rollback>
+			<sql splitStatements="true">
+				DELETE FROM auth_item_child;
+			</sql>
+		</rollback>
+		<comment>
+		<![CDATA[
+		Initial Load for table auth_item_child for meta#grid.
+		Used objects:
+			auth_item_child
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

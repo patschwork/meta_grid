@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000013/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000013" context="RBAC,2amigos-Usario">
+		<!-- <createTable tableName="auth_item" remarks="RBAC authentication rule table">  -->
+			<!-- <column name="name"			type="VARCHAR(64)"> -->
+				<!-- <constraints primaryKey="true" nullable="false"/> -->
+			<!-- </column> -->
+			<!-- <column name="type"        	type="SMALLINT"> -->
+				<!-- <constraints nullable="false"/> -->
+			<!-- </column> -->
+			<!-- <column name="description"  type="TEXT"/> -->
+			<!-- <column name="rule_name"    type="VARCHAR(64)"> -->
+				<!-- <constraints foreignKeyName ="fk_rule_name"		references="auth_rule(name)" 		onDelete="SET NULL"		onUpdate="CASCADE"/> -->
+			<!-- </column> -->
+			<!-- <column name="data"        	type="BLOB"/> -->
+			<!-- <column name="created_at"   type="INTEGER"/> -->
+			<!-- <column name="updated_at"   type="INTEGER"/> -->
+		<!-- </createTable> -->
+		<sql splitStatements="true">
+			CREATE TABLE auth_item (
+				name        VARCHAR (64) NOT NULL,
+				type        SMALLINT     NOT NULL,
+				description TEXT,
+				rule_name   VARCHAR (64),
+				data        BLOB,
+				created_at  INTEGER,
+				updated_at  INTEGER,
+				PRIMARY KEY (
+					name
+				),
+				FOREIGN KEY (
+					rule_name
+				)
+				REFERENCES auth_rule (name) ON DELETE SET NULL
+											ON UPDATE CASCADE
+			);
+		</sql>		
+		<createIndex 
+			indexName="idx-auth_item-type" 			tableName="auth_item">
+			<column name="type"/>
+		</createIndex>
+		
+		<comment>
+		<![CDATA[
+		auth_item table from deployed yii2 (m140506_102106_rbac_init).
+		Used objects:
+			auth_item
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

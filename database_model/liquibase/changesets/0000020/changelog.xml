@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000020/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000020" context="Bugfix">
+
+		<sql splitStatements="true">
+		<![CDATA[
+			WITH cte_dbTable_getNonEqualProjekts AS
+			(
+				SELECT  dbt.id AS [dbt.id]
+					   ,dbt.fk_project_id AS [dbt.fk_project_id]
+					   ,dbtc.id AS [dbtc.id]
+					   ,dbtc.fk_project_id AS [dbtc.fk_project_id]
+				FROM db_table dbt
+					   LEFT JOIN
+					   db_table_context dbtc ON dbtc.id = dbt.fk_db_table_context_id
+				WHERE dbtc.fk_project_id <> dbt.fk_project_id
+			)
+			,
+			cte_DiffOf_dbTableContext AS 
+			(
+				-- Diese Kombination an Projekten fehlt db_table_context Einträge (welche aktuell verwendet werden):
+				SELECT 
+					DISTINCT
+						 [dbt.fk_project_id]
+						,[dbtc.id]
+						,dbtc_2.*
+				FROM cte_dbTable_getNonEqualProjekts gNEP
+				LEFT JOIN db_table_context dbtc_2 ON
+					dbtc_2.id=gNEP.[dbtc.id]
+			)
+			INSERT INTO db_table_context (fk_project_id, name, description, prefix)
+			SELECT 
+				  diff.[dbt.fk_project_id]
+				 ,diff.name
+				 ,diff.description
+				 ,diff.prefix
+			FROM cte_DiffOf_dbTableContext diff
+			EXCEPT
+			SELECT exc.fk_project_id,exc.name,exc.description,exc.prefix FROM db_table_context exc
+			INNER JOIN cte_DiffOf_dbTableContext excdiff ON
+				exc.fk_project_id = excdiff.[dbt.fk_project_id]
+				AND exc.name = excdiff.name
+			]]>
+	</sql>
+		<rollback>		
+			<sql splitStatements="true">
+			<![CDATA[
+				SELECT 'No rollback possible' AS DUMMY;
+			]]>
+			</sql>
+		</rollback>
+		<comment>
+		<![CDATA[
+		Find usings of db_table_context in db_table which differs in fk_project_id. This causes RBAC errors, if users may only see one of the used projects.
+		This script duplicates db_table_context entries with the used project_id in db_table (will then exists n-times). 
+		Used objects:
+			db_table_context
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

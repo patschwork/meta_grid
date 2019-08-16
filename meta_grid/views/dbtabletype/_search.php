@@ -4,11 +4,11 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\DBTableTypeSearch */
+/* @var $model app\models\DbTableTypeSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="dbtable-type-search">
+<div class="db-table-type-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],

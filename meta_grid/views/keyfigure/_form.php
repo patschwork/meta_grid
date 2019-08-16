@@ -1,3 +1,4 @@
+		
 <?php
 
 use yii\helpers\Html;
@@ -11,7 +12,6 @@ use yii\widgets\ActiveForm;
 <div class="keyfigure-form">
 
     <?php $form = ActiveForm::begin(); ?>
-
 <!--  	// automatisch auskommentiert ueber gii/CRUD    <?= $form->field($model, 'uuid') ?>  -->
 
 <!--  	// automatisch auskommentiert ueber gii/CRUD    <?= $form->field($model, 'fk_object_type_id')->textInput() ?>  -->
@@ -30,10 +30,23 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'formula') ?>
 
+    <?= $form->field($model, 'aggregation') ?>
+
+    <?= $form->field($model, 'character') ?>
+
+    <?= $form->field($model, 'type') ?>
+
+    <?= $form->field($model, 'unit') ?>
+
+    <?= $form->field($model, 'value_range') ?>
+
+    <?= $form->field($model, 'cumulation_possible')->checkbox() ?>
+
+
+
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
-
 </div>

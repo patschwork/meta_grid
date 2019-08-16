@@ -6,9 +6,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\Contact */
 
-$this->title = Yii::t('app', 'Update {modelClass}: ', [
-    'modelClass' => 'Contact',
-]) . ' ' . $model->id;
+$this->title = Yii::t('app', 'Update {modelClass}: ', ['modelClass' => Yii::t('app', 'Contact')]) . ' ' . $model->id;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Contacts'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
@@ -23,6 +21,6 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 'contact_groupList' => $contact_groupList,		// autogeneriert ueber gii/CRUD
 'clientList' => $clientList,		// autogeneriert ueber gii/CRUD
         
-    ]) ?>
+				    ]) ?>
 
 </div>

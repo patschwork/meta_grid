@@ -10,14 +10,11 @@ use yii\bootstrap\Tabs;
 use yii\data\ActiveDataProvider;
 // Kommentierung pro Object ...}
 
-
 use yii\bootstrap\ActiveForm;
 use wbraganca\dynamicform\DynamicFormWidget;
 
-
 /* @var $this yii\web\View */
 /* @var $model app\models\Bracket */
-
 
 $js = '
 
@@ -46,9 +43,7 @@ jQuery(".dynamicform_wrapper").on("afterDelete", function(e) {
 
 $this->registerJs($js);
 
-
-
-$this->title = $modelBracket->name;
+$this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Brackets'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -57,57 +52,37 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?php 
-        	echo Html::a(Yii::t('app', 'Update'), ['update', 'id' => $modelBracket->id], ['class' => 'btn btn-primary']) 
-        ?>
-        <?php 
-//         	Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $modelBracket->id], [
-//             'class' => 'btn btn-danger',
-//             'data' => [
-//                 'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
-//                 'method' => 'post',
-//             ],
-//         ]) 
-        ?>
-    </p>
+        <?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('create-bracket')  ? Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) : "" ?>
+		    </p>
 
-    <?php
-    $model = $modelBracket;
-     echo DetailView::widget([
+    <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
             'id',
             'uuid:ntext',
             'fk_object_type_id',
             [
-             'label' => 'Client',
+             'label' => Yii::t('app', 'Client'),
              'value' =>              		$model->fk_project_id == "" ? $model->fk_project_id : $model->fkProject->fkClient->name
             ],
             [
-             'label' => 'Project',
-             'value' =>              		$model->fk_project_id == "" ? $model->fk_project_id : $model->fkProject->name
+             'label' => Yii::t('app', 'Project'),
+             'value' =>              	$model->fk_project_id == "" ? $model->fk_project_id : $model->fkProject->name
             ],
             'name:ntext',
             'description:html',
             [
-             'label' => 'Attribute',
-             'value' =>              		$model->fk_attribute_id == "" ? $model->fk_attribute_id : $model->fkAttribute->name
+             'label' => Yii::t('app', 'Attribute'),
+             'value' =>              	$model->fk_attribute_id == "" ? $model->fk_attribute_id : $model->fkAttribute->name
             ],
             [
-             'label' => 'Object Type As Search Filter',
-             'value' =>              		$model->fk_object_type_id_as_searchFilter == "" ? $model->fk_object_type_id_as_searchFilter : $model->fkObjectTypeIdAsSearchFilter->name
+             'label' => Yii::t('app', 'Object Type As Search Filter'),
+             'value' =>              	$model->fk_object_type_id_as_searchFilter == "" ? $model->fk_object_type_id_as_searchFilter : $model->fkObjectTypeIdAsSearchFilter->name
             ],
         ],
-    ]) 
-    
-    ?>
+    ]) ?>
 
-    
-    
-
-    
-    
-    
+	
     
     <div class="customer-form">
     <?php 
@@ -157,12 +132,6 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="panel-body container-items"><!-- widgetContainer -->
             <?php foreach ($modelsBracketSearchPattern as $index => $modelBracketSearchPattern): ?>
                 <div class="item panel panel-default"><!-- widgetBody -->
-                    <div class="panel-heading">
-                        <span class="panel-title-bracketsearchpattern">bracketsearchpattern_: <?= ($index + 1) ?></span>
-<!--                         <button type="button" class="pull-right remove-item btn btn-danger btn-xs"><i class="fa fa-minus"></i></button> -->
-                        <div class="clearfix"></div>
-                    </div>
-
                     <div class="panel-body">
                         <?php
                             // necessary for update action.
@@ -189,53 +158,40 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 </div>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+	
+	
+	
+	
     	<?php
-		// {... Kommentierung pro Object
+	
+			
+			// {... Kommentierung pro Object
 		// 		autogeneriert ueber gii/CRUD
 		$objectcommentSearchModel = new app\models\ObjectcommentSearch();
         
         $query = app\models\Objectcomment::find();
         $objectcommentDataProvider = new ActiveDataProvider([
         		'query' => $query,
+				'pagination' => false,
         ]);
         
         $query->andFilterWhere([
-        		'ref_fk_object_id' => $modelBracket->id,
-        		'ref_fk_object_type_id' => $modelBracket->fk_object_type_id,
+        		'ref_fk_object_id' => $model->id,
+        		'ref_fk_object_type_id' => $model->fk_object_type_id,
         ]);
         
         $mapObject2ObjectSearchModel = new app\models\VAllMappingsUnion();
         $queryMapObject2Object = app\models\VAllMappingsUnion::find();
         $mapObject2ObjectDataProvider = new ActiveDataProvider([
         		'query' => $queryMapObject2Object,
+				'pagination' => false,
         ]);
         $queryMapObject2Object->andFilterWhere([
-        		'filter_ref_fk_object_id' => $modelBracket->id,
-        		'filter_ref_fk_object_type_id' => $modelBracket->fk_object_type_id,
+        		'filter_ref_fk_object_id' => $model->id,
+        		'filter_ref_fk_object_type_id' => $model->fk_object_type_id,
         ]);
 
+		     
         
 		echo Tabs::widget([
 			'items' => 
@@ -246,20 +202,22 @@ $this->params['breadcrumbs'][] = $this->title;
 								    'searchModel' => $objectcommentSearchModel,
             						'dataProvider' => $objectcommentDataProvider,
 								    ]),
-					'active' => true
+					'active' => true,
+					'options' => ['id' => 'tabComments']  // important for shortcut
 				],		
 				[
 					'label' => Yii::t('app', 'Mapping'),
-					'content' => $this->render('../mapobject2object/_index_external', [
+					'content' => $this->render('../mapper/_index_external', [
 							'searchModel' => $mapObject2ObjectSearchModel,
 							'dataProvider' => $mapObject2ObjectDataProvider,
 					]),
-					'active' => false
-				],				
-			],
+					'active' => false,
+					'options' => ['id' => 'tabMapping']  // important for shortcut
+				],
+						],
 		]);
 		// Kommentierung pro Object ...}
-
+	
 	    		
 	?>  
     

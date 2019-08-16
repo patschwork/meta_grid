@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000011/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000011" context="User,2amigos-Usario">
+		<createTable tableName="token" remarks="Token table"> 
+			<column name="user_id"    	type="INTEGER">
+				<constraints foreignKeyName="fk_token_user"		references="user(id)"/>
+			</column>
+			<column name="code"       	type="VARCHAR(32)">
+				<constraints nullable="false"/>
+			</column>	
+			<column name="type"			type="SMALLINT">
+				<constraints nullable="false"/>
+			</column>	
+			<column name="created_at" 	type="INTEGER">
+				<constraints nullable="false"/>
+			</column>	
+		</createTable>
+
+		<createIndex 
+			indexName="idx_token_user_id_code_type" 			tableName="token" 		unique="true">
+			<column name="user_id"/>
+			<column name="code"/>
+			<column name="type"/>
+		</createIndex>
+		
+		<comment>
+		<![CDATA[
+		Taken from vendor\2amigos\yii2-usuario\src\User\Migration\m000000_000004_create_token_table.php.
+		Used objects:
+			token
+			idx_token_user_id_code_type
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

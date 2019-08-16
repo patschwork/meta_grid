@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000030/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000030" context="mapping_qualifier">
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO mapping_qualifier (name,short_name,description,needs_object_depends_on) VALUES ('Database Foreign Key','FK','Database foreign key relashionship', 1);
+		]]>		
+		</sql>
+
+		<comment>
+		<![CDATA[
+		Default entry for mapping_qualifier.
+		Used objects:
+			mapping_qualifier
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

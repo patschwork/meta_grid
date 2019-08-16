@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+    
+        logicalFilePath="000005/changelog.xml"
+>
+
+	<changeSet author="patrick_schmitz" id="000005">
+        
+       <createTable tableName="import_stage_db_table"
+                    remarks="Import table for bulk upload db_table and db_table_field"
+       >
+            <column name="id" type="INTEGER" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="client_name" type="TEXT(250)"/>
+            <column name="project_name" type="TEXT(250)"/>
+            <column name="db_table_name" type="TEXT(250)"/>
+            <column name="db_table_description" type="TEXT(500)"/>
+            <column name="db_table_field_name" type="TEXT(250)"/>
+            <column name="db_table_field_datatype" type="TEXT(250)"/>
+            <column name="db_table_field_description" type="TEXT(500)"/>
+            <column name="db_table_type_name" type="TEXT(250)"/>
+
+            <column name="db_table_context_name" type="TEXT(250)"/>
+            <column name="db_table_context_prefix" type="TEXT(100)"/>
+            <column name="isPrimaryKeyField" type="BOOLEAN"/>
+            <column name="isForeignKeyField" type="BOOLEAN"/>
+            <column name="foreignKey_table_name" type="TEXT(250)"/>
+            <column name="foreignKey_table_field_name" type="TEXT(250)"/>
+            <column name="_import_state" type="INTEGER"/>
+            <column name="_import_date" type="TIMESTAMP"/>
+        </createTable>
+		<comment>
+		<![CDATA[
+		New table import_stage_db_table
+		Used objects:
+			import_stage_db_table
+		]]>
+		</comment>        
+    </changeSet>
+</databaseChangeLog>

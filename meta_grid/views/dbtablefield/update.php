@@ -6,9 +6,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\DbTableField */
 
-$this->title = Yii::t('app', 'Update {modelClass}: ', [
-    'modelClass' => 'Db Table Field',
-]) . ' ' . $model->name;
+$this->title = Yii::t('app', 'Update {modelClass}: ', ['modelClass' => Yii::t('app', 'Db Table Field')]) . ' ' . $model->name;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Db Table Fields'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
@@ -23,6 +21,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 'projectList' => $projectList,		// autogeneriert ueber gii/CRUD
 'db_tableList' => $db_tableList,		// autogeneriert ueber gii/CRUD
         
-    ]) ?>
+			'fk_db_table_id' => isset($fk_db_table_id) ? $fk_db_table_id : null,
+				    ]) ?>
 
 </div>

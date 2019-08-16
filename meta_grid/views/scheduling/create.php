@@ -7,9 +7,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\Scheduling */
 
-$this->title = Yii::t('app', 'Create {modelClass}', [
-    'modelClass' => 'Scheduling',
-]);
+$this->title = Yii::t('app', 'Create {modelClass}', ['modelClass' => Yii::t('app', 'Scheduling')]); 
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Schedulings'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -23,7 +21,6 @@ $this->params['breadcrumbs'][] = $this->title;
 		'object_typeList' => $object_typeList,		// autogeneriert ueber gii/CRUD
 'projectList' => $projectList,		// autogeneriert ueber gii/CRUD
 'toolList' => $toolList,		// autogeneriert ueber gii/CRUD
-        
-    ]) ?>
+					]) ?>
 
 </div>

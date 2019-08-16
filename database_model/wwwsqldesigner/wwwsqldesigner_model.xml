@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!-- SQL XML created by WWW SQL Designer, http://code.google.com/p/wwwsqldesigner/ -->
-<!-- Active URL: http://localhost:81/sqldesigner/ -->
+<!-- Active URL: http://sqldesigner:81/index.html -->
 <sql>
 <datatypes db="sqlite">
 	<group label="Affinity">
@@ -9,8 +9,11 @@
 		<type label="Integer" default="0" length="0" sql="INTEGER" quote="" color="rgb(238,238,170)"/>
 		<type label="Real" default="0" length="0" sql="REAL" quote="" color="rgb(238,238,170)"/>
 		<type label="None" default="" length="0" sql="NONE" quote="" color="rgb(200,255,200)"/>
+		<type label="Boolean" default="" length="0" sql="BOOLEAN" quote="" color="rgb(215,164,239)"/>
+		<type label="Timestamp" default="" length="0" sql="TIMESTAMP" quote="" color="rgb(181,248,203)"/>
+        
 	</group>
-</datatypes><table x="495" y="119" name="keyfigure">
+</datatypes><table x="548" y="12" name="keyfigure">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -34,6 +37,24 @@
 <default>NULL</default></row>
 <row name="formula" null="1" autoincrement="0">
 <datatype>TEXT(4000)</datatype>
+<default>NULL</default></row>
+<row name="aggregation" null="1" autoincrement="0">
+<datatype>TEXT(500)</datatype>
+<default>NULL</default></row>
+<row name="character" null="1" autoincrement="0">
+<datatype>TEXT(500)</datatype>
+<default>NULL</default></row>
+<row name="type" null="1" autoincrement="0">
+<datatype>TEXT(500)</datatype>
+<default>NULL</default></row>
+<row name="unit" null="1" autoincrement="0">
+<datatype>TEXT(500)</datatype>
+<default>NULL</default></row>
+<row name="value_range" null="1" autoincrement="0">
+<datatype>TEXT(500)</datatype>
+<default>NULL</default></row>
+<row name="cumulation_possible" null="1" autoincrement="0">
+<datatype>BOOLEAN</datatype>
 <default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
@@ -95,7 +116,7 @@
 </key>
 <comment>Project information for a specific client</comment>
 </table>
-<table x="495" y="325" name="sourcesystem">
+<table x="490" y="363" name="sourcesystem">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 </row>
@@ -167,13 +188,17 @@
 This is an object which provides data for exporting out of an dispositive system such a data warehouse. This is only meant for delivery, not for using a data source.    
 Examples: Report, flatfile export, view with external access...,  </comment>
 </table>
-<table x="1206" y="244" name="map_object_2_object">
+<table x="1382" y="322" name="map_object_2_object">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
 <row name="uuid" null="1" autoincrement="0">
 <datatype>TEXT</datatype>
 <default>NULL</default></row>
+<row name="fk_mapping_qualifier_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="mapping_qualifier" row="id" />
+</row>
 <row name="ref_fk_object_id_1" null="0" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -226,7 +251,7 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 </key>
 <comment>BI or DWH tool which is used to do the job e.g. Report, ETL, DQ, OLAP...</comment>
 </table>
-<table x="91" y="654" name="object_depends_on">
+<table x="1640" y="363" name="object_depends_on">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 </row>
@@ -250,7 +275,7 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 </key>
 <comment>Abhängigkeit zu Objecten</comment>
 </table>
-<table x="789" y="94" name="attribute">
+<table x="788" y="94" name="attribute">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -431,7 +456,7 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 </key>
 <comment>Generic information which databases is used in context (vendor database, name of the database, kind of use (production, test, dev, ...), IP, type (operational, reporting, analytical, dwh), database-technologie (OLTP, OLAP, NoSQL, ...)</comment>
 </table>
-<table x="1208" y="440" name="scheduling">
+<table x="1141" y="468" name="scheduling">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -465,7 +490,7 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 </key>
 <comment>Scheduling of BI items (report bursting, copy of files, ETL-jobs, ...)</comment>
 </table>
-<table x="1372" y="630" name="parameter">
+<table x="1363" y="671" name="parameter">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -616,7 +641,7 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <datatype>TEXT(250)</datatype>
 <default>NULL</default></row>
 <row name="description" null="1" autoincrement="0">
-<datatype>TEXT(500)</datatype>
+<datatype>TEXT(4000)</datatype>
 <default>NULL</default></row>
 <row name="fk_data_transfer_type_id" null="1" autoincrement="0">
 <datatype>INTEGER</datatype>
@@ -638,7 +663,7 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <datatype>TEXT(250)</datatype>
 <default>NULL</default></row>
 <row name="description" null="1" autoincrement="0">
-<datatype>TEXT(500)</datatype>
+<datatype>TEXT(4000)</datatype>
 <default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
@@ -648,6 +673,9 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <table x="92" y="67" name="app_config">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
 <default>NULL</default></row>
 <row name="key" null="1" autoincrement="0">
 <datatype>TEXT</datatype>
@@ -739,5 +767,181 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <part>id</part>
 </key>
 <comment>Einzelner Kontakt oder Ansprechpartner</comment>
+</table>
+<table x="1493" y="102" name="bracket">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_object_type_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>16</default><relation table="object_type" row="id" />
+</row>
+<row name="fk_project_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="project" row="id" />
+</row>
+<row name="name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT(4000)</datatype>
+<default>NULL</default></row>
+<row name="fk_attribute_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="fk_object_type_id_as_searchFilter" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="PK_bracket">
+<part>id</part>
+</key>
+<comment>Defines same objectvalues with different names. E.g. tablefield named Country and CNTRY are spelled different but has the same content and meaning</comment>
+</table>
+<table x="1775" y="29" name="bracket_searchPattern">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_object_type_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>17</default><relation table="object_type" row="id" />
+</row>
+<row name="fk_bracket_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="bracket" row="id" />
+</row>
+<row name="searchPattern" null="1" autoincrement="0">
+<datatype>TEXT(500)</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="PK_bracket_searchPattern">
+<part>id</part>
+</key>
+<comment>SearchPattern for collecting bracket elements</comment>
+</table>
+<table x="814" y="1373" name="import_stage_db_table">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="client_name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="project_name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="db_table_name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="db_table_description" null="1" autoincrement="0">
+<datatype>TEXT(500)</datatype>
+<default>NULL</default></row>
+<row name="db_table_field_name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="db_table_field_datatype" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="db_table_field_description" null="1" autoincrement="0">
+<datatype>TEXT(500)</datatype>
+<default>NULL</default></row>
+<row name="db_table_type_name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="db_table_context_name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="db_table_context_prefix" null="1" autoincrement="0">
+<datatype>TEXT(100)</datatype>
+<default>NULL</default></row>
+<row name="isPrimaryKeyField" null="1" autoincrement="0">
+<datatype>BOOLEAN</datatype>
+<default>NULL</default></row>
+<row name="isForeignKeyField" null="1" autoincrement="0">
+<datatype>BOOLEAN</datatype>
+<default>NULL</default></row>
+<row name="foreignKey_table_name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="foreignKey_table_field_name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="_import_state" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><comment>0=no, 1=all fields matched, 2=problems while import</comment>
+</row>
+<row name="_import_date" null="1" autoincrement="0">
+<datatype>TIMESTAMP</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+<comment>Import table for bulk upload</comment>
+</table>
+<table x="425" y="1572" name="perspective_filter">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_language_id" null="1" autoincrement="0">
+<datatype>TEXT(32)</datatype>
+<default>NULL</default></row>
+<row name="fk_object_type_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>18</default><relation table="object_type" row="id" />
+<comment>object_type_id of table perspective_filter</comment>
+</row>
+<row name="filter_attribute_name" null="1" autoincrement="0">
+<datatype>TEXT(150)</datatype>
+<default>NULL</default></row>
+<row name="filter_value" null="1" autoincrement="0">
+<datatype>TEXT(150)</datatype>
+<default>NULL</default></row>
+<row name="ref_fk_object_type_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_type" row="id" />
+<comment>Referenced fk_object_type_id for filtering</comment>
+</row>
+<key type="PRIMARY" name="PK">
+<part>id</part>
+</key>
+<key type="PRIMARY" name="">
+</key>
+<comment>This table holds the data for filtering on object_types on selected persective (language)</comment>
+</table>
+<table x="1599" y="601" name="mapping_qualifier">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_object_type_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>19</default><relation table="object_type" row="id" />
+</row>
+<row name="name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="short_name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default><comment>Short name. Useful for printing in diagrams</comment>
+</row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT(4000)</datatype>
+<default>NULL</default></row>
+<row name="needs_object_depends_on" null="0" autoincrement="0">
+<datatype>BOOLEAN</datatype>
+<default>0</default><comment>Some objekt links belongs to a parent/child relashionship.</comment>
+</row>
+<key type="PRIMARY" name="PK">
+<part>id</part>
+</key>
+<comment>More details about the relationship between two objects</comment>
 </table>
 </sql>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000014/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000014" context="RBAC,2amigos-Usario">
+
+		<!-- <createTable tableName="auth_item_child" remarks="RBAC authentication rule table">  -->
+			<!-- <column name="parent"		type="VARCHAR(64)"> -->
+				<!-- <constraints -->
+					<!-- primaryKey="true" -->
+					<!-- nullable="false" -->
+					<!-- foreignKeyName ="fk_auth_item_parent" -->
+					<!-- references="auth_item(name)" -->
+					<!-- onDelete="CASCADE" -->
+					<!-- onUpdate="CASCADE"/> -->
+			<!-- </column> -->
+			<!-- <column name="child"		type="VARCHAR(64)"> -->
+				<!-- <constraints 					 -->
+					<!-- primaryKey="true" -->
+					<!-- nullable="false" -->
+					<!-- foreignKeyName ="fk_auth_item_child" -->
+					<!-- references="auth_item(name)" -->
+					<!-- onDelete="CASCADE" -->
+					<!-- onUpdate="CASCADE"/> -->
+			<!-- </column> -->
+		<!-- </createTable> -->
+		<sql splitStatements="true">
+			CREATE TABLE auth_item_child (
+				parent VARCHAR (64) NOT NULL,
+				child  VARCHAR (64) NOT NULL,
+				PRIMARY KEY (
+					parent,
+					child
+				),
+				FOREIGN KEY (
+					parent
+				)
+				REFERENCES auth_item (name) ON DELETE CASCADE
+											ON UPDATE CASCADE,
+				FOREIGN KEY (
+					child
+				)
+				REFERENCES auth_item (name) ON DELETE CASCADE
+											ON UPDATE CASCADE
+			);
+		</sql>				
+		<comment>
+		<![CDATA[
+		auth_item_child table from deployed yii2 (m140506_102106_rbac_init).
+		Used objects:
+			auth_item_child
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

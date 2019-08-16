@@ -28,7 +28,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model <?= ltrim($generator->modelClass, '\\') ?> */
 
-$this->title = <?= $generator->generateString('Create {modelClass}', ['modelClass' => Inflector::camel2words(StringHelper::basename($generator->modelClass))]) ?>;
+$this->title = <?php echo "Yii::t('app', 'Create {modelClass}', ['modelClass' => " . "Yii::t('app', '" . Inflector::camel2words(StringHelper::basename($generator->modelClass)) . "')])"; ?>; 
 $this->params['breadcrumbs'][] = ['label' => <?= $generator->generateString(Inflector::pluralize(Inflector::camel2words(StringHelper::basename($generator->modelClass)))) ?>, 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -39,7 +39,13 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= "<?= " ?>$this->render('_form', [
         'model' => $model,
 		//'projectList' => $projectList,		// autogeneriert ueber gii/CRUD
-		<?= $routedVariables?>        
-    ]) ?>
+		<?= $routedVariables?>
+		<?php if ($generator->modelClass === "app\models\DbTableField"): ?>
+	'fk_db_table_id' => isset($fk_db_table_id) ? $fk_db_table_id : null,
+		<?php endif; ?>
+		<?php if ($generator->modelClass === "app\models\Bracket"): ?>
+	'modelsBracketSearchPattern' => isset($modelsBracketSearchPattern) ? $modelsBracketSearchPattern : null,
+		<?php endif; ?>
+	]) ?>
 
 </div>

@@ -8,7 +8,6 @@
 namespace yii\bootstrap;
 
 use Yii;
-use yii\helpers\Html;
 use yii\base\InvalidConfigException;
 
 /**
@@ -23,10 +22,10 @@ use yii\base\InvalidConfigException;
  * $form = ActiveForm::begin(['layout' => 'horizontal'])
  * ```
  *
- * This will set default values for the [[yii\bootstrap\ActiveField|ActiveField]]
- * to render horizontal form fields. In particular the [[yii\bootstrap\ActiveField::template|template]]
+ * This will set default values for the [[ActiveField]]
+ * to render horizontal form fields. In particular the [[ActiveField::template|template]]
  * is set to `{label} {beginWrapper} {input} {error} {endWrapper} {hint}` and the
- * [[yii\bootstrap\ActiveField::horizontalCssClasses|horizontalCssClasses]] are set to:
+ * [[ActiveField::horizontalCssClasses|horizontalCssClasses]] are set to:
  *
  * ```php
  * [
@@ -57,7 +56,7 @@ use yii\base\InvalidConfigException;
  * ]);
  * ```
  *
- * @see \yii\bootstrap\ActiveField for details on the [[fieldConfig]] options
+ * @see ActiveField for details on the [[fieldConfig]] options
  * @see http://getbootstrap.com/css/#forms
  *
  * @author Michael Härtl <haertl.mike@gmail.com>
@@ -71,9 +70,9 @@ class ActiveForm extends \yii\widgets\ActiveForm
      */
     public $fieldClass = 'yii\bootstrap\ActiveField';
     /**
-     * @var array HTML attributes for the form tag. Default is `['role' => 'form']`.
+     * @var array HTML attributes for the form tag. Default is `[]`.
      */
-    public $options = ['role' => 'form'];
+    public $options = [];
     /**
      * @var string the form layout. Either 'default', 'horizontal' or 'inline'.
      * By choosing a layout, an appropriate default field configuration is applied. This will
@@ -97,5 +96,14 @@ class ActiveForm extends \yii\widgets\ActiveForm
             Html::addCssClass($this->options, 'form-' . $this->layout);
         }
         parent::init();
+    }
+
+    /**
+     * @inheritdoc
+     * @return ActiveField the created ActiveField object
+     */
+    public function field($model, $attribute, $options = [])
+    {
+        return parent::field($model, $attribute, $options);
     }
 }

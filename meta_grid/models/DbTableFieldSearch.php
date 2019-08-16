@@ -5,12 +5,12 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\DbTableField;
+use app\models\VDbTableFieldSearchinterface;
 
 /**
- * DbTableFieldSearch represents the model behind the search form about `app\models\DbTableField`.
+ * DbTableFieldSearch represents the model behind the search form about `VDbTableFieldSearchinterface`.
  */
-class DbTableFieldSearch extends DbTableField
+class DbTableFieldSearch extends VDbTableFieldSearchinterface 
 {
     /**
      * @inheritdoc
@@ -19,7 +19,7 @@ class DbTableFieldSearch extends DbTableField
     {
         return [
             [['id', 'fk_object_type_id', 'fk_project_id', 'fk_db_table_id'], 'integer'],
-            [['uuid', 'name', 'description', 'datatype'], 'safe'],
+            [['uuid', 'name', 'description', 'datatype', 'bulk_load_checksum'], 'safe'],
         ];
     }
 
@@ -41,19 +41,30 @@ class DbTableFieldSearch extends DbTableField
      */
     public function search($params)
     {
-        $query = DbTableField::find();
-
+        $query = VDbTableFieldSearchinterface::find();        
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+			        'pagination' => [
+						'pageSize' => 100,
+					]
         ]);
 
-        $this->load($params);
-
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
-        }
+		// this is the case, when the user makes his own filter criteria.
+		if (array_key_exists(\yii\helpers\StringHelper::basename(get_class($this)),$params) === true)
+		{
+			$this->load($params);
+		}
+		else
+		{
+			$this->load(array_replace_recursive(\vendor\meta_grid\helper\PerspectiveHelper::SearchModelFilter($this), $params));
+		}		
+		
+		// If select2-multiple option is true, the validation fails... 
+        // if (!$this->validate()) {
+        //     // uncomment the following line if you do not want to any records when validation fails
+        //     // $query->where('0=1');
+        //     return $dataProvider;
+        // }
 
         $query->andFilterWhere([
             'id' => $this->id,
@@ -65,7 +76,8 @@ class DbTableFieldSearch extends DbTableField
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
             ->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['like', 'description', $this->description])
-            ->andFilterWhere(['like', 'datatype', $this->datatype]);
+            ->andFilterWhere(['like', 'datatype', $this->datatype])
+            ->andFilterWhere(['like', 'bulk_load_checksum', $this->bulk_load_checksum]);
 
         return $dataProvider;
     }

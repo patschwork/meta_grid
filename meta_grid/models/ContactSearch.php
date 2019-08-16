@@ -5,12 +5,12 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Contact;
+use app\models\VContactSearchinterface;
 
 /**
- * ContactSearch represents the model behind the search form about `app\models\Contact`.
+ * ContactSearch represents the model behind the search form about `VContactSearchinterface`.
  */
-class ContactSearch extends Contact
+class ContactSearch extends VContactSearchinterface 
 {
     /**
      * @inheritdoc
@@ -41,19 +41,30 @@ class ContactSearch extends Contact
      */
     public function search($params)
     {
-        $query = Contact::find();
-
+        $query = VContactSearchinterface::find();        
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+			        'pagination' => [
+						'pageSize' => 100,
+					]
         ]);
 
-        $this->load($params);
-
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
-        }
+		// this is the case, when the user makes his own filter criteria.
+		if (array_key_exists(\yii\helpers\StringHelper::basename(get_class($this)),$params) === true)
+		{
+			$this->load($params);
+		}
+		else
+		{
+			$this->load(array_replace_recursive(\vendor\meta_grid\helper\PerspectiveHelper::SearchModelFilter($this), $params));
+		}		
+		
+		// If select2-multiple option is true, the validation fails... 
+        // if (!$this->validate()) {
+        //     // uncomment the following line if you do not want to any records when validation fails
+        //     // $query->where('0=1');
+        //     return $dataProvider;
+        // }
 
         $query->andFilterWhere([
             'id' => $this->id,

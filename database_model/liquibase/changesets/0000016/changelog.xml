@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000016/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000016" context="RBAC">
+
+		<sql splitStatements="true">
+			INSERT INTO auth_rule (name, data, created_at, updated_at) 
+			VALUES ('isNotAGuest', 'O:31:"dmstr\helpers\AuthenticatedRule":3:{s:4:"name";s:11:"isNotAGuest";s:9:"createdAt";N;s:9:"updatedAt";i:1515634976;}', 1515632868, 1515634976);
+		</sql>
+		<rollback>
+			<sql splitStatements="true">
+				DELETE FROM auth_rule WHERE name='isNotAGuest';
+			</sql>
+		</rollback>
+		<comment>
+		<![CDATA[
+		Initial Load for table auth_rule for meta#grid.
+		Used objects:
+			auth_rule
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

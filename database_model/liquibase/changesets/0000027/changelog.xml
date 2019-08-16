@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+    
+        logicalFilePath="000027/changelog.xml"
+>
+
+	<changeSet author="patrick_schmitz" id="000027" context="mapping_qualifier">
+        
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+			CREATE TABLE mapping_qualifier (
+			id INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+			uuid TEXT DEFAULT NULL,
+			fk_object_type_id INTEGER DEFAULT 19 REFERENCES object_type (id),
+			name TEXT(250) DEFAULT NULL,
+			short_name TEXT(250) DEFAULT NULL,
+			description TEXT(4000) DEFAULT NULL,
+			needs_object_depends_on BOOLEAN NOT NULL  DEFAULT 0
+			);
+		]]>
+		</sql>
+		<comment>
+		<![CDATA[
+		New table mapping_qualifier
+		Used objects:
+			mapping_qualifier
+		]]>
+		</comment>        
+    </changeSet>
+</databaseChangeLog>

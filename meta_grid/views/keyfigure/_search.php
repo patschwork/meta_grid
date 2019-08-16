@@ -29,6 +29,18 @@ use yii\widgets\ActiveForm;
 
     <?php // echo $form->field($model, 'formula') ?>
 
+    <?php // echo $form->field($model, 'aggregation') ?>
+
+    <?php // echo $form->field($model, 'character') ?>
+
+    <?php // echo $form->field($model, 'type') ?>
+
+    <?php // echo $form->field($model, 'unit') ?>
+
+    <?php // echo $form->field($model, 'value_range') ?>
+
+    <?php // echo $form->field($model, 'cumulation_possible')->checkbox() ?>
+
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
         <?= Html::resetButton(Yii::t('app', 'Reset'), ['class' => 'btn btn-default']) ?>

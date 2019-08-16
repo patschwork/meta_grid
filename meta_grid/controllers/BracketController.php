@@ -12,20 +12,16 @@ use yii\filters\VerbFilter;
 use app\models\ObjectType;
 use app\models\Project;
 use app\models\Attribute;
-//use app\models\ObjectType;		// !!!
-
-
-// !!!
+use app\models\ObjectTypeAsSearchFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
-// use app\base\Model;
-// use yii\base\Model;
-
 use app\models\BracketSearchPattern;
 use app\models\BracketSearchPatternSearch;
 use app\models\Model;
-// !!!
+use Da\User\Filter\AccessRuleFilter;
+use yii\filters\AccessControl;
+use yii\helpers\VarDumper;
 
 /**
  * BracketController implements the CRUD actions for Bracket model.
@@ -39,6 +35,7 @@ class BracketController extends Controller
 		$object_typeModel = new ObjectType();
 		$object_types = $object_typeModel::find()->all();
 		$object_typeList = array();
+		$object_typeList[null] = null;
 		foreach($object_types as $object_type)
 		{
 			$object_typeList[$object_type->id] = $object_type->name;
@@ -65,6 +62,7 @@ class BracketController extends Controller
 		$attributeModel = new Attribute();
 		$attributes = $attributeModel::find()->all();
 		$attributeList = array();
+		$attributeList[null] = null;
 		foreach($attributes as $attribute)
 		{
 			$attributeList[$attribute->id] = $attribute->name;
@@ -75,9 +73,10 @@ class BracketController extends Controller
 	private function getObjectTypeAsSearchFilterList()
 	{
 		// autogeneriert ueber gii/CRUD
-		$object_type_as_searchFilterModel = new ObjectType();		// !!!
+		$object_type_as_searchFilterModel = new ObjectType();
 		$object_type_as_searchFilters = $object_type_as_searchFilterModel::find()->all();
 		$object_type_as_searchFilterList = array();
+		$object_type_as_searchFilterList[null] = null;
 		foreach($object_type_as_searchFilters as $object_type_as_searchFilter)
 		{
 			$object_type_as_searchFilterList[$object_type_as_searchFilter->id] = $object_type_as_searchFilter->name;
@@ -87,6 +86,11 @@ class BracketController extends Controller
 	
     public function behaviors()
     {
+		if (YII_ENV_DEV)
+		{
+			$this->registerControllerRole();
+		}
+		
         return [
             'verbs' => [
                 'class' => VerbFilter::className(),
@@ -94,8 +98,105 @@ class BracketController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+            'access' => [
+                'class' => AccessControl::class,
+                'ruleConfig' => [
+                    'class' => AccessRuleFilter::class,
+                ],
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['admin'],
+                    ],
+					[
+						'allow' => true,
+						'actions' => ['index','view'],
+						'roles' => ['author', 'global-view', 'view' ."-" . Yii::$app->controller->id],
+					],
+					[
+						'allow' => true,
+						'actions' => ['create', 'update', 'createexternal'],
+						'roles' => ['author', 'global-create', 'create' ."-" . Yii::$app->controller->id],
+					],
+					[
+						'allow' => true,
+						'actions' => ['delete'],
+						'roles' => ['author', 'global-delete', 'delete' ."-" . Yii::$app->controller->id],
+					],
+                ],
+            ],			
         ];
     }
+
+    private function createRole($newRoleOrPermName, $authType, $description, $ruleName, $childRole, $childPerm)
+    {
+    	$auth = Yii::$app->authManager;
+    	$checkRole = $auth->getRole($newRoleOrPermName);
+    	$checkPerm = $auth->getPermission($newRoleOrPermName);
+    	if ((is_null($checkRole) && $authType==="Role") || (is_null($checkPerm) && $authType==="Perm"))
+    	{
+    		if ($authType==="Role")
+    		{
+    			$newAuthObj = $auth->createRole($newRoleOrPermName);
+    		}
+    		else 
+    		{
+    			if ($authType==="Perm")
+    			{
+    				$newAuthObj = $auth->createPermission($newRoleOrPermName);
+    			}
+    			else 
+    			{
+    				throw "No supported authType";
+    			}
+    		}
+    		$newAuthObj->ruleName = $ruleName;
+    		if (!is_null($description))
+    		{
+    			$newAuthObj->description = $description;
+    		}
+    	
+    		$auth->add($newAuthObj);
+
+    	    if (!is_null($childRole))
+    		{	
+    			$auth->addChild($auth->getRole($childRole), $newAuthObj);
+    		}
+
+    	    if (!is_null($childPerm))
+    		{	
+    			$auth->addChild($auth->getRole($childPerm), $newAuthObj);
+    		}
+    		return $newAuthObj;
+    	}
+    	return null; 
+    }
+    
+	private function registerControllerRole()
+	{
+
+		$this->createRole("global-view", "Role", "May view all objectstypes", "isNotAGuest", null, null);
+		$this->createRole("global-create", "Role", "May create all objectstypes", "isNotAGuest", null, null);
+		$this->createRole("global-delete", "Role", "May delete all objectstypes", "isNotAGuest", null, null);
+		$newAuthorRole = $this->createRole("author", "Role", "May edit all objecttypes", "isNotAGuest", null, null);		
+		if (!is_null($newAuthorRole))
+		{			
+			Yii::$app->authManager->addChild($newAuthorRole, Yii::$app->authManager->getRole("global-view"));
+			Yii::$app->authManager->addChild($newAuthorRole, Yii::$app->authManager->getRole("global-create"));
+			Yii::$app->authManager->addChild($newAuthorRole, Yii::$app->authManager->getRole("global-delete"));
+		}
+
+		$newRoleName = 'view' ."-" . Yii::$app->controller->id;
+		$this->createRole($newRoleName, "Perm", "May only view objecttype " . Yii::$app->controller->id, "isNotAGuest", "global-view", null);
+		
+		$newRoleName = 'create' ."-" . Yii::$app->controller->id;
+		$this->createRole($newRoleName, "Perm", "May only create objecttype " . Yii::$app->controller->id, "isNotAGuest", "global-create", null);
+		
+		$newRoleName = 'delete' ."-" . Yii::$app->controller->id;
+		$this->createRole($newRoleName, "Perm", "May only delete objecttype " . Yii::$app->controller->id, "isNotAGuest", "global-delete", null);
+	}
+    
+
 
     /**
      * Lists all Bracket models.
@@ -119,14 +220,14 @@ class BracketController extends Controller
      */
     public function actionView($id)
     {
-    	$modelBracket = $this->findModel($id);
-    	$modelsBracketSearchPattern = $modelBracket->bracketSearchPatterns;
-    	
-        return $this->render('view', [
-            'modelBracket' => $modelBracket,
-            'modelsBracketSearchPattern' => $modelsBracketSearchPattern,
-        ]);
-    }
+		$modelBracket = $this->findModel($id); 
+		$modelsBracketSearchPattern = $modelBracket->bracketSearchPatterns; 
+		        
+		return $this->render('view', [
+			'model' => $modelBracket,
+			'modelsBracketSearchPattern' => $modelsBracketSearchPattern,
+		]);
+		}
 
     /**
      * Creates a new Bracket model.
@@ -135,10 +236,18 @@ class BracketController extends Controller
      */
     public function actionCreate()
     {
-        $modelBracket = new Bracket();
+    	$modelBracket = new Bracket();
 
+		$modelBracket->load(Yii::$app->request->post());
+		
+		if (isset($modelBracket->fkProject)) { // prevent Error, when new dataset will be created				
+			if (!in_array($modelBracket->fkProject->id, Yii::$app->User->identity->permProjectsCanEdit)) {	
+				throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'You have no permission to edit this data.'));
+				return;
+			}
+		}
+    	
         $modelsBracketSearchPattern = [new BracketSearchPattern];
-        
         
         if ($modelBracket->load(Yii::$app->request->post())) {
         	
@@ -176,7 +285,7 @@ class BracketController extends Controller
 //         			$transaction->rollBack();
         		}
         	}
-        }
+    }
 
 //         return $this->render('create', [
 //         		'modelCustomer' => $modelCustomer,
@@ -186,7 +295,7 @@ class BracketController extends Controller
         
         
        		return $this->render('create', [
-  				'modelBracket' => $modelBracket,
+  				'model' => $modelBracket,
    				'object_typeList' => $this->getObjectTypeList(),		// autogeneriert ueber gii/CRUD
    				'projectList' => $this->getProjectList(),		// autogeneriert ueber gii/CRUD
    				'attributeList' => $this->getAttributeList(),		// autogeneriert ueber gii/CRUD
@@ -194,9 +303,8 @@ class BracketController extends Controller
   				'modelsBracketSearchPattern' => (empty($modelsBracketSearchPattern)) ? [new BracketSearchPattern] : $modelsBracketSearchPattern
       		]);
 
-	}
+		    }
 
-    
     /**
      * Updates an existing Bracket model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -205,7 +313,13 @@ class BracketController extends Controller
      */
     public function actionUpdate($id)
     {
-        $modelBracket = $this->findModel($id);
+		$modelBracket = $this->findModel($id);
+
+		if (!in_array($modelBracket->fkProject->id, Yii::$app->User->identity->permProjectsCanEdit)) {	
+			throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'You have no permission to edit this data.'));
+			return;
+		}
+
         $modelsBracketSearchPattern = $modelBracket->bracketSearchPatterns;
 
         if ($modelBracket->load(Yii::$app->request->post())) {
@@ -254,35 +368,15 @@ class BracketController extends Controller
         }
 
         return $this->render('update', [
-  				'modelBracket' => $modelBracket,
+  				'model' => $modelBracket,
    				'object_typeList' => $this->getObjectTypeList(),		// autogeneriert ueber gii/CRUD
    				'projectList' => $this->getProjectList(),		// autogeneriert ueber gii/CRUD
    				'attributeList' => $this->getAttributeList(),		// autogeneriert ueber gii/CRUD
   				'object_type_as_searchFilterList' => $this->getObjectTypeAsSearchFilterList(),		// autogeneriert ueber gii/CRUD
   				'modelsBracketSearchPattern' => (empty($modelsBracketSearchPattern)) ? [new BracketSearchPattern] : $modelsBracketSearchPattern
         ]);
-    }
+		    }
 
-    
-//     public function actionUpdate($id)
-//     {
-//     	// NOCH NICHT ANGEPASST !!!
-//     	$model = $this->findModel($id);
-    
-//     	if ($model->load(Yii::$app->request->post()) && $model->save()) {
-//     		return $this->redirect(['view', 'id' => $model->id]);
-//     	} else {
-//     		return $this->render('update', [
-//     				'model' => $model,
-//     				'object_typeList' => $this->getObjectTypeList(),		// autogeneriert ueber gii/CRUD
-//     				'projectList' => $this->getProjectList(),		// autogeneriert ueber gii/CRUD
-//     				'attributeList' => $this->getAttributeList(),		// autogeneriert ueber gii/CRUD
-//     				'object_type_as_searchFilterList' => $this->getObjectTypeAsSearchFilterList(),		// autogeneriert ueber gii/CRUD
-//     		]);
-//     	}
-//     }
-    
-    
     /**
      * Deletes an existing Bracket model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
@@ -291,7 +385,9 @@ class BracketController extends Controller
      */
     public function actionDelete($id)
     {
-    	// NOCH NICHT ANGEPASST !!!
+		 if (!in_array($this->findModel($id)->fkProject->id, Yii::$app->User->identity->permProjectsCanEdit)) {throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'You have no permission to edit this data.'));
+	return;	}    
+    
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

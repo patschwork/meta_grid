@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="feat_trans_0000005/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="feat_trans_0000005" context="i18n,perspective">
+		<sql splitStatements="true">
+		<![CDATA[
+			CREATE TABLE perspective_filter (
+				id                     INTEGER       NOT NULL  PRIMARY KEY AUTOINCREMENT,
+				fk_language_id         VARCHAR (32)  NOT NULL,
+				fk_object_type_id      INTEGER       NOT NULL,
+				filter_attribute_name  VARCHAR (150) NOT NULL,
+				filter_value           VARCHAR (150) NOT NULL,
+				FOREIGN KEY (fk_language_id)    REFERENCES language(language_id)
+				FOREIGN KEY (fk_object_type_id) REFERENCES object_type(id)
+			);
+		]]>		
+		</sql>
+			
+		<comment>
+		<![CDATA[
+		New table perspective_filter to support filtered views on chosen perspective.
+		Used objects:
+			perspective_filter
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

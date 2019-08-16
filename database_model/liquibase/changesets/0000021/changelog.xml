@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000021/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000021" context="Bugfix">
+
+		<sql splitStatements="true">
+		<![CDATA[
+			WITH cte_dbTable_getNonEqualProjekts AS
+			(
+				SELECT  dbt.id             AS [dbt.id]
+					   ,dbt.fk_project_id  AS [dbt.fk_project_id]
+					   ,dbtc.id            AS [dbtc.id]
+					   ,dbtc.fk_project_id AS [dbtc.fk_project_id]
+					   ,dbtc.name          AS [dbtc.name]
+				FROM db_table dbt
+				LEFT JOIN db_table_context dbtc ON 
+					dbtc.id = dbt.fk_db_table_context_id
+				WHERE dbtc.fk_project_id <> dbt.fk_project_id
+			)
+			UPDATE db_table
+			   SET fk_db_table_context_id = 
+			   (
+				SELECT 
+					dbtc_new.id 
+				FROM cte_dbTable_getNonEqualProjekts diff 	
+				LEFT JOIN db_table_context dbtc_new ON 
+						dbtc_new.name          = [dbtc.name]
+					AND dbtc_new.fk_project_id = [dbt.fk_project_id]
+				WHERE 1=1
+					AND diff.[dbt.id] = db_table.id
+			   )
+			WHERE id IN 
+			(
+				SELECT 
+					[dbt.id]
+				FROM cte_dbTable_getNonEqualProjekts diff 	
+				LEFT JOIN db_table_context dbtc_new ON 
+						dbtc_new.name          = [dbtc.name]
+					AND dbtc_new.fk_project_id = [dbt.fk_project_id]
+			)
+		]]>
+	</sql>
+		<rollback>		
+			<sql splitStatements="true">
+			<![CDATA[
+				SELECT 'No rollback possible' AS DUMMY;
+			]]>
+			</sql>
+		</rollback>
+		<comment>
+		<![CDATA[
+		Update db_table items with faulty db_table_context in unequal project with the corresponding db_table_context in the same project.
+		Used objects:
+			db_table
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

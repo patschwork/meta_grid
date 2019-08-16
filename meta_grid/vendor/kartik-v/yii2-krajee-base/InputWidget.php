@@ -3,8 +3,8 @@
 /**
  * @package   yii2-krajee-base
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
- * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2016
- * @version   1.8.2
+ * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2017
+ * @version   1.8.9
  */
 
 namespace kartik\base;
@@ -14,19 +14,42 @@ use yii\base\InvalidConfigException;
 use yii\helpers\FormatConverter;
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
+use yii\web\View;
+use yii\widgets\InputWidget as YiiInputWidget;
 
 /**
- * Base input widget class for Krajee extensions
+ * InputWidget is the base class for widgets extending the [[YiiInputWidget]] that collect user inputs in all
+ * Krajee input extensions.
+ *
+ * An input widget can be associated with a data model and an attribute, or a name and a value. If the former, the
+ * name and the value will be generated automatically.
+ *
+ * Classes extending from this widget can be used in an [[\yii\widgets\ActiveForm|ActiveForm]] using the
+ * [[\yii\widgets\ActiveField::widget()|widget()]] method. For example like this:
+ *
+ * ```php
+ * <?= $form->field($model, 'from_date')->widget('WidgetClassName', [
+ *     // configure additional widget properties here
+ * ]) ?>
+ * ```
  *
  * @author Kartik Visweswaran <kartikv2@gmail.com>
  * @since 1.0
  */
-class InputWidget extends \yii\widgets\InputWidget
+class InputWidget extends YiiInputWidget
 {
     use TranslationTrait;
     use WidgetTrait;
 
     const LOAD_PROGRESS = '<div class="kv-plugin-loading">&nbsp;</div>';
+
+    /**
+     * @var string the module identifier if this widget is part of a module. If not set, the module identifier will
+     * be auto derived based on the \yii\base\Module::getInstance method. This can be useful, if you are setting
+     * multiple module identifiers for the same module in your Yii configuration file. To specify children or grand
+     * children modules you can specify the module identifiers relative to the parent module (e.g. `admin/content`).
+     */
+    public $moduleId;
 
     /**
      * @var string the language configuration (e.g. 'fr-FR', 'zh-CN'). The format for the language/locale is
@@ -52,7 +75,7 @@ class InputWidget extends \yii\widgets\InputWidget
     public $pluginDestroyJs;
 
     /**
-     * @var mixed show loading indicator while plugin loads
+     * @var boolean show loading indicator while plugin loads
      */
     public $pluginLoading = true;
 
@@ -62,79 +85,107 @@ class InputWidget extends \yii\widgets\InputWidget
     public $data = [];
 
     /**
-     * @var string the name of the jQuery plugin
+     * @var string the name of the jQuery plugin.
      */
     public $pluginName = '';
 
     /**
-     * @var array widget plugin options
+     * @var array the default HTML attributes for the input tag.
+     * @see \yii\helpers\Html::renderTagAttributes() for details on how attributes are being rendered.
+     */
+    public $defaultOptions = [];
+
+    /**
+     * @var array widget plugin options.
+     */
+    public $defaultPluginOptions = [];
+
+    /**
+     * @var array widget plugin options.
      */
     public $pluginOptions = [];
 
     /**
-     * @var array widget JQuery events. You must define events in
-     * event-name => event-function format
-     * for example:
+     * @var array widget JQuery events. You must define events in `event-name => event-function` format. For example:
+     *
      * ~~~
      * pluginEvents = [
-     *        "change" => "function() { log("change"); }",
-     *        "open" => "function() { log("open"); }",
+     *     'change' => 'function() { log("change"); }',
+     *     'open' => 'function() { log("open"); }',
      * ];
      * ~~~
      */
     public $pluginEvents = [];
 
     /**
-     * @var string a pjax container identifier if applicable inside which the widget will be rendered.
-     * If this is set, the widget will automatically reinitialize on pjax completion.
+     * @var string a pjax container identifier if applicable inside which the widget will be rendered. If this is set,
+     * the widget will automatically reinitialize on pjax render completion.
      */
     public $pjaxContainerId;
 
     /**
-     * @var boolean whether the widget should automatically format the date from
-     * the PHP DateTime format to the javascript/jquery plugin format
+     * @var boolean enable pop state fix for pjax container on press of browser back & forward buttons.
+     */
+    public $enablePopStateFix = true;
+
+    /**
+     * @var boolean whether the widget should automatically format the date from the PHP DateTime format to the
+     * javascript/jquery plugin format. This is more applicable for widgets that manage date / time inputs.
+     *
      * @see http://php.net/manual/en/function.date.php
      */
     public $convertFormat = false;
+    
+    /**
+     * @var integer the position where the client JS hash variables for the input widget will be loaded. 
+     * Defaults to `View::POS_HEAD`. This can be set to `View::POS_READY` for specific scenarios like when
+     * rendering the widget via `renderAjax`.
+     */
+    public $hashVarLoadPosition = View::POS_HEAD;
 
     /**
-     * @var array the the internalization configuration for this widget
+     * @var array the the internalization configuration for this widget.
+     *
+     * @see [[\yii\i18n\I18N]] component for understanding the configuration details.
      */
     public $i18n = [];
 
     /**
-     * @var string the hashed variable to store the pluginOptions
+     * @var string the HTML5 data variable name that will be used to store the Json encoded pluginOptions within the
+     * element on which the jQuery plugin will be initialized.
      */
     protected $_dataVar;
 
     /**
-     * @var string the hashed variable to store the pluginOptions
+     * @var string the generated hashed variable name that will store the JSON encoded pluginOptions in
+     * [[View::POS_HEAD]].
      */
     protected $_hashVar;
 
     /**
-     * @var string the Json encoded options
+     * @var string the JSON encoded plugin options.
      */
     protected $_encOptions = '';
 
     /**
-     * @var string the indicator for loading
+     * @var string the indicator to be displayed while plugin is loading.
      */
     protected $_loadIndicator = '';
 
     /**
-     * @var string the two or three letter lowercase code
-     * for the language according to ISO-639
+     * @var string the two or three letter lowercase code for the language according to ISO-639.
      */
     protected $_lang = '';
 
     /**
-     * @var string the language js file
+     * @var string the language js file.
      */
     protected $_langFile = '';
 
     /**
-     * @var string translation message file category name for i18n
+     * @var string translation message file category name for i18n.
+     *
+     * @see [[\yii\i18n\I18N]]
      */
     protected $_msgCat = '';
 
@@ -144,12 +195,14 @@ class InputWidget extends \yii\widgets\InputWidget
     public function init()
     {
         parent::init();
+        $this->pluginOptions = ArrayHelper::merge($this->defaultPluginOptions, $this->pluginOptions);
+        $this->options = ArrayHelper::merge($this->defaultOptions, $this->options);
         $this->initDestroyJs();
         $this->initInputWidget();
     }
 
     /**
-     * Initializes the input widget
+     * Initializes the input widget.
      */
     protected function initInputWidget()
     {
@@ -162,17 +215,14 @@ class InputWidget extends \yii\widgets\InputWidget
             $this->_loadIndicator = self::LOAD_PROGRESS;
         }
         if ($this->hasModel()) {
-            $this->name = empty($this->options['name']) ? Html::getInputName($this->model, $this->attribute) :
-                $this->options['name'];
-            $this->value = Html::getAttributeValue($this->model, $this->attribute);
+            $this->name = !isset($this->options['name']) ? Html::getInputName($this->model, $this->attribute) : $this->options['name'];
+            $this->value = !isset($this->options['value'])? Html::getAttributeValue($this->model, $this->attribute) : $this->options['value'];
         }
         $this->initDisability($this->options);
-        $view = $this->getView();
-        WidgetAsset::register($view);
     }
 
     /**
-     * Validates and sets disabled or readonly inputs
+     * Validates and sets disabled or readonly inputs.
      *
      * @param array $options the HTML attributes for the input
      */
@@ -187,7 +237,7 @@ class InputWidget extends \yii\widgets\InputWidget
     }
 
     /**
-     * Initialize the plugin language
+     * Initialize the plugin language.
      *
      * @param string  $property the name of language property in [[pluginOptions]].
      * @param boolean $full whether to use the full language string. Defaults to `false`
@@ -202,7 +252,7 @@ class InputWidget extends \yii\widgets\InputWidget
     }
 
     /**
-     * Sets the language JS file if it exists
+     * Sets the language JS file if it exists.
      *
      * @param string $prefix the language filename prefix
      * @param string $assetPath the path to the assets
@@ -242,12 +292,12 @@ class InputWidget extends \yii\widgets\InputWidget
     }
 
     /**
-     * Generates an input
+     * Generates an input.
      *
      * @param string $type the input type
-     * @param bool   $list whether the input is of dropdown list type
+     * @param boolean $list whether the input is of dropdown list type
      *
-     * @return mixed
+     * @return string the rendered input markup
      */
     protected function getInput($type, $list = false)
     {
@@ -260,7 +310,6 @@ class InputWidget extends \yii\widgets\InputWidget
         $input = $type;
         $checked = false;
         if ($type == 'radio' || $type == 'checkbox') {
-            $this->options['value'] = $this->value;
             $checked = ArrayHelper::remove($this->options, 'checked', '');
             if (empty($checked) && !empty($this->value)) {
                 $checked = ($this->value == 0) ? false : true;
@@ -326,12 +375,11 @@ class InputWidget extends \yii\widgets\InputWidget
     }
 
     /**
-     * Parses date format based on attribute type using yii\helpers\FormatConverter
-     * Used only within DatePicker and DateTimePicker.
+     * Parses and sets plugin date format based on attribute type using [[FormatConverter]]. Currently this method is
+     * used only within the [[\kartik\date\DatePicker]] and [[\kartik\datetime\DateTimePicker\]] widgets.
      *
-     * @param string $type the attribute type whether date, datetime, or time
+     * @param string $type the attribute type whether date, datetime, or time.
      *
-     * @return mixed|string
      * @throws InvalidConfigException
      */
     protected function parseDateFormat($type)

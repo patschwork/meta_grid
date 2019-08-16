@@ -6,9 +6,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\Tool */
 
-$this->title = Yii::t('app', 'Update {modelClass}: ', [
-    'modelClass' => 'Tool',
-]) . ' ' . $model->id;
+$this->title = Yii::t('app', 'Update {modelClass}: ', ['modelClass' => Yii::t('app', 'Tool')]) . ' ' . $model->id;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tools'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
@@ -21,6 +19,6 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
         'model' => $model, 
        'tool_typeList' => $tool_typeList,		// autogeneriert ueber gii/CRUD
         
-    ]) ?>
+				    ]) ?>
 
 </div>

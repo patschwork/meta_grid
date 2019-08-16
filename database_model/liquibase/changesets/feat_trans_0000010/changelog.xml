@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="feat_trans_0000010/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="feat_trans_0000010" context="i18n,perspective">
+		<sql splitStatements="true">
+		<![CDATA[
+			DROP TABLE perspective_filter
+		]]>		
+		</sql>
+			
+		<comment>
+		<![CDATA[
+		Drop table perspective_filter because of missing fields. Will be corrected in the next changelog.
+		Used objects:
+			perspective_filter
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

@@ -1,5 +1,6 @@
 <?php
 
+
 use yii\helpers\Html;
 
 
@@ -18,6 +19,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= $this->render('_form', [
         'model' => $model,
-    ]) ?>
+		//'projectList' => $projectList,		// autogeneriert ueber gii/CRUD
+		'object_typeList' => $object_typeList,		// autogeneriert ueber gii/CRUD
+					]) ?>
 
 </div>

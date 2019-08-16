@@ -5,24 +5,25 @@
 /* @var $dataProvider ArrayDataProvider */
 /* @var $panels \yii\debug\Panel[] */
 
-use yii\helpers\Html;
-use yii\grid\GridView;
 use yii\data\ArrayDataProvider;
+use yii\grid\GridView;
+use yii\helpers\Html;
 
 $this->title = 'Yii Debugger';
+
 ?>
 <div class="default-index">
-
-    <div id="yii-debug-toolbar" class="yii-debug-toolbar-top">
-        <div class="yii-debug-toolbar-block title">
-            <a href="#">
-                <img width="29" height="30" alt="" src="<?= \yii\debug\Module::getYiiLogo() ?>">
-                Yii Debugger
-            </a>
+    <div id="yii-debug-toolbar" class="yii-debug-toolbar yii-debug-toolbar_position_top" style="display: none;">
+        <div class="yii-debug-toolbar__bar">
+            <div class="yii-debug-toolbar__block yii-debug-toolbar__title">
+                <a href="#">
+                    <img width="30" height="30" alt="" src="<?= \yii\debug\Module::getYiiLogo() ?>">
+                </a>
+            </div>
+            <?php foreach ($panels as $panel): ?>
+                <?= $panel->getSummary() ?>
+            <?php endforeach; ?>
         </div>
-        <?php foreach ($panels as $panel): ?>
-            <?= $panel->getSummary() ?>
-        <?php endforeach; ?>
     </div>
 
     <div class="container">
@@ -31,7 +32,7 @@ $this->title = 'Yii Debugger';
 
 if (isset($this->context->module->panels['db']) && isset($this->context->module->panels['request'])) {
 
-    echo "			<h1>Available Debug Data</h1>";
+    echo '			<h1>Available Debug Data</h1>';
 
     $codes = [];
     foreach ($manifest as $tag => $vals) {
@@ -45,14 +46,13 @@ if (isset($this->context->module->panels['db']) && isset($this->context->module-
     echo GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
-        'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
+        'rowOptions' => function ($model) use ($searchModel) {
             $dbPanel = $this->context->module->panels['db'];
 
             if ($searchModel->isCodeCritical($model['statusCode']) || $dbPanel->isQueryCountCritical($model['sqlCount'])) {
                 return ['class'=>'danger'];
-            } else {
-                return [];
             }
+            return [];
         },
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
@@ -66,7 +66,7 @@ if (isset($this->context->module->panels['db']) && isset($this->context->module-
             [
                 'attribute' => 'time',
                 'value' => function ($data) {
-                    return '<span class="nowrap">' . Yii::$app->formatter->asDateTime($data['time'], 'short') . '</span>';
+                    return '<span class="nowrap">' . Yii::$app->formatter->asDatetime($data['time'], 'yyyy-MM-dd HH:mm:ss') . '</span>';
                 },
                 'format' => 'html',
             ],
@@ -85,9 +85,8 @@ if (isset($this->context->module->panels['db']) && isset($this->context->module-
                             'title' => 'Too many queries. Allowed count is ' . $dbPanel->criticalQueryThreshold,
                         ]);
 
-                    } else {
-                        return $data['sqlCount'];
                     }
+                    return $data['sqlCount'];
                 },
                 'format' => 'html',
             ],
@@ -112,6 +111,21 @@ if (isset($this->context->module->panels['db']) && isset($this->context->module-
             ],
             [
                 'attribute' => 'statusCode',
+                'value' => function ($data) {
+                    $statusCode = $data['statusCode'];
+                    if ($statusCode === null) {
+                        $statusCode = 200;
+                    }
+                    if ($statusCode >= 200 && $statusCode < 300) {
+                        $class = 'label-success';
+                    } elseif ($statusCode >= 300 && $statusCode < 400) {
+                        $class = 'label-info';
+                    } else {
+                        $class = 'label-danger';
+                    }
+                    return "<span class=\"label {$class}\">$statusCode</span>";
+                },
+                'format' => 'raw',
                 'filter' => $statusCodes,
                 'label' => 'Status code'
             ],
@@ -126,3 +140,8 @@ if (isset($this->context->module->panels['db']) && isset($this->context->module-
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    if (!window.frameElement) {
+        document.querySelector('#yii-debug-toolbar').style.display = 'block';
+    }
+</script>

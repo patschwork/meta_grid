@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="feat_trans_0000014/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="feat_trans_0000014" context="i18n,perspective">
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO perspective_filter (fk_language_id, ref_fk_object_type_id, filter_attribute_name, filter_value) VALUES('de-MS_SSRS', 4, 'fk_db_table_context_id', '4')
+		]]>		
+		</sql>
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO perspective_filter (fk_language_id, ref_fk_object_type_id, filter_attribute_name, filter_value) VALUES('de-MS_SSRS', 4, 'fk_db_table_context_id', '5')
+		]]>		
+		</sql>
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO perspective_filter (fk_language_id, ref_fk_object_type_id, filter_attribute_name, filter_value) VALUES('de-MS_SSRS', 4, 'fk_db_table_type_id', '3')
+		]]>		
+		</sql>
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO perspective_filter (fk_language_id, ref_fk_object_type_id, filter_attribute_name, filter_value) VALUES('de-MS_SSRS', 3, 'fk_data_delivery_type_id', '1')
+		]]>		
+		</sql>
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO perspective_filter (fk_language_id, ref_fk_object_type_id, filter_attribute_name, filter_value) VALUES('de-MS_SSRS', 6, 'name', 'SSRS')
+		]]>		
+		</sql>
+
+		<comment>
+		<![CDATA[
+		Inital values for perspective_filter. (may not fit in production because IDs of fk_db_table_context_id could differ.)
+		Used objects:
+			perspective_filter
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

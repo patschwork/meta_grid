@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000023/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000023" context="Bugfix">
+
+		<sql splitStatements="true">
+		<![CDATA[
+		ALTER TABLE app_config_log ADD COLUMN uuid TEXT;
+		]]>
+		</sql>
+		
+		<comment>
+		<![CDATA[
+		Add missing field uuid to table app_config_log.
+		[Taskwarrior UUID 735730c8-4790-4453-bba3-cf3a68c47253]
+		Used objects:
+			app_config_log
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

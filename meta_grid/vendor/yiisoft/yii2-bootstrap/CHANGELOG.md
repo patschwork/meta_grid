@@ -1,6 +1,73 @@
 Yii Framework 2 bootstrap extension Change Log
 ==============================================
 
+2.0.7 October 09, 2017
+----------------------
+
+- Enh #131 Added `tabContentOptions` to set HTML attributes for 'tab-content' container in `Tabs` widget (AndrewKorpusov)
+- Bug #126: `yii\bootstrap\ToggleButtonGroup` was unable to work without model (makroxyz)
+- Bug #130: Fixed `yii\bootstrap\Collapse` to use pure numerical value on `content` property (meysampg)
+- Bug #137: Remove `role="navbar"` from `yii\bootstrap\NavBar` according to new aria specification (tino415)
+- Bug #143: Fixed `yii\bootstrap\Nav` to use tags according to bootstrap docs (PowerGamer1)
+- Bug #157: Active status of multilevel submenu items of the `yii\bootstrap\Nav` class is determined correctly now (PowerGamer1)
+- Bug #162: Fixed `yii\bootstrap\Nav` not taking explicit `active` into account when `activateItems` is off (samdark)
+- Bug #184: `yii\bootstrap\ButtonDropdown` widget did not use the correct JS plugin, was `button`, changed to `dropdown` (cebe, yukal)
+- Bug #196: Remove `role="form"` from `yii\bootstrap\ActiveForm` according to new aria specification (bastardijke)
+- Enh #64: Added simplified syntax for specifying `Collapse` widget `$items` (Faryshta, cebe)
+- Enh #107: Added `yii\bootstrap\Collapse::$autoCloseItems` to allow keeping multiple items open at the same time (cebe)
+- Enh #113: Allow URLs instead of content for Tab Widget Dropdown items (Okeanos)
+- Enh #131: Added `tabContentOptions` to set HTML attributes for 'tab-content' container in `Tabs` widget (AndrewKorpusov)
+- Enh #145: Added the ability to customize the class used to draw dropdowns in `yii\bootstrap\Nav`, `yii\bootstrapButtonDropdown` and `yii\bootstrap\Tab` widgets (PowerGamer1)
+- Enh #174: Added `yii\bootstrap\Tabs::renderPanes()` to allow extending the class to manipulate the content between the tabs and the content (thiagotalma)
+- Enh #187: Added `yii\bootstrap\Tabs::activateFirstVisibleTab()` to set the first visible tab as active if no active tab is set (nilsburg)
+- Enh #208: Added `yii\bootstrap\Modal::$bodyOptions` to allow add options to body part Modal (KoJIT2009)
+
+
+2.0.6 March 17, 2016
+--------------------
+
+- Bug #68: Fixed `yii\bootstrap\Nav` handling empty items (freezy-sk)
+- Bug #81: Fixed `yii\bootstrap\ActiveField::radioList()` and `yii\bootstrap\ActiveField::checkboxList()` ignore `itemOptions` (mikehaertl)
+- Bug #98: Fixed `yii\bootstrap\ButtonDropdown` setting `href` attribute for non `a` tags (13nightevil)
+- Bug #124: Fixed `yii\bootstrap\Tabs` to use `tag` configuration option for item container (arturf)
+- Enh #45: Added support for Bootstrap checkbox/radio toggle buttons (RomeroMsk, klimov-paul)
+- Enh #92: Allow overriding `data-toggle` in `yii\bootstrap\Tabs` (machour)
+
+
+2.0.5 September 23, 2015
+------------------------
+
+- Enh #15: Allowed overriding default Bootstrap CSS classes added by widgets (klimov-paul)
+- Enh #38: Added object support for `content` option in `Collapse` class (pana1990, ItsReddi)
+- Enh #40: Added `visible` option to `yii\bootstrap\Tab` widget items (klimov-paul)
+- Enh #41: Added `submenuOptions` support at `yii\bootstrap\Dropdown` (spikyjt, klimov-paul)
+- Enh #42: Added support for the glyphicons via `yii\bootstrap\Html::icon()` (klimov-paul)
+- Enh #43: Added support for the static form controls via `yii\bootstrap\Html` (klimov-paul)
+- Enh #44: Fixed `yii\bootstrap\ButtonDropdown` renders two buttons with the same id, if 'split' is enabled (klimov-paul)
+- Enh #50: Added `dropDownOptions` that is passed to `yii\bootstrap\Nav` dropdown items (fbau123)
+
+
+2.0.4 May 10, 2015
+------------------
+
+- Bug #18: `label` option ignored by `yii\bootstrap\Activefield::checkbox()` and `yii\bootstrap\Activefield::radio()` (mikehaertl)
+- Bug #5984: `yii\bootstrap\Activefield::checkbox()` caused browser to link label to the wrong input (cebe)
+- Bug #7894: Fixed incorrect URL config processing at `yii\bootstrap\Nav::items` if route element is not a first one (nkovacs, klimov-paul)
+- Bug #8231: Configuration of Alert, ButtonDropdown, Modal widget where not preserved when used multiple times (cebe, idMolotov)
+- Bug (CVE-2015-3397): Using `Json::htmlEncode()` for safer JSON data encoding in HTML code (samdark, Tomasz Tokarski)
+- Enh #29: Added support to list-groups for Collapse class (pana1990, skullcrasher)
+- Enh #2546: Added `visible` option to `yii\bootstrap\ButtonGroup::$buttons` (samdark, lukBarros)
+- Enh #7633: Added `ActionColumn::$buttonOptions` for defining HTML options to be added to the default buttons (cebe)
+- Enh: Added `Nav::$dropDownCaret` to allow customization of the dropdown caret symbol (cebe)
+- Enh: Added support for using external URLs for `Tabs`. (dynasource, qiangxue)
+
+
+2.0.3 March 01, 2015
+--------------------
+
+- no changes in this release.
+
+
 2.0.2 January 11, 2015
 ----------------------
 
@@ -25,7 +92,7 @@ Yii Framework 2 bootstrap extension Change Log
 ----------------------
 
 - Bug #5323: Nested dropdown does not work for `yii\bootstrap\DropDown` (aryraditya)
-- Bug #5336: `yii\bootstrap\DropDown` should register bootstrap plugin asset (zelenin) 
+- Bug #5336: `yii\bootstrap\DropDown` should register bootstrap plugin asset (zelenin)
 - Chg #5231: Collapse `items` property uses `label` element instead of array key for headers (nkovacs)
 - Chg #5232: Collapse encodes headers by default (nkovacs)
 - Chg #5217: Tabs no longer requires content since empty tab could be used dynamically (damiandennis)

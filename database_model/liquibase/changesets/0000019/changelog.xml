@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000019/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000019" context="RBAC">
+
+		<sql splitStatements="true">
+			INSERT INTO user (id, username, email, password_hash, auth_key, unconfirmed_email, registration_ip, flags, confirmed_at, blocked_at, updated_at, created_at, last_login_at, auth_tf_key, auth_tf_enabled) 
+			VALUES (1, 'admin', 'mgadmin@myOrg.tld', '$2y$10$JrSvAr97kTHukJS9DfLGju0gC7BCal5f/nPvJkcFNF6qTBQ1HKK1y', 'FFf4XklEUYlm4pFSr9Fc2w9Zxl3jIrAM', NULL, NULL, 0, 1515622845, NULL, 1515851871, 1515622784, 1517427224, '', 'FALSE');
+		</sql>
+		<rollback>
+			<sql splitStatements="true">
+				DELETE FROM auth_item_child;
+			</sql>
+		</rollback>
+		<comment>
+		<![CDATA[
+		Initial Load for table user (default admin user) for meta#grid.
+		Used objects:
+			user
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000007/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000007">
+	<!-- Those views are automatically generated with a python helper tool: dwh_meta_v2\helper_tools\Python\database\create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="false" viewName="v_keyfigure_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(uuid, '') AS uuid
+			,fk_object_type_id
+			,fk_project_id
+			,IFNULL(name, '') AS name
+			,IFNULL(description, '') AS description
+			,IFNULL(formula, '') AS formula
+			,IFNULL(aggregation, '') AS aggregation
+			,IFNULL(character, '') AS character
+			,IFNULL(type, '') AS type
+			,IFNULL(unit, '') AS unit
+			,IFNULL(value_range, '') AS value_range
+			,cumulation_possible
+		FROM keyfigure
+		]]>
+		</createView>
+
+		<createView replaceIfExists="false" viewName="v_object_type_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(uuid, '') AS uuid
+			,IFNULL(name, '') AS name
+		FROM object_type
+		]]>
+		</createView>
+
+		<createView replaceIfExists="false" viewName="v_client_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(uuid, '') AS uuid
+			,IFNULL(name, '') AS name
+			,IFNULL(description, '') AS description
+		FROM client
+		]]>
+		</createView>
+
+		<createView replaceIfExists="false" viewName="v_project_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(uuid, '') AS uuid
+			,fk_client_id
+			,IFNULL(name, '') AS name
+			,IFNULL(description, '') AS description
+		FROM project
+		]]>
+		</createView>
+
+		<createView replaceIfExists="false" viewName="v_sourcesystem_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(uuid, '') AS uuid
+			,fk_object_type_id
+			,fk_project_id
+			,IFNULL(name, '') AS name
+			,IFNULL(description, '') AS description
+			,fk_contact_group_id_as_supporter
+		FROM sourcesystem
+		]]>
+		</createView>
+
+		<createView replaceIfExists="false" viewName="v_data_delivery_object_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(uuid, '') AS uuid
+			,fk_object_type_id
+			,fk_project_id
+			,IFNULL(name, '') AS name
+			,IFNULL(description, '') AS description
+			,fk_tool_id
+			,fk_data_delivery_type_id
+			,fk_contact_group_id_as_data_owner
+		FROM data_delivery_object
+		]]>
+		</createView>
+
+		<createView replaceIfExists="false" viewName="v_map_object_2_object_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(uuid, '') AS uuid
+			,ref_fk_object_id_1
+			,ref_fk_object_type_id_1
+			,ref_fk_object_id_2
+			,ref_fk_object_type_id_2
+		FROM map_object_2_object
+		]]>
+		</createView>
+
+		<createView replaceIfExists="false" viewName="v_tool_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(uuid, '') AS uuid
+			,fk_tool_type_id
+			,IFNULL(tool_name, '') AS tool_name
+			,IFNULL(vendor, '') AS vendor
+			,IFNULL(version, '') AS version
+			,IFNULL(comment, '') AS comment
+		FROM tool
+		]]>
+		</createView>
+
+		<createView replaceIfExists="false" viewName="v_object_depends_on_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(uuid, '') AS uuid
+			,ref_fk_object_id_parent
+			,ref_fk_object_type_id_parent
+			,ref_fk_object_id_child
+			,ref_fk_object_type_id_child
+		FROM object_depends_on
+		]]>
+		</createView>
+
+		<createView replaceIfExists="false" viewName="v_attribute_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(uuid, '') AS uuid
+			,fk_object_type_id
+			,fk_project_id
+			,IFNULL(name, '') AS name
+			,IFNULL(description, '') AS description
+			,IFNULL(formula, '') AS formula
+		FROM attribute
+		]]>
+		</createView>
+
+		<createView replaceIfExists="false" viewName="v_tool_type_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(uuid, '') AS uuid
+			,IFNULL(name, '') AS name
+			,IFNULL(description, '') AS description
+		FROM tool_type
+		]]>
+		</createView>
+
+		<createView replaceIfExists="false" viewName="v_db_table_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(uuid, '') AS uuid
+			,fk_object_type_id
+			,fk_project_id
+			,IFNULL(name, '') AS name
+			,IFNULL(description, '') AS description
+			,IFNULL(location, '') AS location
+			,fk_db_table_context_id
+			,fk_db_table_type_id
+		FROM db_table
+		]]>
+		</createView>
+
+		<createView replaceIfExists="false" viewName="v_db_table_field_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(uuid, '') AS uuid
+			,fk_object_type_id
+			,fk_project_id
+			,IFNULL(name, '') AS name
+			,IFNULL(description, '') AS description
+			,fk_db_table_id
+			,IFNULL(datatype, '') AS datatype
+			,IFNULL(bulk_load_checksum, '') AS bulk_load_checksum
+		FROM db_table_field
+		]]>
+		</createView>
+
+		<createView replaceIfExists="false" viewName="v_db_table_context_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(uuid, '') AS uuid
+			,fk_object_type_id
+			,fk_project_id
+			,IFNULL(name, '') AS name
+			,IFNULL(description, '') AS description
+			,IFNULL(prefix, '') AS prefix
+		FROM db_table_context
+		]]>
+		</createView>
+
+		<createView replaceIfExists="false" viewName="v_db_database_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(uuid, '') AS uuid
+			,fk_object_type_id
+			,fk_project_id
+			,IFNULL(name, '') AS name
+			,IFNULL(description, '') AS description
+			,fk_tool_id
+		FROM db_database
+		]]>
+		</createView>
+
+		<createView replaceIfExists="false" viewName="v_scheduling_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(uuid, '') AS uuid
+			,fk_object_type_id
+			,fk_project_id
+			,IFNULL(name, '') AS name
+			,IFNULL(description, '') AS description
+			,fk_tool_id
+			,IFNULL(scheduling_series, '') AS scheduling_series
+		FROM scheduling
+		]]>
+		</createView>
+
+		<createView replaceIfExists="false" viewName="v_parameter_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(uuid, '') AS uuid
+			,fk_object_type_id
+			,fk_project_id
+			,IFNULL(name, '') AS name
+			,IFNULL(description, '') AS description
+			,is_optional
+			,IFNULL(default_value, '') AS default_value
+			,IFNULL(datatype, '') AS datatype
+			,IFNULL(range, '') AS range
+		FROM parameter
+		]]>
+		</createView>
+
+		<createView replaceIfExists="false" viewName="v_db_table_type_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(uuid, '') AS uuid
+			,IFNULL(name, '') AS name
+			,IFNULL(description, '') AS description
+		FROM db_table_type
+		]]>
+		</createView>
+
+		<createView replaceIfExists="false" viewName="v_object_comment_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(uuid, '') AS uuid
+			,fk_object_type_id
+			,ref_fk_object_id
+			,ref_fk_object_type_id
+			,IFNULL(comment, '') AS comment
+			,IFNULL(created_at_datetime, '') AS created_at_datetime
+		FROM object_comment
+		]]>
+		</createView>
+
+		<createView replaceIfExists="false" viewName="v_glossary_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(uuid, '') AS uuid
+			,fk_object_type_id
+			,fk_project_id
+			,IFNULL(name, '') AS name
+			,IFNULL(description, '') AS description
+		FROM glossary
+		]]>
+		</createView>
+
+		<createView replaceIfExists="false" viewName="v_data_delivery_type_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(uuid, '') AS uuid
+			,IFNULL(name, '') AS name
+			,IFNULL(description, '') AS description
+		FROM data_delivery_type
+		]]>
+		</createView>
+
+		<createView replaceIfExists="false" viewName="v_data_transfer_process_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(uuid, '') AS uuid
+			,fk_object_type_id
+			,fk_project_id
+			,IFNULL(name, '') AS name
+			,IFNULL(description, '') AS description
+			,fk_data_transfer_type_id
+		FROM data_transfer_process
+		]]>
+		</createView>
+
+		<createView replaceIfExists="false" viewName="v_data_transfer_type_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(uuid, '') AS uuid
+			,IFNULL(name, '') AS name
+			,IFNULL(description, '') AS description
+		FROM data_transfer_type
+		]]>
+		</createView>
+
+		<createView replaceIfExists="false" viewName="v_contact_group_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(uuid, '') AS uuid
+			,fk_object_type_id
+			,fk_client_id
+			,IFNULL(name, '') AS name
+			,IFNULL(description, '') AS description
+			,IFNULL(short_name, '') AS short_name
+		FROM contact_group
+		]]>
+		</createView>
+
+		<createView replaceIfExists="false" viewName="v_contact_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(uuid, '') AS uuid
+			,fk_object_type_id
+			,fk_contact_group_id
+			,fk_client_id
+			,IFNULL(givenname, '') AS givenname
+			,IFNULL(surname, '') AS surname
+			,IFNULL(email, '') AS email
+			,IFNULL(phone, '') AS phone
+			,IFNULL(mobile, '') AS mobile
+			,IFNULL(ldap_cn, '') AS ldap_cn
+			,IFNULL(description, '') AS description
+		FROM contact
+		]]>
+		</createView>
+
+		<createView replaceIfExists="false" viewName="v_bracket_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(uuid, '') AS uuid
+			,fk_object_type_id
+			,fk_project_id
+			,IFNULL(name, '') AS name
+			,IFNULL(description, '') AS description
+			,fk_attribute_id
+			,fk_object_type_id_as_searchFilter
+		FROM bracket
+		]]>
+		</createView>
+
+		<createView replaceIfExists="false" viewName="v_bracket_searchPattern_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(uuid, '') AS uuid
+			,fk_object_type_id
+			,fk_bracket_id
+			,IFNULL(searchPattern, '') AS searchPattern
+		FROM bracket_searchPattern
+		]]>
+		</createView>
+
+		<createView replaceIfExists="false" viewName="v_import_stage_db_table_SearchInterface">
+		<![CDATA[
+		SELECT
+			 id
+			,IFNULL(client_name, '') AS client_name
+			,IFNULL(project_name, '') AS project_name
+			,IFNULL(db_table_name, '') AS db_table_name
+			,IFNULL(db_table_description, '') AS db_table_description
+			,IFNULL(db_table_field_name, '') AS db_table_field_name
+			,IFNULL(db_table_field_datatype, '') AS db_table_field_datatype
+			,IFNULL(db_table_field_description, '') AS db_table_field_description
+			,IFNULL(db_table_type_name, '') AS db_table_type_name
+			,IFNULL(db_table_context_name, '') AS db_table_context_name
+			,IFNULL(db_table_context_prefix, '') AS db_table_context_prefix
+			,isPrimaryKeyField
+			,isForeignKeyField
+			,IFNULL(foreignKey_table_name, '') AS foreignKey_table_name
+			,IFNULL(foreignKey_table_field_name, '') AS foreignKey_table_field_name
+			,_import_state
+			,_import_date
+		FROM import_stage_db_table
+		]]>
+		</createView>
+
+		<comment>
+		<![CDATA[
+		Used objects:
+			v_keyfigure_SearchInterface
+			v_object_type_SearchInterface
+			v_client_SearchInterface
+			v_project_SearchInterface
+			v_sourcesystem_SearchInterface
+			v_data_delivery_object_SearchInterface
+			v_map_object_2_object_SearchInterface
+			v_tool_SearchInterface
+			v_object_depends_on_SearchInterface
+			v_attribute_SearchInterface
+			v_tool_type_SearchInterface
+			v_db_table_SearchInterface
+			v_db_table_field_SearchInterface
+			v_db_table_context_SearchInterface
+			v_db_database_SearchInterface
+			v_scheduling_SearchInterface
+			v_parameter_SearchInterface
+			v_db_table_type_SearchInterface
+			v_object_comment_SearchInterface
+			v_glossary_SearchInterface
+			v_data_delivery_type_SearchInterface
+			v_data_transfer_process_SearchInterface
+			v_data_transfer_type_SearchInterface
+			v_contact_group_SearchInterface
+			v_contact_SearchInterface
+			v_bracket_SearchInterface
+			v_bracket_searchPattern_SearchInterface
+			v_import_stage_db_table_SearchInterface
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

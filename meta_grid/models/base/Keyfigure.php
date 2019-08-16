@@ -14,6 +14,12 @@ use Yii;
  * @property string $name
  * @property string $description
  * @property string $formula
+ * @property string $aggregation
+ * @property string $character
+ * @property string $type
+ * @property string $unit
+ * @property string $value_range
+ * @property boolean $cumulation_possible
  *
  * @property Project $fkProject
  * @property ObjectType $fkObjectType
@@ -36,8 +42,10 @@ class Keyfigure extends \yii\db\ActiveRecord
         return [
             [['uuid'], 'string'],
             [['fk_object_type_id', 'fk_project_id'], 'integer'],
+            [['cumulation_possible'], 'boolean'],
             [['name'], 'string', 'max' => 250],
-            [['description', 'formula'], 'string', 'max' => 4000]
+            [['description', 'formula'], 'string', 'max' => 4000],
+            [['aggregation', 'character', 'type', 'unit', 'value_range'], 'string', 'max' => 500]
         ];
     }
 
@@ -54,6 +62,12 @@ class Keyfigure extends \yii\db\ActiveRecord
             'name' => Yii::t('app', 'Name'),
             'description' => Yii::t('app', 'Description'),
             'formula' => Yii::t('app', 'Formula'),
+            'aggregation' => Yii::t('app', 'Aggregation'),
+            'character' => Yii::t('app', 'Character'),
+            'type' => Yii::t('app', 'Type'),
+            'unit' => Yii::t('app', 'Unit'),
+            'value_range' => Yii::t('app', 'Value Range'),
+            'cumulation_possible' => Yii::t('app', 'Cumulation Possible'),
         ];
     }
 

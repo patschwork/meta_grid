@@ -39,7 +39,7 @@ class DbTableField extends \yii\db\ActiveRecord
             [['uuid'], 'string'],
             [['fk_object_type_id', 'fk_project_id', 'fk_db_table_id'], 'integer'],
             [['name', 'datatype'], 'string', 'max' => 250],
-            [['description'], 'string', 'max' => 500]
+            [['description'], 'string', 'max' => 4000]
         ];
     }
 

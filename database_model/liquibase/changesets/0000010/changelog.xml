@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000010/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000010" context="User,2amigos-Usario">
+		<createTable tableName="social_account" remarks="User-Social-Account mapping table"> 
+			<column name="id"         type="INTEGER"       				autoIncrement="true">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>	
+			<column name="user_id"    type="INTEGER">
+				<constraints foreignKeyName="fk_social_account_user"	references="user(id)"/>
+			</column>
+			<column name="provider"   type="VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>	
+			<column name="client_id"  type="VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>	
+			<column name="code"       type="VARCHAR(32)"/>
+			<column name="email"      type="VARCHAR(255)"/>
+			<column name="username"   type="VARCHAR(255)"/>
+			<column name="data"       type="TEXT"/>
+			<column name="created_at" type="INTEGER"/>
+		</createTable>
+
+		<createIndex 
+			indexName="idx_social_account_code" 					tableName="social_account" 		unique="true">
+			<column name="code"/>
+		</createIndex>
+		<createIndex 
+			indexName="idx_social_account_provider_client_id" 		tableName="social_account" 		unique="true">
+			<column name="provider"/>
+			<column name="client_id"/>
+		</createIndex>
+		
+		<comment>
+		<![CDATA[
+		Taken from vendor\2amigos\yii2-usuario\src\User\Migration\m000000_000003_create_social_account_table.php.
+		Used objects:
+			social_account
+			idx_social_account_provider_client_id
+			idx_social_account_code
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

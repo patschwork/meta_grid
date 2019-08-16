@@ -82,4 +82,5 @@ class Attribute extends \yii\db\ActiveRecord
     {
         return $this->hasOne(\app\models\ObjectType::className(), ['id' => 'fk_object_type_id']);
     }
+    
 }

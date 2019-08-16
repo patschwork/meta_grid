@@ -5,12 +5,12 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\DataTransferProcess;
+use app\models\VDataTransferProcessSearchinterface;
 
 /**
- * DataTransferProcessSearch represents the model behind the search form about `app\models\DataTransferProcess`.
+ * DataTransferProcessSearch represents the model behind the search form about `VDataTransferProcessSearchinterface`.
  */
-class DataTransferProcessSearch extends DataTransferProcess
+class DataTransferProcessSearch extends VDataTransferProcessSearchinterface 
 {
     /**
      * @inheritdoc
@@ -41,19 +41,30 @@ class DataTransferProcessSearch extends DataTransferProcess
      */
     public function search($params)
     {
-        $query = DataTransferProcess::find();
-
+        $query = VDataTransferProcessSearchinterface::find();        
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+			        'pagination' => [
+						'pageSize' => 100,
+					]
         ]);
 
-        $this->load($params);
-
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
-        }
+		// this is the case, when the user makes his own filter criteria.
+		if (array_key_exists(\yii\helpers\StringHelper::basename(get_class($this)),$params) === true)
+		{
+			$this->load($params);
+		}
+		else
+		{
+			$this->load(array_replace_recursive(\vendor\meta_grid\helper\PerspectiveHelper::SearchModelFilter($this), $params));
+		}		
+		
+		// If select2-multiple option is true, the validation fails... 
+        // if (!$this->validate()) {
+        //     // uncomment the following line if you do not want to any records when validation fails
+        //     // $query->where('0=1');
+        //     return $dataProvider;
+        // }
 
         $query->andFilterWhere([
             'id' => $this->id,

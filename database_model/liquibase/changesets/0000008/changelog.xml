@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000008/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000008" context="User,2amigos-Usario">
+		<createTable tableName="user" remarks="User-Table"> 
+				<column name="id" 					type="INTEGER" 		autoIncrement="true">
+					<constraints primaryKey="true" nullable="false"/>
+				</column>
+				<column name="username" 			type="VARCHAR(255)">
+					<constraints nullable="false"/>
+				</column>
+				<column name="email" 				type="VARCHAR(255)">
+					<constraints nullable="false"/>
+				</column>
+				<column name="password_hash" 		type="VARCHAR(60)">
+					<constraints nullable="false"/>
+				</column>
+				<column name="auth_key" 			type="varchar(32)">
+					<constraints nullable="false"/>
+				</column>
+				<column name="unconfirmed_email"	type="VARCHAR(255)"/>
+				<column name="registration_ip" 		type="VARCHAR(45)"/>
+				<column name="flags" 				type="INTEGER" 		defaultValue="0">
+					<constraints nullable="false"/>
+				</column>
+				<column name="confirmed_at" 		type="INTEGER"/>
+				<column name="blocked_at" 			type="INTEGER"/>
+				<column name="updated_at" 			type="INTEGER">
+					<constraints nullable="false"/>
+				</column>
+				<column name="created_at" 			type="INTEGER">
+					<constraints nullable="false"/>
+				</column>
+				<column name="last_login_at" 		type="INTEGER"/>
+				<column name="auth_tf_key" 			type="VARCHAR(16)"/>
+				<column name="auth_tf_enabled" 		type="BOOLEAN" 	defaultValue="FALSE"/>
+		</createTable>
+
+		<createIndex 
+			indexName="idx_user_email" 		tableName="user" 		unique="true">
+			<column name="email"/>
+		</createIndex>
+		<createIndex 
+			indexName="idx_user_username"	tableName="user" 		unique="true">
+			<column name="username"/>
+		</createIndex>
+	
+		<comment>
+		<![CDATA[
+		Taken from vendor\2amigos\yii2-usuario\src\User\Migration\m000000_000001_create_user_table.php, m000000_000005_add_last_login_at.php and m000000_000006_add_two_factor_fields.php.
+		Used objects:
+			user
+			idx_user_email
+			idx_user_username
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

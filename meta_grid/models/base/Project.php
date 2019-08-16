@@ -46,7 +46,7 @@ class Project extends \yii\db\ActiveRecord
             [['uuid'], 'string'],
             [['fk_client_id'], 'integer'],
             [['name'], 'string', 'max' => 250],
-            [['description'], 'string', 'max' => 500]
+            [['description'], 'string', 'max' => 4000]
         ];
     }
 
@@ -83,11 +83,13 @@ class Project extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    /*
     public function getAttributes()
     {
         return $this->hasMany(\app\models\Attribute::className(), ['fk_project_id' => 'id']);
     }
-
+    */
+    
     /**
      * @return \yii\db\ActiveQuery
      */

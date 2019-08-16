@@ -9,4 +9,10 @@ use Yii;
  */
 class ToolType extends \app\models\base\ToolType
 {
+	public static function findBySql($sql, $params = [])
+	{
+		throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'Implementation deactivated.'));
+		return null;
+			
+	}
 }

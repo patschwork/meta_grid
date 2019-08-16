@@ -1,14 +1,20 @@
+
 <?php
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use app\models\Project; 
+use yii\helpers\ArrayHelper; 
+use kartik\select2\Select2; 
+use app\models\Client; 
+use vendor\meta_grid\helper\RBACHelper;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\DbDatabaseSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = Yii::t('app', 'Db Databases');
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = Yii::t('app', $this->title);
 ?>
 <div class="db-database-index">
 
@@ -23,45 +29,107 @@ if (isset($_GET["searchShow"]))
 }
 else
 {
-	echo "<a class='btn btn-default' href='index.php?r=".$_GET["r"]."&searchShow=1'>Advanced Search</a></br></br>";
+	echo "<a class='btn btn-default' href='index.php?r=".$_GET["r"]."&searchShow=1'>".Yii::t('app', 'Advanced Search')."</a></br></br>";
 }
 ?>
 
     <p>
-        <?= Html::a(Yii::t('app', 'Create {modelClass}', [
-    'modelClass' => 'Db Database',
-]), ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+		<?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('create-dbdatabase')  ? Html::a(
+		Yii::t('app', 'Create {modelClass}', ['modelClass' => Yii::t('app', 'Db Database'),]), ['create'], ['class' => 'btn btn-success']) : "" ?>
+	</p>
 
-    <?= GridView::widget([
+	<?php	// Inform user about set perspective_filter
+	if (array_key_exists("fk_object_type_id",  $searchModel->attributes) === true && (isset($searchModel->find()->select(['fk_object_type_id'])->one()->fk_object_type_id) === true))
+	{
+		$fk_object_type_id=$searchModel->find()->select(['fk_object_type_id'])->one()->fk_object_type_id;
+		$session = Yii::$app->session;
+		if ($session->hasFlash('perspective_filter_for_' . $fk_object_type_id))
+		{	
+			echo yii\bootstrap\Alert::widget([
+					'options' => [
+									'class' => 'alert-info',
+					],
+					'body' => $session->getFlash('perspective_filter_for_' . $fk_object_type_id),
+			]);
+		}		
+	}
+	?>	
+	
+	    <?= GridView::widget([
         'dataProvider' => $dataProvider,
+		'pager' => [
+			'firstPageLabel' => '<span class="glyphicon glyphicon-chevron-left"></span><span class="glyphicon glyphicon-chevron-left"></span>',
+			'lastPageLabel' => '<span class="glyphicon glyphicon-chevron-right"></span><span class="glyphicon glyphicon-chevron-right"></span>',
+			'prevPageLabel' => '<span class="glyphicon glyphicon-chevron-left"></span>',
+			'nextPageLabel' => '<span class="glyphicon glyphicon-chevron-right"></span>',
+			'maxButtonCount' => 15,
+		],
+		'layout' => "{pager}\n{summary}{items}\n{pager}",
+       	'rowOptions' => function ($model, $key, $index, $grid) {
+       		$controller = Yii::$app->controller->id;
+       		return [
+       				'ondblclick' => 'location.href="'
+       				. Yii::$app->urlManager->createUrl([$controller . '/view','id'=>$key])
+       				. '"',
+       		];
+       	},    
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+        	['class' => 'yii\grid\ActionColumn', 'contentOptions'=>[ 'style'=>'white-space: nowrap;']
+            ,
+				'template' => RBACHelper::filterActionColumn_meta_grid('{view} {update} {delete}'),
+            ],
+        	
+        	['class' => 'yii\grid\SerialColumn'],
 
             [
-             'label' => 'Client',
+             'label' => Yii::t('app', 'Client'),
              'value' => function($model) {
              		return $model->fk_project_id == "" ? $model->fk_project_id : $model->fkProject->fkClient->name;
              		},
+             		'filter' => Select2::widget([
+             				'model' => $searchModel,
+             				'attribute' => 'fk_project_id',
+             				'data' => ArrayHelper::map(Project::find()->select('project.id, client.name, project.fk_client_id')->distinct()->joinWith('fkClient')->asArray()->all(), 'id', 'name'),
+             				'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_client_id'],
+             				'pluginOptions' => [
+             						'allowClear' => true
+             				],
+             		]),
             ],
             [
-             'label' => 'Project',
+             'label' => Yii::t('app', 'Project'),
              'value' => function($model) {
-             		return $model->fk_project_id == "" ? $model->fk_project_id : isset($_GET["searchShow"]) ? $model->fkProject->name . ' [' . $model->fk_project_id . ']' : $model->fkProject->name;
+             		return $model->fk_project_id == "" ? $model->fk_project_id : (isset($_GET["searchShow"]) ? $model->fkProject->name . ' [' . $model->fk_project_id . ']' : $model->fkProject->name);
              		},
+            'filter' => Select2::widget([
+            		'model' => $searchModel,
+            		'attribute' => 'fk_project_id',
+            		'data' => ArrayHelper::map(app\models\Project::find()->asArray()->all(), 'id', 'name'),
+            		'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_fkProject'],
+            		'pluginOptions' => [
+            				'allowClear' => true
+            		],
+			]),
             ],
             'name:ntext',
             'description:html',
             [
-             'label' => 'Tool',
+             'label' => Yii::t('app', 'Tool'),
              'value' => function($model) {
-             		return $model->fk_tool_id == "" ? $model->fk_tool_id : isset($_GET["searchShow"]) ? $model->fkTool->tool_name . ' [' . $model->fk_tool_id . ']' : $model->fkTool->tool_name;
+             		return $model->fk_tool_id == "" ? $model->fk_tool_id : (isset($_GET["searchShow"]) ? $model->fkTool->tool_name . ' [' . $model->fk_tool_id . ']' : $model->fkTool->tool_name);
              		},
+            'filter' => Select2::widget([
+            		'model' => $searchModel,
+            		'attribute' => 'fk_tool_id',
+            		'data' => ArrayHelper::map(app\models\Tool::find()->asArray()->all(), 'id', 'tool_name'),
+            		'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_fkTool', 'multiple' => true],
+            		'pluginOptions' => [
+            				'allowClear' => true
+            		],
+			]),
             ],
-
-            ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
-
+	
 </div>

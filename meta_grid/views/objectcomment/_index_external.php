@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
 // 		print_r($dataProvider->query->where["ref_fk_object_type_id"]);
 // 		echo "</pre>";
 
-		echo Html::a(Yii::t('app', 'Create new comment'), ['objectcomment/createexternal', 'ref_fk_object_id' => $dataProvider->query->where["ref_fk_object_id"], 'ref_fk_object_type_id' => $dataProvider->query->where["ref_fk_object_type_id"]],['class' => 'btn btn-primary'], [
+		echo Html::a(Yii::t('app', 'Create new comment'), ['objectcomment/createexternal', 'ref_fk_object_id' => $dataProvider->query->where["ref_fk_object_id"], 'ref_fk_object_type_id' => $dataProvider->query->where["ref_fk_object_type_id"]],['class' => 'btn btn-primary', 'id' => 'btnCreateNewComment'], [
 		'data' => [
 		'method' => 'post',
 		],
@@ -41,13 +41,26 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-//             'ref_fk_object_id',			// auskommentiert
-//             'ref_fk_object_type_id',		// auskommentiert
             'comment:html',
-            // 'created_at_datetime:ntext',	// auskommentiert
-
-            //['class' => 'yii\grid\ActionColumn'],	// auskommentiert
+			[
+				// erzeugt einen Link Kommentareintrag
+				// siehe auch: http://www.yiiframework.com/forum/index.php/topic/49595-how-to-change-buttons-in-actioncolumn/
+				'class' => 'yii\grid\ActionColumn',
+				'template' => '{view}',
+				'buttons' => [
+						'info' => function ($url, $model) {
+							return Html::a('<span class="glyphicon glyphicon-info-sign"></span>', $url, [
+									'title' => Yii::t('app', 'Go to comment detail'),
+							]);
+						}
+					],
+				'urlCreator' => function ($action, $model, $key, $index) {
+					if ($action === 'view') {	            		
+						$url = "?r=objectcomment/view&id=".$key;
+						return $url;
+						}
+					}
+			]
         ],
     ]); ?>
 

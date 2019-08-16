@@ -7,6 +7,8 @@
 
 namespace yii\debug\components\search\matchers;
 
+use yii\helpers\VarDumper;
+
 /**
  * Checks if the given value is exactly or partially same as the base one.
  *
@@ -26,10 +28,13 @@ class SameAs extends Base
      */
     public function match($value)
     {
+        if (!is_scalar($value)) {
+            $value = VarDumper::export($value);
+        }
         if ($this->partial) {
             return mb_stripos($value, $this->baseValue, 0, \Yii::$app->charset) !== false;
-        } else {
-            return strcmp(mb_strtoupper($this->baseValue, \Yii::$app->charset), mb_strtoupper($value, \Yii::$app->charset)) === 0;
         }
+
+        return strcmp(mb_strtoupper($this->baseValue, \Yii::$app->charset), mb_strtoupper($value, \Yii::$app->charset)) === 0;
     }
 }

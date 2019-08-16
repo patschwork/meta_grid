@@ -6,9 +6,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\DataDeliveryObject */
 
-$this->title = Yii::t('app', 'Update {modelClass}: ', [
-    'modelClass' => 'Data Delivery Object',
-]) . ' ' . $model->name;
+$this->title = Yii::t('app', 'Update {modelClass}: ', ['modelClass' => Yii::t('app', 'Data Delivery Object')]) . ' ' . $model->name;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Data Delivery Objects'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
@@ -25,6 +23,6 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 'data_delivery_typeList' => $data_delivery_typeList,		// autogeneriert ueber gii/CRUD
 'contact_group_as_data_ownerList' => $contact_group_as_data_ownerList,		// autogeneriert ueber gii/CRUD
         
-    ]) ?>
+				    ]) ?>
 
 </div>

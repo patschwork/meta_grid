@@ -5,7 +5,13 @@ fk_object_type_id INTEGER NOT NULL  DEFAULT 1 REFERENCES object_type (id),
 fk_project_id INTEGER DEFAULT NULL REFERENCES project (id),
 name TEXT(250) DEFAULT NULL,
 description TEXT(4000) DEFAULT NULL,
-formula TEXT(4000) DEFAULT NULL
+formula TEXT(4000) DEFAULT NULL,
+aggregation TEXT(500) DEFAULT NULL,
+character TEXT(500) DEFAULT NULL,
+type TEXT(500) DEFAULT NULL,
+unit TEXT(500) DEFAULT NULL,
+value_range TEXT(500) DEFAULT NULL,
+cumulation_possible BOOLEAN DEFAULT NULL
 );
 
 CREATE TABLE object_type (
@@ -54,6 +60,7 @@ fk_contact_group_id_as_data_owner INTEGER DEFAULT NULL REFERENCES contact_group 
 CREATE TABLE map_object_2_object (
 id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
 uuid TEXT DEFAULT NULL,
+fk_mapping_qualifier_id INTEGER DEFAULT NULL REFERENCES mapping_qualifier (id),
 ref_fk_object_id_1 INTEGER NOT NULL  DEFAULT NULL,
 ref_fk_object_type_id_1 INTEGER NOT NULL  DEFAULT NULL REFERENCES object_type (id),
 ref_fk_object_id_2 INTEGER DEFAULT NULL,
@@ -204,7 +211,7 @@ uuid TEXT DEFAULT NULL,
 fk_object_type_id INTEGER NOT NULL  DEFAULT 13 REFERENCES object_type (id),
 fk_project_id INTEGER NOT NULL  DEFAULT NULL REFERENCES project (id),
 name TEXT(250) DEFAULT NULL,
-description TEXT(500) DEFAULT NULL,
+description TEXT(4000) DEFAULT NULL,
 fk_data_transfer_type_id INTEGER DEFAULT NULL REFERENCES data_transfer_type (id)
 );
 
@@ -212,11 +219,12 @@ CREATE TABLE data_transfer_type (
 id INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
 uuid TEXT DEFAULT NULL,
 name TEXT(250) DEFAULT NULL,
-description TEXT(500) DEFAULT NULL
+description TEXT(4000) DEFAULT NULL
 );
 
 CREATE TABLE app_config (
 id INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+uuid TEXT DEFAULT NULL,
 key TEXT DEFAULT NULL,
 valueINT TEXT DEFAULT NULL,
 valueSTRING TEXT DEFAULT NULL,
@@ -249,20 +257,60 @@ description TEXT DEFAULT NULL
 );
 
 CREATE TABLE bracket (
-id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+id INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
 uuid TEXT DEFAULT NULL,
-fk_object_type_id INTEGER NOT NULL  DEFAULT 16 REFERENCES object_type (id),
+fk_object_type_id INTEGER DEFAULT 16 REFERENCES object_type (id),
 fk_project_id INTEGER DEFAULT NULL REFERENCES project (id),
 name TEXT(250) DEFAULT NULL,
-description TEXT(500) DEFAULT NULL,
-fk_attribute_id INTEGER NULL DEFAULT NULL REFERENCES attribute (id),
-fk_object_type_id_as_searchFilter INTEGER DEFAULT NULL REFERENCES object_type (id)
+description TEXT(4000) DEFAULT NULL,
+fk_attribute_id INTEGER DEFAULT NULL,
+fk_object_type_id_as_searchFilter INTEGER DEFAULT NULL
 );
 
 CREATE TABLE bracket_searchPattern (
-id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+id INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
 uuid TEXT DEFAULT NULL,
-fk_object_type_id INTEGER NOT NULL  DEFAULT 17 REFERENCES object_type (id),
-fk_bracket_id INTEGER NOT NULL REFERENCES bracket (id),
-searchPattern TEXT(500) NOT NULL
+fk_object_type_id INTEGER DEFAULT 17 REFERENCES object_type (id),
+fk_bracket_id INTEGER DEFAULT NULL REFERENCES bracket (id),
+searchPattern TEXT(500) DEFAULT NULL
+);
+
+CREATE TABLE import_stage_db_table (
+id INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+client_name TEXT(250) DEFAULT NULL,
+project_name TEXT(250) DEFAULT NULL,
+db_table_name TEXT(250) DEFAULT NULL,
+db_table_description TEXT(500) DEFAULT NULL,
+db_table_field_name TEXT(250) DEFAULT NULL,
+db_table_field_datatype TEXT(250) DEFAULT NULL,
+db_table_field_description TEXT(500) DEFAULT NULL,
+db_table_type_name TEXT(250) DEFAULT NULL,
+db_table_context_name TEXT(250) DEFAULT NULL,
+db_table_context_prefix TEXT(100) DEFAULT NULL,
+isPrimaryKeyField BOOLEAN DEFAULT NULL,
+isForeignKeyField BOOLEAN DEFAULT NULL,
+foreignKey_table_name TEXT(250) DEFAULT NULL,
+foreignKey_table_field_name TEXT(250) DEFAULT NULL,
+_import_state INTEGER DEFAULT NULL,
+_import_date TIMESTAMP DEFAULT NULL
+);
+
+CREATE TABLE perspective_filter (
+id INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+uuid TEXT DEFAULT NULL,
+fk_language_id TEXT(32) DEFAULT NULL,
+fk_object_type_id INTEGER DEFAULT 18 REFERENCES object_type (id),
+filter_attribute_name TEXT(150) DEFAULT NULL,
+filter_value TEXT(150) DEFAULT NULL,
+ref_fk_object_type_id INTEGER DEFAULT NULL REFERENCES object_type (id)
+);
+
+CREATE TABLE mapping_qualifier (
+id INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+uuid TEXT DEFAULT NULL,
+fk_object_type_id INTEGER DEFAULT 19 REFERENCES object_type (id),
+name TEXT(250) DEFAULT NULL,
+short_name TEXT(250) DEFAULT NULL,
+description TEXT(4000) DEFAULT NULL,
+needs_object_depends_on BOOLEAN NOT NULL  DEFAULT 0
 );

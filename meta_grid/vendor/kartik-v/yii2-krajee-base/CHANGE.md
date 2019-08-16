@@ -1,6 +1,75 @@
 Change Log: `yii2-krajee-base`
 ==============================
 
+## Version 1.9.0 (_under development_)
+
+**Date:** (work in progress)
+
+- (enh #82): Enhance `getModule` to retrieve correct module.
+
+## Version 1.8.9
+
+**Date:** 29-Sep-2017
+
+- (enh #80): Add ability to configure module id in widgets.
+- (enh #79): New property `hashVarLoadPosition` for InputWidget and Widget.
+- (enh kartik-v/yii2-widget-switchinput#29): Enhance boolean inputs for better value init in non model scenario.
+
+## Version 1.8.8
+
+**Date:** 22-Feb-2017
+
+- (enh #74): Allow registering variables in closures by setting them in global namespace.
+- (enh #75): Better validation for default attribute value.
+- (enh #76): Create `BaseAssetBundle` without JQuery and Bootstrap assets dependency.
+
+## Version 1.8.7
+
+**Date:** 04-Sep-2016
+
+- (enh #72): Set a timeout for plugin events callbacks.
+- (enh #73): Update Animate CSS assets to latest version.
+- Enhance PHP Documentation for all classes and methods in the extension.
+
+## Version 1.8.6
+
+**Date:** 19-Aug-2016
+
+- (enh #67): Update Latvian translations.
+- (enh #71): Simplify plugin initialization and event handling.
+- Add github contribution templates.
+
+## Version 1.8.5
+
+**Date:** 08-May-2016
+
+- (enh #60): New property `enablePopStateFix` (addendum to #59).
+- (enh #61): Enhance event handling for `pluginEvents`.
+- (enh #62): Enhance widgets and plugin initialization for dynamic manipulation.
+    - Plugin initialization routine revamped
+    - Widget output can be better handled with dynamic manipulation e.g. via ajax. In order to achieve this the widgets now use the `document.body` on `load` event and trap the plugin selector identifier within that.
+    - More better integration with JS frameworks like AngularJS
+    - Revamp initialization of HTML5 Input based plugins including `Html5Input` widget init.
+- (bug #63): More correct plugin event listening and fixes #61 better.
+- (enh #64): Correct plugin event listening for all use cases (reverts #61).
+- (enh #65): Remove AssetBundle dependency on `yii\web\YiiAsset`.
+
+## Version 1.8.4
+
+**Date:** 11-Apr-2016
+
+- Better enhanced fix for #59.
+
+## Version 1.8.3
+
+**Date:** 09-Apr-2016
+
+- (enh #56): Correct date range picker repo in Config.
+- (enh #57): Update animate.css to v3.5.1.
+- (enh #58): Configure TranslationTrait to accept and parse global i18n config.
+- Add branch alias for dev-master latest release.
+- (enh #59): Workaround PJAX fix for weird back / forward browser button behavior.
+
 ## Version 1.8.2
 
 **Date:** 10-Jan-2016

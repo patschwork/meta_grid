@@ -23,10 +23,13 @@
         "schmunk42/yii2-giiant": "*",
         "kartik-v/yii2-widget-select2": "@dev",
         "kartik-v/yii2-krajee-base": "@dev",
-        "lajax/yii2-translate-manager": "1.*",
+        "lajax/yii2-translate-manager": "^1.7",
         "sitawit/yii2-piwik": "dev-master",
         "sheershoff/yii2-sentry-component": "dev-master",
-        "wbraganca/yii2-dynamicform": "*"
+        "wbraganca/yii2-dynamicform": "*",
+        "conquer/codemirror": "*",
+        "2amigos/yii2-usuario": "~1.0",
+        "yiisoft/yii2-shell": "^2.0"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
@@ -59,5 +62,11 @@
             "npm-asset-library": "vendor/npm",
             "bower-asset-library": "vendor/bower"
         }
-    }
+    },
+"repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ]
 }

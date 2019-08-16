@@ -8,6 +8,7 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use yii\web\Cookie;
 
 class SiteController extends Controller
 {
@@ -93,4 +94,41 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
+    
+    
+    public function actionLanguage($language)
+    {
+    	Yii::$app->language = $language;
+    	
+    	$languageCookie = new Cookie([
+    			'name' => 'language',
+    			'value' => $language,
+    			'expire' => time() + 60 * 60 * 24 * 30, // 30 days
+    	]);
+    	Yii::$app->response->cookies->add($languageCookie);
+		$this->setFlashForPerspectiveFilters();
+
+    	return $this->goHome();
+    }
+    
+	
+	private function setFlashForPerspectiveFilters()
+	{
+		$session = Yii::$app->session;
+		// Reset all flash messages
+		for ($i=0;$i<=50;$i++)
+		{
+			$session->setFlash('perspective_filter_for_' . $i , null);
+		}
+		
+		$model = new \app\models\PerspectiveFilter();
+				
+		// Read the attribut names
+		$distinct_fk_object_type_ids = $model::find()->select(['ref_fk_object_type_id'])->distinct()->where(['fk_language_id' => Yii::$app->language])->all();
+		$arr = array();
+		foreach($distinct_fk_object_type_ids as $distinct_fk_object_type_id)
+		{
+			$session->setFlash('perspective_filter_for_' . $distinct_fk_object_type_id->ref_fk_object_type_id , Yii::t('app','The current perspective ({perspective}) has set a filter', ['perspective' => Yii::$app->language]));
+		}
+	}
 }

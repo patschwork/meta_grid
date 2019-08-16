@@ -84,6 +84,19 @@ abstract class Generator extends Model
         foreach ($this->templates as $i => $template) {
             $this->templates[$i] = Yii::getAlias($template);
         }
+		// $this->templates["myCrud"]='D:\Entwicklung\_Privat\meta_grid\DWH_Meta_wrkCpy_DEV\dwh_meta_v2\frontend\yii\basic/myTemplates/crud/default';
+		$rc = new ReflectionClass(get_class($this));
+		$pathFromClass = dirname($rc->getFileName());
+		// $templatePath=str_replace('\vendor\yiisoft\yii2-gii\generators\model','/myTemplates/crud/default',$pathFromClass);
+		$templatePath=str_replace("\\vendor\\yiisoft\\yii2-gii\\generators\\model","/myTemplates/crud/default",$pathFromClass);
+		// echo 'D:\Entwicklung\_Privat\meta_grid\DWH_Meta_wrkCpy_DEV_feature_user_rbac\dwh_meta_v2\frontend\yii\basic/myTemplates/crud/default';
+		// echo $templatePath;
+		// echo dirname(__FILE__);
+		// echo "<br>";
+		// echo 
+		// die;
+		$this->templates["myCrud"]=str_replace(DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'yiisoft'.DIRECTORY_SEPARATOR.'yii2-gii','/myTemplates/crud/default',dirname(__FILE__));;
+		// $this->templates["myCrud"]=$templatePath;
     }
 
     /**
@@ -270,7 +283,7 @@ abstract class Generator extends Model
         $hasError = false;
         foreach ($files as $file) {
             $relativePath = $file->getRelativePath();
-            if (isset($answers[$file->id]) && $file->operation !== CodeFile::OP_SKIP) {
+            if (isset($answers[$file->id]) && !empty($answers[$file->id]) && $file->operation !== CodeFile::OP_SKIP) {
                 $error = $file->save();
                 if (is_string($error)) {
                     $hasError = true;

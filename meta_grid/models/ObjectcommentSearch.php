@@ -5,12 +5,12 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Objectcomment;
+use app\models\VObjectcommentSearchinterface;
 
 /**
- * ObjectcommentSearch represents the model behind the search form about `app\models\Objectcomment`.
+ * ObjectcommentSearch represents the model behind the search form about `VObjectcommentSearchinterface`.
  */
-class ObjectcommentSearch extends Objectcomment
+class ObjectcommentSearch extends VObjectcommentSearchinterface 
 {
     /**
      * @inheritdoc
@@ -41,10 +41,12 @@ class ObjectcommentSearch extends Objectcomment
      */
     public function search($params)
     {
-        $query = Objectcomment::find();
-
+        $query = VObjectcommentSearchinterface::find();        
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+			        'pagination' => [
+						'pageSize' => 100,
+					]
         ]);
 
         $this->load($params);
@@ -62,9 +64,9 @@ class ObjectcommentSearch extends Objectcomment
             'ref_fk_object_type_id' => $this->ref_fk_object_type_id,
         ]);
 
-        $query->andFilterWhere(['like', 'uuid', $this->uuid])
-            ->andFilterWhere(['like', 'comment', $this->comment])
-            ->andFilterWhere(['like', 'created_at_datetime', $this->created_at_datetime]);
+        $query->andFilterWhere(['like', 'uuid', '%'.$this->uuid.'%', false])
+            ->andFilterWhere(['like', 'comment', '%'.$this->comment.'%', false])
+            ->andFilterWhere(['like', 'created_at_datetime', '%'.$this->created_at_datetime.'%', false]);
 
         return $dataProvider;
     }

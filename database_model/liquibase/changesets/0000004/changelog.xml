@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.7"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.7
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.7.xsd" logicalFilePath="000004/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="5">
+		<comment>Zusaetzliche Felder in Tabelle keyfigure</comment>
+			<!-- <addColumn 												-->
+			<!-- 	tableName="keyfigure"> 									-->
+						<!-- Aggregation --> 												
+			<!-- 		<column name="aggregation" type="TEXT(500)"/> 		-->
+						<!-- Kennzahlenart --> 												
+			<!-- 		<column name="character" type="TEXT(500)"/> 		-->
+						<!-- Kennzahlentyp --> 												
+			<!-- 		<column name="type" type="TEXT(500)"/> 				-->
+						<!-- Masseinheit --> 												
+			<!-- 		<column name="unit" type="TEXT(500)"/> 				-->
+						<!-- Wertebereich --> 												
+			<!-- 		<column name="value_range" type="TEXT(500)"/> 		-->
+						<!-- Kumulation --> 												
+			<!-- 		<column name="cumulation_possible" type="BOOLEAN"/> -->
+			<!-- </addColumn> 												-->
+			
+		<sql
+            splitStatements="true">
+			ALTER TABLE keyfigure ADD COLUMN aggregation TEXT(500);
+			ALTER TABLE keyfigure ADD COLUMN character TEXT(500);
+			ALTER TABLE keyfigure ADD COLUMN type TEXT(500);
+			ALTER TABLE keyfigure ADD COLUMN unit TEXT(500);
+			ALTER TABLE keyfigure ADD COLUMN value_range TEXT(500);
+			ALTER TABLE keyfigure ADD COLUMN cumulation_possible BOOLEAN;
+		</sql>
+	</changeSet>
+	<changeSet author="patrick_schmitz" id="6">
+		<comment>Zusaetzliche Felder in Tabelle keyfigure_log</comment>
+		<sql
+            splitStatements="true">
+			ALTER TABLE keyfigure_log ADD COLUMN aggregation TEXT(500);
+			ALTER TABLE keyfigure_log ADD COLUMN character TEXT(500);
+			ALTER TABLE keyfigure_log ADD COLUMN type TEXT(500);
+			ALTER TABLE keyfigure_log ADD COLUMN unit TEXT(500);
+			ALTER TABLE keyfigure_log ADD COLUMN value_range TEXT(500);
+			ALTER TABLE keyfigure_log ADD COLUMN cumulation_possible BOOLEAN;
+		</sql>
+	</changeSet>
+	<changeSet author="patrick_schmitz" id="7">
+		<comment>ALTER TABLE keyfigure, description TEXT(500) to description TEXT(4000) and formula TEXT(500) to formula TEXT(4000)</comment>
+		<executeCommand executable="deploy_helper_exec_sql.bat"> 
+			<arg value="changesets/0000004/exec_change.sql"/>
+		</executeCommand>
+	</changeSet>
+
+</databaseChangeLog>

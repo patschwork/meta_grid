@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000026/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000026" context="config,app">
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO app_config ("key", valueINT, valueSTRING, description) VALUES('web_app_header_brandlabel_additional_text', NULL, NULL, 'Add a note as additional text after applicationtitle');
+		]]>
+		</sql>
+		
+		<comment>
+		<![CDATA[
+		New entry for app_config => web_app_header_brandlabel_additional_text.
+		Used objects:
+			app_config
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

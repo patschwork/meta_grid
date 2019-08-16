@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="feat_trans_0000007/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="feat_trans_0000007" context="translatemanager,i18n">
+		<sql splitStatements="true">
+		<![CDATA[
+		INSERT INTO language (language_id, "language", country, name, name_ascii, status) VALUES('de-DE', 'de', 'de', 'meta#grid Deutsch', 'de-Master', 1);
+		INSERT INTO language (language_id, "language", country, name, name_ascii, status) VALUES('en-GB', 'en', 'gb', 'English (UK)', 'English (UK)', 0);
+		INSERT INTO language (language_id, "language", country, name, name_ascii, status) VALUES('en-US', 'en', 'us', 'meta#grid English', 'en-Master', 1);
+		INSERT INTO language (language_id, "language", country, name, name_ascii, status) VALUES('xx-XX', 'xx', 'xx', 'Developer', 'Developer', 0);
+		INSERT INTO language (language_id, "language", country, name, name_ascii, status) VALUES('de-MS_SSRS', 'de', 'de', 'Microsoft Reporting Services Deutsch', 'de-MS_SSRS', 1);
+		]]>
+		</sql>
+		<comment>
+		<![CDATA[
+		Add inital languages.
+		Used objects:
+			language
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

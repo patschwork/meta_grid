@@ -10,24 +10,14 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 use app\models\Client;
-
-use yii\data\ActiveDataProvider;
-use app\models\VAllMappingsUnion;
-use app\models\Sourcesystem;
-use app\models\DbDatabase;
-use app\models\DbTable;
-use app\models\DbTableField;
-use app\models\Attribute;
-use app\models\DataDeliveryObject;
-use app\models\DataTransferProcess;
-use app\models\Glossary;
+use Da\User\Filter\AccessRuleFilter;
+use yii\filters\AccessControl;
 
 /**
  * ProjectController implements the CRUD actions for Project model.
  */
 class ProjectController extends Controller
 {
-	private $dataCollection = array();
 	
 	private function getClientList()
 	{
@@ -44,6 +34,11 @@ class ProjectController extends Controller
 	
     public function behaviors()
     {
+		if (YII_ENV_DEV)
+		{
+			$this->registerControllerRole();
+		}
+		
         return [
             'verbs' => [
                 'class' => VerbFilter::className(),
@@ -51,8 +46,143 @@ class ProjectController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+            'access' => [
+                'class' => AccessControl::class,
+                'ruleConfig' => [
+                    'class' => AccessRuleFilter::class,
+                ],
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['admin'],
+                    ],
+					[
+						'allow' => true,
+						'actions' => ['index','view'],
+						'roles' => ['author', 'global-view', 'view' ."-" . Yii::$app->controller->id],
+					],
+					[
+						'allow' => true,
+						'actions' => ['create', 'update', 'createexternal'],
+						'roles' => ['author', 'global-create', 'create' ."-" . Yii::$app->controller->id],
+					],
+					[
+						'allow' => true,
+						'actions' => ['delete'],
+						'roles' => ['author', 'global-delete', 'delete' ."-" . Yii::$app->controller->id],
+					],
+                ],
+            ],			
         ];
     }
+
+    private function createRole($newRoleOrPermName, $authType, $description, $ruleName, $childRole, $childPerm)
+    {
+    	$auth = Yii::$app->authManager;
+    	$checkRole = $auth->getRole($newRoleOrPermName);
+    	$checkPerm = $auth->getPermission($newRoleOrPermName);
+    	if ((is_null($checkRole) && $authType==="Role") || (is_null($checkPerm) && $authType==="Perm"))
+    	{
+    		if ($authType==="Role")
+    		{
+    			$newAuthObj = $auth->createRole($newRoleOrPermName);
+    		}
+    		else 
+    		{
+    			if ($authType==="Perm")
+    			{
+    				$newAuthObj = $auth->createPermission($newRoleOrPermName);
+    			}
+    			else 
+    			{
+    				throw "No supported authType";
+    			}
+    		}
+    		$newAuthObj->ruleName = $ruleName;
+    		if (!is_null($description))
+    		{
+    			$newAuthObj->description = $description;
+    		}
+    	
+    		$auth->add($newAuthObj);
+
+    	    if (!is_null($childRole))
+    		{	
+    			$auth->addChild($auth->getRole($childRole), $newAuthObj);
+    		}
+
+    	    if (!is_null($childPerm))
+    		{	
+    			$auth->addChild($auth->getRole($childPerm), $newAuthObj);
+    		}
+    		return $newAuthObj;
+    	}
+    	return null; 
+    }
+    
+	private function registerControllerRole()
+	{
+
+		$this->createRole("global-view", "Role", "May view all objectstypes", "isNotAGuest", null, null);
+		$this->createRole("global-create", "Role", "May create all objectstypes", "isNotAGuest", null, null);
+		$this->createRole("global-delete", "Role", "May delete all objectstypes", "isNotAGuest", null, null);
+		$newAuthorRole = $this->createRole("author", "Role", "May edit all objecttypes", "isNotAGuest", null, null);		
+		if (!is_null($newAuthorRole))
+		{			
+			Yii::$app->authManager->addChild($newAuthorRole, Yii::$app->authManager->getRole("global-view"));
+			Yii::$app->authManager->addChild($newAuthorRole, Yii::$app->authManager->getRole("global-create"));
+			Yii::$app->authManager->addChild($newAuthorRole, Yii::$app->authManager->getRole("global-delete"));
+		}
+
+		$newRoleName = 'view' ."-" . Yii::$app->controller->id;
+		$this->createRole($newRoleName, "Perm", "May only view objecttype " . Yii::$app->controller->id, "isNotAGuest", "global-view", null);
+		
+		$newRoleName = 'create' ."-" . Yii::$app->controller->id;
+		$this->createRole($newRoleName, "Perm", "May only create objecttype " . Yii::$app->controller->id, "isNotAGuest", "global-create", null);
+		
+		$newRoleName = 'delete' ."-" . Yii::$app->controller->id;
+		$this->createRole($newRoleName, "Perm", "May only delete objecttype " . Yii::$app->controller->id, "isNotAGuest", "global-delete", null);
+	}
+    
+
+	private function createProjectPermissions()
+	{
+		$projectModel = new Project();
+		$projects = $projectModel::find()->all();
+		foreach($projects as $project)
+		{
+			// $clientList[$client->id] = $client->name;
+
+			$auth = Yii::$app->authManager;
+			$newRoleOrPermName="project-".$project->id."-read";
+			$checkPerm = $auth->getPermission($newRoleOrPermName);
+			if (is_null($checkPerm)) {
+				$newAuthObj = $auth->createPermission($newRoleOrPermName);
+				$newAuthObj->ruleName = "isNotAGuest";
+				$newAuthObj->description = "Read-Permission for project " . $project->name . " (" . $project->fkClient->name . ")";
+				$newAuthObj->data = ['id' => $project->id, 'dataaccessfilter' => 'project', 'right' => 'read'];
+				$auth->add($newAuthObj);
+			}
+			$auth = Yii::$app->authManager;
+			$newRoleOrPermName="project-".$project->id."-write";
+			$checkPerm = $auth->getPermission($newRoleOrPermName);
+			if (is_null($checkPerm)) {
+				$newAuthObj = $auth->createPermission($newRoleOrPermName);
+				$newAuthObj->description = "Read-Permission for project " . $project->name . " (" . $project->fkClient->name . ")";
+				$newAuthObj->ruleName = "isNotAGuest";
+				$newAuthObj->data = ['id' => $project->id, 'dataaccessfilter' => 'project', 'right' => 'write'];
+				$auth->add($newAuthObj);
+			}
+		}
+	}
+
+	public function actionCreateprojectpermissions()
+	{
+		$this->createProjectPermissions();
+		echo "Project permissions created if needed.";
+		die;
+	}
+	
 
     /**
      * Lists all Project models.
@@ -76,10 +206,10 @@ class ProjectController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
+		        return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
-    }
+		}
 
     /**
      * Creates a new Project model.
@@ -88,17 +218,25 @@ class ProjectController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Project();
+		        $model = new Project();
 
+		if (Yii::$app->request->post())
+		{
+			$model->load(Yii::$app->request->post());
+		 if (!in_array($model->fkClient->id, Yii::$app->User->identity->permClientsCanEdit)) {throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'You have no permission to edit this data.'));
+	return;	}    
+    	}    
+			
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+				        	$this->createProjectPermissions();			
+		        	return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
                 'clientList' => $this->getClientList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
-    }
+		    }
 
     /**
      * Updates an existing Project model.
@@ -108,17 +246,22 @@ class ProjectController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+				$model = $this->findModel($id);
 
+		 if (!in_array($model->fkClient->id, Yii::$app->User->identity->permClientsCanEdit)) {throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'You have no permission to edit this data.'));
+	return;	}    
+		
+		
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+				        	$this->createProjectPermissions();			
+		            return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
                 'model' => $model,
                 'clientList' => $this->getClientList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
-    }
+		    }
 
     /**
      * Deletes an existing Project model.
@@ -128,107 +271,12 @@ class ProjectController extends Controller
      */
     public function actionDelete($id)
     {
+		 if (!in_array($this->findModel($id)->fkClient->id, Yii::$app->User->identity->permClientsCanEdit)) {throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'You have no permission to edit this data.'));
+	return;	}    
+    
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
-    }
-    
-    private function collectData($modelQuery, $fk_project_id, $objName, $sortOrder)
-    {
-    	$query = $modelQuery;
-    	$dataProvider = new ActiveDataProvider([
-    			'query' => $query,
-    	]);
-    	$query->andFilterWhere([
-    			'fk_project_id' => $fk_project_id,
-    	]);
-    	 
-    	$object_name = Yii::t('app', $objName);
-    	
-    	foreach ($dataProvider->models as $key => $item)
-    	{
-    		$this->dataCollection[$sortOrder][$object_name][$key][Yii::t('app', 'Name')] = $item->name;
-    		$this->dataCollection[$sortOrder][$object_name][$key][Yii::t('app', 'Description')] = $item->description;
-//     		$this->dataCollection[$sortOrder][$object_name][$key]['listkey'] = $item->id.";".$item->fk_object_type_id;
-    	    if ($item->fk_object_type_id==4)
-    		{
-    			$this->dataCollection[$sortOrder][$object_name][$key][Yii::t('app', 'Context')] = $item->fk_db_table_context_id == "" ? $item->fk_db_table_context_id : $item->fkDbTableContext->name;
-    			$this->dataCollection[$sortOrder][$object_name][$key][Yii::t('app', 'Type')] = $item->fk_db_table_type_id == "" ? $item->fk_db_table_type_id : $item->fkDbTableType->name;
-    		}
-    	    if ($item->fk_object_type_id==5)
-    		{
-    			$this->dataCollection[$sortOrder][$object_name][$key][Yii::t('app', 'Belongs to Table')] = $item->fk_db_table_id == "" ? $item->fk_db_table_id : $item->fkDbTable->name;
-    			$this->dataCollection[$sortOrder][$object_name][$key][Yii::t('app', 'Data Type')] = $item->datatype;
-    		}
-    	    if ($item->fk_object_type_id==3)
-    		{
-    			$this->dataCollection[$sortOrder][$object_name][$key][Yii::t('app', 'Type')] = $item->fk_data_delivery_type_id == "" ? $item->fk_data_delivery_type_id : $item->fkDataDeliveryType->name;
-    			$this->dataCollection[$sortOrder][$object_name][$key][Yii::t('app', 'Data Owner')] = $item->fk_contact_group_id_as_data_owner == "" ? $item->fk_contact_group_id_as_data_owner : $item->fkContactGroupIdAsDataOwner->name;
-    		}
-    		if ($item->fk_object_type_id==13)
-    		{
-    			$this->dataCollection[$sortOrder][$object_name][$key][Yii::t('app', 'DataTransferType')] = $item->fk_data_transfer_type_id == "" ? $item->fk_data_transfer_type_id : $item->fkDataTransferType->name;
-    		}
-    		
-    		$mapObject2ObjectSearchModel = new \app\models\VAllMappingsUnion();
-    		$queryMapObject2Object = \app\models\VAllMappingsUnion::find();
-    		$mapObject2ObjectDataProvider = new ActiveDataProvider([
-    				'query' => $queryMapObject2Object,
-    		]);
-    		$queryMapObject2Object->andFilterWhere([
-    				'filter_ref_fk_object_id' => $item->id,
-    				'filter_ref_fk_object_type_id' => $item->fk_object_type_id,
-    		]);
-
-    		foreach ($mapObject2ObjectDataProvider->models as $mapKey => $mapItem)
-    		{
-    			$this->dataCollection[$sortOrder][$object_name][$key][Yii::t('app', 'Mapping')][$mapKey]['name'] = $mapItem->name;
-    			$this->dataCollection[$sortOrder][$object_name][$key][Yii::t('app', 'Mapping')][$mapKey]['object_type_name'] = $mapItem->object_type_name;
-//     			$this->dataCollection[$sortOrder][$object_name][$key][Yii::t('app', 'Mapping')][$mapKey]['listkey'] = $mapItem->listkey;
-    		}
-    	}
-    }
-    
-    public function actionCreatedocumentation($id)
-    {
-		// Daten sammeln
-
-//     	echo '<pre>';
-    	 
-    	$dataCollection = array();
-    	
-    	// Projects
-    	$modelProject = $this->findModel($id);
-    	$sortOrder = 1;
-    	$object_name = Yii::t('app', "Project");
-    	$this->dataCollection[$sortOrder][$object_name][0][Yii::t('app', 'Client')] = $modelProject->fkClient->name;
-    	$this->dataCollection[$sortOrder][$object_name][0][Yii::t('app', 'Project')] = $modelProject->name;
-    	$this->dataCollection[$sortOrder][$object_name][0][Yii::t('app', 'Description')] = $modelProject->description;
-
-    	 
-
-
-		$this->collectData(Sourcesystem::find(), $id, "Sourcesystems", 2);
-    	$this->collectData(DbDatabase::find(), $id, "Databases", 3);
-    	$this->collectData(DbTable::find(), $id, "Tables", 4);
-//     	$this->collectData(DbTableField::find(), $id, "Table Fields", 5);
-    	$this->collectData(Attribute::find(), $id, "Attributes", 6);
-//     	$this->collectData(DataDeliveryObject::find(), $id, "Data Delivery Objects", 7);
-//     	$this->collectData(DataTransferProcess::find(), $id, "Data Transfer Process", 8);
-    	$this->collectData(Glossary::find(), $id, "Glossary", 9);
-    	 
-    	
-    	
-//     	\yii\helpers\VarDumper::dump($this->dataCollection);
-//     	\yii\helpers\VarDumper::dump($dataCollection);
-    	 
-//     	echo '</pre>';
-//     	exit();
-    	 
-    	
-    	return $this->render('create_documentation', [
-    			'dataCollection' => $this->dataCollection,
-    	]);
     }
 
     /**

@@ -1,3 +1,4 @@
+		
 <?php
 
 use yii\helpers\Html;
@@ -11,7 +12,6 @@ use yii\widgets\ActiveForm;
 <div class="data-delivery-object-form">
 
     <?php $form = ActiveForm::begin(); ?>
-
 <!--  	// automatisch auskommentiert ueber gii/CRUD    <?= $form->field($model, 'uuid') ?>  -->
 
 <!--  	// automatisch auskommentiert ueber gii/CRUD    <?= $form->field($model, 'fk_object_type_id')->textInput() ?>  -->
@@ -42,14 +42,15 @@ use yii\widgets\ActiveForm;
 
 	<?php
 		// autogeneriert ueber gii/CRUD
-		echo $form->field($model, 'fk_contact_group_id_as_data_owner')->dropDownList($contact_group_as_data_ownerList, ['id'=>'name']);
+		echo $form->field($model, 'fk_contact_group_id_as_data_owner')->widget(\vendor\meta_grid\contactgroup_select\ContactGroupSelectWidget::className());
 	?>
  <!--  	// automatisch auskommentiert ueber gii/CRUD    <?= $form->field($model, 'fk_contact_group_id_as_data_owner')->textInput() ?>  -->
+
+
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
-
 </div>

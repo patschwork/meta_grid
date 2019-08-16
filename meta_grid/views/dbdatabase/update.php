@@ -6,9 +6,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\DbDatabase */
 
-$this->title = Yii::t('app', 'Update {modelClass}: ', [
-    'modelClass' => 'Db Database',
-]) . ' ' . $model->name;
+$this->title = Yii::t('app', 'Update {modelClass}: ', ['modelClass' => Yii::t('app', 'Db Database')]) . ' ' . $model->name;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Db Databases'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
@@ -23,6 +21,6 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 'projectList' => $projectList,		// autogeneriert ueber gii/CRUD
 'toolList' => $toolList,		// autogeneriert ueber gii/CRUD
         
-    ]) ?>
+				    ]) ?>
 
 </div>

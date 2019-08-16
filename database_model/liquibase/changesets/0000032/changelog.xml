@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000032/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000032" context="mapping_qualifier">
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE map_object_2_object_log ADD COLUMN fk_mapping_qualifier_id INTEGER;
+		]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE map_object_2_object_log ADD COLUMN fk_mapping_qualifier_uuid TEXT;
+		]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_map_object_2_object_log_INSERT;
+		]]>		
+		</sql>
+		
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_map_object_2_object_log_INSERT AFTER INSERT
+ON map_object_2_object
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   INSERT INTO map_object_2_object_log (log_action, id,uuid,fk_mapping_qualifier_id, fk_mapping_qualifier_uuid,ref_fk_object_id_1,ref_fk_object_type_id_1,ref_fk_object_id_2,ref_fk_object_type_id_2) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_mapping_qualifier_id, (SELECT uuid FROM mapping_qualifier WHERE id=new.fk_mapping_qualifier_id),new.ref_fk_object_id_1,new.ref_fk_object_type_id_1,new.ref_fk_object_id_2,new.ref_fk_object_type_id_2);
+   UPDATE map_object_2_object SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   DELETE FROM _newUUID;
+   DELETE FROM map_object_2_object_log WHERE log_id=(SELECT MAX(log_id)+1 FROM map_object_2_object_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
+END;
+		]]>		
+		</sql>
+		
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_map_object_2_object_log_UPDATE;
+		]]>		
+		</sql>
+		
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_map_object_2_object_log_UPDATE AFTER UPDATE
+ON map_object_2_object
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   UPDATE map_object_2_object SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   INSERT INTO map_object_2_object_log (log_action, id,uuid,fk_mapping_qualifier_id, fk_mapping_qualifier_uuid,ref_fk_object_id_1,ref_fk_object_type_id_1,ref_fk_object_id_2,ref_fk_object_type_id_2) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_mapping_qualifier_id, (SELECT uuid FROM mapping_qualifier WHERE id=new.fk_mapping_qualifier_id),new.ref_fk_object_id_1,new.ref_fk_object_type_id_1,new.ref_fk_object_id_2,new.ref_fk_object_type_id_2);
+   DELETE FROM _newUUID;
+END;
+		]]>		
+		</sql>
+		
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_map_object_2_object_log_DELETE;
+		]]>		
+		</sql>
+		
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_map_object_2_object_log_DELETE AFTER DELETE
+ON map_object_2_object
+BEGIN
+   INSERT INTO map_object_2_object_log (log_action, id,uuid,fk_mapping_qualifier_id, fk_mapping_qualifier_uuid,ref_fk_object_id_1,ref_fk_object_type_id_1,ref_fk_object_id_2,ref_fk_object_type_id_2) VALUES ('DELETE',old.id,old.uuid,old.fk_mapping_qualifier_id, (SELECT uuid FROM mapping_qualifier WHERE id=old.fk_mapping_qualifier_id),old.ref_fk_object_id_1,old.ref_fk_object_type_id_1,old.ref_fk_object_id_2,old.ref_fk_object_type_id_2);
+END;
+		]]>		
+		</sql>
+		
+		<comment>
+		<![CDATA[
+		Foreign key for mapping_qualifier in logging table.
+		Used objects:
+			map_object_2_object_log
+			TRIG_map_object_2_object_log_INSERT
+			TRIG_map_object_2_object_log_UPDATE
+			TRIG_map_object_2_object_log_DELETE
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

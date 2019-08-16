@@ -6,9 +6,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\Scheduling */
 
-$this->title = Yii::t('app', 'Update {modelClass}: ', [
-    'modelClass' => 'Scheduling',
-]) . ' ' . $model->name;
+$this->title = Yii::t('app', 'Update {modelClass}: ', ['modelClass' => Yii::t('app', 'Scheduling')]) . ' ' . $model->name;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Schedulings'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
@@ -23,6 +21,6 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 'projectList' => $projectList,		// autogeneriert ueber gii/CRUD
 'toolList' => $toolList,		// autogeneriert ueber gii/CRUD
         
-    ]) ?>
+				    ]) ?>
 
 </div>

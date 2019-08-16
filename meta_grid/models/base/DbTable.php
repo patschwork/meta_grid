@@ -39,13 +39,22 @@ class DbTable extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['uuid', 'location'], 'string'],
-            [['fk_object_type_id', 'fk_project_id', 'fk_db_table_context_id', 'fk_db_table_type_id'], 'integer'],
+            [['uuid', 'location'], 'string'],        		
+			['fk_db_table_context_id', 'checkEqualProjectId'],
+        	[['fk_object_type_id', 'fk_project_id', 'fk_db_table_context_id', 'fk_db_table_type_id'], 'integer'],
             [['name'], 'string', 'max' => 250],
-            [['description'], 'string', 'max' => 500]
+            [['description'], 'string', 'max' => 4000],
+        		
         ];
     }
 
+    public function checkEqualProjectId($attribute, $params)
+    {
+        if (!\app\models\DbTableContext::findOne(['id'=> $this->$attribute, 'fk_project_id'=>$this->fk_project_id])) {
+    		$this->addError($attribute, \Yii::t('app', 'Cross project references are not allowed.'));
+    	}
+    }
+    
     /**
      * @inheritdoc
      */

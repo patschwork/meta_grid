@@ -1,11 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <databaseChangeLog
-  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-  <!-- <include relativeToChangelogFile="true" file="changesets/0000001/changelog.sql"/> -->
-  <include relativeToChangelogFile="true" file="changesets/0000001/changelog.xml"/>
-  <include relativeToChangelogFile="true" file="changesets/0000002/changelog.xml"/>
-  </databaseChangeLog> 
+  <include relativeToChangelogFile="true" file="changesets/0000001/changelog.xml"/>  <!-- Update view | v_All_Mappings_Union -->
+  <include relativeToChangelogFile="true" file="changesets/0000002/changelog.xml"/>  <!-- Create Index | map_object_2_object;map_object_2_object_filter_1;map_object_2_object_filter_2 -->
+  <include relativeToChangelogFile="true" file="changesets/0000003/changelog.xml"/>  <!-- SQL ALTER TABLE incl. executeCommand | sourcesystem -->
+  <include relativeToChangelogFile="true" file="changesets/0000004/changelog.xml"/>  <!-- SQL ALTER TABLE incl. executeCommand | keyfigure -->
+  <include relativeToChangelogFile="true" file="changesets/0000005/changelog.xml"/>  <!-- Create table | import_stage_db_table -->
+  <include relativeToChangelogFile="true" file="changesets/0000006/changelog.xml"/>  <!-- Update view | v_All_Mappings_Union -->
+  <include relativeToChangelogFile="true" file="changesets/0000007/changelog.xml"/>  <!-- Create view | v_keyfigure_Search;v_object_type_Search;v_client_Search;v_project_Search;v_sourcesystem_Search;v_data_delivery_object_Search;v_map_object_2_object_Search;v_tool_Search;v_object_depends_on_Search;v_attribute_Search;v_tool_type_Search;v_db_table_Search;v_db_table_field_Search;v_db_table_context_Search;v_db_database_Search;v_scheduling_Search;v_parameter_Search;v_db_table_type_Search;v_object_comment_Search;v_glossary_Search;v_data_delivery_type_Search;v_data_transfer_process_Search;v_data_transfer_type_Search;v_contact_group_Search;v_contact_Search;v_bracket_Search;v_bracket_searchPattern_Search;v_import_stage_db_table_Search -->
+  <include relativeToChangelogFile="true" file="changesets/0000008/changelog.xml"/>  <!-- Create table (with PK, AutoInc) and index | user;idx_user_email;idx_user_username  -->
+  <include relativeToChangelogFile="true" file="changesets/0000009/changelog.xml"/>  <!-- Create table (with PK, AutoInc, FK) | profile -->
+  <include relativeToChangelogFile="true" file="changesets/0000010/changelog.xml"/>  <!-- Create table (with PK, AutoInc, FK) and index | social_account;idx_social_account_provider_client_id;idx_social_account_code -->
+  <include relativeToChangelogFile="true" file="changesets/0000011/changelog.xml"/>  <!-- Create table (with FK) and index | token;idx_token_user_id_code_type -->
+  <include relativeToChangelogFile="true" file="changesets/0000012/changelog.xml"/>  <!-- Create table (with PK) | auth_rule -->
+  <include relativeToChangelogFile="true" file="changesets/0000013/changelog.xml"/>  <!-- SQL Create table (with PK, FK) and index | auth_item;idx-auth_item-type -->
+  <include relativeToChangelogFile="true" file="changesets/0000014/changelog.xml"/>  <!-- SQL Create table (with PK, FK) | auth_item_child -->
+  <include relativeToChangelogFile="true" file="changesets/0000015/changelog.xml"/>  <!-- SQL Create table (with PK, FK) | auth_assignment -->
+  <include relativeToChangelogFile="true" file="changesets/0000016/changelog.xml"/>  <!-- SQL INSERT | auth_rule -->
+  <include relativeToChangelogFile="true" file="changesets/0000017/changelog.xml"/>  <!-- SQL INSERT | auth_item -->
+  <include relativeToChangelogFile="true" file="changesets/0000018/changelog.xml"/>  <!-- SQL INSERT | auth_item_child -->
+  <include relativeToChangelogFile="true" file="changesets/0000019/changelog.xml"/>  <!-- SQL INSERT | user -->
+  <include relativeToChangelogFile="true" file="changesets/0000020/changelog.xml"/>  <!-- SQL UPDATE | db_table_context -->
+  <include relativeToChangelogFile="true" file="changesets/0000021/changelog.xml"/>  <!-- SQL UPDATE | db_table -->
+  <include relativeToChangelogFile="true" file="changesets/0000022/changelog.xml"/>  <!-- Add field to table | app_config -->
+  <include relativeToChangelogFile="true" file="changesets/0000023/changelog.xml"/>  <!-- Add field to table | app_config_log -->
+  <include relativeToChangelogFile="true" file="changesets/feat_trans_0000001/changelog.xml"/>  <!-- SQL Create table (with PK) | language --> 
+  <include relativeToChangelogFile="true" file="changesets/feat_trans_0000002/changelog.xml"/>  <!-- SQL Create table (with PK) | language_source --> 
+  <include relativeToChangelogFile="true" file="changesets/feat_trans_0000003/changelog.xml"/>  <!-- SQL Create table (with PK) | language_translate --> 
+  <include relativeToChangelogFile="true" file="changesets/feat_trans_0000004/changelog.xml"/>  <!-- Create unique index | language_translate_idx_language;language_translate --> 
+  <include relativeToChangelogFile="true" file="changesets/feat_trans_0000005/changelog.xml"/>  <!-- SQL Create table (with PK) | perspective_filter -->
+  <include relativeToChangelogFile="true" file="changesets/feat_trans_0000006/changelog.xml"/>  <!-- Create unique index | perspective_filter;perspective_filter_uix -->
+  <include relativeToChangelogFile="true" file="changesets/feat_trans_0000007/changelog.xml"/>  <!-- SQL INSERT | language -->
+  <include relativeToChangelogFile="true" file="changesets/feat_trans_0000008/changelog.xml"/>  <!-- SQL INSERT | language_source -->
+  <include relativeToChangelogFile="true" file="changesets/feat_trans_0000009/changelog.xml"/>  <!-- SQL INSERT | language_translate -->
+  <include relativeToChangelogFile="true" file="changesets/feat_trans_0000010/changelog.xml"/>  <!-- SQL DROP TABLE | perspective_filter -->
+  <include relativeToChangelogFile="true" file="changesets/feat_trans_0000011/changelog.xml"/>  <!-- SQL Create table (with PK) | perspective_filter -->
+  <include relativeToChangelogFile="true" file="changesets/feat_trans_0000012/changelog.xml"/>  <!-- SQL Create table AND TRIGGER | perspective_filter_log;TRIG_perspective_filter_log_INSERT;TRIG_perspective_filter_log_UPDATE;TRIG_perspective_filter_log_DELETE -->
+  <include relativeToChangelogFile="true" file="changesets/feat_trans_0000013/changelog.xml"/>  <!-- SQL INSERT | object_type -->
+  <include relativeToChangelogFile="true" file="changesets/feat_trans_0000014/changelog.xml"/>  <!-- SQL INSERT | perspective_filter -->
+  <include relativeToChangelogFile="true" file="changesets/0000024/changelog.xml"/>  <!-- SQL INSERT | app_config -->
+  <include relativeToChangelogFile="true" file="changesets/0000025/changelog.xml"/>  <!-- SQL INSERT | app_config -->
+  <include relativeToChangelogFile="true" file="changesets/0000026/changelog.xml"/>  <!-- SQL INSERT | app_config -->
+  <include relativeToChangelogFile="true" file="changesets/0000027/changelog.xml"/>  <!-- SQL Create table (with PK, FK) | mapping_qualifier -->
+  <include relativeToChangelogFile="true" file="changesets/0000028/changelog.xml"/>  <!-- SQL Create table (with PK, FK) | mapping_qualifier_log;TRIG_mapping_qualifier_log_INSERT;TRIG_mapping_qualifier_log_UPDATE;TRIG_mapping_qualifier_log_DELETE -->
+  <include relativeToChangelogFile="true" file="changesets/0000029/changelog.xml"/>  <!-- SQL INSERT | object_type -->
+  <include relativeToChangelogFile="true" file="changesets/0000030/changelog.xml"/>  <!-- SQL INSERT | mapping_qualifier -->
+  <include relativeToChangelogFile="true" file="changesets/0000031/changelog.xml"/>  <!-- SQL ALTER TABLE (add FK) | map_object_2_object -->
+  <include relativeToChangelogFile="true" file="changesets/0000032/changelog.xml"/>  <!-- SQL ALTER TABLE (add FK) AND TRIGGER | map_object_2_object -->
+</databaseChangeLog> 

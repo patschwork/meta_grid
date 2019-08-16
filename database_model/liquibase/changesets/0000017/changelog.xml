@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000017/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000017" context="RBAC">
+
+		<sql splitStatements="true">
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('global-view', 1, 'May view all objectstypes', 'isNotAGuest', NULL, 1515720136, 1515720136);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('global-create', 1, 'May create all objectstypes', 'isNotAGuest', NULL, 1515720136, 1515720136);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('global-delete', 1, 'May delete all objectstypes', 'isNotAGuest', NULL, 1515720136, 1515720136);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('author', 1, 'May edit all objecttypes', 'isNotAGuest', NULL, 1515720136, 1515720136);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('view-client', 2, 'May only view objecttype client', 'isNotAGuest', NULL, 1515720136, 1515720136);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('create-client', 2, 'May only create objecttype client', 'isNotAGuest', NULL, 1515720136, 1515720136);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('delete-client', 2, 'May only delete objecttype client', 'isNotAGuest', NULL, 1515720136, 1515720136);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('view-project', 2, 'May only view objecttype project', 'isNotAGuest', NULL, 1515720136, 1515720136);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('create-project', 2, 'May only create objecttype project', 'isNotAGuest', NULL, 1515720136, 1515720136);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('delete-project', 2, 'May only delete objecttype project', 'isNotAGuest', NULL, 1515720136, 1515720136);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('view-keyfigure', 2, 'May only view objecttype keyfigure', 'isNotAGuest', NULL, 1515720137, 1515720137);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('create-keyfigure', 2, 'May only create objecttype keyfigure', 'isNotAGuest', NULL, 1515720137, 1515720137);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('delete-keyfigure', 2, 'May only delete objecttype keyfigure', 'isNotAGuest', NULL, 1515720137, 1515720137);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('view-attribute', 2, 'May only view objecttype attribute', 'isNotAGuest', NULL, 1515720137, 1515720137);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('create-attribute', 2, 'May only create objecttype attribute', 'isNotAGuest', NULL, 1515720137, 1515720137);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('delete-attribute', 2, 'May only delete objecttype attribute', 'isNotAGuest', NULL, 1515720137, 1515720137);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('view-contact', 2, 'May only view objecttype contact', 'isNotAGuest', NULL, 1515720138, 1515720138);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('create-contact', 2, 'May only create objecttype contact', 'isNotAGuest', NULL, 1515720138, 1515720138);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('delete-contact', 2, 'May only delete objecttype contact', 'isNotAGuest', NULL, 1515720138, 1515720138);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('view-contact-group', 2, 'May only view objecttype contact-group', 'isNotAGuest', NULL, 1515720138, 1515720138);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('create-contact-group', 2, 'May only create objecttype contact-group', 'isNotAGuest', NULL, 1515720139, 1515720139);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('delete-contact-group', 2, 'May only delete objecttype contact-group', 'isNotAGuest', NULL, 1515720139, 1515720139);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('view-sourcesystem', 2, 'May only view objecttype sourcesystem', 'isNotAGuest', NULL, 1515720139, 1515720139);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('create-sourcesystem', 2, 'May only create objecttype sourcesystem', 'isNotAGuest', NULL, 1515720139, 1515720139);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('delete-sourcesystem', 2, 'May only delete objecttype sourcesystem', 'isNotAGuest', NULL, 1515720139, 1515720139);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('view-dbtable', 2, 'May only view objecttype dbtable', 'isNotAGuest', NULL, 1515720140, 1515720140);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('create-dbtable', 2, 'May only create objecttype dbtable', 'isNotAGuest', NULL, 1515720140, 1515720140);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('delete-dbtable', 2, 'May only delete objecttype dbtable', 'isNotAGuest', NULL, 1515720140, 1515720140);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('view-dbtablefield', 2, 'May only view objecttype dbtablefield', 'isNotAGuest', NULL, 1515720140, 1515720140);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('create-dbtablefield', 2, 'May only create objecttype dbtablefield', 'isNotAGuest', NULL, 1515720140, 1515720140);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('delete-dbtablefield', 2, 'May only delete objecttype dbtablefield', 'isNotAGuest', NULL, 1515720140, 1515720140);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('view-dbtablecontext', 2, 'May only view objecttype dbtablecontext', 'isNotAGuest', NULL, 1515720141, 1515720141);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('create-dbtablecontext', 2, 'May only create objecttype dbtablecontext', 'isNotAGuest', NULL, 1515720141, 1515720141);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('delete-dbtablecontext', 2, 'May only delete objecttype dbtablecontext', 'isNotAGuest', NULL, 1515720141, 1515720141);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('view-dbtabletype', 2, 'May only view objecttype dbtabletype', 'isNotAGuest', NULL, 1515720141, 1515720141);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('create-dbtabletype', 2, 'May only create objecttype dbtabletype', 'isNotAGuest', NULL, 1515720141, 1515720141);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('delete-dbtabletype', 2, 'May only delete objecttype dbtabletype', 'isNotAGuest', NULL, 1515720141, 1515720141);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('view-tool', 2, 'May only view objecttype tool', 'isNotAGuest', NULL, 1515720142, 1515720142);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('create-tool', 2, 'May only create objecttype tool', 'isNotAGuest', NULL, 1515720142, 1515720142);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('delete-tool', 2, 'May only delete objecttype tool', 'isNotAGuest', NULL, 1515720142, 1515720142);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('view-tooltype', 2, 'May only view objecttype tooltype', 'isNotAGuest', NULL, 1515720142, 1515720142);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('create-tooltype', 2, 'May only create objecttype tooltype', 'isNotAGuest', NULL, 1515720142, 1515720142);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('delete-tooltype', 2, 'May only delete objecttype tooltype', 'isNotAGuest', NULL, 1515720142, 1515720142);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('view-datatransferprocess', 2, 'May only view objecttype datatransferprocess', 'isNotAGuest', NULL, 1515720143, 1515720143);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('create-datatransferprocess', 2, 'May only create objecttype datatransferprocess', 'isNotAGuest', NULL, 1515720143, 1515720143);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('delete-datatransferprocess', 2, 'May only delete objecttype datatransferprocess', 'isNotAGuest', NULL, 1515720143, 1515720143);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('view-datatransfertype', 2, 'May only view objecttype datatransfertype', 'isNotAGuest', NULL, 1515720143, 1515720143);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('create-datatransfertype', 2, 'May only create objecttype datatransfertype', 'isNotAGuest', NULL, 1515720143, 1515720143);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('delete-datatransfertype', 2, 'May only delete objecttype datatransfertype', 'isNotAGuest', NULL, 1515720144, 1515720144);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('view-datadeliveryobject', 2, 'May only view objecttype datadeliveryobject', 'isNotAGuest', NULL, 1515720144, 1515720144);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('create-datadeliveryobject', 2, 'May only create objecttype datadeliveryobject', 'isNotAGuest', NULL, 1515720144, 1515720144);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('delete-datadeliveryobject', 2, 'May only delete objecttype datadeliveryobject', 'isNotAGuest', NULL, 1515720144, 1515720144);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('view-datadeliverytype', 2, 'May only view objecttype datadeliverytype', 'isNotAGuest', NULL, 1515720145, 1515720145);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('create-datadeliverytype', 2, 'May only create objecttype datadeliverytype', 'isNotAGuest', NULL, 1515720145, 1515720145);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('delete-datadeliverytype', 2, 'May only delete objecttype datadeliverytype', 'isNotAGuest', NULL, 1515720145, 1515720145);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('view-scheduling', 2, 'May only view objecttype scheduling', 'isNotAGuest', NULL, 1515720145, 1515720145);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('create-scheduling', 2, 'May only create objecttype scheduling', 'isNotAGuest', NULL, 1515720145, 1515720145);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('delete-scheduling', 2, 'May only delete objecttype scheduling', 'isNotAGuest', NULL, 1515720145, 1515720145);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('view-mapper', 2, 'May only view objecttype mapper', 'isNotAGuest', NULL, 1515720146, 1515720146);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('create-mapper', 2, 'May only create objecttype mapper', 'isNotAGuest', NULL, 1515720146, 1515720146);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('delete-mapper', 2, 'May only delete objecttype mapper', 'isNotAGuest', NULL, 1515720146, 1515720146);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('view-objectdependson', 2, 'May only view objecttype objectdependson', 'isNotAGuest', NULL, 1515720146, 1515720146);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('create-objectdependson', 2, 'May only create objecttype objectdependson', 'isNotAGuest', NULL, 1515720146, 1515720146);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('delete-objectdependson', 2, 'May only delete objecttype objectdependson', 'isNotAGuest', NULL, 1515720146, 1515720146);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('view-glossary', 2, 'May only view objecttype glossary', 'isNotAGuest', NULL, 1515720147, 1515720147);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('create-glossary', 2, 'May only create objecttype glossary', 'isNotAGuest', NULL, 1515720147, 1515720147);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('delete-glossary', 2, 'May only delete objecttype glossary', 'isNotAGuest', NULL, 1515720147, 1515720147);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('view-bracket', 2, 'May only view objecttype bracket', 'isNotAGuest', NULL, 1515720147, 1515720147);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('create-bracket', 2, 'May only create objecttype bracket', 'isNotAGuest', NULL, 1515720147, 1515720147);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('delete-bracket', 2, 'May only delete objecttype bracket', 'isNotAGuest', NULL, 1515720147, 1515720147);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('view-dbdatabase', 2, 'May only view objecttype dbdatabase', 'isNotAGuest', NULL, 1515969101, 1515969101);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('create-dbdatabase', 2, 'May only create objecttype dbdatabase', 'isNotAGuest', NULL, 1515969101, 1515969101);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('delete-dbdatabase', 2, 'May only delete objecttype dbdatabase', 'isNotAGuest', NULL, 1515969101, 1515969101);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('view-global-search', 2, 'May only view objecttype global-search', 'isNotAGuest', NULL, 1515974904, 1515974904);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('view-documentation', 2, 'May only view objecttype documentation', 'isNotAGuest', NULL, 1515977885, 1515977885);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('view-objectcomment', 2, 'May only view objecttype objectcomment', 'isNotAGuest', NULL, 1517001259, 1517001259);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('create-objectcomment', 2, 'May only create objecttype objectcomment', 'isNotAGuest', NULL, 1517001259, 1517001259);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('delete-objectcomment', 2, 'May only delete objecttype objectcomment', 'isNotAGuest', NULL, 1517001259, 1517001259);
+			INSERT INTO auth_item (name, type, description, rule_name, data, created_at, updated_at) VALUES ('mgadmin', 1, 'Administrator of meta#grid', NULL, NULL, 1517421082, 1517421190);
+		</sql>
+		<rollback>
+			<sql splitStatements="true">
+				DELETE FROM auth_item;
+			</sql>
+		</rollback>
+		<comment>
+		<![CDATA[
+		Initial Load for table auth_item for meta#grid.
+		Used objects:
+			auth_item
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

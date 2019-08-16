@@ -3,8 +3,8 @@
 /**
  * @package   yii2-krajee-base
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
- * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2016
- * @version   1.8.2
+ * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2017
+ * @version   1.8.9
  */
 
 namespace kartik\base;
@@ -13,16 +13,16 @@ use Yii;
 use yii\base\InvalidConfigException;
 
 /**
- * Global configuration helper class for Krajee extensions
+ * Global configuration helper class for Krajee extensions.
  *
  * @author Kartik Visweswaran <kartikv2@gmail.com>
  * @since 1.0
  */
 class Config
 {
-    const VENDOR_NAME = "kartik-v/";
-    const NAMESPACE_PREFIX = "\\kartik\\";
-    const DEFAULT_REASON = "for your selected functionality";
+    const VENDOR_NAME = 'kartik-v/';
+    const NAMESPACE_PREFIX = '\\kartik\\';
+    const DEFAULT_REASON = 'for your selected functionality';
 
     protected static $_validHtmlInputs = [
         'hiddenInput',
@@ -61,22 +61,23 @@ class Config
         '\kartik\date\DatePicker' => ['yii2-widgets', 'yii2-widget-datepicker'],
         '\kartik\time\TimePicker' => ['yii2-widgets', 'yii2-widget-timepicker'],
         '\kartik\datetime\DateTimePicker' => ['yii2-widgets', 'yii2-widget-datetimepicker'],
-        '\kartik\daterange\DateRangePicker' => 'yii2-daterange',
+        '\kartik\daterange\DateRangePicker' => 'yii2-date-range',
         '\kartik\sortinput\SortableInput' => 'yii2-sortinput',
+        '\kartik\tree\TreeViewInput' => 'yii2-tree-manager',
         '\kartik\money\MaskMoney' => 'yii2-money',
         '\kartik\checkbox\CheckboxX' => 'yii2-checkbox',
         '\kartik\slider\Slider' => 'yii2-slider',
     ];
 
     /**
-     * Validate multiple extension dependencies
+     * Validate multiple extension dependencies.
      *
-     * @param array $extensions the configuration of extensions with each array
-     * item setup as required in `checkDependency` method. The following keys
-     * can be setup:
-     * - name: string, the extension class name (without vendor namespace prefix)
-     * - repo: string, the extension package repository name (without vendor name prefix)
-     * - reason: string, a user friendly message for dependency validation failure
+     * @param array $extensions the configuration of extensions with each array item setup as required in
+     * `checkDependency` method. The following keys can be setup:
+     *
+     * - `name`: _string_, the extension class name (without vendor namespace prefix)
+     * - `repo`: _string_, the extension package repository name (without vendor name prefix)
+     * - `reason`: _string_, a user friendly message for dependency validation failure
      *
      * @throws InvalidConfigException if extension fails dependency validation
      */
@@ -104,8 +105,8 @@ class Config
         if (empty($name)) {
             return;
         }
-        $command = "php composer.phar require " . self::VENDOR_NAME;
-        $version = ": \"@dev\"";
+        $command = 'php composer.phar require ' . self::VENDOR_NAME;
+        $version = ': \'@dev\'';
         $class = (substr($name, 0, 8) == self::NAMESPACE_PREFIX) ? $name : self::NAMESPACE_PREFIX . $name;
 
         if (is_array($repo)) {
@@ -126,10 +127,8 @@ class Config
     }
 
     /**
-     * Gets list of namespaced Krajee input widget classes as an associative
-     * array, where the array keys are the namespaced classes, and the array
-     * values are the names of the github repository to which these classes
-     * belong to.
+     * Gets list of namespaced Krajee input widget classes as an associative array, where the array keys are the
+     * namespaced classes, and the array values are the names of the github repository to which these classes belong to.
      *
      * @returns array
      */
@@ -143,7 +142,7 @@ class Config
      *
      * @param string $type the type of input
      *
-     * @returns bool
+     * @returns boolean
      */
     public static function isValidInput($type)
     {
@@ -155,7 +154,7 @@ class Config
      *
      * @param string $type the type of input
      *
-     * @returns bool
+     * @returns boolean
      */
     public static function isHtmlInput($type)
     {
@@ -167,7 +166,7 @@ class Config
      *
      * @param string $type the type of input
      *
-     * @returns bool
+     * @returns boolean
      */
     public static function isInputWidget($type)
     {
@@ -179,7 +178,7 @@ class Config
      *
      * @param string $type the type of input
      *
-     * @returns bool
+     * @returns boolean
      */
     public static function isDropdownInput($type)
     {
@@ -210,14 +209,14 @@ class Config
      */
     public static function getLang($language)
     {
-        $pos = strpos($language, "-");
+        $pos = strpos($language, '-');
         return $pos > 0 ? substr($language, 0, $pos) : $language;
     }
 
     /**
      * Get the current directory of the extended class object
      *
-     * @param mixed $object the called object instance
+     * @param object $object the called object instance
      *
      * @return string
      */
@@ -244,21 +243,7 @@ class Config
     }
 
     /**
-     * Gets the module
-     *
-     * @param string $m the module name
-     *
-     * @return Module
-     */
-    public static function getModule($m)
-    {
-        $app = Yii::$app;
-        $mod = isset($app->controller) && $app->controller->module ? $app->controller->module : null;
-        return $mod && $mod->getModule($m) ? $mod->getModule($m) : $app->getModule($m);
-    }
-
-    /**
-     * Initializes and validates the module
+     * Initializes and validates the module (deprecated since v1.8.9 - use `getModule` instead directly)
      *
      * @param string $class the Module class name
      *
@@ -273,6 +258,37 @@ class Config
         $module = $m ? static::getModule($m) : null;
         if ($module === null || !$module instanceof $class) {
             throw new InvalidConfigException("The '{$m}' module MUST be setup in your Yii configuration file and must be an instance of '{$class}'.");
+        }
+        return $module;
+    }
+
+    /**
+     * Gets the module instance by validating the module name. The check is first done for a submodule of the same name
+     * and then the check is done for the module within the current Yii2 application.
+     *
+     * @param string $m the module identifier
+     * @param string $class the module class name
+     *
+     * @throws InvalidConfigException
+     *
+     * @return yii\base\Module
+     */
+    public static function getModule($m, $class = '')
+    {
+        $app = Yii::$app;
+        $mod = isset($app->controller) && $app->controller->module ? $app->controller->module : null;
+        $module = null;
+        if ($mod) {
+            $module = $mod->id === $m ? $mod : $mod->getModule($m);
+        }
+        if (!$module) {
+            $module = $app->getModule($m);
+        }
+        if ($module === null) {
+            throw new InvalidConfigException("The '{$m}' module MUST be setup in your Yii configuration file.");
+        }
+        if (!empty($class) && !$module instanceof $class) {
+            throw new InvalidConfigException("The '{$m}' module MUST be an instance of '{$class}'.");
         }
         return $module;
     }

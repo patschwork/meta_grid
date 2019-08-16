@@ -20,6 +20,7 @@ $searchAttributes = $generator->getSearchAttributes();
 $searchConditions = $generator->generateSearchConditions();
 
 echo "<?php\n";
+$searchInterfaceModelClassName = "V" . StringHelper::basename($generator->searchModelClass) . "interface";
 ?>
 
 namespace <?= StringHelper::dirname(ltrim($generator->searchModelClass, '\\')) ?>;
@@ -27,13 +28,14 @@ namespace <?= StringHelper::dirname(ltrim($generator->searchModelClass, '\\')) ?
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use <?= ltrim($generator->modelClass, '\\') . (isset($modelAlias) ? " as $modelAlias" : "") ?>;
+<?php // echo "use ltrim($generator->modelClass, '\\') . (isset($modelAlias) ? \" as $modelAlias\" : \"\"); ?>
+use <?= "app\\models\\" . ltrim($searchInterfaceModelClassName, '\\') . (isset($modelAlias) ? " as $modelAlias" : "") ?>;
 
 /**
- * <?= $searchModelClass ?> represents the model behind the search form about `<?= $generator->modelClass ?>`.
+ * <?= $searchModelClass ?> represents the model behind the search form about `<?= $searchInterfaceModelClassName ?>`.
  */
-class <?= $searchModelClass ?> extends <?= isset($modelAlias) ? $modelAlias : $modelClass ?>
-
+<?php // echo "class $searchModelClass extends " . isset($modelAlias) ? $modelAlias : $modelClass; ?>
+class <?= $searchModelClass ?> extends <?= $searchInterfaceModelClassName ?> 
 {
     /**
      * @inheritdoc
@@ -63,19 +65,32 @@ class <?= $searchModelClass ?> extends <?= isset($modelAlias) ? $modelAlias : $m
      */
     public function search($params)
     {
-        $query = <?= isset($modelAlias) ? $modelAlias : $modelClass ?>::find();
-
+        <?php // echo "\$query = " . isset($modelAlias) ? $modelAlias : $modelClass . "::find();"; ?>
+<?php echo "\$query = " . $searchInterfaceModelClassName . "::find();"; ?>
+        
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+			        'pagination' => [
+						'pageSize' => 100,
+					]
         ]);
 
-        $this->load($params);
-
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
-        }
+		// this is the case, when the user makes his own filter criteria.
+		if (array_key_exists(\yii\helpers\StringHelper::basename(get_class($this)),$params) === true)
+		{
+			$this->load($params);
+		}
+		else
+		{
+			$this->load(array_replace_recursive(\vendor\meta_grid\helper\PerspectiveHelper::SearchModelFilter($this), $params));
+		}		
+		
+		// If select2-multiple option is true, the validation fails... 
+        // if (!$this->validate()) {
+        //     // uncomment the following line if you do not want to any records when validation fails
+        //     // $query->where('0=1');
+        //     return $dataProvider;
+        // }
 
         <?= implode("\n        ", $searchConditions) ?>
 

@@ -5,12 +5,12 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Tool;
+use app\models\VToolSearchinterface;
 
 /**
- * ToolSearch represents the model behind the search form about `app\models\Tool`.
+ * ToolSearch represents the model behind the search form about `VToolSearchinterface`.
  */
-class ToolSearch extends Tool
+class ToolSearch extends VToolSearchinterface 
 {
     /**
      * @inheritdoc
@@ -41,19 +41,30 @@ class ToolSearch extends Tool
      */
     public function search($params)
     {
-        $query = Tool::find();
-
+        $query = VToolSearchinterface::find();        
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+			        'pagination' => [
+						'pageSize' => 100,
+					]
         ]);
 
-        $this->load($params);
-
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
-        }
+		// this is the case, when the user makes his own filter criteria.
+		if (array_key_exists(\yii\helpers\StringHelper::basename(get_class($this)),$params) === true)
+		{
+			$this->load($params);
+		}
+		else
+		{
+			$this->load(array_replace_recursive(\vendor\meta_grid\helper\PerspectiveHelper::SearchModelFilter($this), $params));
+		}		
+		
+		// If select2-multiple option is true, the validation fails... 
+        // if (!$this->validate()) {
+        //     // uncomment the following line if you do not want to any records when validation fails
+        //     // $query->where('0=1');
+        //     return $dataProvider;
+        // }
 
         $query->andFilterWhere([
             'id' => $this->id,

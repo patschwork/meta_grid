@@ -9,6 +9,7 @@ namespace yii\debug;
 
 use Yii;
 use yii\base\Component;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 
 /**
@@ -48,6 +49,12 @@ class Panel extends Component
      * See [[\yii\base\Controller::actions()]] for the format.
      */
     public $actions = [];
+
+    /**
+     * @var FlattenException|null Error while saving the panel
+     * @since 2.0.10
+     */
+    protected $error;
 
 
     /**
@@ -96,13 +103,79 @@ class Panel extends Component
     }
 
     /**
+     * @param null|array $additionalParams Optional additional parameters to add to the route
      * @return string URL pointing to panel detail view
      */
-    public function getUrl()
+    public function getUrl($additionalParams = null)
     {
-        return Url::toRoute(['/' . $this->module->id . '/default/view',
+        $route = [
+            '/' . $this->module->id . '/default/view',
             'panel' => $this->id,
             'tag' => $this->tag,
-        ]);
+        ];
+
+        if (is_array($additionalParams)){
+            $route = ArrayHelper::merge($route, $additionalParams);
+        }
+
+        return Url::toRoute($route);
+    }
+
+    /**
+     * Returns a trace line
+     * @param array $options The array with trace
+     * @return string the trace line
+     * @since 2.0.7
+     */
+    public function getTraceLine($options)
+    {
+        if (!isset($options['text'])) {
+            $options['text'] = "{$options['file']}:{$options['line']}";
+        }
+        $traceLine = $this->module->traceLine;
+        if ($traceLine === false) {
+            return $options['text'];
+        }
+
+        $options['file'] = str_replace('\\', '/', $options['file']);
+        $rawLink = $traceLine instanceof \Closure ? $traceLine($options, $this) : $traceLine;
+        return strtr($rawLink, ['{file}' => $options['file'], '{line}' => $options['line'], '{text}' => $options['text']]);
+    }
+
+    /**
+     * @param FlattenException $error
+     * @since 2.0.10
+     */
+    public function setError(FlattenException $error)
+    {
+        $this->error = $error;
+    }
+
+    /**
+     * @return FlattenException|null
+     * @since 2.0.10
+     */
+    public function getError()
+    {
+        return $this->error;
+    }
+
+    /**
+     * @return bool
+     * @since 2.0.10
+     */
+    public function hasError()
+    {
+        return $this->error !== null;
+    }
+
+    /**
+     * Is the panel enabled?
+     * @return bool
+     * @since 2.0.10
+     */
+    public function isEnabled()
+    {
+        return true;
     }
 }

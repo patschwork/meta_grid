@@ -10,7 +10,6 @@ namespace yii\bootstrap;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\helpers\ArrayHelper;
-use yii\helpers\Html;
 
 /**
  * Nav renders a nav HTML component.
@@ -33,6 +32,11 @@ use yii\helpers\Html;
  *                  '<li class="dropdown-header">Dropdown Header</li>',
  *                  ['label' => 'Level 1 - Dropdown B', 'url' => '#'],
  *             ],
+ *         ],
+ *         [
+ *             'label' => 'Login',
+ *             'url' => ['site/login'],
+ *             'visible' => Yii::$app->user->isGuest
  *         ],
  *     ],
  *     'options' => ['class' =>'nav-pills'], // set this to nav-tab to get tab-styled navigation
@@ -59,8 +63,10 @@ class Nav extends Widget
      * - linkOptions: array, optional, the HTML attributes of the item's link.
      * - options: array, optional, the HTML attributes of the item container (LI).
      * - active: boolean, optional, whether the item should be on active state or not.
+     * - dropDownOptions: array, optional, the HTML options that will passed to the [[Dropdown]] widget.
      * - items: array|string, optional, the configuration array for creating a [[Dropdown]] widget,
      *   or a string representing the dropdown menu. Note that Bootstrap does not support sub-dropdown menus.
+     * - encode: boolean, optional, whether the label will be HTML-encoded. If set, supersedes the $encodeLabels option for only this item.
      *
      * If a menu item is a string, it will be rendered directly without HTML encoding.
      */
@@ -93,6 +99,17 @@ class Nav extends Widget
      * @see isItemActive
      */
     public $params;
+    /**
+     * @var string this property allows you to customize the HTML which is used to generate the drop down caret symbol,
+     * which is displayed next to the button text to indicate the drop down functionality.
+     * Defaults to `null` which means `<span class="caret"></span>` will be used. To disable the caret, set this property to be an empty string.
+     */
+    public $dropDownCaret;
+    /**
+     * @var string name of a class to use for rendering dropdowns within this widget. Defaults to [[Dropdown]].
+     * @since 2.0.7
+     */
+    public $dropdownClass = 'yii\bootstrap\Dropdown';
 
 
     /**
@@ -107,7 +124,10 @@ class Nav extends Widget
         if ($this->params === null) {
             $this->params = Yii::$app->request->getQueryParams();
         }
-        Html::addCssClass($this->options, 'nav');
+        if ($this->dropDownCaret === null) {
+            $this->dropDownCaret = '<span class="caret"></span>';
+        }
+        Html::addCssClass($this->options, ['widget' => 'nav']);
     }
 
     /**
@@ -115,8 +135,8 @@ class Nav extends Widget
      */
     public function run()
     {
-        echo $this->renderItems();
         BootstrapAsset::register($this->getView());
+        return $this->renderItems();
     }
 
     /**
@@ -127,7 +147,6 @@ class Nav extends Widget
         $items = [];
         foreach ($this->items as $i => $item) {
             if (isset($item['visible']) && !$item['visible']) {
-                unset($items[$i]);
                 continue;
             }
             $items[] = $this->renderItem($item);
@@ -163,20 +182,22 @@ class Nav extends Widget
             $active = $this->isItemActive($item);
         }
 
-        if ($items !== null) {
+        if (empty($items)) {
+            $items = '';
+        } else {
             $linkOptions['data-toggle'] = 'dropdown';
-            Html::addCssClass($options, 'dropdown');
-            Html::addCssClass($linkOptions, 'dropdown-toggle');
-            $label .= ' ' . Html::tag('b', '', ['class' => 'caret']);
+            Html::addCssClass($options, ['widget' => 'dropdown']);
+            Html::addCssClass($linkOptions, ['widget' => 'dropdown-toggle']);
+            if ($this->dropDownCaret !== '') {
+                $label .= ' ' . $this->dropDownCaret;
+            }
             if (is_array($items)) {
-                if ($this->activateItems) {
-                    $items = $this->isChildActive($items, $active);
-                }
+                $items = $this->isChildActive($items, $active);
                 $items = $this->renderDropdown($items, $item);
             }
         }
 
-        if ($this->activateItems && $active) {
+        if ($active) {
             Html::addCssClass($options, 'active');
         }
 
@@ -193,7 +214,10 @@ class Nav extends Widget
      */
     protected function renderDropdown($items, $parentItem)
     {
-        return Dropdown::widget([
+        /** @var Widget $dropdownClass */
+        $dropdownClass = $this->dropdownClass;
+        return $dropdownClass::widget([
+            'options' => ArrayHelper::getValue($parentItem, 'dropDownOptions', []),
             'items' => $items,
             'encodeLabels' => $this->encodeLabels,
             'clientOptions' => false,
@@ -204,15 +228,27 @@ class Nav extends Widget
     /**
      * Check to see if a child item is active optionally activating the parent.
      * @param array $items @see items
-     * @param boolean $active should the parent be active too
+     * @param bool $active should the parent be active too
      * @return array @see items
      */
     protected function isChildActive($items, &$active)
     {
         foreach ($items as $i => $child) {
+            if (is_array($child) && !ArrayHelper::getValue($child, 'visible', true)) {
+                continue;
+            }
             if (ArrayHelper::remove($items[$i], 'active', false) || $this->isItemActive($child)) {
                 Html::addCssClass($items[$i]['options'], 'active');
                 if ($this->activateParents) {
+                    $active = true;
+                }
+            }
+            $childItems = ArrayHelper::getValue($child, 'items');
+            if (is_array($childItems)) {
+                $activeParent = false;
+                $items[$i]['items'] = $this->isChildActive($childItems, $activeParent);
+                if ($activeParent) {
+                    Html::addCssClass($items[$i]['options'], 'active');
                     $active = true;
                 }
             }
@@ -228,10 +264,13 @@ class Nav extends Widget
      * Only when its route and parameters match [[route]] and [[params]], respectively, will a menu item
      * be considered active.
      * @param array $item the menu item to be checked
-     * @return boolean whether the menu item is active
+     * @return bool whether the menu item is active
      */
     protected function isItemActive($item)
     {
+        if (!$this->activateItems) {
+            return false;
+        }
         if (isset($item['url']) && is_array($item['url']) && isset($item['url'][0])) {
             $route = $item['url'][0];
             if ($route[0] !== '/' && Yii::$app->controller) {
@@ -242,7 +281,9 @@ class Nav extends Widget
             }
             unset($item['url']['#']);
             if (count($item['url']) > 1) {
-                foreach (array_splice($item['url'], 1) as $name => $value) {
+                $params = $item['url'];
+                unset($params[0]);
+                foreach ($params as $name => $value) {
                     if ($value !== null && (!isset($this->params[$name]) || $this->params[$name] != $value)) {
                         return false;
                     }

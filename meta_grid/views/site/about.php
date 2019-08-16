@@ -9,8 +9,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        This is the About page. You may modify the following file to customize its content:
+		$Revision: 5262a09d5f49 $ from $Date: 2018/08/30 19:46:59 $
     </p>
 
-    <code><?= __FILE__ ?></code>
 </div>

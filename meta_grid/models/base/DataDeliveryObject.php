@@ -42,7 +42,7 @@ class DataDeliveryObject extends \yii\db\ActiveRecord
             [['uuid'], 'string'],
             [['fk_object_type_id', 'fk_project_id', 'fk_tool_id', 'fk_data_delivery_type_id', 'fk_contact_group_id_as_data_owner'], 'integer'],
             [['name'], 'string', 'max' => 250],
-            [['description'], 'string', 'max' => 500]
+            [['description'], 'string', 'max' => 4000]
         ];
     }
 

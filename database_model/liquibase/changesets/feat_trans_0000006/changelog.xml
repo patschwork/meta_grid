@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="feat_trans_0000006/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="feat_trans_0000006" context="translatemanager,i18n">
+		<createIndex 
+			indexName="perspective_filter_uix"
+			tableName="perspective_filter"
+			unique="true">
+				<column name="fk_language_id"/>
+				<column name="fk_object_type_id"/>
+				<column name="filter_attribute_name"/>
+				<column name="filter_value"/>
+		</createIndex>
+		<comment>
+		<![CDATA[
+		Unique index for table perspective_filter avoid multiple rows with the same content.
+		Used objects:
+			perspective_filter
+			perspective_filter_uix
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>
