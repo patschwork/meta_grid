@@ -1,0 +1,95 @@
+{
+    "name": "2amigos/yii2-usuario",
+    "description": "Highly customizable and extensible user management, authentication, and authorization Yii2 extension",
+    "type": "yii2-extension",
+    "license": "BSD-3-Clause",
+    "support": {
+        "issues": "https://github.com/2amigos/yii2-usuario/issues?state=open",
+        "forum": "https://gitter.im/2amigos/yii2-usuario",
+        "source": "https://github.com/2amigos/yii2-usuario"
+    },
+    "keywords": [
+        "2amigos",
+        "yii",
+        "yii2",
+        "yii 2",
+        "yii framework",
+        "user",
+        "access",
+        "rbac",
+        "acl",
+        "backend",
+        "yii2-user",
+        "yii2 user",
+        "user management"
+    ],
+    "authors": [
+        {
+            "name": "2amigOS! Consulting Group",
+            "email": "hola@2amigos.us",
+            "homepage": "http://2amigos.us",
+            "role": "Developer"
+        },
+        {
+            "name": "Antonio Ramirez Cobos",
+            "email": "hola@2amigos.us",
+            "homepage": "http://2amigos.us",
+            "role": "Developer"
+        },
+        {
+            "name": "Timur Ruziev",
+            "email": "resurtm@2amigos.us",
+            "homepage": "http://resurtm.com",
+            "role": "Developer"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=5.5",
+        "2amigos/yii2-selectize-widget": "^1.1",
+        "yiisoft/yii2-authclient": "^2.1",
+        "yiisoft/yii2-httpclient": "^2.0",
+        "yiisoft/yii2-bootstrap": "^2.0",
+        "yiisoft/yii2-swiftmailer": "^2.0",
+        "2amigos/2fa-library": "^1.0",
+        "2amigos/qrcode-library": "^1.1"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.3",
+        "squizlabs/php_codesniffer": "*",
+        "phpmd/phpmd": "@stable",
+        "codeception/specify": "^0.4.3",
+        "codeception/verify": "^0.3.1",
+        "codeception/codeception": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Da\\User\\": "./src/User"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Da\\User\\": "./src/User"
+        }
+    },
+    "config": {
+        "preferred-install": {
+            "*": "auto"
+        },
+        "fxp-asset": {
+            "installer-paths": {
+                "npm-asset-library": "vendor/npm",
+                "bower-asset-library": "vendor/bower"
+            },
+            "vcs-driver-options": {
+                "github-no-api": true
+            },
+            "git-skip-update": "2 days",
+            "pattern-skip-version": "(-build|-patch)"
+        }
+    },
+    "extra": {
+        "bootstrap": "Da\\User\\Bootstrap"
+    }
+}
