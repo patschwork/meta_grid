@@ -10,6 +10,11 @@
     <directory>/</directory>
     <parameters>
       <parameter>
+        <name>map_db_table_to_db_database_id</name>
+        <default_value>11</default_value>
+        <description>DB_Database ID which will be used to map (new) database tables found</description>
+      </parameter>
+      <parameter>
         <name>metagrid_jdbc_db_pwd</name>
         <default_value/>
         <description>JDBC Database Password for meta#grid</description>
@@ -30,32 +35,62 @@
         <description>JDBC URL of the source system to write in meta#grid database (including IP/DNS, Port, Databasename)</description>
       </parameter>
       <parameter>
-        <name>project_id</name>
+        <name>object_type_id_db_database</name>
+        <default_value>11</default_value>
+        <description>Static values used in transformation (do not change)</description>
+      </parameter>
+      <parameter>
+        <name>object_type_id_db_table</name>
         <default_value>4</default_value>
+        <description>Static values used in transformation (do not change)</description>
+      </parameter>
+      <parameter>
+        <name>project_id</name>
+        <default_value>7</default_value>
         <description>Project ID which information belongs to</description>
       </parameter>
       <parameter>
         <name>source_db_schema_exclude</name>
-        <default_value>sys,INFORMATION_SCHEMA,Backup,zz_Attic</default_value>
+        <default_value>sys,INFORMATION_SCHEMA,Backup,zz_Attic,information_schema,pg_catalog,pg_toast</default_value>
         <description>Ignore special schemes in databse e.g. sys</description>
       </parameter>
       <parameter>
         <name>source_jdbc_db_pwd</name>
+        <default_value>Encrypted 2be98afc86ac68681fa40fd26da86a29b</default_value>
+        <description/>
+      </parameter>
+      <parameter>
+        <name>source_jdbc_db_pwd_X</name>
         <default_value>Encrypted 2be98afc86aa7f2e4bb16bd64d980aac9</default_value>
         <description>JDBC Database Password</description>
       </parameter>
       <parameter>
         <name>source_jdbc_db_user</name>
+        <default_value>SA</default_value>
+        <description/>
+      </parameter>
+      <parameter>
+        <name>source_jdbc_db_user_X</name>
         <default_value>postgres</default_value>
         <description>JDBC Database User for source</description>
       </parameter>
       <parameter>
         <name>source_jdbc_driver_class</name>
+        <default_value>net.sourceforge.jtds.jdbc.Driver</default_value>
+        <description/>
+      </parameter>
+      <parameter>
+        <name>source_jdbc_driver_class_X</name>
         <default_value>org.postgresql.Driver</default_value>
         <description>JDBC Java Driver Class to use to read from source</description>
       </parameter>
       <parameter>
         <name>source_jdbc_url</name>
+        <default_value>jdbc:jtds:sqlserver://127.0.0.1:1433/Chinook</default_value>
+        <description/>
+      </parameter>
+      <parameter>
+        <name>source_jdbc_url_X</name>
         <default_value>jdbc:postgresql://127.0.0.1:5432/pdwh</default_value>
         <description>JDBC URL of the source system to read from (including IP/DNS, Port, Databasename)</description>
       </parameter>
@@ -488,8 +523,8 @@
     <notepad>
       <note>Not finished yet. 
 Next step is filling a staging table to check the import...</note>
-      <xloc>676</xloc>
-      <yloc>446</yloc>
+      <xloc>655</xloc>
+      <yloc>310</yloc>
       <width>426</width>
       <heigth>51</heigth>
       <fontname>Tahoma</fontname>
@@ -534,8 +569,8 @@ Next step is filling a staging table to check the import...</note>
 
 
 </note>
-      <xloc>667</xloc>
-      <yloc>554</yloc>
+      <xloc>646</xloc>
+      <yloc>418</yloc>
       <width>322</width>
       <heigth>523</heigth>
       <fontname>Tahoma</fontname>
@@ -560,8 +595,8 @@ Next step is filling a staging table to check the import...</note>
 
 
 </note>
-      <xloc>636</xloc>
-      <yloc>687</yloc>
+      <xloc>615</xloc>
+      <yloc>551</yloc>
       <width>321</width>
       <heigth>113</heigth>
       <fontname>Tahoma</fontname>
@@ -586,8 +621,8 @@ Next step is filling a staging table to check the import...</note>
 
 
 </note>
-      <xloc>277</xloc>
-      <yloc>426</yloc>
+      <xloc>256</xloc>
+      <yloc>290</yloc>
       <width>271</width>
       <heigth>113</heigth>
       <fontname>Tahoma</fontname>
@@ -600,6 +635,27 @@ Next step is filling a staging table to check the import...</note>
       <backgroundcolorred>255</backgroundcolorred>
       <backgroundcolorgreen>174</backgroundcolorgreen>
       <backgroundcolorblue>215</backgroundcolorblue>
+      <bordercolorred>100</bordercolorred>
+      <bordercolorgreen>100</bordercolorgreen>
+      <bordercolorblue>100</bordercolorblue>
+      <drawshadow>Y</drawshadow>
+    </notepad>
+    <notepad>
+      <note>PRÜFEN OB db_database überhaupt vorhanden ist mit der angegebenen ID als Parameter</note>
+      <xloc>2135</xloc>
+      <yloc>737</yloc>
+      <width>531</width>
+      <heigth>25</heigth>
+      <fontname>Arial</fontname>
+      <fontsize>10</fontsize>
+      <fontbold>N</fontbold>
+      <fontitalic>N</fontitalic>
+      <fontcolorred>0</fontcolorred>
+      <fontcolorgreen>0</fontcolorgreen>
+      <fontcolorblue>0</fontcolorblue>
+      <backgroundcolorred>255</backgroundcolorred>
+      <backgroundcolorgreen>205</backgroundcolorgreen>
+      <backgroundcolorblue>112</backgroundcolorblue>
       <bordercolorred>100</bordercolorred>
       <bordercolorgreen>100</bordercolorgreen>
       <bordercolorblue>100</bordercolorblue>
@@ -989,11 +1045,6 @@ Next step is filling a staging table to check the import...</note>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Get JDBC Metadata - Tables</from>
-      <to>Filter rows: Exclude Table Schema</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Filter rows: Exclude Table Schema</from>
       <to>Sort rows - tables</to>
       <enabled>Y</enabled>
@@ -1054,68 +1105,71 @@ Next step is filling a staging table to check the import...</note>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Data Grid: Set Paramter</from>
-      <to>Modified Java Script Value: Set project_id</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Sort rows - tables</from>
       <to>Modified Java Script Value - location</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Modified Java Script Value: Set project_id</from>
-      <to>Get JDBC Metadata - Catalog</to>
+      <from>Table output: db_table</from>
+      <to>Stream lookup mapping db_table to db_database</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Get JDBC Metadata - Catalog</from>
+      <from>Table input: map_object_2_object</from>
+      <to>Stream lookup mapping db_table to db_database</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows: uuid IS NULL (no mapping for db_table found)</from>
+      <to>Dummy (do nothing) 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Stream lookup mapping db_table to db_database</from>
+      <to>Filter rows: uuid IS NULL (no mapping for db_table found)</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Table input: db_database</from>
+      <to>Stream lookup db_database</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows: uuid IS NULL (no mapping for db_table found)</from>
+      <to>Stream lookup db_database</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Stream lookup db_database</from>
+      <to>Filter rows: uuid IS NULL (no mapping for db_table found) 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows: uuid IS NULL (no mapping for db_table found) 2</from>
+      <to>Table output: mapping_object_2_object</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows: uuid IS NULL (no mapping for db_table found) 2</from>
+      <to>Write to log: No database_id found</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>get_Database_Name</from>
       <to>Get JDBC Metadata - Tables</to>
       <enabled>Y</enabled>
     </hop>
+    <hop>
+      <from>Get JDBC Metadata - Tables</from>
+      <to>Modified Java Script Value: Set project_id</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Modified Java Script Value: Set project_id</from>
+      <to>Filter rows: Exclude Table Schema</to>
+      <enabled>Y</enabled>
+    </hop>
   </order>
-  <step>
-    <name>Data Grid: Set Paramter</name>
-    <type>DataGrid</type>
-    <description/>
-    <distribute>N</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <field>
-        <name>dummy</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <length>-1</length>
-        <precision>-1</precision>
-        <set_empty_string>N</set_empty_string>
-      </field>
-    </fields>
-    <data>
-      <line>
-        <item>1</item>
-      </line>
-    </data>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>193</xloc>
-      <yloc>43</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
   <step>
     <name>Database lookup - fk_client_id</name>
     <type>DBLookup</type>
@@ -1158,8 +1212,8 @@ Next step is filling a staging table to check the import...</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>423</xloc>
-      <yloc>466</yloc>
+      <xloc>402</xloc>
+      <yloc>330</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1205,8 +1259,8 @@ Next step is filling a staging table to check the import...</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>866</xloc>
-      <yloc>340</yloc>
+      <xloc>845</xloc>
+      <yloc>204</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1229,8 +1283,32 @@ Next step is filling a staging table to check the import...</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1167</xloc>
-      <yloc>749</yloc>
+      <xloc>1146</xloc>
+      <yloc>613</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Dummy (do nothing) 2</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>2014</xloc>
+      <yloc>613</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1263,8 +1341,8 @@ Next step is filling a staging table to check the import...</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1030</xloc>
-      <yloc>177</yloc>
+      <xloc>1009</xloc>
+      <yloc>41</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1306,8 +1384,8 @@ Next step is filling a staging table to check the import...</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>423</xloc>
-      <yloc>340</yloc>
+      <xloc>402</xloc>
+      <yloc>204</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1340,8 +1418,76 @@ Next step is filling a staging table to check the import...</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1167</xloc>
-      <yloc>591</yloc>
+      <xloc>1146</xloc>
+      <yloc>455</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Filter rows: uuid IS NULL (no mapping for db_table found)</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <send_true_to>Stream lookup db_database</send_true_to>
+    <send_false_to>Dummy (do nothing) 2</send_false_to>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>uuid_stream_lookup_mapping</leftvalue>
+        <function>IS NULL</function>
+        <rightvalue/>
+      </condition>
+    </compare>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>2014</xloc>
+      <yloc>455</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Filter rows: uuid IS NULL (no mapping for db_table found) 2</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <send_true_to>Table output: mapping_object_2_object</send_true_to>
+    <send_false_to>Write to log: No database_id found</send_false_to>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>db_database_id</leftvalue>
+        <function>IS NOT NULL</function>
+        <rightvalue/>
+      </condition>
+    </compare>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>2624</xloc>
+      <yloc>455</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1416,52 +1562,9 @@ Next step is filling a staging table to check the import...</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1412</xloc>
+      <xloc>1391</xloc>
       <yloc>0</yloc>
       <draw>N</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Get JDBC Metadata - Catalog</name>
-    <type>jdbcMetaData</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <connectionSource>Connection</connectionSource>
-    <connectionName>Source_Generic_Database</connectionName>
-    <connectionField>Kettle_Connection_Name</connectionField>
-    <jdbcDriverField/>
-    <jdbcUrlField/>
-    <jdbcUserField/>
-    <jdbcPasswordField/>
-    <alwaysPassInputRow>N</alwaysPassInputRow>
-    <methodName>getCatalogs</methodName>
-    <removeArgumentFields>N</removeArgumentFields>
-    <argumentSourceFields>N</argumentSourceFields>
-    <arguments>
-    </arguments>
-    <outputFields>
-      <outputField>
-        <name>TABLE_CAT</name>
-        <rename>TABLE_CAT</rename>
-      </outputField>
-    </outputFields>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>472</xloc>
-      <yloc>177</yloc>
-      <draw>Y</draw>
     </GUI>
   </step>
   <step>
@@ -1529,6 +1632,10 @@ Next step is filling a staging table to check the import...</note>
         <name>REF_GENERATION</name>
         <rename>REF_GENERATION</rename>
       </outputField>
+      <outputField>
+        <name/>
+        <rename/>
+      </outputField>
     </outputFields>
     <cluster_schema/>
     <remotesteps>
@@ -1538,8 +1645,8 @@ Next step is filling a staging table to check the import...</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>751</xloc>
-      <yloc>177</yloc>
+      <xloc>459</xloc>
+      <yloc>41</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1619,8 +1726,8 @@ location = vTABLE_CAT + vTABLE_SCHEM + vTABLE_NAME;
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1309</xloc>
-      <yloc>340</yloc>
+      <xloc>1288</xloc>
+      <yloc>204</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1654,8 +1761,8 @@ location = vTABLE_CAT + vTABLE_SCHEM + vTABLE_NAME;
       </output>
     </remotesteps>
     <GUI>
-      <xloc>817</xloc>
-      <yloc>724</yloc>
+      <xloc>796</xloc>
+      <yloc>588</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1671,7 +1778,7 @@ location = vTABLE_CAT + vTABLE_SCHEM + vTABLE_NAME;
       <schema_name/>
     </partitioning>
     <compatible>N</compatible>
-    <optimizationLevel/>
+    <optimizationLevel>9</optimizationLevel>
     <jsScripts>
       <jsScript>
         <jsScript_type>0</jsScript_type>
@@ -1682,6 +1789,13 @@ setVariable("var_fk_project_id_filter",getVariable("project_id",""),"s")
 
 fk_project_id=getVariable("project_id","");
 db_schema_exclude=getVariable("source_db_schema_exclude","");
+
+map_db_table_to_db_database_id=getVariable("map_db_table_to_db_database_id","");
+
+object_type_id_db_table=getVariable("object_type_id_db_table","");
+object_type_id_db_database=getVariable("object_type_id_db_database","");
+
+stream_lookup_dummy_value_2=1
 
 writeToLog("Exclude follwing db_schemes: " + db_schema_exclude)</jsScript_script>
       </jsScript>
@@ -1703,6 +1817,38 @@ writeToLog("Exclude follwing db_schemes: " + db_schema_exclude)</jsScript_script
         <precision>-1</precision>
         <replace>N</replace>
       </field>
+      <field>
+        <name>map_db_table_to_db_database_id</name>
+        <rename>map_db_table_to_db_database_id</rename>
+        <type>Integer</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <replace>N</replace>
+      </field>
+      <field>
+        <name>object_type_id_db_table</name>
+        <rename>object_type_id_db_table</rename>
+        <type>Integer</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <replace>N</replace>
+      </field>
+      <field>
+        <name>object_type_id_db_database</name>
+        <rename>object_type_id_db_database</rename>
+        <type>Integer</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <replace>N</replace>
+      </field>
+      <field>
+        <name>stream_lookup_dummy_value_2</name>
+        <rename>stream_lookup_dummy_value_2</rename>
+        <type>Integer</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <replace>N</replace>
+      </field>
     </fields>
     <cluster_schema/>
     <remotesteps>
@@ -1712,8 +1858,8 @@ writeToLog("Exclude follwing db_schemes: " + db_schema_exclude)</jsScript_script
       </output>
     </remotesteps>
     <GUI>
-      <xloc>193</xloc>
-      <yloc>177</yloc>
+      <xloc>734</xloc>
+      <yloc>41</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1777,8 +1923,8 @@ writeToLog("Exclude follwing db_schemes: " + db_schema_exclude)</jsScript_script
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1309</xloc>
-      <yloc>177</yloc>
+      <xloc>1288</xloc>
+      <yloc>41</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1818,8 +1964,90 @@ writeToLog("Exclude follwing db_schemes: " + db_schema_exclude)</jsScript_script
       </output>
     </remotesteps>
     <GUI>
-      <xloc>817</xloc>
-      <yloc>591</yloc>
+      <xloc>796</xloc>
+      <yloc>455</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Stream lookup db_database</name>
+    <type>StreamLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <from>Table input: db_database</from>
+    <input_sorted>N</input_sorted>
+    <preserve_memory>Y</preserve_memory>
+    <sorted_list>N</sorted_list>
+    <integer_pair>N</integer_pair>
+    <lookup>
+      <key>
+        <name>stream_lookup_dummy_value_2</name>
+        <field>stream_lookup_dummy_value</field>
+      </key>
+      <value>
+        <name>id</name>
+        <rename>db_database_id</rename>
+        <default/>
+        <type>Integer</type>
+      </value>
+    </lookup>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>2380</xloc>
+      <yloc>455</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Stream lookup mapping db_table to db_database</name>
+    <type>StreamLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <from>Table input: map_object_2_object</from>
+    <input_sorted>N</input_sorted>
+    <preserve_memory>Y</preserve_memory>
+    <sorted_list>N</sorted_list>
+    <integer_pair>N</integer_pair>
+    <lookup>
+      <key>
+        <name>id</name>
+        <field>ref_fk_object_id_2</field>
+      </key>
+      <value>
+        <name>uuid</name>
+        <rename>uuid_stream_lookup_mapping</rename>
+        <default/>
+        <type>String</type>
+      </value>
+    </lookup>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1685</xloc>
+      <yloc>455</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1857,8 +2085,8 @@ writeToLog("Exclude follwing db_schemes: " + db_schema_exclude)</jsScript_script
       </output>
     </remotesteps>
     <GUI>
-      <xloc>423</xloc>
-      <yloc>591</yloc>
+      <xloc>402</xloc>
+      <yloc>455</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1896,8 +2124,51 @@ writeToLog("Exclude follwing db_schemes: " + db_schema_exclude)</jsScript_script
       </output>
     </remotesteps>
     <GUI>
-      <xloc>817</xloc>
-      <yloc>857</yloc>
+      <xloc>796</xloc>
+      <yloc>721</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Table input: db_database</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>Meta#Grid_Generic_Database</connection>
+    <sql>SELECT
+  id
+, uuid
+, fk_object_type_id
+, fk_project_id
+, name
+, description
+, fk_tool_id
+, 1 AS stream_lookup_dummy_value
+FROM db_database
+WHERE 1=1
+AND id = ${map_db_table_to_db_database_id}
+AND fk_project_id = ${project_id}</sql>
+    <limit/>
+    <lookup/>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>Y</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>2380</xloc>
+      <yloc>778</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1938,8 +2209,51 @@ WHERE fk_project_id = ${project_id}</sql>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>817</xloc>
-      <yloc>990</yloc>
+      <xloc>796</xloc>
+      <yloc>854</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Table input: map_object_2_object</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>Meta#Grid_Generic_Database</connection>
+    <sql>SELECT
+  id
+, uuid
+, ref_fk_object_id_1
+, ref_fk_object_type_id_1
+, ref_fk_object_id_2
+, ref_fk_object_type_id_2
+, fk_mapping_qualifier_id
+FROM map_object_2_object
+WHERE 1=1 
+AND ref_fk_object_id_1 = ${map_db_table_to_db_database_id}
+AND ref_fk_object_type_id_1 = ${object_type_id_db_database} -- db_database -> 11
+AND ref_fk_object_type_id_2 = ${object_type_id_db_table}    -- db_table -> 4</sql>
+    <limit/>
+    <lookup/>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>Y</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1685</xloc>
+      <yloc>854</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1947,7 +2261,7 @@ WHERE fk_project_id = ${project_id}</sql>
     <name>Table output: db_table</name>
     <type>TableOutput</type>
     <description/>
-    <distribute>Y</distribute>
+    <distribute>N</distribute>
     <custom_distribution/>
     <copies>1</copies>
     <partitioning>
@@ -2001,8 +2315,67 @@ WHERE fk_project_id = ${project_id}</sql>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1447</xloc>
-      <yloc>591</yloc>
+      <xloc>1426</xloc>
+      <yloc>455</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Table output: mapping_object_2_object</name>
+    <type>TableOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>Meta#Grid_Generic_Database</connection>
+    <schema/>
+    <table>map_object_2_object</table>
+    <commit>1000</commit>
+    <truncate>N</truncate>
+    <ignore_errors>N</ignore_errors>
+    <use_batch>Y</use_batch>
+    <specify_fields>Y</specify_fields>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_field/>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_monthly>Y</partitioning_monthly>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_field/>
+    <tablename_in_table>Y</tablename_in_table>
+    <return_keys>N</return_keys>
+    <return_field/>
+    <fields>
+      <field>
+        <column_name>ref_fk_object_id_2</column_name>
+        <stream_name>id</stream_name>
+      </field>
+      <field>
+        <column_name>ref_fk_object_type_id_2</column_name>
+        <stream_name>object_type_id_db_table</stream_name>
+      </field>
+      <field>
+        <column_name>ref_fk_object_id_1</column_name>
+        <stream_name>map_db_table_to_db_database_id</stream_name>
+      </field>
+      <field>
+        <column_name>ref_fk_object_type_id_1</column_name>
+        <stream_name>object_type_id_db_database</stream_name>
+      </field>
+    </fields>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>2987</xloc>
+      <yloc>455</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2035,8 +2408,98 @@ WHERE fk_project_id = ${project_id}</sql>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1447</xloc>
-      <yloc>749</yloc>
+      <xloc>1426</xloc>
+      <yloc>613</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Write to log: No database_id found</name>
+    <type>WriteToLog</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <loglevel>log_level_basic</loglevel>
+    <displayHeader>Y</displayHeader>
+    <limitRows>N</limitRows>
+    <limitRowsNumber>5</limitRowsNumber>
+    <logmessage>No database_id found</logmessage>
+    <fields>
+      <field>
+        <name>map_db_table_to_db_database_id</name>
+      </field>
+    </fields>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>2624</xloc>
+      <yloc>894</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>get_Database_Name</name>
+    <type>SimpleMapping</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <specification_method>filename</specification_method>
+    <trans_object_id/>
+    <trans_name/>
+    <filename>${Internal.Entry.Current.Directory}/00_get_database_name.ktr</filename>
+    <directory_path/>
+    <mappings>
+      <input>
+        <mapping>
+          <input_step/>
+          <output_step/>
+          <main_path>Y</main_path>
+          <rename_on_output>Y</rename_on_output>
+          <description/>
+        </mapping>
+      </input>
+      <output>
+        <mapping>
+          <input_step/>
+          <output_step/>
+          <main_path>Y</main_path>
+          <rename_on_output>N</rename_on_output>
+          <description/>
+          <connector>
+            <parent>TABLE_CAT</parent>
+            <child>TABLE_CAT</child>
+          </connector>
+        </mapping>
+      </output>
+      <parameters>
+        <inherit_all_vars>Y</inherit_all_vars>
+      </parameters>
+    </mappings>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>172</xloc>
+      <yloc>41</yloc>
       <draw>Y</draw>
     </GUI>
   </step>

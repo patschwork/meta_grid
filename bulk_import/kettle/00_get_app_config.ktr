@@ -51,12 +51,12 @@
         </parameter>
         <parameter>
             <name>source_jdbc_driver_class</name>
-            <default_value>com.microsoft.sqlserver.jdbc.SQLServerDriver</default_value>
+            <default_value>net.sourceforge.jtds.jdbc.Driver</default_value>
             <description>JDBC Java Driver Class to use to read from source</description>
         </parameter>
         <parameter>
             <name>source_jdbc_url</name>
-            <default_value>jdbc:sqlserver:&#47;&#47;127.0.0.1:1433;databaseName=mappingwebrc_p</default_value>
+            <default_value>jdbc:jtds:sqlserver://127.0.0.1:1433/Chinook</default_value>
             <description>JDBC URL of the source system to read from (including IP&#47;DNS, Port, Databasename)</description>
         </parameter>
     </parameters>

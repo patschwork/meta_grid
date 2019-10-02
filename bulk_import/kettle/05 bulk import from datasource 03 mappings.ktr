@@ -491,7 +491,7 @@ Next step is filling a staging table to check the import...</note>
       <xloc>1185</xloc>
       <yloc>258</yloc>
       <width>426</width>
-      <heigth>51</heigth>
+      <heigth>52</heigth>
       <fontname>Tahoma</fontname>
       <fontsize>10</fontsize>
       <fontbold>N</fontbold>
@@ -518,7 +518,7 @@ Next step is filling a staging table to check the import...</note>
       <xloc>380</xloc>
       <yloc>458</yloc>
       <width>406</width>
-      <heigth>127</heigth>
+      <heigth>143</heigth>
       <fontname>Arial</fontname>
       <fontsize>10</fontsize>
       <fontbold>Y</fontbold>
@@ -543,7 +543,7 @@ Next step is filling a staging table to check the import...</note>
       <xloc>787</xloc>
       <yloc>287</yloc>
       <width>330</width>
-      <heigth>88</heigth>
+      <heigth>105</heigth>
       <fontname>Arial</fontname>
       <fontsize>10</fontsize>
       <fontbold>Y</fontbold>
@@ -575,8 +575,8 @@ Next step is filling a staging table to check the import...</note>
 </note>
       <xloc>318</xloc>
       <yloc>709</yloc>
-      <width>876</width>
-      <heigth>245</heigth>
+      <width>880</width>
+      <heigth>257</heigth>
       <fontname>Arial</fontname>
       <fontsize>10</fontsize>
       <fontbold>Y</fontbold>
@@ -608,8 +608,8 @@ Next step is filling a staging table to check the import...</note>
 </note>
       <xloc>27</xloc>
       <yloc>980</yloc>
-      <width>873</width>
-      <heigth>245</heigth>
+      <width>875</width>
+      <heigth>257</heigth>
       <fontname>Arial</fontname>
       <fontsize>10</fontsize>
       <fontbold>Y</fontbold>
@@ -661,7 +661,7 @@ Next step is filling a staging table to check the import...</note>
       <xloc>453</xloc>
       <yloc>1250</yloc>
       <width>290</width>
-      <heigth>616</heigth>
+      <heigth>618</heigth>
       <fontname>Arial</fontname>
       <fontsize>10</fontsize>
       <fontbold>Y</fontbold>
@@ -678,6 +678,57 @@ Next step is filling a staging table to check the import...</note>
       <drawshadow>Y</drawshadow>
     </notepad>
   </notepads>
+  <connection>
+    <name>[In memory] MyDatabase (H2)</name>
+    <server/>
+    <type>GENERIC</type>
+    <access>Native</access>
+    <database/>
+    <port>1521</port>
+    <username>H2</username>
+    <password>Encrypted </password>
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
+    <attributes>
+      <attribute>
+        <code>CUSTOM_DRIVER_CLASS</code>
+        <attribute>org.h2.Driver</attribute>
+      </attribute>
+      <attribute>
+        <code>CUSTOM_URL</code>
+        <attribute>jdbc:h2:tcp://localhost:6006/mem:MyDatabase;DB_CLOSE_DELAY=-1</attribute>
+      </attribute>
+      <attribute>
+        <code>FORCE_IDENTIFIERS_TO_LOWERCASE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>FORCE_IDENTIFIERS_TO_UPPERCASE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>IS_CLUSTERED</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>PORT_NUMBER</code>
+        <attribute>1521</attribute>
+      </attribute>
+      <attribute>
+        <code>QUOTE_ALL_FIELDS</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>SUPPORTS_BOOLEAN_DATA_TYPE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>USE_POOLING</code>
+        <attribute>N</attribute>
+      </attribute>
+    </attributes>
+  </connection>
   <connection>
     <name>[local] AdventureWorks2008R2 (MSSQL)</name>
     <server>127.0.0.1</server>
@@ -974,6 +1025,10 @@ Next step is filling a staging table to check the import...</note>
         <attribute>${metagrid_jdbc_url}</attribute>
       </attribute>
       <attribute>
+        <code>DATABASE_DIALECT_ID</code>
+        <attribute>Generic database</attribute>
+      </attribute>
+      <attribute>
         <code>FORCE_IDENTIFIERS_TO_LOWERCASE</code>
         <attribute>N</attribute>
       </attribute>
@@ -990,11 +1045,74 @@ Next step is filling a staging table to check the import...</note>
         <attribute>1521</attribute>
       </attribute>
       <attribute>
+        <code>PRESERVE_RESERVED_WORD_CASE</code>
+        <attribute>Y</attribute>
+      </attribute>
+      <attribute>
         <code>QUOTE_ALL_FIELDS</code>
         <attribute>N</attribute>
       </attribute>
       <attribute>
         <code>SUPPORTS_BOOLEAN_DATA_TYPE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>SUPPORTS_TIMESTAMP_DATA_TYPE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>USE_POOLING</code>
+        <attribute>N</attribute>
+      </attribute>
+    </attributes>
+  </connection>
+  <connection>
+    <name>mip_t (MSSQL)</name>
+    <server>127.0.0.1</server>
+    <type>MSSQL</type>
+    <access>Native</access>
+    <database>mip_t</database>
+    <port>1433</port>
+    <username>sa</username>
+    <password>Encrypted 2be98afc86aa79390ae48f7238896bbd7</password>
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
+    <attributes>
+      <attribute>
+        <code>FORCE_IDENTIFIERS_TO_LOWERCASE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>FORCE_IDENTIFIERS_TO_UPPERCASE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>IS_CLUSTERED</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>MSSQL_DOUBLE_DECIMAL_SEPARATOR</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>PORT_NUMBER</code>
+        <attribute>1433</attribute>
+      </attribute>
+      <attribute>
+        <code>PRESERVE_RESERVED_WORD_CASE</code>
+        <attribute>Y</attribute>
+      </attribute>
+      <attribute>
+        <code>QUOTE_ALL_FIELDS</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>SUPPORTS_BOOLEAN_DATA_TYPE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>SUPPORTS_TIMESTAMP_DATA_TYPE</code>
         <attribute>N</attribute>
       </attribute>
       <attribute>
@@ -1025,6 +1143,10 @@ Next step is filling a staging table to check the import...</note>
         <attribute>${source_jdbc_url}</attribute>
       </attribute>
       <attribute>
+        <code>DATABASE_DIALECT_ID</code>
+        <attribute>Generic database</attribute>
+      </attribute>
+      <attribute>
         <code>FORCE_IDENTIFIERS_TO_LOWERCASE</code>
         <attribute>N</attribute>
       </attribute>
@@ -1041,11 +1163,19 @@ Next step is filling a staging table to check the import...</note>
         <attribute>1521</attribute>
       </attribute>
       <attribute>
+        <code>PRESERVE_RESERVED_WORD_CASE</code>
+        <attribute>Y</attribute>
+      </attribute>
+      <attribute>
         <code>QUOTE_ALL_FIELDS</code>
         <attribute>N</attribute>
       </attribute>
       <attribute>
         <code>SUPPORTS_BOOLEAN_DATA_TYPE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>SUPPORTS_TIMESTAMP_DATA_TYPE</code>
         <attribute>N</attribute>
       </attribute>
       <attribute>
@@ -1166,58 +1296,11 @@ Next step is filling a staging table to check the import...</note>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Data Grid: Set Paramter</from>
-      <to>Get JDBC Metadata - Catalog</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Get JDBC Metadata - Catalog</from>
+      <from>get_Database_Name</from>
       <to>Get JDBC Metadata - Columns</to>
       <enabled>Y</enabled>
     </hop>
   </order>
-  <step>
-    <name>Data Grid: Set Paramter</name>
-    <type>DataGrid</type>
-    <description/>
-    <distribute>N</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <field>
-        <name>dummy</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <length>-1</length>
-        <precision>-1</precision>
-        <set_empty_string>N</set_empty_string>
-      </field>
-    </fields>
-    <data>
-      <line>
-        <item>1</item>
-      </line>
-    </data>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>236</xloc>
-      <yloc>416</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
   <step>
     <name>Database lookup - fk_db_table_id 2</name>
     <type>DBLookup</type>
@@ -2510,35 +2593,48 @@ FROM map_object_2_object
     </GUI>
   </step>
   <step>
-    <name>Get JDBC Metadata - Catalog</name>
-    <type>jdbcMetaData</type>
+    <name>get_Database_Name</name>
+    <type>SimpleMapping</type>
     <description/>
-    <distribute>N</distribute>
+    <distribute>Y</distribute>
     <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connectionSource>Connection</connectionSource>
-    <connectionName>Source_Generic_Database</connectionName>
-    <connectionField>Kettle_Connection_Name</connectionField>
-    <jdbcDriverField/>
-    <jdbcUrlField/>
-    <jdbcUserField/>
-    <jdbcPasswordField/>
-    <alwaysPassInputRow>N</alwaysPassInputRow>
-    <methodName>getCatalogs</methodName>
-    <removeArgumentFields>N</removeArgumentFields>
-    <argumentSourceFields>N</argumentSourceFields>
-    <arguments>
-    </arguments>
-    <outputFields>
-      <outputField>
-        <name>TABLE_CAT</name>
-        <rename>TABLE_CAT</rename>
-      </outputField>
-    </outputFields>
+    <specification_method>filename</specification_method>
+    <trans_object_id/>
+    <trans_name/>
+    <filename>${Internal.Entry.Current.Directory}/00_get_database_name.ktr</filename>
+    <directory_path/>
+    <mappings>
+      <input>
+        <mapping>
+          <input_step/>
+          <output_step/>
+          <main_path>Y</main_path>
+          <rename_on_output>Y</rename_on_output>
+          <description/>
+        </mapping>
+      </input>
+      <output>
+        <mapping>
+          <input_step/>
+          <output_step/>
+          <main_path>Y</main_path>
+          <rename_on_output>N</rename_on_output>
+          <description/>
+          <connector>
+            <parent>TABLE_CAT</parent>
+            <child>TABLE_CAT</child>
+          </connector>
+        </mapping>
+      </output>
+      <parameters>
+        <inherit_all_vars>Y</inherit_all_vars>
+      </parameters>
+    </mappings>
     <cluster_schema/>
     <remotesteps>
       <input>

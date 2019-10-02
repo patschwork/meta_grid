@@ -36,27 +36,47 @@
       </parameter>
       <parameter>
         <name>source_db_schema_exclude</name>
-        <default_value>sys,INFORMATION_SCHEMA,Backup,zz_Attic</default_value>
+        <default_value>sys,INFORMATION_SCHEMA,Backup,zz_Attic,information_schema,pg_catalog,pg_toast</default_value>
         <description>Ignore special schemes in databse e.g. sys</description>
       </parameter>
       <parameter>
         <name>source_jdbc_db_pwd</name>
+        <default_value>Encrypted 2be98afc86ac68681fa40fd26da86a29b</default_value>
+        <description/>
+      </parameter>
+      <parameter>
+        <name>source_jdbc_db_pwd_X</name>
         <default_value>Encrypted 2be98afc86aa7f2e4bb16bd64d980aac9</default_value>
         <description>JDBC Database Password</description>
       </parameter>
       <parameter>
         <name>source_jdbc_db_user</name>
+        <default_value>SA</default_value>
+        <description/>
+      </parameter>
+      <parameter>
+        <name>source_jdbc_db_user_X</name>
         <default_value>postgres</default_value>
         <description>JDBC Database User for source</description>
       </parameter>
       <parameter>
         <name>source_jdbc_driver_class</name>
+        <default_value>net.sourceforge.jtds.jdbc.Driver</default_value>
+        <description/>
+      </parameter>
+      <parameter>
+        <name>source_jdbc_driver_class_X</name>
         <default_value>org.postgresql.Driver</default_value>
         <description>JDBC Java Driver Class to use to read from source</description>
       </parameter>
       <parameter>
         <name>source_jdbc_url</name>
-        <default_value>jdbc:postgresql://127.0.0.1:5432/stage</default_value>
+        <default_value>jdbc:jtds:sqlserver://127.0.0.1:1433/Chinook</default_value>
+        <description/>
+      </parameter>
+      <parameter>
+        <name>source_jdbc_url_X</name>
+        <default_value>jdbc:postgresql://127.0.0.1:5432/pdwh</default_value>
         <description>JDBC URL of the source system to read from (including IP/DNS, Port, Databasename)</description>
       </parameter>
     </parameters>
@@ -1109,12 +1129,7 @@ Next step is filling a staging table to check the import...</note>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Data Grid</from>
-      <to>Get JDBC Metadata - Catalog</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Get JDBC Metadata - Catalog</from>
+      <from>get_Database_Name</from>
       <to>Get JDBC Metadata - Columns</to>
       <enabled>Y</enabled>
     </hop>
@@ -1188,48 +1203,6 @@ Next step is filling a staging table to check the import...</note>
     <GUI>
       <xloc>854</xloc>
       <yloc>792</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Data Grid</name>
-    <type>DataGrid</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <field>
-        <name>dummy</name>
-        <type>Integer</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <length>-1</length>
-        <precision>-1</precision>
-        <set_empty_string>N</set_empty_string>
-      </field>
-    </fields>
-    <data>
-      <line>
-        <item>1</item>
-      </line>
-    </data>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>221</xloc>
-      <yloc>383</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2502,35 +2475,48 @@ WHERE fk_project_id=${project_id}</sql>
     </GUI>
   </step>
   <step>
-    <name>Get JDBC Metadata - Catalog</name>
-    <type>jdbcMetaData</type>
+    <name>get_Database_Name</name>
+    <type>SimpleMapping</type>
     <description/>
-    <distribute>N</distribute>
+    <distribute>Y</distribute>
     <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connectionSource>Connection</connectionSource>
-    <connectionName>Source_Generic_Database</connectionName>
-    <connectionField>Kettle_Connection_Name</connectionField>
-    <jdbcDriverField/>
-    <jdbcUrlField/>
-    <jdbcUserField/>
-    <jdbcPasswordField/>
-    <alwaysPassInputRow>N</alwaysPassInputRow>
-    <methodName>getCatalogs</methodName>
-    <removeArgumentFields>N</removeArgumentFields>
-    <argumentSourceFields>N</argumentSourceFields>
-    <arguments>
-    </arguments>
-    <outputFields>
-      <outputField>
-        <name>TABLE_CAT</name>
-        <rename>TABLE_CAT</rename>
-      </outputField>
-    </outputFields>
+    <specification_method>filename</specification_method>
+    <trans_object_id/>
+    <trans_name/>
+    <filename>${Internal.Entry.Current.Directory}/00_get_database_name.ktr</filename>
+    <directory_path/>
+    <mappings>
+      <input>
+        <mapping>
+          <input_step/>
+          <output_step/>
+          <main_path>Y</main_path>
+          <rename_on_output>Y</rename_on_output>
+          <description/>
+        </mapping>
+      </input>
+      <output>
+        <mapping>
+          <input_step/>
+          <output_step/>
+          <main_path>Y</main_path>
+          <rename_on_output>N</rename_on_output>
+          <description/>
+          <connector>
+            <parent>TABLE_CAT</parent>
+            <child>TABLE_CAT</child>
+          </connector>
+        </mapping>
+      </output>
+      <parameters>
+        <inherit_all_vars>Y</inherit_all_vars>
+      </parameters>
+    </mappings>
     <cluster_schema/>
     <remotesteps>
       <input>
@@ -2540,7 +2526,7 @@ WHERE fk_project_id=${project_id}</sql>
     </remotesteps>
     <GUI>
       <xloc>221</xloc>
-      <yloc>295</yloc>
+      <yloc>267</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
