@@ -174,6 +174,8 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
         if ($column->name=="uuid") continue;
         if ($column->name=="fk_object_type_id") continue;
         if ($column->name=="location") continue;
+        
+        if ($column->name=="description" && $generator->modelClass=="app\models\DbTable") continue; // phabricator-task: T23
 
         // Patrick, 2016-01-16, "related" Infos anzeigen
         $setRelationInformation = 0;
@@ -309,6 +311,16 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
         	if ($column->name=="description") $fieldFormat = ":html";
         	if ($column->name=="comment") $fieldFormat = ":html";
         }
+        
+        // { ... phabricator-task: T23
+        if ($column->name=="name" && $generator->modelClass=="app\models\DbTable")
+        {
+        	$useGenCode = 1;
+        	$genCode = "";
+        	$genCode .= "            '" . "databaseInfoFromLocation" . ":ntext" . "',\n";
+        	$genCode .= "            '" . $column->name . $fieldFormat . "',\n";
+        }
+        // ...}
         
         if (++$count < 6) {
 		

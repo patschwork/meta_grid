@@ -9,7 +9,8 @@ use Yii;
  */
 class DbTable extends \app\models\base\DbTable
 {
-    public function beforeDelete()
+	
+	public function beforeDelete()
     {
         if (!parent::beforeDelete()) {
             return false;
@@ -59,5 +60,31 @@ class DbTable extends \app\models\base\DbTable
 		return null;			
     	
     }
- 
+    
+    // { ... phabricator-task: T23
+    public function getDatabaseInfoFromLocation()
+    {
+    	// The bulk loader sets the location attrbute as follows: "Databasename"."Schema"."Table"
+    	$returnValue = "";
+    	
+    	if ((strpos($this->location, '"."')) !== false)
+    	{
+    		if (count(explode('"."', $this->location)) >= 3)
+    		{
+    			$returnValue = explode(".", $this->location)[0];
+    			$returnValue = str_replace('"',"",$returnValue);
+    		}
+    	}
+    	
+    	return $returnValue;
+    }
+    // ...}
+    
+    public function attributeLabels() {
+    	return [
+    			/* Your other attribute labels */
+    			'databaseInfoFromLocation' => Yii::t('app', 'Database'),
+    	];
+    }
+    
 }

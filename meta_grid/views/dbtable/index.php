@@ -112,8 +112,8 @@ else
             		],
 			]),
             ],
+            'databaseInfoFromLocation:ntext',
             'name:ntext',
-            'description:html',
             [
              'label' => Yii::t('app', 'Db Table Context'),
              'value' => function($model) {
