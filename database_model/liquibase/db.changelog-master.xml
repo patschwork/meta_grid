@@ -52,4 +52,24 @@
   <include relativeToChangelogFile="true" file="changesets/0000030/changelog.xml"/>  <!-- SQL INSERT | mapping_qualifier -->
   <include relativeToChangelogFile="true" file="changesets/0000031/changelog.xml"/>  <!-- SQL ALTER TABLE (add FK) | map_object_2_object -->
   <include relativeToChangelogFile="true" file="changesets/0000032/changelog.xml"/>  <!-- SQL ALTER TABLE (add FK) AND TRIGGER | map_object_2_object -->
+  <include relativeToChangelogFile="true" file="changesets/0000033/changelog.xml"/>  <!-- SQL ALTER TABLE AND TRIGGER | data_transfer_process;data_transfer_process_log;TRIG_data_transfer_process_log_INSERT;TRIG_data_transfer_process_log_UPDATE;TRIG_data_transfer_process_log_DELETE -->
+  <include relativeToChangelogFile="true" file="changesets/0000034/changelog.xml"/>  <!-- SQL INSERT | data_transfer_type -->
+  <include relativeToChangelogFile="true" file="changesets/0000035/changelog.xml"/>  <!-- SQL Create table | url ;url_log;TRIG_url_log_INSERT;TRIG_url_log_UPDATE;TRIG_url_log_DELETE;object_type;mapping_qualifier -->
+  <include relativeToChangelogFile="true" file="changesets/0000036/changelog.xml"/>  <!-- SQL ALTER TABLE | data_transfer_process;data_transfer_process_log -->
+  <include relativeToChangelogFile="true" file="changesets/0000037/changelog.xml"/>  <!-- SQL INSERT | app_config -->
+  <include relativeToChangelogFile="true" file="changesets/0000038/changelog.xml"/>  <!-- Create view | v_url_SearchInterface -->
+  <include relativeToChangelogFile="true" file="changesets/0000039/changelog.xml"/>  <!-- SQL INSERT | language_source -->
+  <include relativeToChangelogFile="true" file="changesets/0000040/changelog.xml"/>  <!-- SQL INSERT | language_source -->
+  <include relativeToChangelogFile="true" file="changesets/0000041/changelog.xml"/>  <!-- SQL INSERT | language_translate -->
+  <include relativeToChangelogFile="true" file="changesets/0000042/changelog.xml"/>  <!-- SQL DELETE | language_source -->
+  <include relativeToChangelogFile="true" file="changesets/0000043/changelog.xml"/>  <!-- SQL UPDATE | language_translate -->
+  <include relativeToChangelogFile="true" file="changesets/0000044/changelog.xml"/>  <!-- SQL INSERT | language_translate -->
+  <include relativeToChangelogFile="true" file="changesets/0000045/changelog.xml"/>  <!-- SQL INSERT | language_source -->
+  <include relativeToChangelogFile="true" file="changesets/0000046/changelog.xml"/>  <!-- SQL INSERT | language_translate -->
+  <include relativeToChangelogFile="true" file="changesets/0000047/changelog.xml"/>  <!-- SQL UPDATE | language_translate -->
+  <include relativeToChangelogFile="true" file="changesets/0000048/changelog.xml"/>  <!-- SQL DROP and CREATE table | url  -->
+  <include relativeToChangelogFile="true" file="changesets/0000049/changelog.xml"/>  <!-- SQL DROP and CREATE table | url_log;TRIG_url_log_INSERT;TRIG_url_log_UPDATE;TRIG_url_log_DELETE -->
+  <include relativeToChangelogFile="true" file="changesets/0000050/changelog.xml"/>  <!-- Alter view | v_url_SearchInterface -->
+  <include relativeToChangelogFile="true" file="changesets/0000051/changelog.xml"/>  <!-- Update view | v_All_Objects_Union -->
+  <include relativeToChangelogFile="true" file="changesets/0000052/changelog.xml"/>  <!-- Update view | v_LastChangesLog_List -->
 </databaseChangeLog> 

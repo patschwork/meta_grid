@@ -1,5 +1,5 @@
 -- Diese Datei wurde automatisiert ueber das Python-Script create_wwwsqldesigner_model_additional.py erstellt
--- 2019-02-01 20:44:47
+-- 2019-10-27 14:45:10
 
 PRAGMA foreign_keys = ON;
 
@@ -55,7 +55,7 @@ BEGIN
    INSERT INTO keyfigure_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,formula,aggregation,character,type,unit,value_range,cumulation_possible) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.formula,old.aggregation,old.character,old.type,old.unit,old.value_range,old.cumulation_possible);
 END;
 
-   
+
 DROP TABLE IF EXISTS object_type_log;
 CREATE TABLE object_type_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -94,7 +94,7 @@ BEGIN
    INSERT INTO object_type_log (log_action, id,uuid,name) VALUES ('DELETE',old.id,old.uuid,old.name);
 END;
 
-   
+
 DROP TABLE IF EXISTS client_log;
 CREATE TABLE client_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -134,7 +134,7 @@ BEGIN
    INSERT INTO client_log (log_action, id,uuid,name,description) VALUES ('DELETE',old.id,old.uuid,old.name,old.description);
 END;
 
-   
+
 DROP TABLE IF EXISTS project_log;
 CREATE TABLE project_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -176,7 +176,7 @@ BEGIN
    INSERT INTO project_log (log_action, id,uuid,fk_client_id, fk_client_uuid,name,description) VALUES ('DELETE',old.id,old.uuid,old.fk_client_id, (SELECT uuid FROM client WHERE id=old.fk_client_id),old.name,old.description);
 END;
 
-   
+
 DROP TABLE IF EXISTS sourcesystem_log;
 CREATE TABLE sourcesystem_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -222,7 +222,7 @@ BEGIN
    INSERT INTO sourcesystem_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_contact_group_id_as_supporter, fk_contact_group_uuid_as_supporter) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_contact_group_id_as_supporter, (SELECT uuid FROM contact_group WHERE id=old.fk_contact_group_id_as_supporter));
 END;
 
-   
+
 DROP TABLE IF EXISTS data_delivery_object_log;
 CREATE TABLE data_delivery_object_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -272,7 +272,7 @@ BEGIN
    INSERT INTO data_delivery_object_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_tool_id, fk_tool_uuid,fk_data_delivery_type_id, fk_data_delivery_type_uuid,fk_contact_group_id_as_data_owner, fk_contact_group_uuid_as_data_owner) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_tool_id, (SELECT uuid FROM tool WHERE id=old.fk_tool_id),old.fk_data_delivery_type_id, (SELECT uuid FROM data_delivery_type WHERE id=old.fk_data_delivery_type_id),old.fk_contact_group_id_as_data_owner, (SELECT uuid FROM contact_group WHERE id=old.fk_contact_group_id_as_data_owner));
 END;
 
-   
+
 DROP TABLE IF EXISTS map_object_2_object_log;
 CREATE TABLE map_object_2_object_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -317,7 +317,7 @@ BEGIN
    INSERT INTO map_object_2_object_log (log_action, id,uuid,fk_mapping_qualifier_id, fk_mapping_qualifier_uuid,ref_fk_object_id_1,ref_fk_object_type_id_1,ref_fk_object_id_2,ref_fk_object_type_id_2) VALUES ('DELETE',old.id,old.uuid,old.fk_mapping_qualifier_id, (SELECT uuid FROM mapping_qualifier WHERE id=old.fk_mapping_qualifier_id),old.ref_fk_object_id_1,old.ref_fk_object_type_id_1,old.ref_fk_object_id_2,old.ref_fk_object_type_id_2);
 END;
 
-   
+
 DROP TABLE IF EXISTS tool_log;
 CREATE TABLE tool_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -361,7 +361,7 @@ BEGIN
    INSERT INTO tool_log (log_action, id,uuid,fk_tool_type_id, fk_tool_type_uuid,tool_name,vendor,version,comment) VALUES ('DELETE',old.id,old.uuid,old.fk_tool_type_id, (SELECT uuid FROM tool_type WHERE id=old.fk_tool_type_id),old.tool_name,old.vendor,old.version,old.comment);
 END;
 
-   
+
 DROP TABLE IF EXISTS object_depends_on_log;
 CREATE TABLE object_depends_on_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -403,7 +403,7 @@ BEGIN
    INSERT INTO object_depends_on_log (log_action, id,uuid,ref_fk_object_id_parent,ref_fk_object_type_id_parent,ref_fk_object_id_child,ref_fk_object_type_id_child) VALUES ('DELETE',old.id,old.uuid,old.ref_fk_object_id_parent,old.ref_fk_object_type_id_parent,old.ref_fk_object_id_child,old.ref_fk_object_type_id_child);
 END;
 
-   
+
 DROP TABLE IF EXISTS attribute_log;
 CREATE TABLE attribute_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -448,7 +448,7 @@ BEGIN
    INSERT INTO attribute_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,formula) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.formula);
 END;
 
-   
+
 DROP TABLE IF EXISTS tool_type_log;
 CREATE TABLE tool_type_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -488,7 +488,7 @@ BEGIN
    INSERT INTO tool_type_log (log_action, id,uuid,name,description) VALUES ('DELETE',old.id,old.uuid,old.name,old.description);
 END;
 
-   
+
 DROP TABLE IF EXISTS db_table_log;
 CREATE TABLE db_table_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -537,7 +537,7 @@ BEGIN
    INSERT INTO db_table_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,location,fk_db_table_context_id, fk_db_table_context_uuid,fk_db_table_type_id, fk_db_table_type_uuid) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.location,old.fk_db_table_context_id, (SELECT uuid FROM db_table_context WHERE id=old.fk_db_table_context_id),old.fk_db_table_type_id, (SELECT uuid FROM db_table_type WHERE id=old.fk_db_table_type_id));
 END;
 
-   
+
 DROP TABLE IF EXISTS db_table_field_log;
 CREATE TABLE db_table_field_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -585,7 +585,7 @@ BEGIN
    INSERT INTO db_table_field_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_db_table_id, fk_db_table_uuid,datatype,bulk_load_checksum) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_db_table_id, (SELECT uuid FROM db_table WHERE id=old.fk_db_table_id),old.datatype,old.bulk_load_checksum);
 END;
 
-   
+
 DROP TABLE IF EXISTS db_table_context_log;
 CREATE TABLE db_table_context_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -630,7 +630,7 @@ BEGIN
    INSERT INTO db_table_context_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,prefix) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.prefix);
 END;
 
-   
+
 DROP TABLE IF EXISTS db_database_log;
 CREATE TABLE db_database_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -676,7 +676,7 @@ BEGIN
    INSERT INTO db_database_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_tool_id, fk_tool_uuid) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_tool_id, (SELECT uuid FROM tool WHERE id=old.fk_tool_id));
 END;
 
-   
+
 DROP TABLE IF EXISTS scheduling_log;
 CREATE TABLE scheduling_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -723,7 +723,7 @@ BEGIN
    INSERT INTO scheduling_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_tool_id, fk_tool_uuid,scheduling_series) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_tool_id, (SELECT uuid FROM tool WHERE id=old.fk_tool_id),old.scheduling_series);
 END;
 
-   
+
 DROP TABLE IF EXISTS parameter_log;
 CREATE TABLE parameter_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -771,7 +771,7 @@ BEGIN
    INSERT INTO parameter_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,is_optional,default_value,datatype,range) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.is_optional,old.default_value,old.datatype,old.range);
 END;
 
-   
+
 DROP TABLE IF EXISTS db_table_type_log;
 CREATE TABLE db_table_type_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -811,7 +811,7 @@ BEGIN
    INSERT INTO db_table_type_log (log_action, id,uuid,name,description) VALUES ('DELETE',old.id,old.uuid,old.name,old.description);
 END;
 
-   
+
 DROP TABLE IF EXISTS object_comment_log;
 CREATE TABLE object_comment_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -855,7 +855,7 @@ BEGIN
    INSERT INTO object_comment_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,ref_fk_object_id,ref_fk_object_type_id,comment,created_at_datetime) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.ref_fk_object_id,old.ref_fk_object_type_id,old.comment,old.created_at_datetime);
 END;
 
-   
+
 DROP TABLE IF EXISTS glossary_log;
 CREATE TABLE glossary_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -899,7 +899,7 @@ BEGIN
    INSERT INTO glossary_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description);
 END;
 
-   
+
 DROP TABLE IF EXISTS data_delivery_type_log;
 CREATE TABLE data_delivery_type_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -939,7 +939,7 @@ BEGIN
    INSERT INTO data_delivery_type_log (log_action, id,uuid,name,description) VALUES ('DELETE',old.id,old.uuid,old.name,old.description);
 END;
 
-   
+
 DROP TABLE IF EXISTS data_transfer_process_log;
 CREATE TABLE data_transfer_process_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -954,7 +954,9 @@ CREATE TABLE data_transfer_process_log (
    name TEXT(250),
    description TEXT(4000),
    fk_data_transfer_type_id INTEGER,
-   fk_data_transfer_type_uuid TEXT
+   fk_data_transfer_type_uuid TEXT,
+   location TEXT(500),
+   source_internal_object_id TEXT(500)
 );
 
 DROP TRIGGER IF EXISTS TRIG_data_transfer_process_log_INSERT;
@@ -962,7 +964,7 @@ CREATE TRIGGER TRIG_data_transfer_process_log_INSERT AFTER INSERT
 ON data_transfer_process
 BEGIN
    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
-   INSERT INTO data_transfer_process_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_data_transfer_type_id, fk_data_transfer_type_uuid) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_data_transfer_type_id, (SELECT uuid FROM data_transfer_type WHERE id=new.fk_data_transfer_type_id));
+   INSERT INTO data_transfer_process_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_data_transfer_type_id, fk_data_transfer_type_uuid,location,source_internal_object_id) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_data_transfer_type_id, (SELECT uuid FROM data_transfer_type WHERE id=new.fk_data_transfer_type_id),new.location,new.source_internal_object_id);
    UPDATE data_transfer_process SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
    DELETE FROM _newUUID;
    DELETE FROM data_transfer_process_log WHERE log_id=(SELECT MAX(log_id)+1 FROM data_transfer_process_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
@@ -974,7 +976,7 @@ ON data_transfer_process
 BEGIN
    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
    UPDATE data_transfer_process SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
-   INSERT INTO data_transfer_process_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_data_transfer_type_id, fk_data_transfer_type_uuid) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_data_transfer_type_id, (SELECT uuid FROM data_transfer_type WHERE id=new.fk_data_transfer_type_id));
+   INSERT INTO data_transfer_process_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_data_transfer_type_id, fk_data_transfer_type_uuid,location,source_internal_object_id) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_data_transfer_type_id, (SELECT uuid FROM data_transfer_type WHERE id=new.fk_data_transfer_type_id),new.location,new.source_internal_object_id);
    DELETE FROM _newUUID;
 END;
 
@@ -982,10 +984,10 @@ DROP TRIGGER IF EXISTS TRIG_data_transfer_process_log_DELETE;
 CREATE TRIGGER TRIG_data_transfer_process_log_DELETE AFTER DELETE
 ON data_transfer_process
 BEGIN
-   INSERT INTO data_transfer_process_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_data_transfer_type_id, fk_data_transfer_type_uuid) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_data_transfer_type_id, (SELECT uuid FROM data_transfer_type WHERE id=old.fk_data_transfer_type_id));
+   INSERT INTO data_transfer_process_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_data_transfer_type_id, fk_data_transfer_type_uuid,location,source_internal_object_id) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_data_transfer_type_id, (SELECT uuid FROM data_transfer_type WHERE id=old.fk_data_transfer_type_id),old.location,old.source_internal_object_id);
 END;
 
-   
+
 DROP TABLE IF EXISTS data_transfer_type_log;
 CREATE TABLE data_transfer_type_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -1025,7 +1027,7 @@ BEGIN
    INSERT INTO data_transfer_type_log (log_action, id,uuid,name,description) VALUES ('DELETE',old.id,old.uuid,old.name,old.description);
 END;
 
-   
+
 DROP TABLE IF EXISTS app_config_log;
 CREATE TABLE app_config_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -1067,7 +1069,7 @@ BEGIN
    INSERT INTO app_config_log (log_action, id,uuid,key,valueINT,valueSTRING,description) VALUES ('DELETE',old.id,old.uuid,old.key,old.valueINT,old.valueSTRING,old.description);
 END;
 
-   
+
 DROP TABLE IF EXISTS contact_group_log;
 CREATE TABLE contact_group_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -1112,7 +1114,7 @@ BEGIN
    INSERT INTO contact_group_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_client_id, fk_client_uuid,name,description,short_name) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_client_id, (SELECT uuid FROM client WHERE id=old.fk_client_id),old.name,old.description,old.short_name);
 END;
 
-   
+
 DROP TABLE IF EXISTS contact_log;
 CREATE TABLE contact_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -1163,7 +1165,7 @@ BEGIN
    INSERT INTO contact_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_contact_group_id, fk_contact_group_uuid,fk_client_id, fk_client_uuid,givenname,surname,email,phone,mobile,ldap_cn,description) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_contact_group_id, (SELECT uuid FROM contact_group WHERE id=old.fk_contact_group_id),old.fk_client_id, (SELECT uuid FROM client WHERE id=old.fk_client_id),old.givenname,old.surname,old.email,old.phone,old.mobile,old.ldap_cn,old.description);
 END;
 
-   
+
 DROP TABLE IF EXISTS bracket_log;
 CREATE TABLE bracket_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -1211,7 +1213,7 @@ BEGIN
    INSERT INTO bracket_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_attribute_id, fk_attribute_uuid,fk_object_type_id_as_searchFilter, fk_object_type_uuid_as_searchFilter) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_attribute_id, (SELECT uuid FROM attribute WHERE id=old.fk_attribute_id),old.fk_object_type_id_as_searchFilter, (SELECT uuid FROM object_type_as_searchFilter WHERE id=old.fk_object_type_id_as_searchFilter));
 END;
 
-   
+
 DROP TABLE IF EXISTS bracket_searchPattern_log;
 CREATE TABLE bracket_searchPattern_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -1254,7 +1256,7 @@ BEGIN
    INSERT INTO bracket_searchPattern_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_bracket_id, fk_bracket_uuid,searchPattern) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_bracket_id, (SELECT uuid FROM bracket WHERE id=old.fk_bracket_id),old.searchPattern);
 END;
 
-   
+
 -- DROP TABLE IF EXISTS import_stage_db_table_log;
 -- CREATE TABLE import_stage_db_table_log (
 --    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -1307,7 +1309,7 @@ END;
 --    INSERT INTO import_stage_db_table_log (log_action, id,client_name,project_name,db_table_name,db_table_description,db_table_field_name,db_table_field_datatype,db_table_field_description,db_table_type_name,db_table_context_name,db_table_context_prefix,isPrimaryKeyField,isForeignKeyField,foreignKey_table_name,foreignKey_table_field_name,_import_state,_import_date) VALUES ('DELETE',old.id,old.client_name,old.project_name,old.db_table_name,old.db_table_description,old.db_table_field_name,old.db_table_field_datatype,old.db_table_field_description,old.db_table_type_name,old.db_table_context_name,old.db_table_context_prefix,old.isPrimaryKeyField,old.isForeignKeyField,old.foreignKey_table_name,old.foreignKey_table_field_name,old._import_state,old._import_date);
 -- END;
 
---    
+
 DROP TABLE IF EXISTS perspective_filter_log;
 CREATE TABLE perspective_filter_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -1352,7 +1354,7 @@ BEGIN
    INSERT INTO perspective_filter_log (log_action, id,uuid,fk_language_id, fk_object_type_id, fk_object_type_uuid,filter_attribute_name,filter_value,ref_fk_object_type_id) VALUES ('DELETE',old.id,old.uuid,old.fk_language_id, (SELECT uuid FROM language WHERE id=old.fk_language_id),old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.filter_attribute_name,old.filter_value,old.ref_fk_object_type_id);
 END;
 
-   
+
 DROP TABLE IF EXISTS mapping_qualifier_log;
 CREATE TABLE mapping_qualifier_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -1394,5 +1396,50 @@ CREATE TRIGGER TRIG_mapping_qualifier_log_DELETE AFTER DELETE
 ON mapping_qualifier
 BEGIN
    INSERT INTO mapping_qualifier_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,name,short_name,description,needs_object_depends_on) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.name,old.short_name,old.description,old.needs_object_depends_on);
+END;
+
+
+DROP TABLE IF EXISTS url_log;
+CREATE TABLE url_log (
+   log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+   log_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+   log_action TEXT,
+   id INTEGER,
+   uuid TEXT,
+   fk_object_type_id INTEGER,
+   fk_object_type_uuid TEXT,
+   fk_project_id INTEGER,
+   fk_project_uuid TEXT,
+   name TEXT(250),
+   description TEXT(4000),
+   url TEXT(4000)
+);
+
+DROP TRIGGER IF EXISTS TRIG_url_log_INSERT;
+CREATE TRIGGER TRIG_url_log_INSERT AFTER INSERT
+ON url
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   INSERT INTO url_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,url) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.url);
+   UPDATE url SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   DELETE FROM _newUUID;
+   DELETE FROM url_log WHERE log_id=(SELECT MAX(log_id)+1 FROM url_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
+END;
+
+DROP TRIGGER IF EXISTS TRIG_url_log_UPDATE;
+CREATE TRIGGER TRIG_url_log_UPDATE AFTER UPDATE
+ON url
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   UPDATE url SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   INSERT INTO url_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,url) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.url);
+   DELETE FROM _newUUID;
+END;
+
+DROP TRIGGER IF EXISTS TRIG_url_log_DELETE;
+CREATE TRIGGER TRIG_url_log_DELETE AFTER DELETE
+ON url
+BEGIN
+   INSERT INTO url_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,url) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.url);
 END;
 

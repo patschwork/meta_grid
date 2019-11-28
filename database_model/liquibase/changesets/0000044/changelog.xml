@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000044/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000044" context="translation,perspective">
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO language_translate (id, "language", "translation")
+SELECT 
+   ls.id
+  ,'en-US' AS "language"
+  ,CASE
+     WHEN ls.message='TooltipMainPage: Attribute' THEN 'Attributes and characteristics'
+     WHEN ls.message='TooltipMainPage: Contact' THEN 'Contactinformation and counterpart'
+     WHEN ls.message='TooltipMainPage: ContactGroup' THEN 'Contact groups of contacts e.g. departments, teams or projects etc.'
+     WHEN ls.message='TooltipMainPage: Sourcesystem' THEN 'Named sourcesystems which delivers data to the data warehouse or BI infrastructure'
+     WHEN ls.message='TooltipMainPage: Database' THEN 'Collection of data entities like a database, OLAP cube, data lake, ...'
+     WHEN ls.message='TooltipMainPage: Table' THEN 'Attributecollection of databasetables or -view or files like spreadsheets or csv. This could also be a dimension of a OLAP cube.'
+     WHEN ls.message='TooltipMainPage: Table Field' THEN 'Attribute of an entity e.g. a database table field, or a column of a flatfile. Also it could be the attribute a REST/SOAP webservice.'
+     WHEN ls.message='TooltipMainPage: Table Context' THEN 'Context of an entity. E.g. is this a staging, fact or dimension table of a database'
+     WHEN ls.message='TooltipMainPage: Table Type' THEN 'Physical type of a table or entity, e.g. database table or view, or a csv flatfile'
+     WHEN ls.message='TooltipMainPage: Tool' THEN 'Applikation or program. This could be a BI-Suite or a spreadsheet or databasesystem (RDBMS)'
+     WHEN ls.message='TooltipMainPage: Tool Type' THEN 'Type of a toolsuite. E.g. Databasesystem, office suite, BI suite'
+     WHEN ls.message='TooltipMainPage: Comments' THEN 'All comments of objects'
+     WHEN ls.message='TooltipMainPage: Data Transfer Process' THEN 'ETL, scripts or stored procedures of data transformation etc.'
+     WHEN ls.message='TooltipMainPage: Data Transfer Type' THEN 'The type of the data transfer'
+     WHEN ls.message='TooltipMainPage: Data Delivery Object' THEN 'A report, export interface (view or table in a database), export file, ...'
+     WHEN ls.message='TooltipMainPage: Data Delivery Type' THEN 'Type of delivery'
+     WHEN ls.message='TooltipMainPage: Scheduling' THEN 'Planned, automatic, recurring processes'
+     WHEN ls.message='TooltipMainPage: Mappings' THEN 'Links of objects' 
+     WHEN ls.message='TooltipMainPage: Object depends on' THEN 'Dependencies of objects to each other (parent-child relalationship)'
+     WHEN ls.message='TooltipMainPage: Glossary' THEN 'Definition and descriptions of acronyms'
+     WHEN ls.message='TooltipMainPage: Bracket' THEN 'Subsumptions of objects with e.g. different spelling (Example: addr and adress)'
+     ELSE NULL
+     END AS new_translation
+FROM language_source ls
+LEFT JOIN language_translate lt ON 1=1
+   AND lt.id         = ls.id
+   AND lt."language" = 'en-US'
+WHERE 1=1 
+   AND ls.message LIKE 'TooltipMainPage: %'
+   AND ls.category = 'app'
+   AND lt.id IS NULL
+		]]>		
+		</sql>
+
+
+		<comment>
+		<![CDATA[
+		Used objects:
+	        language_translate
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

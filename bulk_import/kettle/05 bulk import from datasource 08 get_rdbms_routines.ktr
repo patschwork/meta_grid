@@ -1,0 +1,2503 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<transformation>
+  <info>
+    <name>Get_RDBMS_PROCEDURES</name>
+    <description/>
+    <extended_description/>
+    <trans_version/>
+    <trans_type>Normal</trans_type>
+    <trans_status>0</trans_status>
+    <directory>/</directory>
+    <parameters>
+      <parameter>
+        <name>exclude_routine_types</name>
+        <default_value>FUNCTION</default_value>
+        <description>Exclude routine types defined</description>
+      </parameter>
+      <parameter>
+        <name>filter_routine_names</name>
+        <default_value/>
+        <description>Filter routine names based on parameter value (like operation without wildcards). Attention: Case sensitive</description>
+      </parameter>
+      <parameter>
+        <name>get_description_from_routine_definition</name>
+        <default_value>Y</default_value>
+        <description>Extract the comment from the SQL Definition. Y=Yes | N=No</description>
+      </parameter>
+      <parameter>
+        <name>get_description_from_routine_definition_SplitElemenent_1</name>
+        <default_value>1</default_value>
+        <description>Element to use for result of get_description_from_routine_definition_SplitOnString_1</description>
+      </parameter>
+      <parameter>
+        <name>get_description_from_routine_definition_SplitElemenent_2</name>
+        <default_value>0</default_value>
+        <description>Element to use for result of get_description_from_routine_definition_SplitOnString_2</description>
+      </parameter>
+      <parameter>
+        <name>get_description_from_routine_definition_SplitOnString_1</name>
+        <default_value>Description: </default_value>
+        <description>First substring to split the routine definition (e.g.  "Description: ") without quotations</description>
+      </parameter>
+      <parameter>
+        <name>get_description_from_routine_definition_SplitOnString_2</name>
+        <default_value>\n</default_value>
+        <description>Second substring to split the routine definition (e.g.  "\n") without quotations</description>
+      </parameter>
+      <parameter>
+        <name>handle_descriptions</name>
+        <default_value>3</default_value>
+        <description>1=Use only database object description | 2=Use only from routine description | 3=Use both</description>
+      </parameter>
+      <parameter>
+        <name>map_transfer_process_to_db_database_id</name>
+        <default_value>11</default_value>
+        <description>DB_Database ID which will be used to map (new) database routines found</description>
+      </parameter>
+      <parameter>
+        <name>metagrid_jdbc_db_pwd</name>
+        <default_value/>
+        <description>JDBC Database Password for meta#grid</description>
+      </parameter>
+      <parameter>
+        <name>metagrid_jdbc_db_user</name>
+        <default_value/>
+        <description>JDBC Database User for meta#grid</description>
+      </parameter>
+      <parameter>
+        <name>metagrid_jdbc_driver_class</name>
+        <default_value>org.sqlite.JDBC</default_value>
+        <description>JDBC Java Driver Class to use to write in meta#grid database</description>
+      </parameter>
+      <parameter>
+        <name>metagrid_jdbc_url</name>
+        <default_value>jdbc:sqlite:/home/patrick/Development_WorkingCopies/dwh_meta/dwh_meta_v2/dwh_meta.sqlite</default_value>
+        <description>JDBC URL of the source system to write in meta#grid database (including IP/DNS, Port, Databasename)</description>
+      </parameter>
+      <parameter>
+        <name>object_type_id_db_database</name>
+        <default_value>11</default_value>
+        <description>Static values used in transformation (do not change)</description>
+      </parameter>
+      <parameter>
+        <name>object_type_id_db_transfer_process</name>
+        <default_value>13</default_value>
+        <description>Static values used in transformation (do not change)</description>
+      </parameter>
+      <parameter>
+        <name>project_id</name>
+        <default_value>7</default_value>
+        <description>Project ID which information belongs to</description>
+      </parameter>
+      <parameter>
+        <name>so_2_source_jdbc_db_pwd</name>
+        <default_value>postgres</default_value>
+        <description>JDBC Database Password</description>
+      </parameter>
+      <parameter>
+        <name>so_2_source_jdbc_db_user</name>
+        <default_value>postgres</default_value>
+        <description>JDBC Database User for source</description>
+      </parameter>
+      <parameter>
+        <name>so_2_source_jdbc_driver_class</name>
+        <default_value>org.postgresql.Driver</default_value>
+        <description>JDBC Java Driver Class to use to read from source</description>
+      </parameter>
+      <parameter>
+        <name>so_2_source_jdbc_url</name>
+        <default_value>jdbc:postgresql://127.0.0.1:5432/chinook</default_value>
+        <description>JDBC Database Password</description>
+      </parameter>
+      <parameter>
+        <name>source_db_schema_exclude</name>
+        <default_value>sys,INFORMATION_SCHEMA,Backup,zz_Attic,information_schema,pg_catalog,pg_toast</default_value>
+        <description>Ignore special schemes in databse e.g. sys</description>
+      </parameter>
+      <parameter>
+        <name>source_jdbc_db_pwd</name>
+        <default_value>Encrypted 2be98afc86ac68681fa40fd26da86a29b</default_value>
+        <description>JDBC Database Password</description>
+      </parameter>
+      <parameter>
+        <name>source_jdbc_db_user</name>
+        <default_value>SA</default_value>
+        <description>JDBC Database User for source</description>
+      </parameter>
+      <parameter>
+        <name>source_jdbc_driver_class</name>
+        <default_value>net.sourceforge.jtds.jdbc.Driver</default_value>
+        <description>JDBC Java Driver Class to use to read from source</description>
+      </parameter>
+      <parameter>
+        <name>source_jdbc_url</name>
+        <default_value>jdbc:jtds:sqlserver://127.0.0.1:1433/Chinook</default_value>
+        <description>JDBC URL of the source system to read from (including IP/DNS, Port, Databasename)</description>
+      </parameter>
+    </parameters>
+    <log>
+      <trans-log-table>
+        <connection/>
+        <schema/>
+        <table/>
+        <size_limit_lines/>
+        <interval/>
+        <timeout_days/>
+        <field>
+          <id>ID_BATCH</id>
+          <enabled>Y</enabled>
+          <name>ID_BATCH</name>
+        </field>
+        <field>
+          <id>CHANNEL_ID</id>
+          <enabled>Y</enabled>
+          <name>CHANNEL_ID</name>
+        </field>
+        <field>
+          <id>TRANSNAME</id>
+          <enabled>Y</enabled>
+          <name>TRANSNAME</name>
+        </field>
+        <field>
+          <id>STATUS</id>
+          <enabled>Y</enabled>
+          <name>STATUS</name>
+        </field>
+        <field>
+          <id>LINES_READ</id>
+          <enabled>Y</enabled>
+          <name>LINES_READ</name>
+          <subject/>
+        </field>
+        <field>
+          <id>LINES_WRITTEN</id>
+          <enabled>Y</enabled>
+          <name>LINES_WRITTEN</name>
+          <subject/>
+        </field>
+        <field>
+          <id>LINES_UPDATED</id>
+          <enabled>Y</enabled>
+          <name>LINES_UPDATED</name>
+          <subject/>
+        </field>
+        <field>
+          <id>LINES_INPUT</id>
+          <enabled>Y</enabled>
+          <name>LINES_INPUT</name>
+          <subject/>
+        </field>
+        <field>
+          <id>LINES_OUTPUT</id>
+          <enabled>Y</enabled>
+          <name>LINES_OUTPUT</name>
+          <subject/>
+        </field>
+        <field>
+          <id>LINES_REJECTED</id>
+          <enabled>Y</enabled>
+          <name>LINES_REJECTED</name>
+          <subject/>
+        </field>
+        <field>
+          <id>ERRORS</id>
+          <enabled>Y</enabled>
+          <name>ERRORS</name>
+        </field>
+        <field>
+          <id>STARTDATE</id>
+          <enabled>Y</enabled>
+          <name>STARTDATE</name>
+        </field>
+        <field>
+          <id>ENDDATE</id>
+          <enabled>Y</enabled>
+          <name>ENDDATE</name>
+        </field>
+        <field>
+          <id>LOGDATE</id>
+          <enabled>Y</enabled>
+          <name>LOGDATE</name>
+        </field>
+        <field>
+          <id>DEPDATE</id>
+          <enabled>Y</enabled>
+          <name>DEPDATE</name>
+        </field>
+        <field>
+          <id>REPLAYDATE</id>
+          <enabled>Y</enabled>
+          <name>REPLAYDATE</name>
+        </field>
+        <field>
+          <id>LOG_FIELD</id>
+          <enabled>Y</enabled>
+          <name>LOG_FIELD</name>
+        </field>
+        <field>
+          <id>EXECUTING_SERVER</id>
+          <enabled>N</enabled>
+          <name>EXECUTING_SERVER</name>
+        </field>
+        <field>
+          <id>EXECUTING_USER</id>
+          <enabled>N</enabled>
+          <name>EXECUTING_USER</name>
+        </field>
+        <field>
+          <id>CLIENT</id>
+          <enabled>N</enabled>
+          <name>CLIENT</name>
+        </field>
+      </trans-log-table>
+      <perf-log-table>
+        <connection/>
+        <schema/>
+        <table/>
+        <interval/>
+        <timeout_days/>
+        <field>
+          <id>ID_BATCH</id>
+          <enabled>Y</enabled>
+          <name>ID_BATCH</name>
+        </field>
+        <field>
+          <id>SEQ_NR</id>
+          <enabled>Y</enabled>
+          <name>SEQ_NR</name>
+        </field>
+        <field>
+          <id>LOGDATE</id>
+          <enabled>Y</enabled>
+          <name>LOGDATE</name>
+        </field>
+        <field>
+          <id>TRANSNAME</id>
+          <enabled>Y</enabled>
+          <name>TRANSNAME</name>
+        </field>
+        <field>
+          <id>STEPNAME</id>
+          <enabled>Y</enabled>
+          <name>STEPNAME</name>
+        </field>
+        <field>
+          <id>STEP_COPY</id>
+          <enabled>Y</enabled>
+          <name>STEP_COPY</name>
+        </field>
+        <field>
+          <id>LINES_READ</id>
+          <enabled>Y</enabled>
+          <name>LINES_READ</name>
+        </field>
+        <field>
+          <id>LINES_WRITTEN</id>
+          <enabled>Y</enabled>
+          <name>LINES_WRITTEN</name>
+        </field>
+        <field>
+          <id>LINES_UPDATED</id>
+          <enabled>Y</enabled>
+          <name>LINES_UPDATED</name>
+        </field>
+        <field>
+          <id>LINES_INPUT</id>
+          <enabled>Y</enabled>
+          <name>LINES_INPUT</name>
+        </field>
+        <field>
+          <id>LINES_OUTPUT</id>
+          <enabled>Y</enabled>
+          <name>LINES_OUTPUT</name>
+        </field>
+        <field>
+          <id>LINES_REJECTED</id>
+          <enabled>Y</enabled>
+          <name>LINES_REJECTED</name>
+        </field>
+        <field>
+          <id>ERRORS</id>
+          <enabled>Y</enabled>
+          <name>ERRORS</name>
+        </field>
+        <field>
+          <id>INPUT_BUFFER_ROWS</id>
+          <enabled>Y</enabled>
+          <name>INPUT_BUFFER_ROWS</name>
+        </field>
+        <field>
+          <id>OUTPUT_BUFFER_ROWS</id>
+          <enabled>Y</enabled>
+          <name>OUTPUT_BUFFER_ROWS</name>
+        </field>
+      </perf-log-table>
+      <channel-log-table>
+        <connection/>
+        <schema/>
+        <table/>
+        <timeout_days/>
+        <field>
+          <id>ID_BATCH</id>
+          <enabled>Y</enabled>
+          <name>ID_BATCH</name>
+        </field>
+        <field>
+          <id>CHANNEL_ID</id>
+          <enabled>Y</enabled>
+          <name>CHANNEL_ID</name>
+        </field>
+        <field>
+          <id>LOG_DATE</id>
+          <enabled>Y</enabled>
+          <name>LOG_DATE</name>
+        </field>
+        <field>
+          <id>LOGGING_OBJECT_TYPE</id>
+          <enabled>Y</enabled>
+          <name>LOGGING_OBJECT_TYPE</name>
+        </field>
+        <field>
+          <id>OBJECT_NAME</id>
+          <enabled>Y</enabled>
+          <name>OBJECT_NAME</name>
+        </field>
+        <field>
+          <id>OBJECT_COPY</id>
+          <enabled>Y</enabled>
+          <name>OBJECT_COPY</name>
+        </field>
+        <field>
+          <id>REPOSITORY_DIRECTORY</id>
+          <enabled>Y</enabled>
+          <name>REPOSITORY_DIRECTORY</name>
+        </field>
+        <field>
+          <id>FILENAME</id>
+          <enabled>Y</enabled>
+          <name>FILENAME</name>
+        </field>
+        <field>
+          <id>OBJECT_ID</id>
+          <enabled>Y</enabled>
+          <name>OBJECT_ID</name>
+        </field>
+        <field>
+          <id>OBJECT_REVISION</id>
+          <enabled>Y</enabled>
+          <name>OBJECT_REVISION</name>
+        </field>
+        <field>
+          <id>PARENT_CHANNEL_ID</id>
+          <enabled>Y</enabled>
+          <name>PARENT_CHANNEL_ID</name>
+        </field>
+        <field>
+          <id>ROOT_CHANNEL_ID</id>
+          <enabled>Y</enabled>
+          <name>ROOT_CHANNEL_ID</name>
+        </field>
+      </channel-log-table>
+      <step-log-table>
+        <connection/>
+        <schema/>
+        <table/>
+        <timeout_days/>
+        <field>
+          <id>ID_BATCH</id>
+          <enabled>Y</enabled>
+          <name>ID_BATCH</name>
+        </field>
+        <field>
+          <id>CHANNEL_ID</id>
+          <enabled>Y</enabled>
+          <name>CHANNEL_ID</name>
+        </field>
+        <field>
+          <id>LOG_DATE</id>
+          <enabled>Y</enabled>
+          <name>LOG_DATE</name>
+        </field>
+        <field>
+          <id>TRANSNAME</id>
+          <enabled>Y</enabled>
+          <name>TRANSNAME</name>
+        </field>
+        <field>
+          <id>STEPNAME</id>
+          <enabled>Y</enabled>
+          <name>STEPNAME</name>
+        </field>
+        <field>
+          <id>STEP_COPY</id>
+          <enabled>Y</enabled>
+          <name>STEP_COPY</name>
+        </field>
+        <field>
+          <id>LINES_READ</id>
+          <enabled>Y</enabled>
+          <name>LINES_READ</name>
+        </field>
+        <field>
+          <id>LINES_WRITTEN</id>
+          <enabled>Y</enabled>
+          <name>LINES_WRITTEN</name>
+        </field>
+        <field>
+          <id>LINES_UPDATED</id>
+          <enabled>Y</enabled>
+          <name>LINES_UPDATED</name>
+        </field>
+        <field>
+          <id>LINES_INPUT</id>
+          <enabled>Y</enabled>
+          <name>LINES_INPUT</name>
+        </field>
+        <field>
+          <id>LINES_OUTPUT</id>
+          <enabled>Y</enabled>
+          <name>LINES_OUTPUT</name>
+        </field>
+        <field>
+          <id>LINES_REJECTED</id>
+          <enabled>Y</enabled>
+          <name>LINES_REJECTED</name>
+        </field>
+        <field>
+          <id>ERRORS</id>
+          <enabled>Y</enabled>
+          <name>ERRORS</name>
+        </field>
+        <field>
+          <id>LOG_FIELD</id>
+          <enabled>N</enabled>
+          <name>LOG_FIELD</name>
+        </field>
+      </step-log-table>
+      <metrics-log-table>
+        <connection/>
+        <schema/>
+        <table/>
+        <timeout_days/>
+        <field>
+          <id>ID_BATCH</id>
+          <enabled>Y</enabled>
+          <name>ID_BATCH</name>
+        </field>
+        <field>
+          <id>CHANNEL_ID</id>
+          <enabled>Y</enabled>
+          <name>CHANNEL_ID</name>
+        </field>
+        <field>
+          <id>LOG_DATE</id>
+          <enabled>Y</enabled>
+          <name>LOG_DATE</name>
+        </field>
+        <field>
+          <id>METRICS_DATE</id>
+          <enabled>Y</enabled>
+          <name>METRICS_DATE</name>
+        </field>
+        <field>
+          <id>METRICS_CODE</id>
+          <enabled>Y</enabled>
+          <name>METRICS_CODE</name>
+        </field>
+        <field>
+          <id>METRICS_DESCRIPTION</id>
+          <enabled>Y</enabled>
+          <name>METRICS_DESCRIPTION</name>
+        </field>
+        <field>
+          <id>METRICS_SUBJECT</id>
+          <enabled>Y</enabled>
+          <name>METRICS_SUBJECT</name>
+        </field>
+        <field>
+          <id>METRICS_TYPE</id>
+          <enabled>Y</enabled>
+          <name>METRICS_TYPE</name>
+        </field>
+        <field>
+          <id>METRICS_VALUE</id>
+          <enabled>Y</enabled>
+          <name>METRICS_VALUE</name>
+        </field>
+      </metrics-log-table>
+    </log>
+    <maxdate>
+      <connection/>
+      <table/>
+      <field/>
+      <offset>0.0</offset>
+      <maxdiff>0.0</maxdiff>
+    </maxdate>
+    <size_rowset>10000</size_rowset>
+    <sleep_time_empty>50</sleep_time_empty>
+    <sleep_time_full>50</sleep_time_full>
+    <unique_connections>N</unique_connections>
+    <feedback_shown>Y</feedback_shown>
+    <feedback_size>50000</feedback_size>
+    <using_thread_priorities>Y</using_thread_priorities>
+    <shared_objects_file/>
+    <capture_step_performance>N</capture_step_performance>
+    <step_performance_capturing_delay>1000</step_performance_capturing_delay>
+    <step_performance_capturing_size_limit>100</step_performance_capturing_size_limit>
+    <dependencies>
+    </dependencies>
+    <partitionschemas>
+    </partitionschemas>
+    <slaveservers>
+    </slaveservers>
+    <clusterschemas>
+    </clusterschemas>
+    <created_user>-</created_user>
+    <created_date>2015/10/26 11:27:15.913</created_date>
+    <modified_user>-</modified_user>
+    <modified_date>2015/10/26 11:27:15.913</modified_date>
+    <key_for_session_key>H4sIAAAAAAAAAAMAAAAAAAAAAAA=</key_for_session_key>
+    <is_key_private>N</is_key_private>
+  </info>
+  <notepads>
+    <notepad>
+      <note>SQL Query: The datatypes and order of the fields must be equal for all variants.                                
+If there is a mismatch, there will be no result (0 rows) without error!!
+
+
+
+</note>
+      <xloc>23</xloc>
+      <yloc>16</yloc>
+      <width>626</width>
+      <heigth>100</heigth>
+      <fontname>Arial</fontname>
+      <fontsize>10</fontsize>
+      <fontbold>Y</fontbold>
+      <fontitalic>Y</fontitalic>
+      <fontcolorred>255</fontcolorred>
+      <fontcolorgreen>255</fontcolorgreen>
+      <fontcolorblue>255</fontcolorblue>
+      <backgroundcolorred>255</backgroundcolorred>
+      <backgroundcolorgreen>0</backgroundcolorgreen>
+      <backgroundcolorblue>0</backgroundcolorblue>
+      <bordercolorred>100</bordercolorred>
+      <bordercolorgreen>100</bordercolorgreen>
+      <bordercolorblue>100</bordercolorblue>
+      <drawshadow>Y</drawshadow>
+    </notepad>
+    <notepad>
+      <note>  Check if routine (only Stored Procedures)
+  already in system    
+  Comparing with the "internal Object ID"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</note>
+      <xloc>674</xloc>
+      <yloc>1164</yloc>
+      <width>327</width>
+      <heigth>325</heigth>
+      <fontname>Tahoma</fontname>
+      <fontsize>10</fontsize>
+      <fontbold>Y</fontbold>
+      <fontitalic>N</fontitalic>
+      <fontcolorred>0</fontcolorred>
+      <fontcolorgreen>0</fontcolorgreen>
+      <fontcolorblue>0</fontcolorblue>
+      <backgroundcolorred>183</backgroundcolorred>
+      <backgroundcolorgreen>255</backgroundcolorgreen>
+      <backgroundcolorblue>183</backgroundcolorblue>
+      <bordercolorred>100</bordercolorred>
+      <bordercolorgreen>100</bordercolorgreen>
+      <bordercolorblue>100</bordercolorblue>
+      <drawshadow>Y</drawshadow>
+    </notepad>
+    <notepad>
+      <note>  Check if mapping exists                                                              
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</note>
+      <xloc>2220</xloc>
+      <yloc>1179</yloc>
+      <width>509</width>
+      <heigth>310</heigth>
+      <fontname>Tahoma</fontname>
+      <fontsize>10</fontsize>
+      <fontbold>Y</fontbold>
+      <fontitalic>N</fontitalic>
+      <fontcolorred>0</fontcolorred>
+      <fontcolorgreen>0</fontcolorgreen>
+      <fontcolorblue>0</fontcolorblue>
+      <backgroundcolorred>183</backgroundcolorred>
+      <backgroundcolorgreen>255</backgroundcolorgreen>
+      <backgroundcolorblue>183</backgroundcolorblue>
+      <bordercolorred>100</bordercolorred>
+      <bordercolorgreen>100</bordercolorgreen>
+      <bordercolorblue>100</bordercolorblue>
+      <drawshadow>Y</drawshadow>
+    </notepad>
+    <notepad>
+      <note>  Check, if database given via parameter exists
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</note>
+      <xloc>2766</xloc>
+      <yloc>1179</yloc>
+      <width>362</width>
+      <heigth>295</heigth>
+      <fontname>Tahoma</fontname>
+      <fontsize>10</fontsize>
+      <fontbold>Y</fontbold>
+      <fontitalic>N</fontitalic>
+      <fontcolorred>0</fontcolorred>
+      <fontcolorgreen>0</fontcolorgreen>
+      <fontcolorblue>0</fontcolorblue>
+      <backgroundcolorred>183</backgroundcolorred>
+      <backgroundcolorgreen>255</backgroundcolorgreen>
+      <backgroundcolorblue>183</backgroundcolorblue>
+      <bordercolorred>100</bordercolorred>
+      <bordercolorgreen>100</bordercolorgreen>
+      <bordercolorblue>100</bordercolorblue>
+      <drawshadow>Y</drawshadow>
+    </notepad>
+    <notepad>
+      <note>Blocking needed,
+so that all rows will be 
+delivered
+
+
+
+
+
+
+
+
+
+
+
+</note>
+      <xloc>1941</xloc>
+      <yloc>1152</yloc>
+      <width>182</width>
+      <heigth>235</heigth>
+      <fontname>Tahoma</fontname>
+      <fontsize>10</fontsize>
+      <fontbold>Y</fontbold>
+      <fontitalic>N</fontitalic>
+      <fontcolorred>0</fontcolorred>
+      <fontcolorgreen>0</fontcolorgreen>
+      <fontcolorblue>0</fontcolorblue>
+      <backgroundcolorred>255</backgroundcolorred>
+      <backgroundcolorgreen>192</backgroundcolorgreen>
+      <backgroundcolorblue>203</backgroundcolorblue>
+      <bordercolorred>100</bordercolorred>
+      <bordercolorgreen>100</bordercolorgreen>
+      <bordercolorblue>100</bordercolorblue>
+      <drawshadow>Y</drawshadow>
+    </notepad>
+  </notepads>
+  <connection>
+    <name>Meta#Grid_Generic_Database</name>
+    <server/>
+    <type>GENERIC</type>
+    <access>Native</access>
+    <database/>
+    <port>1521</port>
+    <username>${metagrid_jdbc_db_user}</username>
+    <password>${metagrid_jdbc_db_pwd}</password>
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
+    <attributes>
+      <attribute>
+        <code>CUSTOM_DRIVER_CLASS</code>
+        <attribute>${metagrid_jdbc_driver_class}</attribute>
+      </attribute>
+      <attribute>
+        <code>CUSTOM_URL</code>
+        <attribute>${metagrid_jdbc_url}</attribute>
+      </attribute>
+      <attribute>
+        <code>FORCE_IDENTIFIERS_TO_LOWERCASE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>FORCE_IDENTIFIERS_TO_UPPERCASE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>IS_CLUSTERED</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>PORT_NUMBER</code>
+        <attribute>1521</attribute>
+      </attribute>
+      <attribute>
+        <code>QUOTE_ALL_FIELDS</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>SUPPORTS_BOOLEAN_DATA_TYPE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>USE_POOLING</code>
+        <attribute>N</attribute>
+      </attribute>
+    </attributes>
+  </connection>
+  <connection>
+    <name>Source_Generic_Database</name>
+    <server/>
+    <type>GENERIC</type>
+    <access>Native</access>
+    <database/>
+    <port>1521</port>
+    <username>${source_jdbc_db_user}</username>
+    <password>${source_jdbc_db_pwd}</password>
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
+    <attributes>
+      <attribute>
+        <code>CUSTOM_DRIVER_CLASS</code>
+        <attribute>${source_jdbc_driver_class}</attribute>
+      </attribute>
+      <attribute>
+        <code>CUSTOM_URL</code>
+        <attribute>${source_jdbc_url}</attribute>
+      </attribute>
+      <attribute>
+        <code>FORCE_IDENTIFIERS_TO_LOWERCASE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>FORCE_IDENTIFIERS_TO_UPPERCASE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>IS_CLUSTERED</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>PORT_NUMBER</code>
+        <attribute>1521</attribute>
+      </attribute>
+      <attribute>
+        <code>QUOTE_ALL_FIELDS</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>SUPPORTS_BOOLEAN_DATA_TYPE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>USE_POOLING</code>
+        <attribute>N</attribute>
+      </attribute>
+    </attributes>
+  </connection>
+  <order>
+    <hop>
+      <from>Data Grid: Queries for each RDBMS</from>
+      <to>Dynamic SQL row</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Dynamic SQL row</from>
+      <to>Dummy (Dynamic SQL row)</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows: Exclude Table Schema</from>
+      <to>Dummy (Filter rows: Exclude Table Schema)</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Dynamic SQL row</from>
+      <to>Modified Java Script Value: Variable to fields...</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Modified Java Script Value - location</from>
+      <to>Select values</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values</from>
+      <to>Modified Java Script Value - get Description ROUTINE_DEFINITION</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Modified Java Script Value - get Description ROUTINE_DEFINITION</from>
+      <to>Modified Java Script Value - Handle Description</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Modified Java Script Value - Handle Description</from>
+      <to>Select values 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows: Exclude Table Schema</from>
+      <to>Java Filter - Filter on Routinenames</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Java Filter - Filter on Routinenames</from>
+      <to>Modified Java Script Value - location</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Java Filter - Filter on Routinenames</from>
+      <to>Dummy (Java Filter - Filter on Routinenames)</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Table input: data_transfer_process</from>
+      <to>String operations: location_UPPER_existing</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>String operations: location_UPPER_existing</from>
+      <to>Stream lookup</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values 2</from>
+      <to>Stream lookup</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows: uuid IS NULL (db_data_transfer_process not found)</from>
+      <to>Dummy (db_data_transfer_process found)</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Stream lookup</from>
+      <to>Filter rows: uuid IS NULL (db_data_transfer_process not found)</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows: uuid IS NULL (db_data_transfer_process not found)</from>
+      <to>Join Rows (lookup_data_transfer_type_id)</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Table input: data_transfer_type (Stored Procedure)</from>
+      <to>Join Rows (lookup_data_transfer_type_id)</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Table output: data_transfer_process</from>
+      <to>Write to log</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Join Rows (lookup_data_transfer_type_id)</from>
+      <to>Table output: data_transfer_process</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows: uuid IS NULL (no mapping for db_table found) 2</from>
+      <to>Table output: mapping_object_2_object</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows: uuid IS NULL (no mapping for db_table found) 2</from>
+      <to>Write to log: No database_id found</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows: uuid IS NULL (no mapping for data_transfer_process found)</from>
+      <to>Dummy (do nothing) 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Stream lookup mapping data_transfer_process to db_database</from>
+      <to>Filter rows: uuid IS NULL (no mapping for data_transfer_process found)</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Table input: map_object_2_object</from>
+      <to>Stream lookup mapping data_transfer_process to db_database</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows: uuid IS NULL (no mapping for data_transfer_process found)</from>
+      <to>Join Rows (lookup_data_transfer_type_id) 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Table input: db_database</from>
+      <to>Join Rows (lookup_data_transfer_type_id) 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Join Rows (lookup_data_transfer_type_id) 2</from>
+      <to>Filter rows: uuid IS NULL (no mapping for db_table found) 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Modified Java Script Value: Variable to fields...</from>
+      <to>Filter rows: exclude_routine_types</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows: exclude_routine_types</from>
+      <to>Dummy (Filter rows: exclude_routine_types)</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows: exclude_routine_types</from>
+      <to>Filter rows: Exclude Table Schema</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Blocking Step</from>
+      <to>Stream lookup mapping data_transfer_process to db_database</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Table output: data_transfer_process</from>
+      <to>Blocking Step</to>
+      <enabled>Y</enabled>
+    </hop>
+  </order>
+  <step>
+    <name>Blocking Step</name>
+    <type>BlockingStep</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <pass_all_rows>Y</pass_all_rows>
+    <directory>%%java.io.tmpdir%%</directory>
+    <prefix>block</prefix>
+    <cache_size>5000</cache_size>
+    <compress>Y</compress>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>2055</xloc>
+      <yloc>1227</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Data Grid: Queries for each RDBMS</name>
+    <type>DataGrid</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>sql_query</name>
+        <type>string</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>1500</length>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+      </field>
+      <field>
+        <name>rdbms</name>
+        <type>string</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>100</length>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+      </field>
+    </fields>
+    <data>
+      <line>
+        <item>SELECT 
+    CAST(isr.ROUTINE_CATALOG AS VARCHAR(1500)) AS "ROUTINE_CATALOG"
+   ,CAST(ns.nspname AS VARCHAR(1500)) AS "ROUTINE_SCHEMA"
+   ,CAST(pr.proname AS VARCHAR(1500)) AS "ROUTINE_NAME"
+   ,CAST(CASE
+    	WHEN DATA_TYPE='void' THEN 'PROCEDURE'
+	    ELSE ROUTINE_TYPE
+	END AS VARCHAR(1500)) AS "ROUTINE_TYPE"
+   ,CAST(pr.prosrc AS VARCHAR(4000)) AS "ROUTINE_DEFINITION"
+   ,CAST(isr.ROUTINE_BODY AS VARCHAR(1500)) AS "ROUTINE_BODY"
+   ,CAST(isr.DATA_TYPE AS VARCHAR(1500)) AS "DATA_TYPE"
+   ,CAST(isr.SQL_DATA_ACCESS AS VARCHAR(1500)) AS "SQL_DATA_ACCESS"
+   ,CAST(pg_catalog.obj_description(pr.oid, 'pg_proc') AS VARCHAR(4000)) as "Description"
+   ,CAST(pr.oid AS INT) AS "RDBMS_internal_object_id"
+FROM pg_proc pr,
+     pg_type tp,
+     pg_namespace ns,
+     INFORMATION_SCHEMA.ROUTINES isr
+ WHERE tp.oid = pr.prorettype
+   AND pr.proisagg = FALSE
+   AND tp.typname &lt;&gt; 'trigger'
+   AND pr.pronamespace = ns.oid
+   AND isr.specific_name = pr.proname||'_'||pr.oid
+   AND pr.pronamespace IN (
+       SELECT oid
+         FROM pg_namespace
+        -- WHERE nspname NOT LIKE 'pg_%'
+        --  AND nspname != 'information_schema'
+	)
+ORDER BY
+  1,2,3</item>
+        <item>PGSQL</item>
+      </line>
+      <line>
+        <item>SELECT 
+    CAST(ROUTINE_CATALOG AS VARCHAR(1500)) AS [ROUTINE_CATALOG],
+    CAST(ROUTINE_SCHEMA AS VARCHAR(1500)) AS [ROUTINE_SCHEMA],
+    CAST(ROUTINE_NAME AS VARCHAR(1500)) AS [ROUTINE_NAME],
+    CAST(ROUTINE_TYPE AS VARCHAR(1500)) AS [ROUTINE_TYPE],
+    CAST(ROUTINE_DEFINITION AS VARCHAR(4000)) AS [ROUTINE_DEFINITION],
+    CAST(ROUTINE_BODY AS VARCHAR(1500)) AS [ROUTINE_BODY],
+    CAST(DATA_TYPE AS VARCHAR(1500)) AS [DATA_TYPE],
+    CAST(SQL_DATA_ACCESS AS VARCHAR(1500)) AS [SQL_DATA_ACCESS],
+    CAST(ext.[value] AS VARCHAR(4000)) AS [Description],
+    CAST(obj.object_id AS INT) AS [RDBMS_internal_object_id]
+FROM sys.objects obj
+LEFT JOIN sys.extended_properties ext ON obj.object_id = ext.major_id
+LEFT JOIN sys.columns col ON col.object_id = ext.major_id
+	AND col.column_id = ext.minor_id
+LEFT JOIN sys.parameters par ON par.object_id = ext.major_id
+	AND par.parameter_id = ext.minor_id
+LEFT JOIN INFORMATION_SCHEMA.ROUTINES isr ON
+    1 = 1
+    AND isr.ROUTINE_SCHEMA = SCHEMA_NAME(obj.schema_id)
+    AND isr.ROUTINE_NAME   = obj.NAME
+WHERE 1 = 1
+    AND obj.type_desc = 'SQL_STORED_PROCEDURE'
+    AND par.object_id IS NULL -- no parameter, for the moment...
+ORDER BY
+  1,2,3</item>
+        <item>MSSQL</item>
+      </line>
+    </data>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>118</xloc>
+      <yloc>61</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Dummy (Dynamic SQL row)</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>862</xloc>
+      <yloc>61</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Dummy (Filter rows: Exclude Table Schema)</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>862</xloc>
+      <yloc>415</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Dummy (Filter rows: exclude_routine_types)</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>848</xloc>
+      <yloc>299</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Dummy (Java Filter - Filter on Routinenames)</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>862</xloc>
+      <yloc>555</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Dummy (db_data_transfer_process found)</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1246</xloc>
+      <yloc>1000</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Dummy (do nothing) 2</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>2633</xloc>
+      <yloc>1390</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Dynamic SQL row</name>
+    <type>DynamicSQLRow</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>Source_Generic_Database</connection>
+    <rowlimit>0</rowlimit>
+    <sql>SELECT 
+    CAST('' AS VARCHAR(1500)) AS "ROUTINE_CATALOG"
+   ,CAST('' AS VARCHAR(1500)) AS "ROUTINE_SCHEMA"
+   ,CAST('' AS VARCHAR(1500)) AS "ROUTINE_NAME"
+   ,CAST('' AS VARCHAR(1500)) AS "ROUTINE_TYPE"
+   ,CAST('' AS VARCHAR(4000)) AS "ROUTINE_DEFINITION"
+   ,CAST('' AS VARCHAR(1500)) AS "ROUTINE_BODY"
+   ,CAST('' AS VARCHAR(1500)) AS "DATA_TYPE"
+   ,CAST('' AS VARCHAR(1500)) AS "SQL_DATA_ACCESS"
+   ,CAST('' AS VARCHAR(4000)) as "Description"
+   ,CAST(0 AS INT) AS "RDBMS_internal_object_id"</sql>
+    <outer_join>N</outer_join>
+    <replace_vars>N</replace_vars>
+    <sql_fieldname>sql_query</sql_fieldname>
+    <query_only_on_change>N</query_only_on_change>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>483</xloc>
+      <yloc>61</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Filter rows: Exclude Table Schema</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <send_true_to>Java Filter - Filter on Routinenames</send_true_to>
+    <send_false_to>Dummy (Filter rows: Exclude Table Schema)</send_false_to>
+    <compare>
+      <condition>
+        <negated>Y</negated>
+        <leftvalue>db_schema_exclude</leftvalue>
+        <function>CONTAINS</function>
+        <rightvalue>routine_schema</rightvalue>
+      </condition>
+    </compare>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>483</xloc>
+      <yloc>415</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Filter rows: exclude_routine_types</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <send_true_to>Filter rows: Exclude Table Schema</send_true_to>
+    <send_false_to>Dummy (Filter rows: exclude_routine_types)</send_false_to>
+    <compare>
+      <condition>
+        <negated>Y</negated>
+        <leftvalue>exclude_routine_types</leftvalue>
+        <function>CONTAINS</function>
+        <rightvalue>ROUTINE_TYPE</rightvalue>
+      </condition>
+    </compare>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>483</xloc>
+      <yloc>298</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Filter rows: uuid IS NULL (db_data_transfer_process not found)</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <send_true_to>Join Rows (lookup_data_transfer_type_id)</send_true_to>
+    <send_false_to>Dummy (db_data_transfer_process found)</send_false_to>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>lookup_data_transfer_process_uuid</leftvalue>
+        <function>IS NULL</function>
+        <rightvalue/>
+      </condition>
+    </compare>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1246</xloc>
+      <yloc>1227</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Filter rows: uuid IS NULL (no mapping for data_transfer_process found)</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <send_true_to>Join Rows (lookup_data_transfer_type_id) 2</send_true_to>
+    <send_false_to>Dummy (do nothing) 2</send_false_to>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>uuid_stream_lookup_mapping</leftvalue>
+        <function>IS NULL</function>
+        <rightvalue/>
+      </condition>
+    </compare>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>2633</xloc>
+      <yloc>1227</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Filter rows: uuid IS NULL (no mapping for db_table found) 2</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <send_true_to>Table output: mapping_object_2_object</send_true_to>
+    <send_false_to>Write to log: No database_id found</send_false_to>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>db_database_id</leftvalue>
+        <function>IS NOT NULL</function>
+        <rightvalue/>
+      </condition>
+    </compare>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>3243</xloc>
+      <yloc>1227</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Java Filter - Filter on Routinenames</name>
+    <type>JavaFilter</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <send_true_to>Modified Java Script Value - location</send_true_to>
+    <send_false_to>Dummy (Java Filter - Filter on Routinenames)</send_false_to>
+    <condition>ROUTINE_NAME.indexOf("${filter_routine_names}")>-1 ? Boolean.TRUE : Boolean.FALSE</condition>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>483</xloc>
+      <yloc>558</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Join Rows (lookup_data_transfer_type_id)</name>
+    <type>JoinRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <directory>%%java.io.tmpdir%%</directory>
+    <prefix>out</prefix>
+    <cache_size>500</cache_size>
+    <main>Filter rows: uuid IS NULL (db_data_transfer_process not found)</main>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>lookup_data_transfer_type_id</leftvalue>
+        <function>&lt;></function>
+        <rightvalue/>
+        <value>
+          <name>constant</name>
+          <type>Integer</type>
+          <text>-9999999999</text>
+          <length>-1</length>
+          <precision>0</precision>
+          <isnull>N</isnull>
+          <mask>####0;-####0</mask>
+        </value>
+      </condition>
+    </compare>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1565</xloc>
+      <yloc>1227</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Join Rows (lookup_data_transfer_type_id) 2</name>
+    <type>JoinRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <directory>%%java.io.tmpdir%%</directory>
+    <prefix>out</prefix>
+    <cache_size>500</cache_size>
+    <main>Filter rows: uuid IS NULL (db_data_transfer_process not found)</main>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>db_database_id</leftvalue>
+        <function>&lt;></function>
+        <rightvalue/>
+        <value>
+          <name>constant</name>
+          <type>Integer</type>
+          <text>-9999999999</text>
+          <length>-1</length>
+          <precision>0</precision>
+          <isnull>N</isnull>
+          <mask>####0;-####0</mask>
+        </value>
+      </condition>
+    </compare>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>2938</xloc>
+      <yloc>1227</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Modified Java Script Value - Handle Description</name>
+    <type>ScriptValueMod</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <compatible>N</compatible>
+    <optimizationLevel>9</optimizationLevel>
+    <jsScripts>
+      <jsScript>
+        <jsScript_type>0</jsScript_type>
+        <jsScript_name>Script 1</jsScript_name>
+        <jsScript_script>var handle_descriptions = getVariable("handle_descriptions",1)
+
+var DescriptionForInsertIntoMetaGrid = ""
+
+if (handle_descriptions == 1)
+{
+	if (Description != null) DescriptionForInsertIntoMetaGrid = Description
+}
+if (handle_descriptions == 2)
+{
+	if (descriptionFromRoutineDefinition != null) DescriptionForInsertIntoMetaGrid = descriptionFromRoutineDefinition
+}
+if (handle_descriptions == 3)
+{
+	var lineSep = ""
+	if ((Description != null) &amp;&amp; descriptionFromRoutineDefinition != null) 
+	{
+		lineSep = "\n"
+		DescriptionForInsertIntoMetaGrid = ""
+	}
+
+	if (Description != null) DescriptionForInsertIntoMetaGrid += "&lt;p>" + Description + "&lt;/p>" + lineSep
+	if (descriptionFromRoutineDefinition != null) DescriptionForInsertIntoMetaGrid += "&lt;p>" + descriptionFromRoutineDefinition + "&lt;/p>"
+}
+
+if (DescriptionForInsertIntoMetaGrid.equals("")) DescriptionForInsertIntoMetaGrid = null</jsScript_script>
+      </jsScript>
+      <jsScript>
+        <jsScript_type>-1</jsScript_type>
+        <jsScript_name>getVariable_Sample</jsScript_name>
+        <jsScript_script>// Retrieves the value of a given Kettle/Pentaho Variable
+// 
+// Usage:
+// getVariable(var, var);
+// 1: String - The name of the variable to retrieve.
+// 2: String - The default if the variable doesn't exist.
+//
+// 2007-07-27
+//
+var strVarName="getVariableTest";
+var strVarValue="123456";
+Alert(getVariable(strVarName, ""));
+setVariable(strVarName,strVarValue, "r");
+Alert(getVariable(strVarName, ""));
+strVarValue="654321";
+setVariable(strVarName,strVarValue, "r");
+Alert(getVariable(strVarName, ""));</jsScript_script>
+      </jsScript>
+    </jsScripts>
+    <fields>
+      <field>
+        <name>DescriptionForInsertIntoMetaGrid</name>
+        <rename>DescriptionForInsertIntoMetaGrid</rename>
+        <type>String</type>
+        <length>4000</length>
+        <precision>-1</precision>
+        <replace>N</replace>
+      </field>
+    </fields>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>848</xloc>
+      <yloc>947</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Modified Java Script Value - get Description ROUTINE_DEFINITION</name>
+    <type>ScriptValueMod</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <compatible>Y</compatible>
+    <optimizationLevel>9</optimizationLevel>
+    <jsScripts>
+      <jsScript>
+        <jsScript_type>0</jsScript_type>
+        <jsScript_name>Script 1</jsScript_name>
+        <jsScript_script>// To use the function spit, you need to use getString(). 
+// The Compatibility mode has to be activated !!
+
+var StringToExamine = ROUTINE_DEFINITION.getString()
+var SplitOnString_1 = getVariable("get_description_from_routine_definition_SplitOnString_1","Description: ")
+var SplitElemenent_1 = getVariable("get_description_from_routine_definition_SplitElemenent_1",1)
+var SplitOnString_2 = getVariable("get_description_from_routine_definition_SplitOnString_2","\n")
+var SplitElemenent_2 = getVariable("get_description_from_routine_definition_SplitElemenent_2",0)
+
+var indexOfPos = -1
+
+var descriptionFromRoutineDefinition = null
+
+if (getVariable("get_description_from_routine_definition", "N").equals("Y"))
+{
+
+	indexOfPos = StringToExamine.indexOf(SplitOnString_1)
+	if (indexOfPos>-1)
+	{
+		descriptionFromRoutineDefinition = StringToExamine.split(SplitOnString_1)[SplitElemenent_1].split(SplitOnString_2)[SplitElemenent_2];
+	    //Alert(descriptionFromRoutineDefinition);
+	}
+}
+</jsScript_script>
+      </jsScript>
+      <jsScript>
+        <jsScript_type>-1</jsScript_type>
+        <jsScript_name>getVariable_Sample</jsScript_name>
+        <jsScript_script>// Retrieves the value of a given Kettle/Pentaho Variable
+// 
+// Usage:
+// getVariable(var, var);
+// 1: String - The name of the variable to retrieve.
+// 2: String - The default if the variable doesn't exist.
+//
+// 2007-07-27
+//
+var strVarName="getVariableTest";
+var strVarValue="123456";
+Alert(getVariable(strVarName, ""));
+setVariable(strVarName,strVarValue, "r");
+Alert(getVariable(strVarName, ""));
+strVarValue="654321";
+setVariable(strVarName,strVarValue, "r");
+Alert(getVariable(strVarName, ""));</jsScript_script>
+      </jsScript>
+    </jsScripts>
+    <fields>
+      <field>
+        <name>descriptionFromRoutineDefinition</name>
+        <rename>descriptionFromRoutineDefinition</rename>
+        <type>String</type>
+        <length>4000</length>
+        <precision>-1</precision>
+        <replace>N</replace>
+      </field>
+    </fields>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>848</xloc>
+      <yloc>830</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Modified Java Script Value - location</name>
+    <type>ScriptValueMod</type>
+    <description/>
+    <distribute>N</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <compatible>N</compatible>
+    <optimizationLevel>9</optimizationLevel>
+    <jsScripts>
+      <jsScript>
+        <jsScript_type>0</jsScript_type>
+        <jsScript_name>Script 1</jsScript_name>
+        <jsScript_script>var vTABLE_CAT = ROUTINE_CATALOG;
+var vTABLE_SCHEM = ROUTINE_SCHEMA;
+var vTABLE_NAME = ROUTINE_NAME;
+
+if (vTABLE_CAT != "")
+{
+	vTABLE_CAT = '"' + vTABLE_CAT + '".';
+}
+
+if (vTABLE_SCHEM  != "")
+{
+	vTABLE_SCHEM  = '"' + vTABLE_SCHEM + '".';
+}
+
+if (vTABLE_NAME  != "")
+{
+	vTABLE_NAME  = '"' + vTABLE_NAME + '"';
+}
+
+location = upper(vTABLE_CAT + vTABLE_SCHEM + vTABLE_NAME);
+</jsScript_script>
+      </jsScript>
+    </jsScripts>
+    <fields>
+      <field>
+        <name>location</name>
+        <rename>location</rename>
+        <type>String</type>
+        <length>1000</length>
+        <precision>-1</precision>
+        <replace>N</replace>
+      </field>
+    </fields>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>481</xloc>
+      <yloc>711</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Modified Java Script Value: Variable to fields...</name>
+    <type>ScriptValueMod</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <compatible>N</compatible>
+    <optimizationLevel>9</optimizationLevel>
+    <jsScripts>
+      <jsScript>
+        <jsScript_type>0</jsScript_type>
+        <jsScript_name>Script 1</jsScript_name>
+        <jsScript_script>fk_project_id=getVariable("project_id","");
+db_schema_exclude=getVariable("source_db_schema_exclude","");
+exclude_routine_types=getVariable("exclude_routine_types","");
+map_transfer_process_to_db_database_id=getVariable("map_transfer_process_to_db_database_id","");
+
+writeToLog("Exclude follwing db_schemes: " + db_schema_exclude)</jsScript_script>
+      </jsScript>
+    </jsScripts>
+    <fields>
+      <field>
+        <name>fk_project_id</name>
+        <rename>fk_project_id</rename>
+        <type>Integer</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <replace>N</replace>
+      </field>
+      <field>
+        <name>db_schema_exclude</name>
+        <rename>db_schema_exclude</rename>
+        <type>String</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <replace>N</replace>
+      </field>
+      <field>
+        <name>map_transfer_process_to_db_database_id</name>
+        <rename>map_transfer_process_to_db_database_id</rename>
+        <type>Integer</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <replace>N</replace>
+      </field>
+      <field>
+        <name>exclude_routine_types</name>
+        <rename>exclude_routine_types</rename>
+        <type>String</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <replace>N</replace>
+      </field>
+    </fields>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>483</xloc>
+      <yloc>182</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Select values</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <select_unspecified>N</select_unspecified>
+      <remove>
+        <name>sql_query</name>
+      </remove>
+      <remove>
+        <name>db_schema_exclude</name>
+      </remove>
+      <remove>
+        <name>rdbms</name>
+      </remove>
+    </fields>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>481</xloc>
+      <yloc>830</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Select values 2</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <select_unspecified>N</select_unspecified>
+      <remove>
+        <name>Description</name>
+      </remove>
+      <remove>
+        <name>descriptionFromRoutineDefinition</name>
+      </remove>
+    </fields>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>848</xloc>
+      <yloc>1064</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Stream lookup</name>
+    <type>StreamLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <from>String operations: location_UPPER_existing</from>
+    <input_sorted>N</input_sorted>
+    <preserve_memory>Y</preserve_memory>
+    <sorted_list>N</sorted_list>
+    <integer_pair>N</integer_pair>
+    <lookup>
+      <key>
+        <name>RDBMS_internal_object_id</name>
+        <field>source_internal_object_id</field>
+      </key>
+      <value>
+        <name>uuid</name>
+        <rename>lookup_data_transfer_process_uuid</rename>
+        <default/>
+        <type>String</type>
+      </value>
+    </lookup>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>848</xloc>
+      <yloc>1227</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Stream lookup mapping data_transfer_process to db_database</name>
+    <type>StreamLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <from>Table input: map_object_2_object</from>
+    <input_sorted>N</input_sorted>
+    <preserve_memory>Y</preserve_memory>
+    <sorted_list>N</sorted_list>
+    <integer_pair>N</integer_pair>
+    <lookup>
+      <key>
+        <name>id</name>
+        <field>ref_fk_object_id_2</field>
+      </key>
+      <value>
+        <name>uuid</name>
+        <rename>uuid_stream_lookup_mapping</rename>
+        <default/>
+        <type>String</type>
+      </value>
+    </lookup>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>2304</xloc>
+      <yloc>1227</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>String operations: location_UPPER_existing</name>
+    <type>StringOperations</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <in_stream_name>location</in_stream_name>
+        <out_stream_name>location_UPPER_existing</out_stream_name>
+        <trim_type>none</trim_type>
+        <lower_upper>upper</lower_upper>
+        <padding_type>none</padding_type>
+        <pad_char/>
+        <pad_len/>
+        <init_cap>no</init_cap>
+        <mask_xml>none</mask_xml>
+        <digits>none</digits>
+        <remove_special_characters>none</remove_special_characters>
+      </field>
+    </fields>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>848</xloc>
+      <yloc>1325</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Table input: data_transfer_process</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>Meta#Grid_Generic_Database</connection>
+    <sql>SELECT
+  dtp.id
+, dtp.uuid
+, dtp.fk_object_type_id
+, dtp.fk_project_id
+, dtp.name
+, dtp.description
+, dtp.fk_data_transfer_type_id
+, dtp.location
+, dtp.source_internal_object_id
+FROM data_transfer_process dtp
+INNER JOIN data_transfer_type dtt ON
+   1 = 1
+   AND dtt.id = dtp.fk_data_transfer_type_id
+   AND dtt.name = 'Stored Procedure'
+WHERE fk_project_id = ${project_id}
+</sql>
+    <limit/>
+    <lookup/>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>Y</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>849</xloc>
+      <yloc>1423</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Table input: data_transfer_type (Stored Procedure)</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>Meta#Grid_Generic_Database</connection>
+    <sql>SELECT
+  id AS lookup_data_transfer_type_id
+FROM data_transfer_type dtt
+WHERE 1 = 1
+   AND dtt.name = 'Stored Procedure'</sql>
+    <limit>0</limit>
+    <lookup/>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1565</xloc>
+      <yloc>1384</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Table input: db_database</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>Meta#Grid_Generic_Database</connection>
+    <sql>SELECT
+  id AS db_database_id
+, fk_object_type_id AS object_type_id_db_database
+, ${object_type_id_db_transfer_process} AS object_type_id_db_transfer_process
+FROM db_database
+WHERE 1=1
+AND id = ${map_transfer_process_to_db_database_id}
+AND fk_project_id = ${project_id}</sql>
+    <limit/>
+    <lookup/>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>Y</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>2938</xloc>
+      <yloc>1390</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Table input: map_object_2_object</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>Meta#Grid_Generic_Database</connection>
+    <sql>SELECT
+  id
+, uuid
+, ref_fk_object_id_1
+, ref_fk_object_type_id_1
+, ref_fk_object_id_2
+, ref_fk_object_type_id_2
+, fk_mapping_qualifier_id
+FROM map_object_2_object
+WHERE 1=1 
+AND ref_fk_object_id_1 = ${map_transfer_process_to_db_database_id}
+AND ref_fk_object_type_id_1 = ${object_type_id_db_database}            -- db_database -> 11
+AND ref_fk_object_type_id_2 = ${object_type_id_db_transfer_process}    -- db_transfer_process -> 13</sql>
+    <limit/>
+    <lookup/>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>Y</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>2304</xloc>
+      <yloc>1386</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Table output: data_transfer_process</name>
+    <type>TableOutput</type>
+    <description/>
+    <distribute>N</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>Meta#Grid_Generic_Database</connection>
+    <schema/>
+    <table>data_transfer_process</table>
+    <commit>1000</commit>
+    <truncate>N</truncate>
+    <ignore_errors>N</ignore_errors>
+    <use_batch>N</use_batch>
+    <specify_fields>Y</specify_fields>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_field/>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_monthly>Y</partitioning_monthly>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_field/>
+    <tablename_in_table>Y</tablename_in_table>
+    <return_keys>Y</return_keys>
+    <return_field>id</return_field>
+    <fields>
+      <field>
+        <column_name>name</column_name>
+        <stream_name>ROUTINE_NAME</stream_name>
+      </field>
+      <field>
+        <column_name>description</column_name>
+        <stream_name>DescriptionForInsertIntoMetaGrid</stream_name>
+      </field>
+      <field>
+        <column_name>location</column_name>
+        <stream_name>location</stream_name>
+      </field>
+      <field>
+        <column_name>source_internal_object_id</column_name>
+        <stream_name>RDBMS_internal_object_id</stream_name>
+      </field>
+      <field>
+        <column_name>fk_data_transfer_type_id</column_name>
+        <stream_name>lookup_data_transfer_type_id</stream_name>
+      </field>
+      <field>
+        <column_name>fk_project_id</column_name>
+        <stream_name>fk_project_id</stream_name>
+      </field>
+    </fields>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1806</xloc>
+      <yloc>1227</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Table output: mapping_object_2_object</name>
+    <type>TableOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>Meta#Grid_Generic_Database</connection>
+    <schema/>
+    <table>map_object_2_object</table>
+    <commit>1000</commit>
+    <truncate>N</truncate>
+    <ignore_errors>N</ignore_errors>
+    <use_batch>Y</use_batch>
+    <specify_fields>Y</specify_fields>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_field/>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_monthly>Y</partitioning_monthly>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_field/>
+    <tablename_in_table>Y</tablename_in_table>
+    <return_keys>N</return_keys>
+    <return_field/>
+    <fields>
+      <field>
+        <column_name>ref_fk_object_id_2</column_name>
+        <stream_name>id</stream_name>
+      </field>
+      <field>
+        <column_name>ref_fk_object_type_id_2</column_name>
+        <stream_name>object_type_id_db_transfer_process</stream_name>
+      </field>
+      <field>
+        <column_name>ref_fk_object_id_1</column_name>
+        <stream_name>map_transfer_process_to_db_database_id</stream_name>
+      </field>
+      <field>
+        <column_name>ref_fk_object_type_id_1</column_name>
+        <stream_name>object_type_id_db_database</stream_name>
+      </field>
+    </fields>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>3606</xloc>
+      <yloc>1227</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Write to log</name>
+    <type>WriteToLog</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <loglevel>log_level_basic</loglevel>
+    <displayHeader>Y</displayHeader>
+    <limitRows>N</limitRows>
+    <limitRowsNumber>5</limitRowsNumber>
+    <logmessage>New inserted data_transfer_process</logmessage>
+    <fields>
+      <field>
+        <name>location</name>
+      </field>
+    </fields>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1806</xloc>
+      <yloc>1386</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Write to log: No database_id found</name>
+    <type>WriteToLog</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <loglevel>log_level_basic</loglevel>
+    <displayHeader>Y</displayHeader>
+    <limitRows>N</limitRows>
+    <limitRowsNumber>5</limitRowsNumber>
+    <logmessage>No database_id found</logmessage>
+    <fields>
+      <field>
+        <name>map_db_table_to_db_database_id</name>
+      </field>
+    </fields>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>3243</xloc>
+      <yloc>1390</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step_error_handling>
+    <error>
+      <source_step>Dynamic SQL row</source_step>
+      <target_step>Dummy (Dynamic SQL row)</target_step>
+      <is_enabled>Y</is_enabled>
+      <nr_valuename/>
+      <descriptions_valuename/>
+      <fields_valuename/>
+      <codes_valuename/>
+      <max_errors/>
+      <max_pct_errors/>
+      <min_pct_rows/>
+    </error>
+  </step_error_handling>
+  <slave-step-copy-partition-distribution>
+  </slave-step-copy-partition-distribution>
+  <slave_transformation>N</slave_transformation>
+</transformation>

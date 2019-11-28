@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000041/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000041" context="translation,perspective">
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO language_translate ("language","translation",id)
+SELECT 
+   DISTINCT 
+      "language"
+     ,CASE
+        WHEN "language" IS NOT NULL THEN sq01.message
+        ELSE NULL
+        END AS "translation"
+     ,sq01.id AS language_source_id
+FROM language_translate
+LEFT JOIN (
+	SELECT id,message FROM language_source WHERE category='app' AND message='URL'
+) sq01 ON 1=1
+		]]>		
+		</sql>
+
+
+		<comment>
+		<![CDATA[
+		Used objects:
+	        language_translate
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

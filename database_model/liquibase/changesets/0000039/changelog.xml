@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000039/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000039" context="translation,perspective">
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO language_source (id, category, message) VALUES ((SELECT MAX(id)+1 FROM language_source), 'app', 'The database structure version differs from available version. Please update the database!')
+		]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO language_source (id, category, message) VALUES ((SELECT MAX(id)+1 FROM language_source), 'app', 'Url')
+		]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO language_source (id, category, message) VALUES ((SELECT MAX(id)+1 FROM language_source), 'app', 'Urls')
+		]]>		
+		</sql>
+
+		<comment>
+		<![CDATA[
+		Used objects:
+	        language_source
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

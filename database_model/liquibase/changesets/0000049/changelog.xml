@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000049/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000049" context="url table">
+
+
+    	<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TABLE IF EXISTS url_log;
+		]]>	
+		</sql>		
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TABLE url_log (
+   log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+   log_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+   log_action TEXT,
+   id INTEGER,
+   uuid TEXT,
+   fk_object_type_id INTEGER,
+   fk_object_type_uuid TEXT,
+   fk_project_id INTEGER,
+   fk_project_uuid TEXT,
+   name TEXT(250),
+   description TEXT(4000),
+   url TEXT(4000)
+);
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_url_log_INSERT;
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_url_log_INSERT AFTER INSERT
+ON url
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   INSERT INTO url_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,url) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.url);
+   UPDATE url SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   DELETE FROM _newUUID;
+   DELETE FROM url_log WHERE log_id=(SELECT MAX(log_id)+1 FROM url_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
+END;
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_url_log_UPDATE;		
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_url_log_UPDATE AFTER UPDATE
+ON url
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   UPDATE url SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   INSERT INTO url_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,url) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.url);
+   DELETE FROM _newUUID;
+END;
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_url_log_DELETE;		
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_url_log_DELETE AFTER DELETE
+ON url
+BEGIN
+   INSERT INTO url_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,url) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.url);
+END;	
+		]]>		
+		</sql>
+
+		<comment>
+		<![CDATA[
+		fk_project_id field was missing in table "url".
+		Used objects:
+			url_log
+			TRIG_url_log_INSERT
+			TRIG_url_log_UPDATE
+			TRIG_url_log_DELETE
+		Phabricator tasks:
+			T26
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

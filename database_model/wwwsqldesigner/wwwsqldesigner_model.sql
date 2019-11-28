@@ -212,7 +212,9 @@ fk_object_type_id INTEGER NOT NULL  DEFAULT 13 REFERENCES object_type (id),
 fk_project_id INTEGER NOT NULL  DEFAULT NULL REFERENCES project (id),
 name TEXT(250) DEFAULT NULL,
 description TEXT(4000) DEFAULT NULL,
-fk_data_transfer_type_id INTEGER DEFAULT NULL REFERENCES data_transfer_type (id)
+fk_data_transfer_type_id INTEGER DEFAULT NULL REFERENCES data_transfer_type (id),
+location TEXT(500) DEFAULT NULL,
+source_internal_object_id TEXT(500) DEFAULT NULL
 );
 
 CREATE TABLE data_transfer_type (
@@ -313,4 +315,14 @@ name TEXT(250) DEFAULT NULL,
 short_name TEXT(250) DEFAULT NULL,
 description TEXT(4000) DEFAULT NULL,
 needs_object_depends_on BOOLEAN NOT NULL  DEFAULT 0
+);
+
+CREATE TABLE url (
+id INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+uuid TEXT DEFAULT NULL,
+fk_object_type_id INTEGER DEFAULT 24 REFERENCES object_type (id),
+fk_project_id INTEGER NOT NULL  DEFAULT NULL REFERENCES project (id),
+name TEXT(250) DEFAULT NULL,
+description TEXT(4000) DEFAULT NULL,
+url TEXT(4000) DEFAULT NULL
 );

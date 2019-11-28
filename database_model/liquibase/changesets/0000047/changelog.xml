@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000047/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000047" context="translation,perspective">
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+UPDATE language_translate
+	SET "translation"='Eine URL zu einer Website oder einem Link zu einer Datei&#013;&#10;(bspw. einem SSRS-Bericht oder Power BI Dashboard im Berichtsserverportal)'
+WHERE "translation"='Eine URL zu einer Website oder einem Link zu einer Datei (bspw. Referez zu einem WIKI Eintrag oder einer Aufgabenbeschreibung oder einem Quellcodehinweis)'
+AND "language" = 'de-MS_SSRS'
+		]]>		
+		</sql>
+
+
+		<comment>
+		<![CDATA[
+		Used objects:
+	        language_translate
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

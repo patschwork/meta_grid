@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000034/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000034" context="bulk lolad stored procedures for data_transfer_process">
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+-- Only insert, if not exists
+INSERT INTO data_transfer_type (name,description)
+SELECT name,description FROM (
+	SELECT 'Stored Procedure' AS name,'PROCEDURES of a RDBMS to manipulate data (e.g. in a ETL workflow)' AS description
+) sq01
+WHERE 0=(SELECT COUNT(*) FROM data_transfer_type WHERE name='Stored Procedure')
+		]]>		
+		</sql>
+
+		<comment>
+		<![CDATA[
+		Add new default value into table "data_transfer_type".
+		Used objects:
+			data_transfer_type
+		Phabricator tasks:
+			T25
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

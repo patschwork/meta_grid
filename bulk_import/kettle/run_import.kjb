@@ -17,6 +17,41 @@
       <description>Path to scan for liquibase changesets</description>
     </parameter>
     <parameter>
+      <name>filter_routine_names</name>
+      <default_value/>
+      <description>Filter routine names based on parameter value (like operation without wildcards). Attention: Case sensitive</description>
+    </parameter>
+    <parameter>
+      <name>get_description_from_routine_definition</name>
+      <default_value>Y</default_value>
+      <description>Extract the comment from the SQL Definition. Y=Yes | N=No</description>
+    </parameter>
+    <parameter>
+      <name>get_description_from_routine_definition_SplitElemenent_1</name>
+      <default_value>1</default_value>
+      <description>Element to use for result of get_description_from_routine_definition_SplitOnString_1</description>
+    </parameter>
+    <parameter>
+      <name>get_description_from_routine_definition_SplitElemenent_2</name>
+      <default_value>0</default_value>
+      <description>Element to use for result of get_description_from_routine_definition_SplitOnString_2</description>
+    </parameter>
+    <parameter>
+      <name>get_description_from_routine_definition_SplitOnString_1</name>
+      <default_value>Description: </default_value>
+      <description>First substring to split the routine definition (e.g.  "Description: ") without quotations</description>
+    </parameter>
+    <parameter>
+      <name>get_description_from_routine_definition_SplitOnString_2</name>
+      <default_value>\n</default_value>
+      <description>Second substring to split the routine definition (e.g.  "\n") without quotations</description>
+    </parameter>
+    <parameter>
+      <name>handle_descriptions</name>
+      <default_value>3</default_value>
+      <description>1=Use only database object description | 2=Use only from routine description | 3=Use both</description>
+    </parameter>
+    <parameter>
       <name>location_lookup_database</name>
       <default_value>db_name</default_value>
       <description>Database for liquibase changeset lookup db_table</description>
@@ -25,6 +60,11 @@
       <name>map_db_table_to_db_database_id</name>
       <default_value>11</default_value>
       <description>DB_Database ID which will be used to map (new) database tables found</description>
+    </parameter>
+    <parameter>
+      <name>map_transfer_process_to_db_database_id</name>
+      <default_value>11</default_value>
+      <description>DB_Database ID which will be used to map (new) database routines found</description>
     </parameter>
     <parameter>
       <name>metagrid_jdbc_db_pwd</name>
@@ -586,8 +626,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>181</xloc>
-      <yloc>333</yloc>
+      <xloc>180</xloc>
+      <yloc>462</yloc>
     </entry>
     <entry>
       <name>Transformation: Get additional_mappingMSSQL</name>
@@ -662,8 +702,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>683</xloc>
-      <yloc>460</yloc>
+      <xloc>682</xloc>
+      <yloc>589</yloc>
     </entry>
     <entry>
       <name>Simple evaluation: MSSQL</name>
@@ -684,8 +724,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>683</xloc>
-      <yloc>333</yloc>
+      <xloc>682</xloc>
+      <yloc>462</yloc>
     </entry>
     <entry>
       <name>Simple evaluation: SQLITE</name>
@@ -706,8 +746,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>181</xloc>
-      <yloc>615</yloc>
+      <xloc>180</xloc>
+      <yloc>744</yloc>
     </entry>
     <entry>
       <name>Success</name>
@@ -716,8 +756,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>992</xloc>
-      <yloc>615</yloc>
+      <xloc>991</xloc>
+      <yloc>744</yloc>
     </entry>
     <entry>
       <name>Transformation: additional_description_MSSQL</name>
@@ -797,8 +837,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>992</xloc>
-      <yloc>460</yloc>
+      <xloc>991</xloc>
+      <yloc>589</yloc>
     </entry>
     <entry>
       <name>Transformation: Get Database Tables (General)</name>
@@ -970,7 +1010,7 @@
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>859</xloc>
-      <yloc>176</yloc>
+      <yloc>167</yloc>
     </entry>
     <entry>
       <name>Transformation: Get Database Mappings (General)</name>
@@ -1051,7 +1091,7 @@
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>520</xloc>
-      <yloc>176</yloc>
+      <yloc>167</yloc>
     </entry>
     <entry>
       <name>Transformation: Update db_table_context</name>
@@ -1137,7 +1177,7 @@
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>1198</xloc>
-      <yloc>176</yloc>
+      <yloc>167</yloc>
     </entry>
     <entry>
       <name>Job: Get LiquiBase Comment</name>
@@ -1205,8 +1245,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>181</xloc>
-      <yloc>176</yloc>
+      <xloc>180</xloc>
+      <yloc>305</yloc>
     </entry>
     <entry>
       <name>Transformation: Get app_config</name>
@@ -1279,6 +1319,127 @@
       <nr>0</nr>
       <xloc>859</xloc>
       <yloc>40</yloc>
+    </entry>
+    <entry>
+      <name>Transformation: Get Database Routines (General)</name>
+      <description/>
+      <type>TRANS</type>
+      <specification_method>filename</specification_method>
+      <trans_object_id/>
+      <filename>${Internal.Entry.Current.Directory}/05 bulk import from datasource 08 get_rdbms_routines.ktr</filename>
+      <transname/>
+      <arg_from_previous>N</arg_from_previous>
+      <params_from_previous>N</params_from_previous>
+      <exec_per_row>N</exec_per_row>
+      <clear_rows>N</clear_rows>
+      <clear_files>N</clear_files>
+      <set_logfile>N</set_logfile>
+      <logfile/>
+      <logext/>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <loglevel>Basic</loglevel>
+      <cluster>N</cluster>
+      <slave_server_name/>
+      <set_append_logfile>N</set_append_logfile>
+      <wait_until_finished>Y</wait_until_finished>
+      <follow_abort_remote>N</follow_abort_remote>
+      <create_parent_folder>N</create_parent_folder>
+      <logging_remote_work>N</logging_remote_work>
+      <run_configuration>Pentaho local</run_configuration>
+      <parameters>
+        <pass_all_parameters>Y</pass_all_parameters>
+        <parameter>
+          <name>metagrid_jdbc_db_pwd</name>
+          <stream_name/>
+          <value>${metagrid_jdbc_db_pwd}</value>
+        </parameter>
+        <parameter>
+          <name>metagrid_jdbc_db_user</name>
+          <stream_name/>
+          <value>${metagrid_jdbc_db_user}</value>
+        </parameter>
+        <parameter>
+          <name>metagrid_jdbc_driver_class</name>
+          <stream_name/>
+          <value>${metagrid_jdbc_driver_class}</value>
+        </parameter>
+        <parameter>
+          <name>metagrid_jdbc_url</name>
+          <stream_name/>
+          <value>${metagrid_jdbc_url}</value>
+        </parameter>
+        <parameter>
+          <name>project_id</name>
+          <stream_name/>
+          <value>${project_id}</value>
+        </parameter>
+        <parameter>
+          <name>source_jdbc_db_pwd</name>
+          <stream_name/>
+          <value>${source_jdbc_db_pwd}</value>
+        </parameter>
+        <parameter>
+          <name>source_jdbc_db_user</name>
+          <stream_name/>
+          <value>${source_jdbc_db_user}</value>
+        </parameter>
+        <parameter>
+          <name>source_jdbc_driver_class</name>
+          <stream_name/>
+          <value>${source_jdbc_driver_class}</value>
+        </parameter>
+        <parameter>
+          <name>source_jdbc_url</name>
+          <stream_name/>
+          <value>${source_jdbc_url}</value>
+        </parameter>
+        <parameter>
+          <name>filter_routine_names</name>
+          <stream_name/>
+          <value>${filter_routine_names}</value>
+        </parameter>
+        <parameter>
+          <name>get_description_from_routine_definition</name>
+          <stream_name/>
+          <value>${get_description_from_routine_definition}</value>
+        </parameter>
+        <parameter>
+          <name>get_description_from_routine_definition_SplitElemenent_1</name>
+          <stream_name/>
+          <value>${get_description_from_routine_definition_SplitElemenent_1}</value>
+        </parameter>
+        <parameter>
+          <name>get_description_from_routine_definition_SplitElemenent_2</name>
+          <stream_name/>
+          <value>${get_description_from_routine_definition_SplitElemenent_2}</value>
+        </parameter>
+        <parameter>
+          <name>get_description_from_routine_definition_SplitOnString_1</name>
+          <stream_name/>
+          <value>${get_description_from_routine_definition_SplitOnString_1}</value>
+        </parameter>
+        <parameter>
+          <name>get_description_from_routine_definition_SplitOnString_2</name>
+          <stream_name/>
+          <value>${get_description_from_routine_definition_SplitOnString_2}</value>
+        </parameter>
+        <parameter>
+          <name>handle_descriptions</name>
+          <stream_name/>
+          <value>${handle_descriptions}</value>
+        </parameter>
+        <parameter>
+          <name>map_transfer_process_to_db_database_id</name>
+          <stream_name/>
+          <value>${map_transfer_process_to_db_database_id}</value>
+        </parameter>
+      </parameters>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>181</xloc>
+      <yloc>167</yloc>
     </entry>
   </entries>
   <hops>
@@ -1364,15 +1525,6 @@
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Transformation: Get Database Mappings (General)</from>
-      <to>Job: Get LiquiBase Comment</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
       <from>Job: Get LiquiBase Comment</from>
       <to>Transformation: Get Database Version Information</to>
       <from_nr>0</from_nr>
@@ -1402,6 +1554,24 @@
     <hop>
       <from>Transformation: csv_files_meta_import</from>
       <to>Transformation: Get Database Tables (General)</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Transformation: Get Database Mappings (General)</from>
+      <to>Transformation: Get Database Routines (General)</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Transformation: Get Database Routines (General)</from>
+      <to>Job: Get LiquiBase Comment</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>

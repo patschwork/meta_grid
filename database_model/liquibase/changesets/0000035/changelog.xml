@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000035/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000035" context="url table">
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TABLE url (
+id INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+uuid TEXT DEFAULT NULL,
+fk_object_type_id INTEGER DEFAULT 24 REFERENCES object_type (id),
+name TEXT(250) DEFAULT NULL,
+description TEXT(4000) DEFAULT NULL,
+url TEXT(4000) DEFAULT NULL
+);
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TABLE url_log (
+   log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+   log_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+   log_action TEXT,
+   id INTEGER,
+   uuid TEXT,
+   fk_object_type_id INTEGER,
+   fk_object_type_uuid TEXT,
+   name TEXT(250),
+   description TEXT(4000),
+   url TEXT(4000)
+);
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_url_log_INSERT;
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_url_log_INSERT AFTER INSERT
+ON url
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   INSERT INTO url_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,name,description,url) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.name,new.description,new.url);
+   UPDATE url SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   DELETE FROM _newUUID;
+   DELETE FROM url_log WHERE log_id=(SELECT MAX(log_id)+1 FROM url_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
+END;		
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_url_log_UPDATE;		
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_url_log_UPDATE AFTER UPDATE
+ON url
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   UPDATE url SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   INSERT INTO url_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,name,description,url) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.name,new.description,new.url);
+   DELETE FROM _newUUID;
+END;		
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_url_log_DELETE;		
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_url_log_DELETE AFTER DELETE
+ON url
+BEGIN
+   INSERT INTO url_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,name,description,url) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.name,old.description,old.url);
+END;		
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO object_type (id,name) VALUES (24,'url');		
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO mapping_qualifier (name,short_name,description,needs_object_depends_on) VALUES ('Website Link','URL','Http or https Link to website (http://...)', 0);
+INSERT INTO mapping_qualifier (name,short_name,description,needs_object_depends_on) VALUES ('File Reference','FILE','Link to a file to a disc or network-drive (file://...)', 0);
+		]]>		
+		</sql>
+
+
+		<comment>
+		<![CDATA[
+		Add new table "url".
+		Used objects:
+			url
+			url_log
+			TRIG_url_log_INSERT
+			TRIG_url_log_UPDATE
+			TRIG_url_log_DELETE
+			object_type
+			mapping_qualifier
+		Phabricator tasks:
+			T26
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

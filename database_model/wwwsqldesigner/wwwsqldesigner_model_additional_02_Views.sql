@@ -48,6 +48,7 @@
 				WHEN parameter.fk_project_id IS NOT NULL THEN parameter.fk_project_id
 				WHEN attribute.fk_project_id IS NOT NULL THEN attribute.fk_project_id
 				WHEN data_transfer_process.fk_project_id IS NOT NULL THEN data_transfer_process.fk_project_id
+				WHEN url.fk_project_id IS NOT NULL THEN url.fk_project_id
 				ELSE NULL END AS fk_project_id
 			,CASE
 				WHEN contact_group.fk_client_id IS NOT NULL THEN contact_group.fk_client_id
@@ -69,6 +70,7 @@
 		LEFT JOIN data_transfer_process ON data_transfer_process.fk_object_type_id=obj.ref_fk_object_type_id AND data_transfer_process.id=obj.ref_fk_object_id
 		LEFT JOIN contact_group ON contact_group.fk_object_type_id=obj.ref_fk_object_type_id AND contact_group.id=obj.ref_fk_object_id
 		LEFT JOIN contact ON contact.fk_object_type_id=obj.ref_fk_object_type_id AND contact.id=obj.ref_fk_object_id
+		LEFT JOIN url ON url.fk_object_type_id=obj.ref_fk_object_type_id AND url.id=obj.ref_fk_object_id
 			UNION
 		SELECT 
 			 obj.id
@@ -202,6 +204,19 @@
 			,NULL AS fk_client_id
 			,obj.fk_project_id
 		FROM data_transfer_process obj
+		LEFT JOIN object_type ON object_type.id = obj.fk_object_type_id
+		UNION
+		SELECT 
+			 obj.id
+			,obj.fk_object_type_id
+			,obj.name
+			,object_type.NAME AS object_type_name
+			,obj.name || ' - ' || object_type.NAME AS listvalue_1
+			,object_type.NAME || ' - ' || obj.name AS listvalue_2
+			,CAST(obj.id AS varchar(10)) || ';' || CAST(obj.fk_object_type_id AS varchar(10)) AS listkey
+			,NULL AS fk_client_id
+			,obj.fk_project_id
+		FROM url obj
 		LEFT JOIN object_type ON object_type.id = obj.fk_object_type_id
 			UNION
 		SELECT 
@@ -485,6 +500,8 @@
 		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'bracket_log' AS tablename FROM bracket_log ORDER BY log_id DESC LIMIT 1)
 		UNION 
 		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,searchPattern AS name,'bracket_searchPattern_log' AS tablename FROM bracket_searchPattern_log ORDER BY log_id DESC LIMIT 1)
+		UNION 
+		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name AS name,'url_log' AS tablename FROM url_log ORDER BY log_id DESC LIMIT 1)
 	) 
 	ORDER BY log_datetime DESC
 

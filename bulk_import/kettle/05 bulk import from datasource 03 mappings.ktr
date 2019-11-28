@@ -31,32 +31,32 @@
       </parameter>
       <parameter>
         <name>project_id</name>
-        <default_value>5</default_value>
+        <default_value>7</default_value>
         <description>Project ID which information belongs to</description>
       </parameter>
       <parameter>
         <name>source_db_schema_exclude</name>
-        <default_value>sys,INFORMATION_SCHEMA,Backup,zz_Attic</default_value>
+        <default_value>sys,INFORMATION_SCHEMA,Backup,zz_Attic,information_schema,pg_catalog,pg_toast</default_value>
         <description>Ignore special schemes in databse e.g. sys</description>
       </parameter>
       <parameter>
         <name>source_jdbc_db_pwd</name>
-        <default_value>Encrypted 2be98afc86aa7f2e4bb16bd64d980aac9</default_value>
+        <default_value>Encrypted 2be98afc86ac68681fa40fd26da86a29b</default_value>
         <description>JDBC Database Password</description>
       </parameter>
       <parameter>
         <name>source_jdbc_db_user</name>
-        <default_value>postgres</default_value>
+        <default_value>SA</default_value>
         <description>JDBC Database User for source</description>
       </parameter>
       <parameter>
         <name>source_jdbc_driver_class</name>
-        <default_value>org.postgresql.Driver</default_value>
+        <default_value>net.sourceforge.jtds.jdbc.Driver</default_value>
         <description>JDBC Java Driver Class to use to read from source</description>
       </parameter>
       <parameter>
         <name>source_jdbc_url</name>
-        <default_value>jdbc:postgresql://127.0.0.1:5432/pdwh</default_value>
+        <default_value>jdbc:jtds:sqlserver://127.0.0.1:1433/Chinook</default_value>
         <description>JDBC URL of the source system to read from (including IP/DNS, Port, Databasename)</description>
       </parameter>
     </parameters>

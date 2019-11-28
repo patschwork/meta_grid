@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000036/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000036" context="bulk lolad stored procedures for data_transfer_process">
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE data_transfer_process ADD COLUMN source_internal_object_id TEXT(500) DEFAULT NULL;
+		]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE data_transfer_process_log ADD COLUMN source_internal_object_id TEXT(500) DEFAULT NULL;
+		]]>		
+		</sql>
+		
+		<comment>
+		<![CDATA[
+		New fields in table "data_transfer_process".
+		Used objects:
+			data_transfer_process
+			data_transfer_process_log
+		Phabricator tasks:
+			T25
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

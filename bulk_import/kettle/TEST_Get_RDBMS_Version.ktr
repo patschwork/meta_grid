@@ -21,7 +21,7 @@
         </parameter>
         <parameter>
             <name>source_jdbc_driver_class</name>
-            <default_value>net.sourceforge.jtds.jdbc.Driver</default_value>
+            <default_value>com.microsoft.sqlserver.jdbc.SQLServerDriver</default_value>
             <description>JDBC Java Driver Class to use to read from source</description>
         </parameter>
         <parameter>

@@ -7,78 +7,444 @@
     <trans_version/>
     <trans_type>Normal</trans_type>
     <trans_status>0</trans_status>
-    <directory>&#47;</directory>
+    <directory>/</directory>
     <parameters>
-        <parameter>
-            <name>metagrid_jdbc_db_pwd</name>
-            <default_value/>
-            <description>JDBC Database Password for meta#grid</description>
-        </parameter>
-        <parameter>
-            <name>metagrid_jdbc_db_user</name>
-            <default_value/>
-            <description>JDBC Database User for meta#grid</description>
-        </parameter>
-        <parameter>
-            <name>metagrid_jdbc_driver_class</name>
-            <default_value>org.sqlite.JDBC</default_value>
-            <description>JDBC Java Driver Class to use to write in meta#grid database</description>
-        </parameter>
-        <parameter>
-            <name>metagrid_jdbc_url</name>
-            <default_value>jdbc:sqlite:D:\ownCloud\Documents\dwh_meta_v2_prod\dwh_meta.sqlite</default_value>
-            <description>JDBC URL of the source system to write in meta#grid database (including IP&#47;DNS, Port, Databasename)</description>
-        </parameter>
-        <parameter>
-            <name>project_id</name>
-            <default_value>2</default_value>
-            <description>Project ID which information belongs to</description>
-        </parameter>
-        <parameter>
-            <name>source_jdbc_db_pwd</name>
-            <default_value>Encrypted 2be98afc86aa79390ae48f7238896bbd7</default_value>
-            <description>JDBC Database Password</description>
-        </parameter>
-        <parameter>
-            <name>source_jdbc_db_user</name>
-            <default_value>sa</default_value>
-            <description>JDBC Database User for source</description>
-        </parameter>
-        <parameter>
-            <name>source_jdbc_driver_class</name>
-            <default_value>net.sourceforge.jtds.jdbc.Driver</default_value>
-            <description>JDBC Java Driver Class to use to read from source</description>
-        </parameter>
-        <parameter>
-            <name>source_jdbc_url</name>
-            <default_value>jdbc:jtds:sqlserver://127.0.0.1:1433/Chinook</default_value>
-            <description>JDBC URL of the source system to read from (including IP&#47;DNS, Port, Databasename)</description>
-        </parameter>
+      <parameter>
+        <name>metagrid_jdbc_db_pwd</name>
+        <default_value/>
+        <description>JDBC Database Password for meta#grid</description>
+      </parameter>
+      <parameter>
+        <name>metagrid_jdbc_db_user</name>
+        <default_value/>
+        <description>JDBC Database User for meta#grid</description>
+      </parameter>
+      <parameter>
+        <name>metagrid_jdbc_driver_class</name>
+        <default_value>org.sqlite.JDBC</default_value>
+        <description>JDBC Java Driver Class to use to write in meta#grid database</description>
+      </parameter>
+      <parameter>
+        <name>metagrid_jdbc_url</name>
+        <default_value>jdbc:sqlite:D:\ownCloud\Documents\dwh_meta_v2_prod\dwh_meta.sqlite</default_value>
+        <description>JDBC URL of the source system to write in meta#grid database (including IP/DNS, Port, Databasename)</description>
+      </parameter>
+      <parameter>
+        <name>project_id</name>
+        <default_value>2</default_value>
+        <description>Project ID which information belongs to</description>
+      </parameter>
+      <parameter>
+        <name>source_jdbc_db_pwd</name>
+        <default_value>Encrypted 2be98afc86aa79390ae48f7238896bbd7</default_value>
+        <description>JDBC Database Password</description>
+      </parameter>
+      <parameter>
+        <name>source_jdbc_db_user</name>
+        <default_value>sa</default_value>
+        <description>JDBC Database User for source</description>
+      </parameter>
+      <parameter>
+        <name>source_jdbc_driver_class</name>
+        <default_value>com.microsoft.sqlserver.jdbc.SQLServerDriver</default_value>
+        <description>JDBC Java Driver Class to use to read from source</description>
+      </parameter>
+      <parameter>
+        <name>source_jdbc_url</name>
+        <default_value>jdbc:sqlserver://127.0.0.1:1433;databaseName=mappingwebrc_p</default_value>
+        <description>JDBC URL of the source system to read from (including IP/DNS, Port, Databasename)</description>
+      </parameter>
     </parameters>
     <log>
-<trans-log-table><connection/>
-<schema/>
-<table/>
-<size_limit_lines/>
-<interval/>
-<timeout_days/>
-<field><id>ID_BATCH</id><enabled>Y</enabled><name>ID_BATCH</name></field><field><id>CHANNEL_ID</id><enabled>Y</enabled><name>CHANNEL_ID</name></field><field><id>TRANSNAME</id><enabled>Y</enabled><name>TRANSNAME</name></field><field><id>STATUS</id><enabled>Y</enabled><name>STATUS</name></field><field><id>LINES_READ</id><enabled>Y</enabled><name>LINES_READ</name><subject/></field><field><id>LINES_WRITTEN</id><enabled>Y</enabled><name>LINES_WRITTEN</name><subject/></field><field><id>LINES_UPDATED</id><enabled>Y</enabled><name>LINES_UPDATED</name><subject/></field><field><id>LINES_INPUT</id><enabled>Y</enabled><name>LINES_INPUT</name><subject/></field><field><id>LINES_OUTPUT</id><enabled>Y</enabled><name>LINES_OUTPUT</name><subject/></field><field><id>LINES_REJECTED</id><enabled>Y</enabled><name>LINES_REJECTED</name><subject/></field><field><id>ERRORS</id><enabled>Y</enabled><name>ERRORS</name></field><field><id>STARTDATE</id><enabled>Y</enabled><name>STARTDATE</name></field><field><id>ENDDATE</id><enabled>Y</enabled><name>ENDDATE</name></field><field><id>LOGDATE</id><enabled>Y</enabled><name>LOGDATE</name></field><field><id>DEPDATE</id><enabled>Y</enabled><name>DEPDATE</name></field><field><id>REPLAYDATE</id><enabled>Y</enabled><name>REPLAYDATE</name></field><field><id>LOG_FIELD</id><enabled>Y</enabled><name>LOG_FIELD</name></field></trans-log-table>
-<perf-log-table><connection/>
-<schema/>
-<table/>
-<interval/>
-<timeout_days/>
-<field><id>ID_BATCH</id><enabled>Y</enabled><name>ID_BATCH</name></field><field><id>SEQ_NR</id><enabled>Y</enabled><name>SEQ_NR</name></field><field><id>LOGDATE</id><enabled>Y</enabled><name>LOGDATE</name></field><field><id>TRANSNAME</id><enabled>Y</enabled><name>TRANSNAME</name></field><field><id>STEPNAME</id><enabled>Y</enabled><name>STEPNAME</name></field><field><id>STEP_COPY</id><enabled>Y</enabled><name>STEP_COPY</name></field><field><id>LINES_READ</id><enabled>Y</enabled><name>LINES_READ</name></field><field><id>LINES_WRITTEN</id><enabled>Y</enabled><name>LINES_WRITTEN</name></field><field><id>LINES_UPDATED</id><enabled>Y</enabled><name>LINES_UPDATED</name></field><field><id>LINES_INPUT</id><enabled>Y</enabled><name>LINES_INPUT</name></field><field><id>LINES_OUTPUT</id><enabled>Y</enabled><name>LINES_OUTPUT</name></field><field><id>LINES_REJECTED</id><enabled>Y</enabled><name>LINES_REJECTED</name></field><field><id>ERRORS</id><enabled>Y</enabled><name>ERRORS</name></field><field><id>INPUT_BUFFER_ROWS</id><enabled>Y</enabled><name>INPUT_BUFFER_ROWS</name></field><field><id>OUTPUT_BUFFER_ROWS</id><enabled>Y</enabled><name>OUTPUT_BUFFER_ROWS</name></field></perf-log-table>
-<channel-log-table><connection/>
-<schema/>
-<table/>
-<timeout_days/>
-<field><id>ID_BATCH</id><enabled>Y</enabled><name>ID_BATCH</name></field><field><id>CHANNEL_ID</id><enabled>Y</enabled><name>CHANNEL_ID</name></field><field><id>LOG_DATE</id><enabled>Y</enabled><name>LOG_DATE</name></field><field><id>LOGGING_OBJECT_TYPE</id><enabled>Y</enabled><name>LOGGING_OBJECT_TYPE</name></field><field><id>OBJECT_NAME</id><enabled>Y</enabled><name>OBJECT_NAME</name></field><field><id>OBJECT_COPY</id><enabled>Y</enabled><name>OBJECT_COPY</name></field><field><id>REPOSITORY_DIRECTORY</id><enabled>Y</enabled><name>REPOSITORY_DIRECTORY</name></field><field><id>FILENAME</id><enabled>Y</enabled><name>FILENAME</name></field><field><id>OBJECT_ID</id><enabled>Y</enabled><name>OBJECT_ID</name></field><field><id>OBJECT_REVISION</id><enabled>Y</enabled><name>OBJECT_REVISION</name></field><field><id>PARENT_CHANNEL_ID</id><enabled>Y</enabled><name>PARENT_CHANNEL_ID</name></field><field><id>ROOT_CHANNEL_ID</id><enabled>Y</enabled><name>ROOT_CHANNEL_ID</name></field></channel-log-table>
-<step-log-table><connection/>
-<schema/>
-<table/>
-<timeout_days/>
-<field><id>ID_BATCH</id><enabled>Y</enabled><name>ID_BATCH</name></field><field><id>CHANNEL_ID</id><enabled>Y</enabled><name>CHANNEL_ID</name></field><field><id>LOG_DATE</id><enabled>Y</enabled><name>LOG_DATE</name></field><field><id>TRANSNAME</id><enabled>Y</enabled><name>TRANSNAME</name></field><field><id>STEPNAME</id><enabled>Y</enabled><name>STEPNAME</name></field><field><id>STEP_COPY</id><enabled>Y</enabled><name>STEP_COPY</name></field><field><id>LINES_READ</id><enabled>Y</enabled><name>LINES_READ</name></field><field><id>LINES_WRITTEN</id><enabled>Y</enabled><name>LINES_WRITTEN</name></field><field><id>LINES_UPDATED</id><enabled>Y</enabled><name>LINES_UPDATED</name></field><field><id>LINES_INPUT</id><enabled>Y</enabled><name>LINES_INPUT</name></field><field><id>LINES_OUTPUT</id><enabled>Y</enabled><name>LINES_OUTPUT</name></field><field><id>LINES_REJECTED</id><enabled>Y</enabled><name>LINES_REJECTED</name></field><field><id>ERRORS</id><enabled>Y</enabled><name>ERRORS</name></field><field><id>LOG_FIELD</id><enabled>N</enabled><name>LOG_FIELD</name></field></step-log-table>
+      <trans-log-table>
+        <connection/>
+        <schema/>
+        <table/>
+        <size_limit_lines/>
+        <interval/>
+        <timeout_days/>
+        <field>
+          <id>ID_BATCH</id>
+          <enabled>Y</enabled>
+          <name>ID_BATCH</name>
+        </field>
+        <field>
+          <id>CHANNEL_ID</id>
+          <enabled>Y</enabled>
+          <name>CHANNEL_ID</name>
+        </field>
+        <field>
+          <id>TRANSNAME</id>
+          <enabled>Y</enabled>
+          <name>TRANSNAME</name>
+        </field>
+        <field>
+          <id>STATUS</id>
+          <enabled>Y</enabled>
+          <name>STATUS</name>
+        </field>
+        <field>
+          <id>LINES_READ</id>
+          <enabled>Y</enabled>
+          <name>LINES_READ</name>
+          <subject/>
+        </field>
+        <field>
+          <id>LINES_WRITTEN</id>
+          <enabled>Y</enabled>
+          <name>LINES_WRITTEN</name>
+          <subject/>
+        </field>
+        <field>
+          <id>LINES_UPDATED</id>
+          <enabled>Y</enabled>
+          <name>LINES_UPDATED</name>
+          <subject/>
+        </field>
+        <field>
+          <id>LINES_INPUT</id>
+          <enabled>Y</enabled>
+          <name>LINES_INPUT</name>
+          <subject/>
+        </field>
+        <field>
+          <id>LINES_OUTPUT</id>
+          <enabled>Y</enabled>
+          <name>LINES_OUTPUT</name>
+          <subject/>
+        </field>
+        <field>
+          <id>LINES_REJECTED</id>
+          <enabled>Y</enabled>
+          <name>LINES_REJECTED</name>
+          <subject/>
+        </field>
+        <field>
+          <id>ERRORS</id>
+          <enabled>Y</enabled>
+          <name>ERRORS</name>
+        </field>
+        <field>
+          <id>STARTDATE</id>
+          <enabled>Y</enabled>
+          <name>STARTDATE</name>
+        </field>
+        <field>
+          <id>ENDDATE</id>
+          <enabled>Y</enabled>
+          <name>ENDDATE</name>
+        </field>
+        <field>
+          <id>LOGDATE</id>
+          <enabled>Y</enabled>
+          <name>LOGDATE</name>
+        </field>
+        <field>
+          <id>DEPDATE</id>
+          <enabled>Y</enabled>
+          <name>DEPDATE</name>
+        </field>
+        <field>
+          <id>REPLAYDATE</id>
+          <enabled>Y</enabled>
+          <name>REPLAYDATE</name>
+        </field>
+        <field>
+          <id>LOG_FIELD</id>
+          <enabled>Y</enabled>
+          <name>LOG_FIELD</name>
+        </field>
+        <field>
+          <id>EXECUTING_SERVER</id>
+          <enabled>N</enabled>
+          <name>EXECUTING_SERVER</name>
+        </field>
+        <field>
+          <id>EXECUTING_USER</id>
+          <enabled>N</enabled>
+          <name>EXECUTING_USER</name>
+        </field>
+        <field>
+          <id>CLIENT</id>
+          <enabled>N</enabled>
+          <name>CLIENT</name>
+        </field>
+      </trans-log-table>
+      <perf-log-table>
+        <connection/>
+        <schema/>
+        <table/>
+        <interval/>
+        <timeout_days/>
+        <field>
+          <id>ID_BATCH</id>
+          <enabled>Y</enabled>
+          <name>ID_BATCH</name>
+        </field>
+        <field>
+          <id>SEQ_NR</id>
+          <enabled>Y</enabled>
+          <name>SEQ_NR</name>
+        </field>
+        <field>
+          <id>LOGDATE</id>
+          <enabled>Y</enabled>
+          <name>LOGDATE</name>
+        </field>
+        <field>
+          <id>TRANSNAME</id>
+          <enabled>Y</enabled>
+          <name>TRANSNAME</name>
+        </field>
+        <field>
+          <id>STEPNAME</id>
+          <enabled>Y</enabled>
+          <name>STEPNAME</name>
+        </field>
+        <field>
+          <id>STEP_COPY</id>
+          <enabled>Y</enabled>
+          <name>STEP_COPY</name>
+        </field>
+        <field>
+          <id>LINES_READ</id>
+          <enabled>Y</enabled>
+          <name>LINES_READ</name>
+        </field>
+        <field>
+          <id>LINES_WRITTEN</id>
+          <enabled>Y</enabled>
+          <name>LINES_WRITTEN</name>
+        </field>
+        <field>
+          <id>LINES_UPDATED</id>
+          <enabled>Y</enabled>
+          <name>LINES_UPDATED</name>
+        </field>
+        <field>
+          <id>LINES_INPUT</id>
+          <enabled>Y</enabled>
+          <name>LINES_INPUT</name>
+        </field>
+        <field>
+          <id>LINES_OUTPUT</id>
+          <enabled>Y</enabled>
+          <name>LINES_OUTPUT</name>
+        </field>
+        <field>
+          <id>LINES_REJECTED</id>
+          <enabled>Y</enabled>
+          <name>LINES_REJECTED</name>
+        </field>
+        <field>
+          <id>ERRORS</id>
+          <enabled>Y</enabled>
+          <name>ERRORS</name>
+        </field>
+        <field>
+          <id>INPUT_BUFFER_ROWS</id>
+          <enabled>Y</enabled>
+          <name>INPUT_BUFFER_ROWS</name>
+        </field>
+        <field>
+          <id>OUTPUT_BUFFER_ROWS</id>
+          <enabled>Y</enabled>
+          <name>OUTPUT_BUFFER_ROWS</name>
+        </field>
+      </perf-log-table>
+      <channel-log-table>
+        <connection/>
+        <schema/>
+        <table/>
+        <timeout_days/>
+        <field>
+          <id>ID_BATCH</id>
+          <enabled>Y</enabled>
+          <name>ID_BATCH</name>
+        </field>
+        <field>
+          <id>CHANNEL_ID</id>
+          <enabled>Y</enabled>
+          <name>CHANNEL_ID</name>
+        </field>
+        <field>
+          <id>LOG_DATE</id>
+          <enabled>Y</enabled>
+          <name>LOG_DATE</name>
+        </field>
+        <field>
+          <id>LOGGING_OBJECT_TYPE</id>
+          <enabled>Y</enabled>
+          <name>LOGGING_OBJECT_TYPE</name>
+        </field>
+        <field>
+          <id>OBJECT_NAME</id>
+          <enabled>Y</enabled>
+          <name>OBJECT_NAME</name>
+        </field>
+        <field>
+          <id>OBJECT_COPY</id>
+          <enabled>Y</enabled>
+          <name>OBJECT_COPY</name>
+        </field>
+        <field>
+          <id>REPOSITORY_DIRECTORY</id>
+          <enabled>Y</enabled>
+          <name>REPOSITORY_DIRECTORY</name>
+        </field>
+        <field>
+          <id>FILENAME</id>
+          <enabled>Y</enabled>
+          <name>FILENAME</name>
+        </field>
+        <field>
+          <id>OBJECT_ID</id>
+          <enabled>Y</enabled>
+          <name>OBJECT_ID</name>
+        </field>
+        <field>
+          <id>OBJECT_REVISION</id>
+          <enabled>Y</enabled>
+          <name>OBJECT_REVISION</name>
+        </field>
+        <field>
+          <id>PARENT_CHANNEL_ID</id>
+          <enabled>Y</enabled>
+          <name>PARENT_CHANNEL_ID</name>
+        </field>
+        <field>
+          <id>ROOT_CHANNEL_ID</id>
+          <enabled>Y</enabled>
+          <name>ROOT_CHANNEL_ID</name>
+        </field>
+      </channel-log-table>
+      <step-log-table>
+        <connection/>
+        <schema/>
+        <table/>
+        <timeout_days/>
+        <field>
+          <id>ID_BATCH</id>
+          <enabled>Y</enabled>
+          <name>ID_BATCH</name>
+        </field>
+        <field>
+          <id>CHANNEL_ID</id>
+          <enabled>Y</enabled>
+          <name>CHANNEL_ID</name>
+        </field>
+        <field>
+          <id>LOG_DATE</id>
+          <enabled>Y</enabled>
+          <name>LOG_DATE</name>
+        </field>
+        <field>
+          <id>TRANSNAME</id>
+          <enabled>Y</enabled>
+          <name>TRANSNAME</name>
+        </field>
+        <field>
+          <id>STEPNAME</id>
+          <enabled>Y</enabled>
+          <name>STEPNAME</name>
+        </field>
+        <field>
+          <id>STEP_COPY</id>
+          <enabled>Y</enabled>
+          <name>STEP_COPY</name>
+        </field>
+        <field>
+          <id>LINES_READ</id>
+          <enabled>Y</enabled>
+          <name>LINES_READ</name>
+        </field>
+        <field>
+          <id>LINES_WRITTEN</id>
+          <enabled>Y</enabled>
+          <name>LINES_WRITTEN</name>
+        </field>
+        <field>
+          <id>LINES_UPDATED</id>
+          <enabled>Y</enabled>
+          <name>LINES_UPDATED</name>
+        </field>
+        <field>
+          <id>LINES_INPUT</id>
+          <enabled>Y</enabled>
+          <name>LINES_INPUT</name>
+        </field>
+        <field>
+          <id>LINES_OUTPUT</id>
+          <enabled>Y</enabled>
+          <name>LINES_OUTPUT</name>
+        </field>
+        <field>
+          <id>LINES_REJECTED</id>
+          <enabled>Y</enabled>
+          <name>LINES_REJECTED</name>
+        </field>
+        <field>
+          <id>ERRORS</id>
+          <enabled>Y</enabled>
+          <name>ERRORS</name>
+        </field>
+        <field>
+          <id>LOG_FIELD</id>
+          <enabled>N</enabled>
+          <name>LOG_FIELD</name>
+        </field>
+      </step-log-table>
+      <metrics-log-table>
+        <connection/>
+        <schema/>
+        <table/>
+        <timeout_days/>
+        <field>
+          <id>ID_BATCH</id>
+          <enabled>Y</enabled>
+          <name>ID_BATCH</name>
+        </field>
+        <field>
+          <id>CHANNEL_ID</id>
+          <enabled>Y</enabled>
+          <name>CHANNEL_ID</name>
+        </field>
+        <field>
+          <id>LOG_DATE</id>
+          <enabled>Y</enabled>
+          <name>LOG_DATE</name>
+        </field>
+        <field>
+          <id>METRICS_DATE</id>
+          <enabled>Y</enabled>
+          <name>METRICS_DATE</name>
+        </field>
+        <field>
+          <id>METRICS_CODE</id>
+          <enabled>Y</enabled>
+          <name>METRICS_CODE</name>
+        </field>
+        <field>
+          <id>METRICS_DESCRIPTION</id>
+          <enabled>Y</enabled>
+          <name>METRICS_DESCRIPTION</name>
+        </field>
+        <field>
+          <id>METRICS_SUBJECT</id>
+          <enabled>Y</enabled>
+          <name>METRICS_SUBJECT</name>
+        </field>
+        <field>
+          <id>METRICS_TYPE</id>
+          <enabled>Y</enabled>
+          <name>METRICS_TYPE</name>
+        </field>
+        <field>
+          <id>METRICS_VALUE</id>
+          <enabled>Y</enabled>
+          <name>METRICS_VALUE</name>
+        </field>
+      </metrics-log-table>
     </log>
     <maxdate>
       <connection/>
@@ -106,10 +472,12 @@
     </slaveservers>
     <clusterschemas>
     </clusterschemas>
-  <created_user>-</created_user>
-  <created_date>2015&#47;10&#47;26 11:27:15.913</created_date>
-  <modified_user>-</modified_user>
-  <modified_date>2015&#47;10&#47;26 11:27:15.913</modified_date>
+    <created_user>-</created_user>
+    <created_date>2015/10/26 11:27:15.913</created_date>
+    <modified_user>-</modified_user>
+    <modified_date>2015/10/26 11:27:15.913</modified_date>
+    <key_for_session_key>H4sIAAAAAAAAAAMAAAAAAAAAAAA=</key_for_session_key>
+    <is_key_private>N</is_key_private>
   </info>
   <notepads>
     <notepad>
@@ -217,6 +585,28 @@
       <bordercolorblue>100</bordercolorblue>
       <drawshadow>Y</drawshadow>
     </notepad>
+    <notepad>
+      <note>Attention: In case of procedures the descriptions are
+harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines.ktr</note>
+      <xloc>487</xloc>
+      <yloc>233</yloc>
+      <width>513</width>
+      <heigth>40</heigth>
+      <fontname>Arial</fontname>
+      <fontsize>10</fontsize>
+      <fontbold>N</fontbold>
+      <fontitalic>Y</fontitalic>
+      <fontcolorred>0</fontcolorred>
+      <fontcolorgreen>0</fontcolorgreen>
+      <fontcolorblue>255</fontcolorblue>
+      <backgroundcolorred>173</backgroundcolorred>
+      <backgroundcolorgreen>216</backgroundcolorgreen>
+      <backgroundcolorblue>230</backgroundcolorblue>
+      <bordercolorred>100</bordercolorred>
+      <bordercolorgreen>100</bordercolorgreen>
+      <bordercolorblue>100</bordercolorblue>
+      <drawshadow>Y</drawshadow>
+    </notepad>
   </notepads>
   <connection>
     <name>Meta#Grid_Generic_Database</name>
@@ -231,15 +621,42 @@
     <data_tablespace/>
     <index_tablespace/>
     <attributes>
-      <attribute><code>CUSTOM_DRIVER_CLASS</code><attribute>${metagrid_jdbc_driver_class}</attribute></attribute>
-      <attribute><code>CUSTOM_URL</code><attribute>${metagrid_jdbc_url}</attribute></attribute>
-      <attribute><code>FORCE_IDENTIFIERS_TO_LOWERCASE</code><attribute>N</attribute></attribute>
-      <attribute><code>FORCE_IDENTIFIERS_TO_UPPERCASE</code><attribute>N</attribute></attribute>
-      <attribute><code>IS_CLUSTERED</code><attribute>N</attribute></attribute>
-      <attribute><code>PORT_NUMBER</code><attribute>1521</attribute></attribute>
-      <attribute><code>QUOTE_ALL_FIELDS</code><attribute>N</attribute></attribute>
-      <attribute><code>SUPPORTS_BOOLEAN_DATA_TYPE</code><attribute>N</attribute></attribute>
-      <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
+      <attribute>
+        <code>CUSTOM_DRIVER_CLASS</code>
+        <attribute>${metagrid_jdbc_driver_class}</attribute>
+      </attribute>
+      <attribute>
+        <code>CUSTOM_URL</code>
+        <attribute>${metagrid_jdbc_url}</attribute>
+      </attribute>
+      <attribute>
+        <code>FORCE_IDENTIFIERS_TO_LOWERCASE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>FORCE_IDENTIFIERS_TO_UPPERCASE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>IS_CLUSTERED</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>PORT_NUMBER</code>
+        <attribute>1521</attribute>
+      </attribute>
+      <attribute>
+        <code>QUOTE_ALL_FIELDS</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>SUPPORTS_BOOLEAN_DATA_TYPE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>USE_POOLING</code>
+        <attribute>N</attribute>
+      </attribute>
     </attributes>
   </connection>
   <connection>
@@ -255,276 +672,664 @@
     <data_tablespace/>
     <index_tablespace/>
     <attributes>
-      <attribute><code>CUSTOM_DRIVER_CLASS</code><attribute>${source_jdbc_driver_class}</attribute></attribute>
-      <attribute><code>CUSTOM_URL</code><attribute>${source_jdbc_url}</attribute></attribute>
-      <attribute><code>FORCE_IDENTIFIERS_TO_LOWERCASE</code><attribute>N</attribute></attribute>
-      <attribute><code>FORCE_IDENTIFIERS_TO_UPPERCASE</code><attribute>N</attribute></attribute>
-      <attribute><code>IS_CLUSTERED</code><attribute>N</attribute></attribute>
-      <attribute><code>PORT_NUMBER</code><attribute>1521</attribute></attribute>
-      <attribute><code>QUOTE_ALL_FIELDS</code><attribute>N</attribute></attribute>
-      <attribute><code>SUPPORTS_BOOLEAN_DATA_TYPE</code><attribute>N</attribute></attribute>
-      <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
+      <attribute>
+        <code>CUSTOM_DRIVER_CLASS</code>
+        <attribute>${source_jdbc_driver_class}</attribute>
+      </attribute>
+      <attribute>
+        <code>CUSTOM_URL</code>
+        <attribute>${source_jdbc_url}</attribute>
+      </attribute>
+      <attribute>
+        <code>FORCE_IDENTIFIERS_TO_LOWERCASE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>FORCE_IDENTIFIERS_TO_UPPERCASE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>IS_CLUSTERED</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>PORT_NUMBER</code>
+        <attribute>1521</attribute>
+      </attribute>
+      <attribute>
+        <code>QUOTE_ALL_FIELDS</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>SUPPORTS_BOOLEAN_DATA_TYPE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>USE_POOLING</code>
+        <attribute>N</attribute>
+      </attribute>
     </attributes>
   </connection>
   <order>
-  <hop> <from>Filter rows: TABLE and VIEWS</from><to>Dummy (do nothing): Other objects (currently unsupported)</to><enabled>Y</enabled> </hop>  <hop> <from>Filter rows: Split COLUMN</from><to>Dummy (do nothing) 2</to><enabled>Y</enabled> </hop>  <hop> <from>Filter rows: TABLE and VIEWS</from><to>Modified Java Script Value - Set location and description</to><enabled>Y</enabled> </hop>  <hop> <from>Table input: db_table</from><to>Stream lookup: db_table</to><enabled>Y</enabled> </hop>  <hop> <from>Replace in string: Bulk Import TABLE</from><to>Filter rows: No TABLE description</to><enabled>Y</enabled> </hop>  <hop> <from>Filter rows: No TABLE description</from><to>Dummy (do nothing) TABLE description exists (no further todo)</to><enabled>Y</enabled> </hop>  <hop> <from>Dummy (do nothing) 2</from><to>Stream lookup</to><enabled>Y</enabled> </hop>  <hop> <from>Table input: db_table_field</from><to>Stream lookup</to><enabled>Y</enabled> </hop>  <hop> <from>Modified Java Script Value - Set location and description</from><to>Stream lookup: db_table</to><enabled>Y</enabled> </hop>  <hop> <from>Filter rows: Split COLUMN</from><to>Replace in string: Bulk Import TABLE</to><enabled>Y</enabled> </hop>  <hop> <from>Replace in string: Bulk Import COLUMN</from><to>Filter rows: No COLUMN description</to><enabled>Y</enabled> </hop>  <hop> <from>Filter rows: No COLUMN description</from><to>Dummy (do nothing): COLUMN description exists (no further todo)</to><enabled>Y</enabled> </hop>  <hop> <from>Filter rows: No TABLE description</from><to>Modified Java Script Value: Concat TABLE description 2</to><enabled>Y</enabled> </hop>  <hop> <from>Filter rows: No COLUMN description</from><to>Modified Java Script Value: Concat COLUMN description</to><enabled>Y</enabled> </hop>  <hop> <from>Modified Java Script Value: Concat COLUMN description</from><to>Update: db_table_field (COLUMN)</to><enabled>Y</enabled> </hop>  <hop> <from>Modified Java Script Value: Concat TABLE description 2</from><to>Update: db_table</to><enabled>Y</enabled> </hop>  <hop> <from>Update: db_table_field (COLUMN)</from><to>Write to log: Error on Update Column Description</to><enabled>Y</enabled> </hop>  <hop> <from>Table input: extended_properties</from><to>Filter rows: MS_Description only</to><enabled>Y</enabled> </hop>  <hop> <from>Filter rows: MS_Description only</from><to>Filter rows: TABLE and VIEWS</to><enabled>Y</enabled> </hop>  <hop> <from>Filter rows: MS_Description only</from><to>Dummy (do nothing): Other Ext_Props</to><enabled>Y</enabled> </hop>  <hop> <from>Stream lookup: db_table</from><to>Filter rows: id_TABLE NOT NULL</to><enabled>Y</enabled> </hop>  <hop> <from>Filter rows: id_TABLE NOT NULL</from><to>Filter rows: Split COLUMN</to><enabled>Y</enabled> </hop>  <hop> <from>Filter rows: id_TABLE NOT NULL</from><to>Dummy: id_TABLE NULL</to><enabled>Y</enabled> </hop>  <hop> <from>Stream lookup</from><to>Filter rows: id_COLUMN not null</to><enabled>Y</enabled> </hop>  <hop> <from>Filter rows: id_COLUMN not null</from><to>Replace in string: Bulk Import COLUMN</to><enabled>Y</enabled> </hop>  <hop> <from>Filter rows: id_COLUMN not null</from><to>Dummy (do nothing): id_COLUMN NULL</to><enabled>Y</enabled> </hop>  </order>
+    <hop>
+      <from>Filter rows: TABLE and VIEWS</from>
+      <to>Dummy (do nothing): Other objects (currently unsupported)</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows: Split COLUMN</from>
+      <to>Dummy (do nothing) 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows: TABLE and VIEWS</from>
+      <to>Modified Java Script Value - Set location and description</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Table input: db_table</from>
+      <to>Stream lookup: db_table</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Replace in string: Bulk Import TABLE</from>
+      <to>Filter rows: No TABLE description</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows: No TABLE description</from>
+      <to>Dummy (do nothing) TABLE description exists (no further todo)</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Dummy (do nothing) 2</from>
+      <to>Stream lookup</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Table input: db_table_field</from>
+      <to>Stream lookup</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Modified Java Script Value - Set location and description</from>
+      <to>Stream lookup: db_table</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows: Split COLUMN</from>
+      <to>Replace in string: Bulk Import TABLE</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Replace in string: Bulk Import COLUMN</from>
+      <to>Filter rows: No COLUMN description</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows: No COLUMN description</from>
+      <to>Dummy (do nothing): COLUMN description exists (no further todo)</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows: No TABLE description</from>
+      <to>Modified Java Script Value: Concat TABLE description 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows: No COLUMN description</from>
+      <to>Modified Java Script Value: Concat COLUMN description</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Modified Java Script Value: Concat COLUMN description</from>
+      <to>Update: db_table_field (COLUMN)</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Modified Java Script Value: Concat TABLE description 2</from>
+      <to>Update: db_table</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Update: db_table_field (COLUMN)</from>
+      <to>Write to log: Error on Update Column Description</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Table input: extended_properties</from>
+      <to>Filter rows: MS_Description only</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows: MS_Description only</from>
+      <to>Filter rows: TABLE and VIEWS</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows: MS_Description only</from>
+      <to>Dummy (do nothing): Other Ext_Props</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Stream lookup: db_table</from>
+      <to>Filter rows: id_TABLE NOT NULL</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows: id_TABLE NOT NULL</from>
+      <to>Filter rows: Split COLUMN</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows: id_TABLE NOT NULL</from>
+      <to>Dummy: id_TABLE NULL</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Stream lookup</from>
+      <to>Filter rows: id_COLUMN not null</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows: id_COLUMN not null</from>
+      <to>Replace in string: Bulk Import COLUMN</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows: id_COLUMN not null</from>
+      <to>Dummy (do nothing): id_COLUMN NULL</to>
+      <enabled>Y</enabled>
+    </hop>
+  </order>
   <step>
     <name>Dummy (do nothing) 2</name>
     <type>Dummy</type>
     <description/>
     <distribute>Y</distribute>
+    <custom_distribution/>
     <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
       <xloc>348</xloc>
       <yloc>906</yloc>
       <draw>Y</draw>
-      </GUI>
-    </step>
-
+    </GUI>
+  </step>
   <step>
     <name>Dummy (do nothing) TABLE description exists (no further todo)</name>
     <type>Dummy</type>
     <description/>
     <distribute>Y</distribute>
+    <custom_distribution/>
     <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
       <xloc>808</xloc>
       <yloc>975</yloc>
       <draw>Y</draw>
-      </GUI>
-    </step>
-
+    </GUI>
+  </step>
   <step>
     <name>Dummy (do nothing): COLUMN description exists (no further todo)</name>
     <type>Dummy</type>
     <description/>
     <distribute>Y</distribute>
+    <custom_distribution/>
     <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
       <xloc>865</xloc>
       <yloc>1458</yloc>
       <draw>Y</draw>
-      </GUI>
-    </step>
-
+    </GUI>
+  </step>
   <step>
     <name>Dummy (do nothing): Other Ext_Props</name>
     <type>Dummy</type>
     <description/>
     <distribute>Y</distribute>
+    <custom_distribution/>
     <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
       <xloc>808</xloc>
       <yloc>140</yloc>
       <draw>Y</draw>
-      </GUI>
-    </step>
-
+    </GUI>
+  </step>
   <step>
     <name>Dummy (do nothing): Other objects (currently unsupported)</name>
     <type>Dummy</type>
     <description/>
     <distribute>Y</distribute>
+    <custom_distribution/>
     <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
       <xloc>808</xloc>
       <yloc>290</yloc>
       <draw>Y</draw>
-      </GUI>
-    </step>
-
+    </GUI>
+  </step>
+  <step>
+    <name>Dummy (do nothing): id_COLUMN NULL</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>578</xloc>
+      <yloc>1136</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Dummy: id_TABLE NULL</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>808</xloc>
+      <yloc>616</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
   <step>
     <name>Filter rows: MS_Description only</name>
     <type>FilterRows</type>
     <description/>
     <distribute>Y</distribute>
+    <custom_distribution/>
     <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-<send_true_to>Filter rows: TABLE and VIEWS</send_true_to>
-<send_false_to>Dummy (do nothing): Other Ext_Props</send_false_to>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <send_true_to>Filter rows: TABLE and VIEWS</send_true_to>
+    <send_false_to>Dummy (do nothing): Other Ext_Props</send_false_to>
     <compare>
-<condition>
- <negated>N</negated>
- <leftvalue>Ext_prop</leftvalue>
- <function>=</function>
- <rightvalue/>
- <value><name>constant</name><type>String</type><text>MS_Description</text><length>-1</length><precision>-1</precision><isnull>N</isnull><mask/></value> </condition>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>Ext_prop</leftvalue>
+        <function>=</function>
+        <rightvalue/>
+        <value>
+          <name>constant</name>
+          <type>String</type>
+          <text>MS_Description</text>
+          <length>-1</length>
+          <precision>-1</precision>
+          <isnull>N</isnull>
+          <mask/>
+        </value>
+      </condition>
     </compare>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
       <xloc>348</xloc>
       <yloc>140</yloc>
       <draw>Y</draw>
-      </GUI>
-    </step>
-
+    </GUI>
+  </step>
   <step>
     <name>Filter rows: No COLUMN description</name>
     <type>FilterRows</type>
     <description/>
     <distribute>Y</distribute>
+    <custom_distribution/>
     <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-<send_true_to>Modified Java Script Value: Concat COLUMN description</send_true_to>
-<send_false_to>Dummy (do nothing): COLUMN description exists (no further todo)</send_false_to>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <send_true_to>Modified Java Script Value: Concat COLUMN description</send_true_to>
+    <send_false_to>Dummy (do nothing): COLUMN description exists (no further todo)</send_false_to>
     <compare>
-<condition>
- <negated>N</negated>
- <leftvalue>description_COLUMN_Replaced</leftvalue>
- <function>=</function>
- <rightvalue/>
- <value><name>constant</name><type>String</type><text/><length>-1</length><precision>-1</precision><isnull>Y</isnull><mask/></value> </condition>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>description_COLUMN_Replaced</leftvalue>
+        <function>=</function>
+        <rightvalue/>
+        <value>
+          <name>constant</name>
+          <type>String</type>
+          <text/>
+          <length>-1</length>
+          <precision>-1</precision>
+          <isnull>Y</isnull>
+          <mask/>
+        </value>
+      </condition>
     </compare>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
       <xloc>865</xloc>
       <yloc>1348</yloc>
       <draw>Y</draw>
-      </GUI>
-    </step>
-
+    </GUI>
+  </step>
   <step>
     <name>Filter rows: No TABLE description</name>
     <type>FilterRows</type>
     <description/>
     <distribute>Y</distribute>
+    <custom_distribution/>
     <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-<send_true_to>Modified Java Script Value: Concat TABLE description 2</send_true_to>
-<send_false_to>Dummy (do nothing) TABLE description exists (no further todo)</send_false_to>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <send_true_to>Modified Java Script Value: Concat TABLE description 2</send_true_to>
+    <send_false_to>Dummy (do nothing) TABLE description exists (no further todo)</send_false_to>
     <compare>
-<condition>
- <negated>N</negated>
- <conditions>
-  <condition>
-   <negated>N</negated>
-   <leftvalue>description_TABLE_Replaced</leftvalue>
-   <function>=</function>
-   <rightvalue/>
-   <value><name>constant</name><type>String</type><text/><length>-1</length><precision>-1</precision><isnull>Y</isnull><mask/></value>   </condition>
-  </conditions>
- </condition>
+      <condition>
+        <negated>N</negated>
+        <conditions>
+          <condition>
+            <negated>N</negated>
+            <leftvalue>description_TABLE_Replaced</leftvalue>
+            <function>=</function>
+            <rightvalue/>
+            <value>
+              <name>constant</name>
+              <type>String</type>
+              <text/>
+              <length>-1</length>
+              <precision>-1</precision>
+              <isnull>Y</isnull>
+              <mask/>
+            </value>
+          </condition>
+        </conditions>
+      </condition>
     </compare>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
       <xloc>808</xloc>
       <yloc>860</yloc>
       <draw>Y</draw>
-      </GUI>
-    </step>
-
+    </GUI>
+  </step>
   <step>
     <name>Filter rows: Split COLUMN</name>
     <type>FilterRows</type>
     <description/>
     <distribute>Y</distribute>
+    <custom_distribution/>
     <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-<send_true_to>Dummy (do nothing) 2</send_true_to>
-<send_false_to>Replace in string: Bulk Import TABLE</send_false_to>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <send_true_to>Dummy (do nothing) 2</send_true_to>
+    <send_false_to>Replace in string: Bulk Import TABLE</send_false_to>
     <compare>
-<condition>
- <negated>N</negated>
- <leftvalue>Obj_Type</leftvalue>
- <function>=</function>
- <rightvalue/>
- <value><name>constant</name><type>String</type><text>COLUMN</text><length>-1</length><precision>-1</precision><isnull>N</isnull><mask/></value> </condition>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>Obj_Type</leftvalue>
+        <function>=</function>
+        <rightvalue/>
+        <value>
+          <name>constant</name>
+          <type>String</type>
+          <text>COLUMN</text>
+          <length>-1</length>
+          <precision>-1</precision>
+          <isnull>N</isnull>
+          <mask/>
+        </value>
+      </condition>
     </compare>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
       <xloc>348</xloc>
       <yloc>752</yloc>
       <draw>Y</draw>
-      </GUI>
-    </step>
-
+    </GUI>
+  </step>
   <step>
     <name>Filter rows: TABLE and VIEWS</name>
     <type>FilterRows</type>
     <description/>
     <distribute>Y</distribute>
+    <custom_distribution/>
     <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-<send_true_to>Modified Java Script Value - Set location and description</send_true_to>
-<send_false_to>Dummy (do nothing): Other objects (currently unsupported)</send_false_to>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <send_true_to>Modified Java Script Value - Set location and description</send_true_to>
+    <send_false_to>Dummy (do nothing): Other objects (currently unsupported)</send_false_to>
     <compare>
-<condition>
- <negated>N</negated>
- <conditions>
-  <condition>
-   <negated>N</negated>
-   <leftvalue>Parent_Type</leftvalue>
-   <function>=</function>
-   <rightvalue/>
-   <value><name>constant</name><type>String</type><text>U</text><length>-1</length><precision>-1</precision><isnull>N</isnull><mask/></value>   </condition>
-  <condition>
-   <negated>N</negated>
-   <operator>OR</operator>
-   <leftvalue>Parent_Type</leftvalue>
-   <function>=</function>
-   <rightvalue/>
-   <value><name>constant</name><type>String</type><text>V</text><length>-1</length><precision>-1</precision><isnull>N</isnull><mask/></value>   </condition>
-  </conditions>
- </condition>
+      <condition>
+        <negated>N</negated>
+        <conditions>
+          <condition>
+            <negated>N</negated>
+            <leftvalue>Parent_Type</leftvalue>
+            <function>=</function>
+            <rightvalue/>
+            <value>
+              <name>constant</name>
+              <type>String</type>
+              <text>U</text>
+              <length>-1</length>
+              <precision>-1</precision>
+              <isnull>N</isnull>
+              <mask/>
+            </value>
+          </condition>
+          <condition>
+            <negated>N</negated>
+            <operator>OR</operator>
+            <leftvalue>Parent_Type</leftvalue>
+            <function>=</function>
+            <rightvalue/>
+            <value>
+              <name>constant</name>
+              <type>String</type>
+              <text>V</text>
+              <length>-1</length>
+              <precision>-1</precision>
+              <isnull>N</isnull>
+              <mask/>
+            </value>
+          </condition>
+        </conditions>
+      </condition>
     </compare>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
       <xloc>348</xloc>
       <yloc>290</yloc>
       <draw>Y</draw>
-      </GUI>
-    </step>
-
+    </GUI>
+  </step>
+  <step>
+    <name>Filter rows: id_COLUMN not null</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <send_true_to>Replace in string: Bulk Import COLUMN</send_true_to>
+    <send_false_to>Dummy (do nothing): id_COLUMN NULL</send_false_to>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>id_COLUMN</leftvalue>
+        <function>IS NOT NULL</function>
+        <rightvalue/>
+      </condition>
+    </compare>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>578</xloc>
+      <yloc>1244</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Filter rows: id_TABLE NOT NULL</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <send_true_to>Filter rows: Split COLUMN</send_true_to>
+    <send_false_to>Dummy: id_TABLE NULL</send_false_to>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>id_TABLE</leftvalue>
+        <function>IS NOT NULL</function>
+        <rightvalue/>
+      </condition>
+    </compare>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>348</xloc>
+      <yloc>616</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
   <step>
     <name>Get JDBC Metadata - Best row identifier</name>
     <type>jdbcMetaData</type>
     <description/>
     <distribute>Y</distribute>
+    <custom_distribution/>
     <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
     <connectionSource>Connection</connectionSource>
     <connectionName>[local] mip_fc_p (MSSQL)</connectionName>
     <connectionField/>
@@ -537,196 +1342,247 @@
     <removeArgumentFields>N</removeArgumentFields>
     <argumentSourceFields>N</argumentSourceFields>
     <arguments>
-        <argument/>
-        <argument>dbo</argument>
-        <argument>DATABASECHANGELOG</argument>
-        <argument/>
-        <argument/>
+      <argument/>
+      <argument>dbo</argument>
+      <argument>DATABASECHANGELOG</argument>
+      <argument/>
+      <argument/>
     </arguments>
     <outputFields>
-        <outputField>
-            <name>SCOPE</name>
-            <rename>SCOPE</rename>
-        </outputField>
-        <outputField>
-            <name>COLUMN_NAME</name>
-            <rename>COLUMN_NAME</rename>
-        </outputField>
-        <outputField>
-            <name>DATA_TYPE</name>
-            <rename>DATA_TYPE</rename>
-        </outputField>
-        <outputField>
-            <name>TYPE_NAME</name>
-            <rename>TYPE_NAME</rename>
-        </outputField>
-        <outputField>
-            <name>COLUMN_SIZE</name>
-            <rename>COLUMN_SIZE</rename>
-        </outputField>
-        <outputField>
-            <name>BUFFER_LENGTH</name>
-            <rename>BUFFER_LENGTH</rename>
-        </outputField>
-        <outputField>
-            <name>DECIMAL_DIGITS</name>
-            <rename>DECIMAL_DIGITS</rename>
-        </outputField>
-        <outputField>
-            <name>COL_PSEUDO_COLUMN</name>
-            <rename>COL_PSEUDO_COLUMN</rename>
-        </outputField>
+      <outputField>
+        <name>SCOPE</name>
+        <rename>SCOPE</rename>
+      </outputField>
+      <outputField>
+        <name>COLUMN_NAME</name>
+        <rename>COLUMN_NAME</rename>
+      </outputField>
+      <outputField>
+        <name>DATA_TYPE</name>
+        <rename>DATA_TYPE</rename>
+      </outputField>
+      <outputField>
+        <name>TYPE_NAME</name>
+        <rename>TYPE_NAME</rename>
+      </outputField>
+      <outputField>
+        <name>COLUMN_SIZE</name>
+        <rename>COLUMN_SIZE</rename>
+      </outputField>
+      <outputField>
+        <name>BUFFER_LENGTH</name>
+        <rename>BUFFER_LENGTH</rename>
+      </outputField>
+      <outputField>
+        <name>DECIMAL_DIGITS</name>
+        <rename>DECIMAL_DIGITS</rename>
+      </outputField>
+      <outputField>
+        <name>COL_PSEUDO_COLUMN</name>
+        <rename>COL_PSEUDO_COLUMN</rename>
+      </outputField>
     </outputFields>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
       <xloc>1421</xloc>
       <yloc>188</yloc>
       <draw>N</draw>
-      </GUI>
-    </step>
-
+    </GUI>
+  </step>
   <step>
     <name>Modified Java Script Value - Set location and description</name>
     <type>ScriptValueMod</type>
     <description/>
     <distribute>N</distribute>
+    <custom_distribution/>
     <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
     <compatible>N</compatible>
-    <jsScripts>      <jsScript>        <jsScript_type>0</jsScript_type>
+    <optimizationLevel/>
+    <jsScripts>
+      <jsScript>
+        <jsScript_type>0</jsScript_type>
         <jsScript_name>Script 1</jsScript_name>
         <jsScript_script>var vTABLE_CAT = Parent_Catalog;
 var vTABLE_SCHEM = Parent_Schema;
 var vTABLE_NAME = Parent_Name;
 var vREMARKS = null
 
-if (vTABLE_CAT != &quot;&quot;)
+if (vTABLE_CAT != "")
 {
-	vTABLE_CAT = &apos;&quot;&apos; + vTABLE_CAT + &apos;&quot;.&apos;;
+	vTABLE_CAT = '"' + vTABLE_CAT + '".';
 }
 
-if (vTABLE_SCHEM  != &quot;&quot;)
+if (vTABLE_SCHEM  != "")
 {
-	vTABLE_SCHEM  = &apos;&quot;&apos; + vTABLE_SCHEM + &apos;&quot;.&apos;;
+	vTABLE_SCHEM  = '"' + vTABLE_SCHEM + '".';
 }
 
-if (vTABLE_NAME  != &quot;&quot;)
+if (vTABLE_NAME  != "")
 {
-	vTABLE_NAME  = &apos;&quot;&apos; + vTABLE_NAME + &apos;&quot;&apos;;
+	vTABLE_NAME  = '"' + vTABLE_NAME + '"';
 }
 
 
 location_TABLE = vTABLE_CAT + vTABLE_SCHEM + vTABLE_NAME;
-&#47;&#47;Alert(location + &quot;\n&quot; + TYPE_NAME);</jsScript_script>
-      </jsScript>    </jsScripts>    <fields>      <field>        <name>location_TABLE</name>
+//Alert(location + "\n" + TYPE_NAME);</jsScript_script>
+      </jsScript>
+    </jsScripts>
+    <fields>
+      <field>
+        <name>location_TABLE</name>
         <rename>location_TABLE</rename>
         <type>String</type>
         <length>1000</length>
         <precision>-1</precision>
         <replace>N</replace>
-      </field>    </fields>     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      </field>
+    </fields>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
       <xloc>348</xloc>
       <yloc>388</yloc>
       <draw>Y</draw>
-      </GUI>
-    </step>
-
+    </GUI>
+  </step>
   <step>
     <name>Modified Java Script Value: Concat COLUMN description</name>
     <type>ScriptValueMod</type>
     <description/>
     <distribute>Y</distribute>
+    <custom_distribution/>
     <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
     <compatible>N</compatible>
-    <jsScripts>      <jsScript>        <jsScript_type>0</jsScript_type>
+    <optimizationLevel/>
+    <jsScripts>
+      <jsScript>
+        <jsScript_type>0</jsScript_type>
         <jsScript_name>Script 1</jsScript_name>
-        <jsScript_script>&#47;&#47;Script here
+        <jsScript_script>//Script here
 
-var newDescription = &quot;&quot;
-var tempCRLF = &quot;&quot;
+var newDescription = ""
+var tempCRLF = ""
 
 if (description_COLUMN != null)
 {
- if (description_COLUMN.indexOf(&quot;Bulk Import&quot;)&gt;0)
+ if (description_COLUMN.indexOf("Bulk Import")>0)
  {
-	 tempCRLF = &quot;\n\n&quot;
+	 tempCRLF = "\n\n"
  }
 }
 newDescription = description_COLUMN + tempCRLF + Description
-writeToLog(&quot;r&quot;,&quot;*** &quot; + location_TABLE + &quot; &#47; &quot; + name_COLUMN + &quot; &#47; &quot; + description_COLUMN + &quot; &#47; &quot; + Description);</jsScript_script>
-      </jsScript>    </jsScripts>    <fields>      <field>        <name>newDescription</name>
+writeToLog("r","*** " + location_TABLE + " / " + name_COLUMN + " / " + description_COLUMN + " / " + Description);</jsScript_script>
+      </jsScript>
+    </jsScripts>
+    <fields>
+      <field>
+        <name>newDescription</name>
         <rename>newDescription_COLUMN</rename>
         <type>String</type>
         <length>4000</length>
         <precision>-1</precision>
         <replace>N</replace>
-      </field>    </fields>     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      </field>
+    </fields>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
       <xloc>1228</xloc>
       <yloc>1348</yloc>
       <draw>Y</draw>
-      </GUI>
-    </step>
-
+    </GUI>
+  </step>
   <step>
     <name>Modified Java Script Value: Concat TABLE description 2</name>
     <type>ScriptValueMod</type>
     <description/>
     <distribute>Y</distribute>
+    <custom_distribution/>
     <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
     <compatible>N</compatible>
-    <jsScripts>      <jsScript>        <jsScript_type>0</jsScript_type>
+    <optimizationLevel/>
+    <jsScripts>
+      <jsScript>
+        <jsScript_type>0</jsScript_type>
         <jsScript_name>Script 1</jsScript_name>
-        <jsScript_script>&#47;&#47;Script here
+        <jsScript_script>//Script here
 
-var newDescription = &quot;&quot;
-var tempCRLF = &quot;&quot;
+var newDescription = ""
+var tempCRLF = ""
 
 if (description_TABLE != null)
 {
- if (description_TABLE.indexOf(&quot;Bulk Import&quot;)&gt;0)
+ if (description_TABLE.indexOf("Bulk Import")>0)
  {
- 	tempCRLF = &quot;\n\n&quot;
+ 	tempCRLF = "\n\n"
  }
 }
 newDescription = description_TABLE + tempCRLF + Description
 </jsScript_script>
-      </jsScript>    </jsScripts>    <fields>      <field>        <name>newDescription</name>
+      </jsScript>
+    </jsScripts>
+    <fields>
+      <field>
+        <name>newDescription</name>
         <rename>newDescription_TABLE</rename>
         <type>String</type>
         <length>4000</length>
         <precision>-1</precision>
         <replace>N</replace>
-      </field>    </fields>     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      </field>
+    </fields>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
       <xloc>1228</xloc>
       <yloc>860</yloc>
       <draw>Y</draw>
-      </GUI>
-    </step>
-
+    </GUI>
+  </step>
   <step>
     <name>Replace in string: Bulk Import COLUMN</name>
     <type>ReplaceString</type>
     <description/>
     <distribute>Y</distribute>
+    <custom_distribution/>
     <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
     <fields>
       <field>
         <in_stream_name>description_COLUMN</in_stream_name>
@@ -734,29 +1590,37 @@ newDescription = description_TABLE + tempCRLF + Description
         <use_regex>no</use_regex>
         <replace_string>(Added via Bulk Import)</replace_string>
         <replace_by_string/>
+        <set_empty_string>N</set_empty_string>
         <replace_field_by_string/>
         <whole_word>no</whole_word>
         <case_sensitive>no</case_sensitive>
+        <is_unicode>no</is_unicode>
       </field>
     </fields>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
       <xloc>865</xloc>
       <yloc>1244</yloc>
       <draw>Y</draw>
-      </GUI>
-    </step>
-
+    </GUI>
+  </step>
   <step>
     <name>Replace in string: Bulk Import TABLE</name>
     <type>ReplaceString</type>
     <description/>
     <distribute>Y</distribute>
+    <custom_distribution/>
     <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
     <fields>
       <field>
         <in_stream_name>description_TABLE</in_stream_name>
@@ -764,29 +1628,37 @@ newDescription = description_TABLE + tempCRLF + Description
         <use_regex>no</use_regex>
         <replace_string>(Added via Bulk Import)</replace_string>
         <replace_by_string/>
+        <set_empty_string>N</set_empty_string>
         <replace_field_by_string/>
         <whole_word>no</whole_word>
         <case_sensitive>no</case_sensitive>
+        <is_unicode>no</is_unicode>
       </field>
     </fields>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
       <xloc>808</xloc>
       <yloc>752</yloc>
       <draw>Y</draw>
-      </GUI>
-    </step>
-
+    </GUI>
+  </step>
   <step>
     <name>Stream lookup</name>
     <type>StreamLookup</type>
     <description/>
     <distribute>Y</distribute>
+    <custom_distribution/>
     <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
     <from>Table input: db_table_field</from>
     <input_sorted>N</input_sorted>
     <preserve_memory>Y</preserve_memory>
@@ -820,24 +1692,30 @@ newDescription = description_TABLE + tempCRLF + Description
         <type>String</type>
       </value>
     </lookup>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
       <xloc>348</xloc>
       <yloc>1244</yloc>
       <draw>Y</draw>
-      </GUI>
-    </step>
-
+    </GUI>
+  </step>
   <step>
     <name>Stream lookup: db_table</name>
     <type>StreamLookup</type>
     <description/>
     <distribute>Y</distribute>
+    <custom_distribution/>
     <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
     <from>Table input: db_table</from>
     <input_sorted>N</input_sorted>
     <preserve_memory>Y</preserve_memory>
@@ -861,24 +1739,30 @@ newDescription = description_TABLE + tempCRLF + Description
         <type>String</type>
       </value>
     </lookup>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
       <xloc>348</xloc>
       <yloc>502</yloc>
       <draw>Y</draw>
-      </GUI>
-    </step>
-
+    </GUI>
+  </step>
   <step>
     <name>Table input: db_table</name>
     <type>TableInput</type>
     <description/>
     <distribute>Y</distribute>
+    <custom_distribution/>
     <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
     <connection>Meta#Grid_Generic_Database</connection>
     <sql>SELECT
   id
@@ -897,24 +1781,30 @@ WHERE fk_project_id=${project_id}</sql>
     <execute_each_row>N</execute_each_row>
     <variables_active>Y</variables_active>
     <lazy_conversion_active>N</lazy_conversion_active>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
       <xloc>147</xloc>
       <yloc>502</yloc>
       <draw>Y</draw>
-      </GUI>
-    </step>
-
+    </GUI>
+  </step>
   <step>
     <name>Table input: db_table_field</name>
     <type>TableInput</type>
     <description/>
     <distribute>Y</distribute>
+    <custom_distribution/>
     <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
     <connection>Meta#Grid_Generic_Database</connection>
     <sql>SELECT
   id
@@ -933,24 +1823,30 @@ WHERE fk_project_id=${project_id}</sql>
     <execute_each_row>N</execute_each_row>
     <variables_active>Y</variables_active>
     <lazy_conversion_active>N</lazy_conversion_active>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
       <xloc>145</xloc>
       <yloc>1244</yloc>
       <draw>Y</draw>
-      </GUI>
-    </step>
-
+    </GUI>
+  </step>
   <step>
     <name>Table input: extended_properties</name>
     <type>TableInput</type>
     <description/>
     <distribute>Y</distribute>
+    <custom_distribution/>
     <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
     <connection>Source_Generic_Database</connection>
     <sql>SELECT
      [Parent_Catalog]   = DB_NAME()
@@ -958,7 +1854,7 @@ WHERE fk_project_id=${project_id}</sql>
 	,[Parent_Name]      = obj.NAME
 	,[Parent_Type]      = CAST(obj.type AS VARCHAR(1))
 	,[Parent_Type_Desc] = obj.type_desc
-	,[Obj_Type]         = CAST(IIF(col.NAME IS NOT NULL,&apos;COLUMN&apos;,IIF(par.NAME IS NOT NULL, &apos;PARAMETER&apos;,NULL)) AS VARCHAR(100))
+	,[Obj_Type]         = CAST(IIF(col.NAME IS NOT NULL,'COLUMN',IIF(par.NAME IS NOT NULL, 'PARAMETER',NULL)) AS VARCHAR(100))
 	,[Obj_Name]         = CAST(IIF(col.NAME IS NOT NULL,col.NAME,IIF(par.NAME IS NOT NULL, par.NAME,NULL)) AS VARCHAR(1500))
     ,[Description]      = CAST(ext.value AS NVARCHAR(MAX))
 	,[Ext_prop]         = CAST(ext.name AS VARCHAR(100))
@@ -973,24 +1869,30 @@ LEFT JOIN sys.parameters par ON par.object_id = ext.major_id
     <execute_each_row>N</execute_each_row>
     <variables_active>N</variables_active>
     <lazy_conversion_active>N</lazy_conversion_active>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
       <xloc>348</xloc>
       <yloc>30</yloc>
       <draw>Y</draw>
-      </GUI>
-    </step>
-
+    </GUI>
+  </step>
   <step>
     <name>Update: db_table</name>
     <type>Update</type>
     <description/>
     <distribute>Y</distribute>
+    <custom_distribution/>
     <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
     <connection>Meta#Grid_Generic_Database</connection>
     <skip_lookup>N</skip_lookup>
     <commit>100</commit>
@@ -1005,30 +1907,36 @@ LEFT JOIN sys.parameters par ON par.object_id = ext.major_id
         <field>id</field>
         <condition>=</condition>
         <name2/>
-        </key>
+      </key>
       <value>
         <name>description</name>
         <rename>newDescription_TABLE</rename>
-        </value>
-      </lookup>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      </value>
+    </lookup>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
       <xloc>1228</xloc>
       <yloc>752</yloc>
       <draw>Y</draw>
-      </GUI>
-    </step>
-
+    </GUI>
+  </step>
   <step>
     <name>Update: db_table_field (COLUMN)</name>
     <type>Update</type>
     <description/>
     <distribute>Y</distribute>
+    <custom_distribution/>
     <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
     <connection>Meta#Grid_Generic_Database</connection>
     <skip_lookup>N</skip_lookup>
     <commit>100</commit>
@@ -1043,213 +1951,134 @@ LEFT JOIN sys.parameters par ON par.object_id = ext.major_id
         <field>id</field>
         <condition>=</condition>
         <name2/>
-        </key>
+      </key>
       <value>
         <name>description</name>
         <rename>newDescription_COLUMN</rename>
-        </value>
-      </lookup>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      </value>
+    </lookup>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
       <xloc>1228</xloc>
       <yloc>1242</yloc>
       <draw>Y</draw>
-      </GUI>
-    </step>
-
+    </GUI>
+  </step>
   <step>
     <name>Write to log: Error on Update Column Description</name>
     <type>WriteToLog</type>
     <description/>
     <distribute>Y</distribute>
+    <custom_distribution/>
     <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-      <loglevel>log_level_basic</loglevel>
-      <displayHeader>Y</displayHeader>
-      <logmessage>Error on Update Column Description</logmessage>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <loglevel>log_level_basic</loglevel>
+    <displayHeader>Y</displayHeader>
+    <limitRows>N</limitRows>
+    <limitRowsNumber>5</limitRowsNumber>
+    <logmessage>Error on Update Column Description</logmessage>
     <fields>
       <field>
         <name>Parent_Catalog</name>
-        </field>
+      </field>
       <field>
         <name>Parent_Schema</name>
-        </field>
+      </field>
       <field>
         <name>Parent_Name</name>
-        </field>
+      </field>
       <field>
         <name>Parent_Type</name>
-        </field>
+      </field>
       <field>
         <name>Parent_Type_Desc</name>
-        </field>
+      </field>
       <field>
         <name>Obj_Type</name>
-        </field>
+      </field>
       <field>
         <name>Obj_Name</name>
-        </field>
+      </field>
       <field>
         <name>Description</name>
-        </field>
+      </field>
       <field>
         <name>Ext_prop</name>
-        </field>
+      </field>
       <field>
         <name>location_TABLE</name>
-        </field>
+      </field>
       <field>
         <name>id_TABLE</name>
-        </field>
+      </field>
       <field>
         <name>description_TABLE</name>
-        </field>
+      </field>
       <field>
         <name>id_COLUMN</name>
-        </field>
+      </field>
       <field>
         <name>description_COLUMN</name>
-        </field>
+      </field>
       <field>
         <name>name_COLUMN</name>
-        </field>
+      </field>
       <field>
         <name>description_COLUMN_Replaced</name>
-        </field>
+      </field>
       <field>
         <name>newDescription_COLUMN</name>
-        </field>
+      </field>
       <field>
         <name>NrOfErrors</name>
-        </field>
+      </field>
       <field>
         <name>ErrorDescription</name>
-        </field>
+      </field>
       <field>
         <name>ErrorFields</name>
-        </field>
+      </field>
       <field>
         <name>ErrorCodes</name>
-        </field>
-      </fields>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      </field>
+    </fields>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
       <xloc>1227</xloc>
       <yloc>1136</yloc>
       <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Filter rows: id_TABLE NOT NULL</name>
-    <type>FilterRows</type>
-    <description/>
-    <distribute>Y</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-<send_true_to>Filter rows: Split COLUMN</send_true_to>
-<send_false_to>Dummy: id_TABLE NULL</send_false_to>
-    <compare>
-<condition>
- <negated>N</negated>
- <leftvalue>id_TABLE</leftvalue>
- <function>IS NOT NULL</function>
- <rightvalue/>
- </condition>
-    </compare>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>348</xloc>
-      <yloc>616</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Dummy: id_TABLE NULL</name>
-    <type>Dummy</type>
-    <description/>
-    <distribute>Y</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>808</xloc>
-      <yloc>616</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Filter rows: id_COLUMN not null</name>
-    <type>FilterRows</type>
-    <description/>
-    <distribute>Y</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-<send_true_to>Replace in string: Bulk Import COLUMN</send_true_to>
-<send_false_to>Dummy (do nothing): id_COLUMN NULL</send_false_to>
-    <compare>
-<condition>
- <negated>N</negated>
- <leftvalue>id_COLUMN</leftvalue>
- <function>IS NOT NULL</function>
- <rightvalue/>
- </condition>
-    </compare>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>578</xloc>
-      <yloc>1244</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Dummy (do nothing): id_COLUMN NULL</name>
-    <type>Dummy</type>
-    <description/>
-    <distribute>Y</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>578</xloc>
-      <yloc>1136</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
+    </GUI>
+  </step>
   <step_error_handling>
-      <error>
-        <source_step>Update: db_table_field (COLUMN)</source_step>
-        <target_step>Write to log: Error on Update Column Description</target_step>
-        <is_enabled>Y</is_enabled>
-        <nr_valuename>NrOfErrors</nr_valuename>
-        <descriptions_valuename>ErrorDescription</descriptions_valuename>
-        <fields_valuename>ErrorFields</fields_valuename>
-        <codes_valuename>ErrorCodes</codes_valuename>
-        <max_errors/>
-        <max_pct_errors/>
-        <min_pct_rows/>
-      </error>
+    <error>
+      <source_step>Update: db_table_field (COLUMN)</source_step>
+      <target_step>Write to log: Error on Update Column Description</target_step>
+      <is_enabled>Y</is_enabled>
+      <nr_valuename>NrOfErrors</nr_valuename>
+      <descriptions_valuename>ErrorDescription</descriptions_valuename>
+      <fields_valuename>ErrorFields</fields_valuename>
+      <codes_valuename>ErrorCodes</codes_valuename>
+      <max_errors/>
+      <max_pct_errors/>
+      <min_pct_rows/>
+    </error>
   </step_error_handling>
-   <slave-step-copy-partition-distribution>
-</slave-step-copy-partition-distribution>
-   <slave_transformation>N</slave_transformation>
+  <slave-step-copy-partition-distribution>
+  </slave-step-copy-partition-distribution>
+  <slave_transformation>N</slave_transformation>
 </transformation>

@@ -18,6 +18,8 @@ INSERT INTO object_type (id,name) VALUES (16,'bracket');
 INSERT INTO object_type (id,name) VALUES (17,'bracket_searchPattern');
 INSERT INTO object_type (id,name) VALUES (18,'perspective_filter');
 INSERT INTO object_type (id,name) VALUES (19,'mapping_qualifier');
+-- 20-23 reservation for branch feature_interface_contract and tagging
+INSERT INTO object_type (id,name) VALUES (24,'url');
 
 -- app_config
 INSERT INTO app_config (key,valueINT,description) VALUES ('project_filter',2,'Set a filter to a specific project id (INT). Maybe more than one row/entry.');
@@ -28,7 +30,12 @@ INSERT INTO app_config ("key", valueINT, valueSTRING, description) VALUES('web_a
 -- db_table_type
 -- important for bulk import of database tables with Pentaho Data Integration (Kettle)
 INSERT INTO db_table_type (name,description) VALUES ('TABLE', 'Table in a DBMS');
-INSERT INTO db_table_type (name,description) VALUES ('TABLE', 'Table in a DBMS');
+INSERT INTO db_table_type (name,description) VALUES ('VIEW', 'View in a DBMS');
 
 -- mapping_qualifier
 INSERT INTO mapping_qualifier (name,short_name,description,needs_object_depends_on) VALUES ('Database Foreign Key','FK','Database foreign key relashionship', 1);
+INSERT INTO mapping_qualifier (name,short_name,description,needs_object_depends_on) VALUES ('Website Link','URL','Http or https Link to website (http://...)', 0);
+INSERT INTO mapping_qualifier (name,short_name,description,needs_object_depends_on) VALUES ('File Reference','FILE','Link to a file to a disc or network-drive (file://...)', 0);
+
+-- data_transfer_type
+INSERT INTO data_transfer_type (name,description) VALUES ('Stored Procedure','PROCEDURES of a RDBMS to manipulate data (e.g. in a ETL workflow)');

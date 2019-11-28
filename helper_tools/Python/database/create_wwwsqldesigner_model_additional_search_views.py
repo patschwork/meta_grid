@@ -8,11 +8,11 @@ from macpath import split, join
 print('%s %s' % (sys.executable or sys.platform, sys.version))
 
 # Config
-wwwsqldesignermodelfile = "..\..\..\database_model\wwwsqldesigner\wwwsqldesigner_model.xml"
+wwwsqldesignermodelfile = "../../../database_model/wwwsqldesigner/wwwsqldesigner_model.xml"
 output = "liquibase" # sql or liquibase
 replaceIfExists = False
-folderForYii2ModelClasses = "D:\\Temp\\folderForYii2ModelClasses"
-
+folderForYii2ModelClasses = "../../../frontend/yii/basic/models"
+filterOnSpecificDbObject = "url" # Table
 
 isLinuxOrDarwin = False
 if _platform == "linux" or _platform == "linux2":
@@ -64,6 +64,9 @@ rowcounter = -1
 print("Anzahl Tabellen: %s" % (len(itemlist)))
 for s in itemlist:
     tablename = s.attributes['name'].value
+    if (filterOnSpecificDbObject != ""):
+        if (filterOnSpecificDbObject != tablename):
+            continue
     newViewName = GetNewViewName(tablename)
     if tablename=="app_config":
         continue
@@ -76,6 +79,7 @@ for s in itemlist:
             liquibaseReplaceIfExists="true"
         else:
             liquibaseReplaceIfExists="false"
+        print("<!-- Those views are automatically generated with a python helper tool: dwh_meta_v2\helper_tools\Python\database\create_wwwsqldesigner_model_additional_search_views.py -->")
         print("<createView replaceIfExists=\"%s\" viewName=\"%s\">" % (liquibaseReplaceIfExists, newViewName))
         print "<![CDATA["
     print "SELECT"
@@ -110,6 +114,9 @@ if output=="liquibase":
     print("Used objects:")
     for s in itemlist:
         tablename = s.attributes['name'].value
+        if (filterOnSpecificDbObject != ""):
+            if (filterOnSpecificDbObject != tablename):
+                continue
         newViewName = GetNewViewName(tablename)
         if tablename=="app_config":
             continue
@@ -152,6 +159,9 @@ for s in itemlist:
     newViewName = GetNewViewName(tablename)
     if tablename=="app_config":
         continue
+    if (filterOnSpecificDbObject != ""):
+        if (filterOnSpecificDbObject != tablename):
+            continue
     templateclass=template
     templateclass=templateclass.replace("{{{viewname}}}", newViewName)
     templateclass=templateclass.replace("{{{modelclassname}}}",yii2_id2camel(tablename, "_"))

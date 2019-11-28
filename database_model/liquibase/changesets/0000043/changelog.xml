@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000043/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000043" context="translation,perspective">
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+UPDATE language_translate
+SET id = (SELECT id FROM language_source WHERE message='TooltipMainPage: Client')
+WHERE 1=1 
+   AND "language"='en-US'
+   AND "translation"='Client master data'
+		]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+UPDATE language_translate
+SET id = (SELECT id FROM language_source WHERE message='TooltipMainPage: Project')
+WHERE 1=1 
+   AND "language"='en-US'
+   AND "translation"='Project master data'
+		]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+UPDATE language_translate
+SET id = (SELECT id FROM language_source WHERE message='TooltipMainPage: Keyfigure')
+WHERE 1=1 
+   AND "language"='en-US'
+   AND "translation"='Definitions of keyfigures and KPI'
+		]]>		
+		</sql>
+
+		<comment>
+		<![CDATA[
+		Clean up data
+		Used objects:
+	        language_translate
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>
