@@ -33,6 +33,9 @@ class PerspectiveHelper
 		$resSource = $languageSources->find()->where(['category' => $category,'message' => $message])->one();
 		// $resSource->getTranslation();
 		
+		// Bugfix: there's yet no message (maybe a new objecttype?!)
+		if (isset($resSource->id) === false) return true;
+
 		// Build string for language master from actual selected perspective
 		$language_base   = explode("-",Yii::$app->language)[0];
 		$language_master = $language_base . "-Master";
@@ -72,13 +75,17 @@ class PerspectiveHelper
 	
 	public static function translationExists($category, $message)
 	{
+		$result = false;
 		$languageSources = new \lajax\translatemanager\models\LanguageSource();
 		$resSource = $languageSources->find()->where(['category' => $category,'message' => $message])->one();
+
+		// Bugfix: there's yet no message (maybe a new objecttype?!)
+		if (isset($resSource->id) === false) return $result;
 
 		$languageTranslations = new \lajax\translatemanager\models\LanguageTranslate();
 		$resTranslation       = $languageTranslations->find()->where(['id' => $resSource->id, 'language' => Yii::$app->language])->one();
 		
-		$result = false;
+
 		if (!empty($resTranslation->translation))
 		{
 			$result = true;

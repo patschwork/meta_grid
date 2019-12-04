@@ -48,7 +48,7 @@ class MapperController extends Controller
                     ],
 					[
 						'allow' => true,
-						'actions' => ['index','view'],
+						'actions' => ['index','view','vallobjectsuniondepdrop'],
 						'roles' => ['author', 'global-view', 'view' ."-" . Yii::$app->controller->id],
 					],
 					[
@@ -318,6 +318,27 @@ class MapperController extends Controller
 			$model->ref_fk_object_type_id_2 = explode(";", $listkey)[1];
 		}
 		
+		// Information about source mapping object
+
+		$permClientsCanSee = Yii::$app->User->identity->permClientsCanSee;
+    	$permProjectsCanSee = Yii::$app->User->identity->permProjectsCanSee;
+
+		$SrcObjectInfo = new \app\models\VAllObjectsUnion ();
+		$SrcObjectInfo = $VAllObjectsUnionModel::find()
+			->where(['id' => $ref_fk_object_id, 'fk_object_type_id' => $ref_fk_object_type_id])
+			->andWhere(['or',
+				['in','fk_client_id', $permClientsCanSee],
+				['in','fk_project_id', $permProjectsCanSee]
+				])
+			->one();
+
+		if ($SrcObjectInfo == NULL)
+		{
+			throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'No data or you have no permission for this data.'));
+		}
+
+		$TitleSrcInformation = $SrcObjectInfo->listvalue_1;
+
     	if ($model->load(Yii::$app->request->post()) && $model->save()) {
     		
     		// zurueck woher man gekommen ist...
@@ -329,7 +350,8 @@ class MapperController extends Controller
 			return $this->render ( '_create_external', [ 
 					'model' => $model,
 					'objectTypesList' => $objectTypesList,
-					'VAllObjectsUnionList' => $VAllObjectsUnionList 
+					'VAllObjectsUnionList' => $VAllObjectsUnionList,
+					'TitleSrcInformation' => $TitleSrcInformation
 			] );
 		}
 	}
