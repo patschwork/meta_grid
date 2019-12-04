@@ -15,10 +15,14 @@ use kartik\depdrop\DepDrop;			// Patrick, 2016-01-17
 
 <div class="map-object2-object-form">
 
+	<?php 
+		echo "<h2>" . Yii::t('app', 'Mapping object to') . ": $TitleSrcInformation</h2>";
+	?>
+
     <?php $form = ActiveForm::begin(); ?>
 
     <?php 
-    	// $form->field($model, 'ref_fk_object_type_id_1')->hiddenInput() nicht verwenden, da es einen unnötigen Label erzeugt.
+    	// $form->field($model, 'ref_fk_object_type_id_1')->hiddenInput() nicht verwenden, da es einen unnï¿½tigen Label erzeugt.
     	// disabled elemente funktionieren nicht! Post-Submit klappt dann nicht mehr.
     	echo Html::activeHiddenInput($model, 'ref_fk_object_id_1');
     	echo Html::activeHiddenInput($model, 'ref_fk_object_type_id_1');

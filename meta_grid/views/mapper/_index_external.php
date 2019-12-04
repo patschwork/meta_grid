@@ -4,6 +4,8 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use app\models\Objectcomment;
 use app\models\ObjectType;
+use app\models\Url;
+
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\MapObject2ObjectSearch */
@@ -78,7 +80,7 @@ use app\models\ObjectType;
 	            			
 	            			$object_type_model = ObjectType::findOne($objIdTypeFromComment);
 	            			
-	            			// Variablen für Link URL neu setzen
+	            			// Variablen fï¿½r Link URL neu setzen
 	            			$link_to_objId = $objIdFromComment;
 	            			$cntrl=str_replace("_","",$object_type_model->name);
 	            		}
@@ -106,12 +108,35 @@ use app\models\ObjectType;
 						return $retValue;
 					}			
 			],
-            [
+			[
 	            'class' => 'yii\grid\DataColumn',
 	            'attribute' => 'name',
-	            'format' => 'html',
+	            'format' => 'html',				
 	            'label' => 'Content',
-            ],
+				'value' => function ($model) {
+
+					$link_to_objId=explode(";",$model->listkey)[0];
+					$link_to_objTypeId=explode(";",$model->listkey)[1];
+					
+					$cntrl=str_replace("_","",$model->object_type_name);
+
+					$retValue = $model->name;
+
+					// If it is an url, then show the corresponding link
+					if ($link_to_objTypeId==24)
+					{
+						$url_model  = Url::findOne($link_to_objId);
+
+						$urlToShow = $url_model->url;
+						if (strlen($urlToShow)>50)  $urlToShow = substr($urlToShow,0,50) . "...";
+						$urlToOpen = $url_model->url;
+						
+						$retValue = $model->name . " ". "<a href=\"$urlToOpen\">" . '<span class="glyphicon glyphicon-globe"></span>' . " $urlToShow</a>" . "";
+					}
+
+					return $retValue;
+				}			
+			],
             [
 	            'class' => 'yii\grid\DataColumn',
 	            'attribute' => 'object_type_name',

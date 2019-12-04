@@ -4,19 +4,23 @@
     }
     
     a[data-tooltip]:before {
-      position: absolute;
-      left: 0;
-      top: -40px;
-      background-color: #c0c0c0;
-      color: #000000;
-      height: 30px;
-      line-height: 30px;
-      border-radius: 5px;
-      padding: 0 15px;
-      content: attr(data-tooltip);
-      /* white-space: nowrap; */
-      display: none;
-    }
+        position: absolute;
+        left: 0;
+        /* top: -40px; */
+        bottom: 40px; /* is needed for text with line-break*/
+        background-color: #c0c0c0;
+        color: #000000;
+        /* height: 30px; */
+        line-height: 30px;
+        border-radius: 5px;
+        padding: 0 15px;
+        content: attr(data-tooltip);
+        /* white-space: nowrap; */
+        white-space: pre; 
+        display: none;
+        text-align: left;
+      }
+  
     
     a[data-tooltip]:after {
       position: absolute;
@@ -76,6 +80,65 @@ if ($foundIssues>0)
 			],
 			'body' => Yii::t('app','Following objecttypes does not have any items. They are basically needed for further working. You should start here.').$alertBody,
 	]);
+}
+
+try
+{
+    // get the path from the app_config database table. If not exists, then use a default.
+    $app_config_liquibase_changelog_master_filepath = ((new yii\db\Query())->from('app_config')->select(['valueSTRING'])->where(["key" => "liquibase_changelog_master_filepath"])->one())['valueSTRING'];
+    if ($app_config_liquibase_changelog_master_filepath === "") $app_config_liquibase_changelog_master_filepath = "../../../../database_model/liquibase/db.changelog-master.xml";
+
+    // reads the LiquiBase Changelog-Master-XML File
+    $xml=simplexml_load_file($app_config_liquibase_changelog_master_filepath) or die("Error: Cannot create object");
+    $lastChangelogFileXMLElement = $xml->include[count($xml->include)-1]['file'];
+    // Example entry in xml file:   <include relativeToChangelogFile="true" file="changesets/0000036/changelog.xml"/>  <!-- SQL ALTER TABLE | data_transfer_process;data_transfer_process_log -->
+
+    // manipulate string for comparing with database entry
+    $lastChangelogFileXMLElementReadyForComparing = str_replace("changesets/","",$lastChangelogFileXMLElement);
+
+    // get last deployment from database
+    $lastChangelogFileDeployedInDB = "";
+    $res = (new yii\db\Query())->select(['FILENAME'])->from('DATABASECHANGELOG')->orderBy("ORDEREXECUTED DESC")->limit(1)->one();
+    foreach($res as $key => $value ){
+        $lastChangelogFileDeployedInDB = $value;
+        // Example entry in table:   000036/changelog.xml
+    }
+
+    if (strlen(explode("/",$lastChangelogFileDeployedInDB)[0]) < strlen(explode("/",$lastChangelogFileXMLElementReadyForComparing)[0]))
+    {
+        // workaround: the folder is missing a 0-digit :-(
+        $lastChangelogFileXMLElementReadyForComparing = substr(explode("/",$lastChangelogFileXMLElementReadyForComparing)[0],1,strlen(explode("/",$lastChangelogFileDeployedInDB)[0])) . "/" .  explode("/",$lastChangelogFileXMLElementReadyForComparing)[1];
+    }
+
+    // compare the results
+    if ($lastChangelogFileDeployedInDB != $lastChangelogFileXMLElementReadyForComparing) {
+        // $foundIssues = $foundIssues + 1;
+        $alertBody2 = '<b>'.Yii::t('app','The database structure version differs from available version. Please update the database!').'</b><br>Found version in database: ' . $lastChangelogFileDeployedInDB . '<br>Found deployable version: ' . $lastChangelogFileXMLElementReadyForComparing;
+        echo yii\bootstrap\Alert::widget([
+            'options' => [
+                    'class' => 'alert-warning',
+            ],
+            'body' => $alertBody2,
+        ]);
+    }
+}
+catch (Exception $e) {
+    // Ignore any errors...
+
+    // if admin user then show a hint:
+    if (isset(Yii::$app->user->identity->isAdmin))
+    {
+        if (Yii::$app->user->identity->isAdmin) 
+        {
+            echo yii\bootstrap\Alert::widget([
+                'options' => [
+                        'class' => 'alert-danger',
+                ],
+                'body' => "<b>Admin-only-hint</b>: LiquiBase changelog file not found</br>" . "<pre>" . $e->getMessage() . "</pre>",
+            ]);           
+        };
+    }
+
 }
 
 if (!Yii::$app->user->isGuest)
@@ -229,6 +292,12 @@ function UseMayAccessObject($objecttype) {
             // $tooltip     = "Zusammenfassen von Objekten";
             // $tooltip     = "Grouping of objects";
             $buttonTitle = "Bracket";
+            $tooltip     = "TooltipMainPage: " . $buttonTitle;
+            break;
+        case "url":
+            // $tooltip     = "Zusammenfassen von Objekten";
+            // $tooltip     = "Grouping of objects";
+            $buttonTitle = "URL";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
         }
@@ -385,18 +454,19 @@ function printHeader($csvObjecttypes, $title) {
                 <!--  <p><a style="width: 250px;" class="btn btn-warning" target="_blank" href="<?= $wa_gui_url ?>data_delivery_type.php">Data Delivery Type &raquo;</a></p>	-->
             </div>
             <div class="col-lg-4">
-                <h2><?= printHeader("mapper;objectdependson;glossary;bracket", "Relations") ?></h2>
+                <h2><?= printHeader("mapper;objectdependson;glossary;bracket;url", "Relations") ?></h2>
                 <?= UseMayAccessObject("mapper") ?>
                 <?= UseMayAccessObject("objectdependson") ?>
                 <?= UseMayAccessObject("glossary") ?>
                 <?= UseMayAccessObject("bracket") ?>
+                <?= UseMayAccessObject("url") ?>
             </div>
          </div>
 
     </div>
     <?php
     if (!Yii::$app->user->isGuest) {
-        if (printHeader("client;project;keyfigure;attribute;contact;contact-group;sourcesystem;dbdatabase;dbtable;dbtablefield;dbtablecontext;dbtabletype;tool;tooltype;objectcomment;datatransferprocess;datatransfertype;datadeliveryobject;datadeliverytype;scheduling;mapper;objectdependson;glossary;bracket", "dummy") === "") {
+        if (printHeader("client;project;keyfigure;attribute;contact;contact-group;sourcesystem;dbdatabase;dbtable;dbtablefield;dbtablecontext;dbtabletype;tool;tooltype;objectcomment;datatransferprocess;datatransfertype;datadeliveryobject;datadeliverytype;scheduling;mapper;objectdependson;glossary;bracket;url", "dummy") === "") {
             echo yii\bootstrap\Alert::widget([
                 'options' => [
                         'class' => 'alert-warning',
