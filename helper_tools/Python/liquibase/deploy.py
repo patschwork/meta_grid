@@ -95,6 +95,13 @@ liquibaseDriverUrlprefix = Config.get("environment", "liquibaseDriverUrlprefix")
 comment = Config.get("other", "comment")
 
 logfilepath = os.path.join(os.path.dirname(getFilePathRelativeScriptPath(liquibaseChangeLogFile)),"logs")
+if not os.path.exists(logfilepath) & os.path.isdir(logfilepath):
+	try:
+		os.mkdir(logfilepath)
+	except OSError:
+		print ("Creation of the directory %s failed" % logfilepath)
+	else:
+		print ("Successfully created the directory: %s" % logfilepath)
 
 # Dump settings
 printCurrentEnvSettings("Script path", realPath)
