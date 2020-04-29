@@ -1,3 +1,29 @@
+# 2.4
+
+- [T52] MultipleTableFieldEdit introduced: Object typed db_table and db_table_fields will now be added and edited in one view
+- [T51] New attributes to flaf GDPR fields
+- [T67] Warning to use PRAGMA foreign_keys = ON 
+- [T64] Missing fields in advanced search of each object type added
+- [T53] A new column "Database" (index view) in object type "db_table_field" of the inherited attribute from "db_table" was added
+- [T55] Avaiable table context in object type "db_table" now depends on selected projekt
+- [T69] Centralized location for meta#grid application version
+- [T43] Referential integrity for SQLite enabled 
+- [T33] If objects will be deleted also comments and mappings will be deleted (incl. cleanup of existing databases)
+
+- [T61] Minor bugfix
+- [T60] Minor bugfix
+- [T59] Minor bugfix
+- [T57] Minor bugfix
+- [T56] Minor bugfix
+- [T50] Minor bugfix
+- [T49] Minor bugfix
+
+- [T66] Release test v2.4
+
+----------------------------------------------------------------------------------------------------
+
+# 2.3
+
 Phabricator-task: Ref T34, T36, T30, T25, T39, T38, T35, T29, T26 
 
 
