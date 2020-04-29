@@ -1,7 +1,7 @@
 # 2.4
 
 - [T52] MultipleTableFieldEdit introduced: Object typed db_table and db_table_fields will now be added and edited in one view
-- [T51] New attributes to flaf GDPR fields
+- [T51] New attributes to flag GDPR fields
 - [T67] Warning to use PRAGMA foreign_keys = ON 
 - [T64] Missing fields in advanced search of each object type added
 - [T53] A new column "Database" (index view) in object type "db_table_field" of the inherited attribute from "db_table" was added
