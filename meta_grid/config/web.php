@@ -43,19 +43,19 @@ $config = [
                 // ],
             // ],
         // ],
-		'raven' => [
-				'class' => 'sheershoff\sentry\ErrorHandler',
-				//'dsn' => 'http://e35918b84af8411dbe1e0a02d8ca0760:f9321e3f1dd54b69a05c673e05a500ab@vps249413.ovh.net:9000/2', // Sentry DSN
-			],
-			'log' => [
-				'targets' => [
-					[
-						'class' => 'sheershoff\sentry\Target',
-						'levels' => ['error', 'warning'],
-						//'dsn' => 'http://e35918b84af8411dbe1e0a02d8ca0760:f9321e3f1dd54b69a05c673e05a500ab@vps249413.ovh.net:9000/2', // Sentry DSN
-					]
-				],
-			],		
+		// 'raven' => [
+		// 		'class' => 'sheershoff\sentry\ErrorHandler',
+		// 		//'dsn' => 'http://e35918b84af8411dbe1e0a02d8ca0760:f9321e3f1dd54b69a05c673e05a500ab@vps249413.ovh.net:9000/2', // Sentry DSN
+		// 	],
+		// 'log' => [
+		// 		'targets' => [
+		// 			[
+		// 				'class' => 'sheershoff\sentry\Target',
+		// 				'levels' => ['error', 'warning'],
+		// 				//'dsn' => 'http://e35918b84af8411dbe1e0a02d8ca0760:f9321e3f1dd54b69a05c673e05a500ab@vps249413.ovh.net:9000/2', // Sentry DSN
+		// 			]
+		// 		],
+		// 	],		
     		'i18n' => [
     				'translations' => [
     						'*' => [

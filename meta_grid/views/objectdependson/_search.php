@@ -25,7 +25,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'ref_fk_object_id_child') ?>
 
-    <?php // echo $form->field($model, 'ref_fk_object_type_id_child') ?>
+    <?= $form->field($model, 'ref_fk_object_type_id_child') ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>

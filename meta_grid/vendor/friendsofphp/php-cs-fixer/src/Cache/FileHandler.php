@@ -42,7 +42,7 @@ final class FileHandler implements FileHandlerInterface
     public function read()
     {
         if (!file_exists($this->file)) {
-            return;
+            return null;
         }
 
         $content = file_get_contents($this->file);
@@ -50,7 +50,7 @@ final class FileHandler implements FileHandlerInterface
         try {
             $cache = Cache::fromJson($content);
         } catch (\InvalidArgumentException $exception) {
-            return;
+            return null;
         }
 
         return $cache;
@@ -83,7 +83,7 @@ final class FileHandler implements FileHandlerInterface
             @chmod($this->file, 0666);
         }
 
-        $bytesWritten = @file_put_contents($this->file, $content, LOCK_EX);
+        $bytesWritten = @file_put_contents($this->file, $content);
 
         if (false === $bytesWritten) {
             $error = error_get_last();

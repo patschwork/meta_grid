@@ -18,8 +18,9 @@ class DbTableFieldSearch extends VDbTableFieldSearchinterface
     public function rules()
     {
         return [
-            [['id', 'fk_object_type_id', 'fk_project_id', 'fk_db_table_id'], 'integer'],
+            [['id', 'fk_object_type_id', 'fk_project_id', 'fk_db_table_id', 'fk_deleted_status_id'], 'integer'],
             [['uuid', 'name', 'description', 'datatype', 'bulk_load_checksum'], 'safe'],
+            [['is_PrimaryKey', 'is_BusinessKey', 'is_GDPR_relevant'], 'boolean'],
         ];
     }
 
@@ -71,6 +72,10 @@ class DbTableFieldSearch extends VDbTableFieldSearchinterface
             'fk_object_type_id' => $this->fk_object_type_id,
             'fk_project_id' => $this->fk_project_id,
             'fk_db_table_id' => $this->fk_db_table_id,
+            'fk_deleted_status_id' => $this->fk_deleted_status_id,
+            'is_PrimaryKey' => $this->is_PrimaryKey,
+            'is_BusinessKey' => $this->is_BusinessKey,
+            'is_GDPR_relevant' => $this->is_GDPR_relevant,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])

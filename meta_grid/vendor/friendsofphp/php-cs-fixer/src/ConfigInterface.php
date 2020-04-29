@@ -37,7 +37,7 @@ interface ConfigInterface
     /**
      * Returns files to scan.
      *
-     * @return iterable|string[]|\Traversable
+     * @return iterable|\Traversable
      */
     public function getFinder();
 
@@ -180,8 +180,6 @@ interface ConfigInterface
      * Value for set must be bool (turn it on or off).
      * Value for fixer may be bool (turn it on or off) or array of configuration
      * (turn it on and contains configuration for FixerInterface::configure method).
-     *
-     * @param array $rules
      *
      * @return self
      */

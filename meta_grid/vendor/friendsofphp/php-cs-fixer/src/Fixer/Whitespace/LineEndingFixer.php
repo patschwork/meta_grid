@@ -16,6 +16,7 @@ use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\Preg;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
@@ -58,14 +59,14 @@ final class LineEndingFixer extends AbstractFixer implements WhitespacesAwareFix
     {
         $ending = $this->whitespacesConfig->getLineEnding();
 
-        for ($index = 0, $count = count($tokens); $index < $count; ++$index) {
+        for ($index = 0, $count = \count($tokens); $index < $count; ++$index) {
             $token = $tokens[$index];
 
             if ($token->isGivenKind(T_ENCAPSED_AND_WHITESPACE)) {
                 if ($tokens[$tokens->getNextMeaningfulToken($index)]->isGivenKind(T_END_HEREDOC)) {
                     $tokens[$index] = new Token([
                         $token->getId(),
-                        preg_replace(
+                        Preg::replace(
                             "#\r\n|\n#",
                             $ending,
                             $token->getContent()
@@ -79,7 +80,7 @@ final class LineEndingFixer extends AbstractFixer implements WhitespacesAwareFix
             if ($token->isGivenKind([T_OPEN_TAG, T_WHITESPACE, T_COMMENT, T_DOC_COMMENT, T_START_HEREDOC])) {
                 $tokens[$index] = new Token([
                     $token->getId(),
-                    preg_replace(
+                    Preg::replace(
                         "#\r\n|\n#",
                         $ending,
                         $token->getContent()

@@ -18,7 +18,7 @@ class KeyfigureSearch extends VKeyfigureSearchinterface
     public function rules()
     {
         return [
-            [['id', 'fk_object_type_id', 'fk_project_id'], 'integer'],
+            [['id', 'fk_object_type_id', 'fk_project_id', 'fk_deleted_status_id'], 'integer'],
             [['uuid', 'name', 'description', 'formula', 'aggregation', 'character', 'type', 'unit', 'value_range'], 'safe'],
             [['cumulation_possible'], 'boolean'],
         ];
@@ -72,6 +72,7 @@ class KeyfigureSearch extends VKeyfigureSearchinterface
             'fk_object_type_id' => $this->fk_object_type_id,
             'fk_project_id' => $this->fk_project_id,
             'cumulation_possible' => $this->cumulation_possible,
+            'fk_deleted_status_id' => $this->fk_deleted_status_id,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])

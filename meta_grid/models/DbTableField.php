@@ -43,4 +43,26 @@ class DbTableField extends \app\models\base\DbTableField
 		return null;
 			
 	}
+
+    // { ... phabricator-task: T53
+	public function getDatabaseInfoFromLocation()
+	{
+		return $this->fkDbTable->databaseInfoFromLocation;
+	}
+
+	public function attributeLabels() {
+	
+		$addionalLabels = array('databaseInfoFromLocation' => Yii::t('app', 'Database'));
+		return array_merge(parent::attributeLabels(), $addionalLabels);
+	}
+	// ...}
+
+	 /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+		$addionalRules = array([['name'], 'required']);
+		return array_merge(parent::rules(), $addionalRules);
+    }
 }

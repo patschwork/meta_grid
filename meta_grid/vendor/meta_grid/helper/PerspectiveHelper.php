@@ -16,6 +16,7 @@ class PerspectiveHelper
 	public static function getInfoIfMasterLang() 
 	{
 		$languages = \lajax\translatemanager\models\Language::find()->where(['language_id' => Yii::$app->language])->one();
+		if (is_null($languages)) return false;
 		$language_name_ascii = $languages->name_ascii;
 		if (explode("-",$language_name_ascii)[1] === "Master")
 		{

@@ -12,6 +12,7 @@
 
 namespace PhpCsFixer\Linter;
 
+use PhpCsFixer\FileReader;
 use PhpCsFixer\Tokenizer\CodeHasher;
 use PhpCsFixer\Tokenizer\Tokens;
 
@@ -26,7 +27,7 @@ final class TokenizerLinter implements LinterInterface
 {
     public function __construct()
     {
-        if (false === defined('TOKEN_PARSE')) {
+        if (false === \defined('TOKEN_PARSE')) {
             throw new UnavailableLinterException('Cannot use tokenizer as linter.');
         }
     }
@@ -44,7 +45,7 @@ final class TokenizerLinter implements LinterInterface
      */
     public function lintFile($path)
     {
-        return $this->lintSource(file_get_contents($path));
+        return $this->lintSource(FileReader::createSingleton()->read($path));
     }
 
     /**

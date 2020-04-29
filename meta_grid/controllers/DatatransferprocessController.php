@@ -14,6 +14,7 @@ use app\models\Project;
 use app\models\DataTransferType;
 use Da\User\Filter\AccessRuleFilter;
 use yii\filters\AccessControl;
+use yii\helpers\Url;
 
 /**
  * DatatransferprocessController implements the CRUD actions for DataTransferProcess model.
@@ -266,9 +267,22 @@ class DatatransferprocessController extends Controller
 		 if (!in_array($this->findModel($id)->fkProject->id, Yii::$app->User->identity->permProjectsCanEdit)) {throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'You have no permission to edit this data.'));
 	return;	}    
     
-        $this->findModel($id)->delete();
+		try {
+			$model = $this->findModel($id);
+			$model->delete();
+			return $this->redirect(['index']);
+		} catch (\Exception $e) {
+			$model->addError(null, $e->getMessage());
+			$errMsg = $e->getMessage();
+			
+			$errMsgAdd = "";
+			try{$errMsgAdd = '"'. $model->name . '"';} catch(\Exception $e){}
 
-        return $this->redirect(['index']);
+			if (strpos($errMsg, "Integrity constraint violation")) $errMsg = Yii::t('yii',"The object {errMsgAdd} is still referenced by other objects.", ['errMsgAdd' => $errMsgAdd]);
+			Yii::$app->session->setFlash('deleteError', Yii::t('yii','Object can\'t be deleted: ') . $errMsg);
+			return $this->redirect(Url::previous());  // Url::remember() is set in index-view
+		}
+
     }
 
     /**

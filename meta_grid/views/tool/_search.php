@@ -25,9 +25,9 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'vendor') ?>
 
-    <?php // echo $form->field($model, 'version') ?>
+    <?= $form->field($model, 'version') ?>
 
-    <?php // echo $form->field($model, 'comment') ?>
+    <?= $form->field($model, 'comment') ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>

@@ -18,7 +18,7 @@ use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
 /**
- * This abstract fixer provides a base for fixers to fix types in phpdoc.
+ * This abstract fixer provides a base for fixers to fix types in PHPDoc.
  *
  * @author Graham Campbell <graham@alt-three.com>
  *
@@ -91,8 +91,6 @@ abstract class AbstractPhpdocTypesFixer extends AbstractFixer
      * We must be super careful not to modify parts of words.
      *
      * This will be nicely handled behind the scenes for us by the annotation class.
-     *
-     * @param Annotation $annotation
      */
     private function fixTypes(Annotation $annotation)
     {

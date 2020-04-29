@@ -72,7 +72,7 @@ final class CurlyBraceTransformer extends AbstractTransformer
         $this->transformIntoDynamicVarBraces($tokens, $token, $index);
         $this->transformIntoCurlyIndexBraces($tokens, $token, $index);
 
-        if (PHP_VERSION_ID >= 70000) {
+        if (\PHP_VERSION_ID >= 70000) {
             $this->transformIntoGroupUseBraces($tokens, $token, $index);
         }
     }
@@ -82,9 +82,7 @@ final class CurlyBraceTransformer extends AbstractTransformer
      *
      * This should be done at very beginning of curly braces transformations.
      *
-     * @param Tokens $tokens
-     * @param Token  $token
-     * @param int    $index
+     * @param int $index
      */
     private function transformIntoCurlyCloseBrace(Tokens $tokens, Token $token, $index)
     {
@@ -175,7 +173,6 @@ final class CurlyBraceTransformer extends AbstractTransformer
             [T_STRING],
             [T_VARIABLE],
             [CT::T_ARRAY_INDEX_CURLY_BRACE_CLOSE],
-            [CT::T_ARRAY_SQUARE_BRACE_CLOSE],
             ']',
             ')',
         ])) {
@@ -192,7 +189,7 @@ final class CurlyBraceTransformer extends AbstractTransformer
         if (
             $tokens[$prevIndex]->equals(')')
             && !$tokens[$tokens->getPrevMeaningfulToken(
-                $tokens->findBlockEnd(Tokens::BLOCK_TYPE_PARENTHESIS_BRACE, $prevIndex, false)
+                $tokens->findBlockStart(Tokens::BLOCK_TYPE_PARENTHESIS_BRACE, $prevIndex)
             )]->isGivenKind(T_ARRAY)
         ) {
             return;

@@ -22,6 +22,7 @@ use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Indicator\PhpUnitTestCaseIndicator;
+use PhpCsFixer\Preg;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 use PhpCsFixer\Tokenizer\TokensAnalyzer;
@@ -131,7 +132,8 @@ final class MyTest extends \PHPUnit_Framework_TestCase
      */
     protected function applyFix(\SplFileInfo $file, Tokens $tokens)
     {
-        foreach (array_reverse($this->findPhpUnitClasses($tokens)) as $indexes) {
+        $phpUnitTestCaseIndicator = new PhpUnitTestCaseIndicator();
+        foreach ($phpUnitTestCaseIndicator->findPhpUnitClasses($tokens) as $indexes) {
             $this->fixPhpUnitClass($tokens, $indexes[0], $indexes[1]);
         }
     }
@@ -155,8 +157,7 @@ final class MyTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param Tokens $tokens
-     * @param int    $index
+     * @param int $index
      *
      * @return string
      */
@@ -172,31 +173,8 @@ final class MyTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param Tokens $tokens
-     *
-     * @return int[][] array of [start, end] indexes from sooner to later classes
-     */
-    private function findPhpUnitClasses(Tokens $tokens)
-    {
-        $phpUnitTestCaseIndicator = new PhpUnitTestCaseIndicator();
-        $phpunitClasses = [];
-
-        for ($index = 0, $limit = $tokens->count() - 1; $index < $limit; ++$index) {
-            if ($tokens[$index]->isGivenKind(T_CLASS) && $phpUnitTestCaseIndicator->isPhpUnitClass($tokens, $index)) {
-                $index = $tokens->getNextTokenOfKind($index, ['{']);
-                $endIndex = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_CURLY_BRACE, $index);
-                $phpunitClasses[] = [$index, $endIndex];
-                $index = $endIndex;
-            }
-        }
-
-        return $phpunitClasses;
-    }
-
-    /**
-     * @param Tokens $tokens
-     * @param int    $startIndex
-     * @param int    $endIndex
+     * @param int $startIndex
+     * @param int $endIndex
      */
     private function fixPhpUnitClass(Tokens $tokens, $startIndex, $endIndex)
     {
@@ -253,7 +231,7 @@ final class MyTest extends \PHPUnit_Framework_TestCase
             $newMethodsCode = '<?php $this->'
                 .(isset($annotations['expectedExceptionMessageRegExp']) ? 'setExpectedExceptionRegExp' : 'setExpectedException')
                 .'('
-                .implode($paramList, ', ')
+                .implode(', ', $paramList)
                 .');';
             $newMethods = Tokens::fromCode($newMethodsCode);
             $newMethods[0] = new Token([
@@ -265,9 +243,10 @@ final class MyTest extends \PHPUnit_Framework_TestCase
             $tokens[$docBlockIndex] = new Token([T_DOC_COMMENT, $doc->getContent()]);
             $tokens->insertAt($braceIndex + 1, $newMethods);
 
-            $tokens[$braceIndex + $newMethods->getSize() + 1] = new Token([
+            $whitespaceIndex = $braceIndex + $newMethods->getSize() + 1;
+            $tokens[$whitespaceIndex] = new Token([
                 T_WHITESPACE,
-                $this->whitespacesConfig->getLineEnding().$tokens[$braceIndex + $newMethods->getSize() + 1]->getContent(),
+                $this->whitespacesConfig->getLineEnding().$tokens[$whitespaceIndex]->getContent(),
             ]);
 
             $i = $docBlockIndex;
@@ -275,28 +254,34 @@ final class MyTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param Annotation $annotation
-     *
      * @return string
      */
     private function extractContentFromAnnotation(Annotation $annotation)
     {
         $tag = $annotation->getTag()->getName();
 
-        preg_match('/^\s*\*\s*@'.$tag.'\s+(.+)$/', $annotation->getContent(), $matches);
+        if (1 !== Preg::match('/@'.$tag.'\s+(.+)$/s', $annotation->getContent(), $matches)) {
+            return '';
+        }
 
-        return rtrim($matches[1]);
+        $content = $matches[1];
+
+        if (Preg::match('/\R/u', $content)) {
+            $content = Preg::replace('/\s*\R+\s*\*\s*/u', ' ', $content);
+        }
+
+        return rtrim($content);
     }
 
     private function annotationsToParamList(array $annotations)
     {
         $params = [];
-        $exceptionClass = '\\'.ltrim($annotations['expectedException'], '\\');
+        $exceptionClass = ltrim($annotations['expectedException'], '\\');
 
         if ($this->configuration['use_class_const']) {
-            $params[] = $exceptionClass.'::class';
+            $params[] = "\\{$exceptionClass}::class";
         } else {
-            $params[] = "'$exceptionClass'";
+            $params[] = "'{$exceptionClass}'";
         }
 
         if (isset($annotations['expectedExceptionMessage'])) {

@@ -13,9 +13,10 @@
 namespace PhpCsFixer\Runner;
 
 use PhpCsFixer\Cache\CacheManagerInterface;
+use PhpCsFixer\FileReader;
 use PhpCsFixer\FixerFileProcessedEvent;
 use Symfony\Component\EventDispatcher\Event;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
@@ -25,7 +26,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 final class FileFilterIterator extends \FilterIterator
 {
     /**
-     * @var null|EventDispatcher
+     * @var null|EventDispatcherInterface
      */
     private $eventDispatcher;
 
@@ -41,7 +42,7 @@ final class FileFilterIterator extends \FilterIterator
 
     public function __construct(
         \Iterator $iterator,
-        EventDispatcher $eventDispatcher = null,
+        EventDispatcherInterface $eventDispatcher = null,
         CacheManagerInterface $cacheManager
     ) {
         parent::__construct($iterator);
@@ -53,7 +54,16 @@ final class FileFilterIterator extends \FilterIterator
     public function accept()
     {
         $file = $this->current();
-        $path = $file->getRealPath();
+        if (!$file instanceof \SplFileInfo) {
+            throw new \RuntimeException(
+                sprintf(
+                    'Expected instance of "\SplFileInfo", got "%s".',
+                    \is_object($file) ? \get_class($file) : \gettype($file)
+                )
+            );
+        }
+
+        $path = $file->isLink() ? $file->getPathname() : $file->getRealPath();
 
         if (isset($this->visitedElements[$path])) {
             return false;
@@ -61,11 +71,11 @@ final class FileFilterIterator extends \FilterIterator
 
         $this->visitedElements[$path] = true;
 
-        if ($file->isDir() || $file->isLink()) {
+        if (!$file->isFile() || $file->isLink()) {
             return false;
         }
 
-        $content = file_get_contents($path);
+        $content = FileReader::createSingleton()->read($path);
 
         // mark as skipped:
         if (
@@ -87,7 +97,6 @@ final class FileFilterIterator extends \FilterIterator
 
     /**
      * @param string $name
-     * @param Event  $event
      */
     private function dispatchEvent($name, Event $event)
     {
@@ -95,6 +104,15 @@ final class FileFilterIterator extends \FilterIterator
             return;
         }
 
-        $this->eventDispatcher->dispatch($name, $event);
+        // BC compatibility < Sf 4.3
+        if (
+            !$this->eventDispatcher instanceof \Symfony\Contracts\EventDispatcher\EventDispatcherInterface
+        ) {
+            $this->eventDispatcher->dispatch($name, $event);
+
+            return;
+        }
+
+        $this->eventDispatcher->dispatch($event, $name);
     }
 }

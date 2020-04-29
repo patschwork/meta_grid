@@ -12,6 +12,7 @@
 
 namespace PhpCsFixer\Linter;
 
+use PhpCsFixer\FileReader;
 use PhpCsFixer\FileRemoval;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Process\PhpExecutableFinder;
@@ -56,7 +57,7 @@ final class ProcessLinter implements LinterInterface
                 throw new UnavailableLinterException('Cannot find PHP executable.');
             }
 
-            if ('phpdbg' === PHP_SAPI) {
+            if ('phpdbg' === \PHP_SAPI) {
                 if (false === strpos($executable, 'phpdbg')) {
                     throw new UnavailableLinterException('Automatically found PHP executable is non-standard phpdbg. Could not find proper PHP executable.');
                 }
@@ -115,11 +116,11 @@ final class ProcessLinter implements LinterInterface
     {
         // in case php://stdin
         if (!is_file($path)) {
-            return $this->createProcessForSource(file_get_contents($path));
+            return $this->createProcessForSource(FileReader::createSingleton()->read($path));
         }
 
         $process = $this->processBuilder->build($path);
-        $process->setTimeout(null);
+        $process->setTimeout(10);
         $process->start();
 
         return $process;

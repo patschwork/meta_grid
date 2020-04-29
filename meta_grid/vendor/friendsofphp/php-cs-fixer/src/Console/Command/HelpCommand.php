@@ -18,8 +18,12 @@ use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\Fixer\DefinedFixerInterface;
 use PhpCsFixer\Fixer\DeprecatedFixerInterface;
 use PhpCsFixer\Fixer\FixerInterface;
+use PhpCsFixer\FixerConfiguration\AliasedFixerOption;
+use PhpCsFixer\FixerConfiguration\AllowedValueSubset;
+use PhpCsFixer\FixerConfiguration\DeprecatedFixerOption;
 use PhpCsFixer\FixerConfiguration\FixerOptionInterface;
 use PhpCsFixer\FixerFactory;
+use PhpCsFixer\Preg;
 use PhpCsFixer\RuleSet;
 use PhpCsFixer\Utils;
 use Symfony\Component\Console\Command\HelpCommand as BaseHelpCommand;
@@ -37,7 +41,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 final class HelpCommand extends BaseHelpCommand
 {
-    const COMMAND_NAME = 'help';
+    protected static $defaultName = 'help';
 
     /**
      * Returns help-copy suitable for console output.
@@ -47,7 +51,7 @@ final class HelpCommand extends BaseHelpCommand
     public static function getHelpCopy()
     {
         $template =
-            <<<EOF
+            <<<'EOF'
 The <info>%command.name%</info> command tries to fix as much coding standards
 problems as possible on a given file or files in a given directory and its subdirectories:
 
@@ -60,7 +64,7 @@ to merge paths from the config file and from the argument:
 
     <info>$ php %command.full_name% --path-mode=intersection /path/to/dir</info>
 
-The <comment>--format</comment> option for the output format. Supported formats are ``txt`` (default one), ``json``, ``xml``, ``checkstyle`` and ``junit``.
+The <comment>--format</comment> option for the output format. Supported formats are ``txt`` (default one), ``json``, ``xml``, ``checkstyle``, ``junit`` and ``gitlab``.
 
 NOTE: the output for the following formats are generated in accordance with XML schemas
 
@@ -68,9 +72,9 @@ NOTE: the output for the following formats are generated in accordance with XML 
 * ``checkstyle`` follows the common `"checkstyle" xml schema </doc/checkstyle.xsd>`_
 
 
-The <comment>--verbose</comment> option will show the applied rules. When using the ``txt`` format it will also displays progress notifications.
+The <comment>--verbose</comment> option will show the applied rules. When using the ``txt`` format it will also display progress notifications.
 
-The <comment>--rules</comment> option limits the rules to apply on the
+The <comment>--rules</comment> option limits the rules to apply to the
 project:
 
     <info>$ php %command.full_name% /path/to/project --rules=@PSR2</info>
@@ -105,16 +109,17 @@ The <comment>--diff-format</comment> option allows to specify in which format th
 * <comment>sbd</comment>: Sebastianbergmann/diff format (default when using `--diff` without specifying `diff-format`).
 
 The <comment>--allow-risky</comment> option (pass ``yes`` or ``no``) allows you to set whether risky rules may run. Default value is taken from config file.
-Risky rule is a rule, which could change code behaviour. By default no risky rules are run.
+A rule is considered risky if it could change code behaviour. By default no risky rules are run.
 
 The <comment>--stop-on-violation</comment> flag stops the execution upon first file that needs to be fixed.
 
 The <comment>--show-progress</comment> option allows you to choose the way process progress is rendered:
 
 * <comment>none</comment>: disables progress output;
-* <comment>run-in</comment>: simple single-line progress output;
-* <comment>estimating</comment>: multiline progress output with number of files and percentage on each line. Note that with this option, the files list is evaluated before processing to get the total number of files and then kept in memory to avoid using the file iterator twice. This has an impact on memory usage so using this option is not recommended on very large projects;
-* <comment>estimating-max</comment>: same as <comment>estimating</comment> but using all terminal columns instead of default 80.
+* <comment>run-in</comment>: [deprecated] simple single-line progress output;
+* <comment>estimating</comment>: [deprecated] multiline progress output with number of files and percentage on each line. Note that with this option, the files list is evaluated before processing to get the total number of files and then kept in memory to avoid using the file iterator twice. This has an impact on memory usage so using this option is not recommended on very large projects;
+* <comment>estimating-max</comment>: [deprecated] same as <comment>dots</comment>;
+* <comment>dots</comment>: same as <comment>estimating</comment> but using all terminal columns instead of default 80.
 
 If the option is not provided, it defaults to <comment>run-in</comment> unless a config file that disables output is used, in which case it defaults to <comment>none</comment>. This option has no effect if the verbosity of the command is less than <comment>verbose</comment>.
 
@@ -156,7 +161,7 @@ The example below will add two rules to the default list of PSR2 set rules:
 
     <?php
 
-    \$finder = PhpCsFixer\Finder::create()
+    $finder = PhpCsFixer\Finder::create()
         ->exclude('somedir')
         ->notPath('src/Symfony/Component/Translation/Tests/fixtures/resources.php')
         ->in(__DIR__)
@@ -168,14 +173,14 @@ The example below will add two rules to the default list of PSR2 set rules:
             'strict_param' => true,
             'array_syntax' => ['syntax' => 'short'],
         ])
-        ->setFinder(\$finder)
+        ->setFinder($finder)
     ;
 
     ?>
 
 **NOTE**: ``exclude`` will work only for directories, so if you need to exclude file, try ``notPath``.
 
-See `Symfony\Finder` (<url>http://symfony.com/doc/current/components/finder.html</url>)
+See `Symfony\Finder` (<url>https://symfony.com/doc/current/components/finder.html</url>)
 online documentation for other `Finder` methods.
 
 You may also use a blacklist for the rules instead of the above shown whitelist approach.
@@ -183,7 +188,7 @@ The following example shows how to use all ``Symfony`` rules but the ``full_open
 
     <?php
 
-    \$finder = PhpCsFixer\Finder::create()
+    $finder = PhpCsFixer\Finder::create()
         ->exclude('somedir')
         ->in(__DIR__)
     ;
@@ -193,7 +198,7 @@ The following example shows how to use all ``Symfony`` rules but the ``full_open
             '@Symfony' => true,
             'full_opening_tag' => false,
         ])
-        ->setFinder(\$finder)
+        ->setFinder($finder)
     ;
 
     ?>
@@ -204,8 +209,8 @@ configure them in your config file.
     <?php
 
     return PhpCsFixer\Config::create()
-        ->setIndent("\\t")
-        ->setLineEnding("\\r\\n")
+        ->setIndent("\t")
+        ->setLineEnding("\r\n")
     ;
 
     ?>
@@ -253,22 +258,22 @@ Then, add the following command to your CI:
 
 %%%CI_INTEGRATION%%%
 
-Where ``\$COMMIT_RANGE`` is your range of commits, eg ``\$TRAVIS_COMMIT_RANGE`` or ``HEAD~..HEAD``.
+Where ``$COMMIT_RANGE`` is your range of commits, e.g. ``$TRAVIS_COMMIT_RANGE`` or ``HEAD~..HEAD``.
 
-Exit codes
-----------
+Exit code
+---------
 
 Exit code is built using following bit flags:
 
-*  0 OK.
-*  1 General error (or PHP minimal requirement not matched).
-*  4 Some files have invalid syntax (only in dry-run mode).
-*  8 Some files need fixing (only in dry-run mode).
-* 16 Configuration error of the application.
-* 32 Configuration error of a Fixer.
-* 64 Exception raised within the application.
+*  0 - OK.
+*  1 - General error (or PHP minimal requirement not matched).
+*  4 - Some files have invalid syntax (only in dry-run mode).
+*  8 - Some files need fixing (only in dry-run mode).
+* 16 - Configuration error of the application.
+* 32 - Configuration error of a Fixer.
+* 64 - Exception raised within the application.
 
-(applies to exit codes of the `fix` command only)
+(Applies to exit code of the ``fix`` command only)
 EOF
         ;
 
@@ -278,8 +283,8 @@ EOF
                 self::getLatestReleaseVersionFromChangeLog()
             ),
             '%%%CI_INTEGRATION%%%' => implode("\n", array_map(
-                function ($line) { return '    $ '.$line; },
-                array_slice(file(__DIR__.'/../../../dev-tools/ci-integration.sh', FILE_IGNORE_NEW_LINES), 3)
+                static function ($line) { return '    $ '.$line; },
+                \array_slice(file(__DIR__.'/../../../dev-tools/ci-integration.sh', FILE_IGNORE_NEW_LINES), 3)
             )),
             '%%%FIXERS_DETAILS%%%' => self::getFixersHelp(),
         ]);
@@ -292,7 +297,7 @@ EOF
      */
     public static function toString($value)
     {
-        if (is_array($value)) {
+        if (\is_array($value)) {
             // Output modifications:
             // - remove new-lines
             // - combine multiple whitespaces
@@ -307,7 +312,7 @@ EOF
 
             $str = var_export($value, true);
             do {
-                $strNew = preg_replace(
+                $strNew = Preg::replace(
                     $replaces[0],
                     $replaces[1],
                     $str
@@ -323,13 +328,11 @@ EOF
             $str = var_export($value, true);
         }
 
-        return preg_replace('/\bNULL\b/', 'null', $str);
+        return Preg::replace('/\bNULL\b/', 'null', $str);
     }
 
     /**
      * Returns the allowed values of the given option that can be converted to a string.
-     *
-     * @param FixerOptionInterface $option
      *
      * @return null|array
      */
@@ -338,18 +341,26 @@ EOF
         $allowed = $option->getAllowedValues();
 
         if (null !== $allowed) {
-            $allowed = array_filter($allowed, function ($value) {
+            $allowed = array_filter($allowed, static function ($value) {
                 return !($value instanceof \Closure);
             });
 
-            usort($allowed, function ($valueA, $valueB) {
+            usort($allowed, static function ($valueA, $valueB) {
+                if ($valueA instanceof AllowedValueSubset) {
+                    return -1;
+                }
+
+                if ($valueB instanceof AllowedValueSubset) {
+                    return 1;
+                }
+
                 return strcasecmp(
                     self::toString($valueA),
                     self::toString($valueB)
                 );
             });
 
-            if (0 === count($allowed)) {
+            if (0 === \count($allowed)) {
                 $allowed = null;
             }
         }
@@ -389,7 +400,7 @@ EOF
         }
 
         for ($i = (int) Application::VERSION; $i > 0; --$i) {
-            if (1 === preg_match('/Changelog for v('.$i.'.\d+.\d+)/', $changelog, $matches)) {
+            if (1 === Preg::match('/Changelog for v('.$i.'.\d+.\d+)/', $changelog, $matches)) {
                 $version = $matches[1];
 
                 break;
@@ -433,7 +444,7 @@ EOF
         // sort fixers by name
         usort(
             $fixers,
-            function (FixerInterface $a, FixerInterface $b) {
+            static function (FixerInterface $a, FixerInterface $b) {
                 return strcmp($a->getName(), $b->getName());
             }
         );
@@ -443,7 +454,7 @@ EOF
             $ruleSets[$setName] = new RuleSet([$setName => true]);
         }
 
-        $getSetsWithRule = function ($rule) use ($ruleSets) {
+        $getSetsWithRule = static function ($rule) use ($ruleSets) {
             $sets = [];
 
             foreach ($ruleSets as $setName => $ruleSet) {
@@ -455,7 +466,7 @@ EOF
             return $sets;
         };
 
-        $count = count($fixers) - 1;
+        $count = \count($fixers) - 1;
         foreach ($fixers as $i => $fixer) {
             $sets = $getSetsWithRule($fixer->getName());
 
@@ -474,7 +485,7 @@ EOF
             }
 
             $description = implode("\n   | ", self::wordwrap(
-                preg_replace('/(`.+?`)/', '<info>$1</info>', $description),
+                Preg::replace('/(`.+?`)/', '<info>$1</info>', $description),
                 72
             ));
 
@@ -487,10 +498,10 @@ EOF
             if ($fixer->isRisky()) {
                 $help .= sprintf(
                     "   | *Risky rule: %s.*\n",
-                    preg_replace(
+                    Preg::replace(
                         '/(`.+?`)/',
                         '<info>$1</info>',
-                        lcfirst(preg_replace('/\.$/', '', $fixer->getDefinition()->getRiskyDescription()))
+                        lcfirst(Preg::replace('/\.$/', '', $fixer->getDefinition()->getRiskyDescription()))
                     )
                 );
             }
@@ -498,12 +509,12 @@ EOF
             if ($fixer instanceof ConfigurationDefinitionFixerInterface) {
                 $configurationDefinition = $fixer->getConfigurationDefinition();
                 $configurationDefinitionOptions = $configurationDefinition->getOptions();
-                if (count($configurationDefinitionOptions)) {
+                if (\count($configurationDefinitionOptions)) {
                     $help .= "   |\n   | Configuration options:\n";
 
                     usort(
                         $configurationDefinitionOptions,
-                        function (FixerOptionInterface $optionA, FixerOptionInterface $optionB) {
+                        static function (FixerOptionInterface $optionA, FixerOptionInterface $optionB) {
                             return strcmp($optionA->getName(), $optionB->getName());
                         }
                     );
@@ -514,25 +525,46 @@ EOF
                         $allowed = self::getDisplayableAllowedValues($option);
                         if (null !== $allowed) {
                             foreach ($allowed as &$value) {
-                                $value = self::toString($value);
+                                if ($value instanceof AllowedValueSubset) {
+                                    $value = 'a subset of <comment>'.self::toString($value->getAllowedValues()).'</comment>';
+                                } else {
+                                    $value = '<comment>'.self::toString($value).'</comment>';
+                                }
                             }
                         } else {
-                            $allowed = $option->getAllowedTypes();
+                            $allowed = array_map(
+                                function ($type) {
+                                    return '<comment>'.$type.'</comment>';
+                                },
+                                $option->getAllowedTypes()
+                            );
                         }
 
                         if (null !== $allowed) {
-                            $line .= ' (<comment>'.implode('</comment>, <comment>', $allowed).'</comment>)';
+                            $line .= ' ('.implode(', ', $allowed).')';
                         }
 
-                        $line .= ': '.preg_replace(
+                        $line .= ': '.Preg::replace(
                             '/(`.+?`)/',
                             '<info>$1</info>',
-                            lcfirst(preg_replace('/\.$/', '', OutputFormatter::escape($option->getDescription())))
+                            lcfirst(Preg::replace('/\.$/', '', OutputFormatter::escape($option->getDescription())))
                         ).'; ';
                         if ($option->hasDefault()) {
                             $line .= 'defaults to <comment>'.self::toString($option->getDefault()).'</comment>';
                         } else {
                             $line .= 'required';
+                        }
+
+                        if ($option instanceof DeprecatedFixerOption) {
+                            $line .= '. DEPRECATED: '.Preg::replace(
+                                '/(`.+?`)/',
+                                '<info>$1</info>',
+                                lcfirst(Preg::replace('/\.$/', '', OutputFormatter::escape($option->getDeprecationMessage())))
+                            );
+                        }
+
+                        if ($option instanceof AliasedFixerOption) {
+                            $line .= '; DEPRECATED alias: <comment>'.$option->getAlias().'</comment>';
                         }
 
                         foreach (self::wordwrap($line, 72) as $index => $line) {
@@ -550,7 +582,7 @@ EOF
         }
 
         // prevent "\</foo>" from being rendered as an escaped literal style tag
-        return preg_replace('#\\\\(</.*?>)#', '<<$1', $help);
+        return Preg::replace('#\\\\(</.*?>)#', '<<$1', $help);
     }
 
     /**
@@ -567,7 +599,7 @@ EOF
         $currentLine = 0;
         $lineLength = 0;
         foreach (explode(' ', $string) as $word) {
-            $wordLength = strlen(preg_replace('~</?(\w+)>~', '', $word));
+            $wordLength = \strlen(Preg::replace('~</?(\w+)>~', '', $word));
             if (0 !== $lineLength) {
                 ++$wordLength; // space before word
             }
@@ -581,7 +613,7 @@ EOF
             $lineLength += $wordLength;
         }
 
-        return array_map(function ($line) {
+        return array_map(static function ($line) {
             return implode(' ', $line);
         }, $result);
     }

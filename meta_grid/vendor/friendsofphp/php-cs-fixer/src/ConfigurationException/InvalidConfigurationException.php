@@ -20,13 +20,13 @@ use PhpCsFixer\Console\Command\FixCommandExitStatusCalculator;
  * @author SpacePossum
  *
  * @internal
+ * @final Only internal extending this class is supported
  */
 class InvalidConfigurationException extends \InvalidArgumentException
 {
     /**
-     * @param string          $message
-     * @param null|int        $code
-     * @param null|\Exception $previous
+     * @param string   $message
+     * @param null|int $code
      */
     public function __construct($message, $code = null, \Exception $previous = null)
     {

@@ -101,12 +101,12 @@ final class ConcatSpaceFixer extends AbstractFixer implements ConfigurationDefin
     }
 
     /**
-     * @param Tokens $tokens
-     * @param int    $index  index of concatenation '.' token
+     * @param int $index index of concatenation '.' token
      */
     private function fixConcatenationToNoSpace(Tokens $tokens, $index)
     {
-        if (!$tokens[$tokens->getPrevNonWhitespace($index)]->isGivenKind(T_LNUMBER)) {
+        $prevNonWhitespaceToken = $tokens[$tokens->getPrevNonWhitespace($index)];
+        if (!$prevNonWhitespaceToken->isGivenKind([T_LNUMBER, T_COMMENT, T_DOC_COMMENT]) || '/*' === substr($prevNonWhitespaceToken->getContent(), 0, 2)) {
             $tokens->removeLeadingWhitespace($index, " \t");
         }
 
@@ -116,8 +116,7 @@ final class ConcatSpaceFixer extends AbstractFixer implements ConfigurationDefin
     }
 
     /**
-     * @param Tokens $tokens
-     * @param int    $index  index of concatenation '.' token
+     * @param int $index index of concatenation '.' token
      */
     private function fixConcatenationToSingleSpace(Tokens $tokens, $index)
     {
@@ -126,9 +125,8 @@ final class ConcatSpaceFixer extends AbstractFixer implements ConfigurationDefin
     }
 
     /**
-     * @param Tokens $tokens
-     * @param int    $index  index of concatenation '.' token
-     * @param int    $offset 1 or -1
+     * @param int $index  index of concatenation '.' token
+     * @param int $offset 1 or -1
      */
     private function fixWhiteSpaceAroundConcatToken(Tokens $tokens, $index, $offset)
     {

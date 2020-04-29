@@ -95,7 +95,7 @@ final class NewWithBracesFixer extends AbstractFixer
                 [CT::T_BRACE_CLASS_INSTANTIATION_CLOSE],
             ];
 
-            if (defined('T_SPACESHIP')) {
+            if (\defined('T_SPACESHIP')) {
                 $nextTokenKinds[] = [T_SPACESHIP];
             }
         }
@@ -120,8 +120,8 @@ final class NewWithBracesFixer extends AbstractFixer
             }
 
             // entrance into array index syntax - need to look for exit
-            while ($nextToken->equals('[')) {
-                $nextIndex = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_INDEX_SQUARE_BRACE, $nextIndex) + 1;
+            while ($nextToken->equals('[') || $nextToken->isGivenKind(CT::T_ARRAY_INDEX_CURLY_BRACE_OPEN)) {
+                $nextIndex = $tokens->findBlockEnd($tokens->detectBlockType($nextToken)['type'], $nextIndex) + 1;
                 $nextToken = $tokens[$nextIndex];
             }
 
@@ -132,7 +132,7 @@ final class NewWithBracesFixer extends AbstractFixer
             }
 
             // new statement with () - nothing to do
-            if ($nextToken->equals('(')) {
+            if ($nextToken->equals('(') || $nextToken->isGivenKind(T_OBJECT_OPERATOR)) {
                 continue;
             }
 
@@ -141,8 +141,7 @@ final class NewWithBracesFixer extends AbstractFixer
     }
 
     /**
-     * @param Tokens $tokens
-     * @param int    $index
+     * @param int $index
      */
     private function insertBracesAfter(Tokens $tokens, $index)
     {

@@ -17,7 +17,6 @@ use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
-use PhpCsFixer\Utils;
 
 /**
  * @author Graham Campbell <graham@alt-three.com>
@@ -60,8 +59,9 @@ class Bar {}
      */
     public function getPriority()
     {
-        // should be ran before the SingleBlankLineBeforeNamespaceFixer.
-        return 1;
+        // should be run before the SingleBlankLineBeforeNamespaceFixer.
+        // should be run after the NoWhitespaceInBlankLineFixer.
+        return -20;
     }
 
     /**
@@ -78,6 +78,7 @@ class Bar {}
             T_GOTO,
             T_CONTINUE,
             T_BREAK,
+            T_DECLARE,
         ];
 
         foreach ($tokens as $index => $token) {
@@ -96,8 +97,7 @@ class Bar {}
     /**
      * Cleanup a whitespace token.
      *
-     * @param Tokens $tokens
-     * @param int    $index
+     * @param int $index
      */
     private function fixWhitespace(Tokens $tokens, $index)
     {
@@ -105,8 +105,7 @@ class Bar {}
         // if there is more than one new line in the whitespace, then we need to fix it
         if (substr_count($content, "\n") > 1) {
             // the final bit of the whitespace must be the next statement's indentation
-            $lines = Utils::splitLines($content);
-            $tokens[$index] = new Token([T_WHITESPACE, "\n".end($lines)]);
+            $tokens[$index] = new Token([T_WHITESPACE, substr($content, strrpos($content, "\n"))]);
         }
     }
 }

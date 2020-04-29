@@ -18,7 +18,7 @@ class DataDeliveryObjectSearch extends VDataDeliveryObjectSearchinterface
     public function rules()
     {
         return [
-            [['id', 'fk_object_type_id', 'fk_project_id', 'fk_tool_id', 'fk_data_delivery_type_id', 'fk_contact_group_id_as_data_owner'], 'integer'],
+            [['id', 'fk_object_type_id', 'fk_project_id', 'fk_tool_id', 'fk_data_delivery_type_id', 'fk_contact_group_id_as_data_owner', 'fk_deleted_status_id'], 'integer'],
             [['uuid', 'name', 'description'], 'safe'],
         ];
     }
@@ -73,6 +73,7 @@ class DataDeliveryObjectSearch extends VDataDeliveryObjectSearchinterface
             'fk_tool_id' => $this->fk_tool_id,
             'fk_data_delivery_type_id' => $this->fk_data_delivery_type_id,
             'fk_contact_group_id_as_data_owner' => $this->fk_contact_group_id_as_data_owner,
+            'fk_deleted_status_id' => $this->fk_deleted_status_id,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])

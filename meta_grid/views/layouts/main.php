@@ -70,6 +70,7 @@ ShortcutAsset::register($this);
 								['url' => ['/project/createprojectpermissions'], 
 											'label' => Yii::t('general','Rebuild Project Permissions'), 'visible' => True],
 								['label' => Yii::t('general','Translate'), 'url' => ['/translatemanager']],
+								['label' => Yii::t('general','Gii - Yii2 Code Generator'), 'url' => ['/gii']],
 																					  
 							]
 						],
@@ -98,8 +99,9 @@ ShortcutAsset::register($this);
 
     <footer class="footer">
         <div class="container">
-            <p class="pull-left">&copy; meta#grid <?= date('Y') ?></p>
-            <p class="pull-right"><?= "v2.2" ?></p>
+            <p class="pull-left">&copy; <?= Yii::$app->name . " " . date('Y') ?></p>
+            <p class="pull-right"><?= "v" . \vendor\meta_grid\helper\ApplicationVersion::getVersion() ?></p>
+
         </div>
     </footer>
 

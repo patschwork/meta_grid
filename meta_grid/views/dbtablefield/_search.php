@@ -25,13 +25,21 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'name') ?>
 
-    <?php // echo $form->field($model, 'description') ?>
+    <?= $form->field($model, 'description') ?>
 
-    <?php // echo $form->field($model, 'fk_db_table_id') ?>
+    <?= $form->field($model, 'fk_db_table_id') ?>
 
-    <?php // echo $form->field($model, 'datatype') ?>
+    <?= $form->field($model, 'datatype') ?>
 
-    <?php // echo $form->field($model, 'bulk_load_checksum') ?>
+    <?= $form->field($model, 'bulk_load_checksum') ?>
+
+    <?= $form->field($model, 'fk_deleted_status_id') ?>
+
+    <?= $form->field($model, 'is_PrimaryKey')->checkbox() ?>
+
+    <?= $form->field($model, 'is_BusinessKey')->checkbox() ?>
+
+    <?= $form->field($model, 'is_GDPR_relevant')->checkbox() ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>

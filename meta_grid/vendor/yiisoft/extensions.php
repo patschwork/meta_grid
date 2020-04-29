@@ -21,15 +21,6 @@ return array (
       '@sitawit/piwik' => $vendorDir . '/sitawit/yii2-piwik',
     ),
   ),
-  'wbraganca/yii2-dynamicform' => 
-  array (
-    'name' => 'wbraganca/yii2-dynamicform',
-    'version' => '2.0.2.0',
-    'alias' => 
-    array (
-      '@wbraganca/dynamicform' => $vendorDir . '/wbraganca/yii2-dynamicform',
-    ),
-  ),
   'conquer/codemirror' => 
   array (
     'name' => 'conquer/codemirror',
@@ -250,5 +241,14 @@ return array (
       '@yii/shell' => $vendorDir . '/yiisoft/yii2-shell',
     ),
     'bootstrap' => 'yii\\shell\\Bootstrap',
+  ),
+  'wbraganca/yii2-dynamicform' => 
+  array (
+    'name' => 'wbraganca/yii2-dynamicform',
+    'version' => '2.0.1.0',
+    'alias' => 
+    array (
+      '@wbraganca/dynamicform' => $vendorDir . '/wbraganca/yii2-dynamicform',
+    ),
   ),
 );

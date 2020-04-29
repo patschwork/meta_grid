@@ -8,6 +8,7 @@ use yii\helpers\ArrayHelper;
 use kartik\select2\Select2; 
 use app\models\Client; 
 use vendor\meta_grid\helper\RBACHelper;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\KeyfigureSearch */
@@ -38,11 +39,13 @@ else
 		Yii::t('app', 'Create {modelClass}', ['modelClass' => Yii::t('app', 'Keyfigure'),]), ['create'], ['class' => 'btn btn-success']) : "" ?>
 	</p>
 
-	<?php	// Inform user about set perspective_filter
+	<?php
+	$session = Yii::$app->session;
+	
+	// Inform user about set perspective_filter
 	if (array_key_exists("fk_object_type_id",  $searchModel->attributes) === true && (isset($searchModel->find()->select(['fk_object_type_id'])->one()->fk_object_type_id) === true))
 	{
 		$fk_object_type_id=$searchModel->find()->select(['fk_object_type_id'])->one()->fk_object_type_id;
-		$session = Yii::$app->session;
 		if ($session->hasFlash('perspective_filter_for_' . $fk_object_type_id))
 		{	
 			echo yii\bootstrap\Alert::widget([
@@ -53,8 +56,19 @@ else
 			]);
 		}		
 	}
-	?>	
 	
+	if ($session->hasFlash('deleteError'))
+	{	
+		echo yii\bootstrap\Alert::widget([
+				'options' => [
+					'class' => 'alert alert-danger alert-dismissable',
+				],
+				'body' => $session->getFlash('deleteError'),
+		]);
+	}
+
+	Url::remember();
+	?>
 	    <?= GridView::widget([
         'dataProvider' => $dataProvider,
 		'pager' => [

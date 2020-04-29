@@ -39,7 +39,7 @@ final class PhpdocNoEmptyReturnFixer extends AbstractFixer
     public function getDefinition()
     {
         return new FixerDefinition(
-            '@return void and @return null annotations should be omitted from phpdocs.',
+            '`@return void` and `@return null` annotations should be omitted from PHPDoc.',
             [
                 new CodeSample(
                     '<?php
@@ -66,7 +66,8 @@ function foo() {}
      */
     public function getPriority()
     {
-        // must be run before the PhpdocSeparationFixer and PhpdocOrderFixer
+        // must be run before the PhpdocSeparationFixer, PhpdocOrderFixer
+        // must be run after the PhpdocAddMissingParamAnnotationFixer
         return 10;
     }
 
@@ -91,19 +92,30 @@ function foo() {}
                 $this->fixAnnotation($doc, $annotation);
             }
 
+            $newContent = $doc->getContent();
+
+            if ($newContent === $token->getContent()) {
+                continue;
+            }
+
+            if ('' === $newContent) {
+                $tokens->clearTokenAndMergeSurroundingWhitespace($index);
+
+                continue;
+            }
+
             $tokens[$index] = new Token([T_DOC_COMMENT, $doc->getContent()]);
         }
     }
 
     /**
      * Remove return void or return null annotations..
-     *
-     * @param DocBlock   $doc
-     * @param Annotation $annotation
      */
     private function fixAnnotation(DocBlock $doc, Annotation $annotation)
     {
-        if (1 === preg_match('/@return\s+(void|null)(?!\|)/', $doc->getLine($annotation->getStart())->getContent())) {
+        $types = $annotation->getNormalizedTypes();
+
+        if (1 === \count($types) && ('null' === $types[0] || 'void' === $types[0])) {
             $annotation->remove();
         }
     }

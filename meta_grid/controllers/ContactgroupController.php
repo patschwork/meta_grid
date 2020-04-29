@@ -11,13 +11,15 @@ use yii\filters\VerbFilter;
 
 use app\models\ObjectType;
 use app\models\Client;
+use app\models\DeletedStatus;
 use Da\User\Filter\AccessRuleFilter;
 use yii\filters\AccessControl;
+use yii\helpers\Url;
 
 /**
- * ContactGroupController implements the CRUD actions for ContactGroup model.
+ * ContactgroupController implements the CRUD actions for ContactGroup model.
  */
-class ContactGroupController extends Controller
+class ContactgroupController extends Controller
 {
 	
 	private function getObjectTypeList()
@@ -44,6 +46,20 @@ class ContactGroupController extends Controller
 			$clientList[$client->id] = $client->name;
 		}
 		return $clientList;
+	}
+
+	private function getDeletedStatusList()
+	{
+		// autogeneriert ueber gii/CRUD
+		$deleted_statusModel = new DeletedStatus();
+		$deleted_statuss = $deleted_statusModel::find()->all();
+		$deleted_statusList = array();
+		$deleted_statusList[null] = null;
+		foreach($deleted_statuss as $deleted_status)
+		{
+			$deleted_statusList[$deleted_status->id] = $deleted_status->name;
+		}
+		return $deleted_statusList;
 	}
 	
     public function behaviors()
@@ -210,6 +226,7 @@ class ContactGroupController extends Controller
                 'model' => $model,
                 'object_typeList' => $this->getObjectTypeList(),		// autogeneriert ueber gii/CRUD
 'clientList' => $this->getClientList(),		// autogeneriert ueber gii/CRUD
+'deleted_statusList' => $this->getDeletedStatusList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
 		    }
@@ -235,6 +252,7 @@ class ContactGroupController extends Controller
                 'model' => $model,
                 'object_typeList' => $this->getObjectTypeList(),		// autogeneriert ueber gii/CRUD
 'clientList' => $this->getClientList(),		// autogeneriert ueber gii/CRUD
+'deleted_statusList' => $this->getDeletedStatusList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
 		    }
@@ -250,9 +268,22 @@ class ContactGroupController extends Controller
 		 if (!in_array($this->findModel($id)->fkClient->id, Yii::$app->User->identity->permClientsCanEdit)) {throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'You have no permission to edit this data.'));
 	return;	}    
     
-        $this->findModel($id)->delete();
+		try {
+			$model = $this->findModel($id);
+			$model->delete();
+			return $this->redirect(['index']);
+		} catch (\Exception $e) {
+			$model->addError(null, $e->getMessage());
+			$errMsg = $e->getMessage();
+			
+			$errMsgAdd = "";
+			try{$errMsgAdd = '"'. $model->name . '"';} catch(\Exception $e){}
 
-        return $this->redirect(['index']);
+			if (strpos($errMsg, "Integrity constraint violation")) $errMsg = Yii::t('yii',"The object {errMsgAdd} is still referenced by other objects.", ['errMsgAdd' => $errMsgAdd]);
+			Yii::$app->session->setFlash('deleteError', Yii::t('yii','Object can\'t be deleted: ') . $errMsg);
+			return $this->redirect(Url::previous());  // Url::remember() is set in index-view
+		}
+
     }
 
     /**

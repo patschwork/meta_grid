@@ -272,6 +272,7 @@ class RBACHelper
         }
         if(!Yii::$app->User->can('create-' . Yii::$app->controller->id)) {
             $buttons = str_replace('{update}','',$buttons);
+            $buttons = str_replace('{update-dbtablefield-individual}','',$buttons);
         }
         if(!Yii::$app->User->can('view-documentation')) {
             $buttons = str_replace('{documentation}','',$buttons);

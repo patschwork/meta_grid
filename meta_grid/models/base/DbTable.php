@@ -16,7 +16,9 @@ use Yii;
  * @property string $location
  * @property integer $fk_db_table_context_id
  * @property integer $fk_db_table_type_id
+ * @property integer $fk_deleted_status_id
  *
+ * @property DeletedStatus $fkDeletedStatus
  * @property DbTableType $fkDbTableType
  * @property DbTableContext $fkDbTableContext
  * @property Project $fkProject
@@ -41,10 +43,10 @@ class DbTable extends \yii\db\ActiveRecord
         return [
             [['uuid', 'location'], 'string'],        		
 			['fk_db_table_context_id', 'checkEqualProjectId'],
-        	[['fk_object_type_id', 'fk_project_id', 'fk_db_table_context_id', 'fk_db_table_type_id'], 'integer'],
+        	[['fk_object_type_id', 'fk_project_id', 'fk_db_table_context_id', 'fk_db_table_type_id', 'fk_deleted_status_id'], 'integer'],
             [['name'], 'string', 'max' => 250],
             [['description'], 'string', 'max' => 4000],
-        		
+            [['fk_deleted_status_id'], 'exist', 'skipOnError' => true, 'targetClass' => \app\models\DeletedStatus::className(), 'targetAttribute' => ['fk_deleted_status_id' => 'id']],            
         ];
     }
 
@@ -70,7 +72,16 @@ class DbTable extends \yii\db\ActiveRecord
             'location' => Yii::t('app', 'Location'),
             'fk_db_table_context_id' => Yii::t('app', 'Fk Db Table Context ID'),
             'fk_db_table_type_id' => Yii::t('app', 'Fk Db Table Type ID'),
+            'fk_deleted_status_id' => Yii::t('app', 'Fk Deleted Status ID'),
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFkDeletedStatus()
+    {
+        return $this->hasOne(DeletedStatus::className(), ['id' => 'fk_deleted_status_id']);
     }
 
     /**

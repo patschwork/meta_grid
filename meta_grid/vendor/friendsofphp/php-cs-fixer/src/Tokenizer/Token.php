@@ -55,7 +55,25 @@ class Token
      */
     public function __construct($token)
     {
-        if (is_array($token)) {
+        if (\is_array($token)) {
+            if (!\is_int($token[0])) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Id must be an int, got "%s".',
+                    \is_object($token[0]) ? \get_class($token[0]) : \gettype($token[0])
+                ));
+            }
+
+            if (!\is_string($token[1])) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Content must be a string, got "%s".',
+                    \is_object($token[1]) ? \get_class($token[1]) : \gettype($token[1])
+                ));
+            }
+
+            if ('' === $token[1]) {
+                throw new \InvalidArgumentException('Cannot set empty content for id-based Token.');
+            }
+
             $this->isArray = true;
             $this->id = $token[0];
             $this->content = $token[1];
@@ -63,13 +81,13 @@ class Token
             if ($token[0] && '' === $token[1]) {
                 throw new \InvalidArgumentException('Cannot set empty content for id-based Token.');
             }
-        } elseif (is_string($token)) {
+        } elseif (\is_string($token)) {
             $this->isArray = false;
             $this->content = $token;
         } else {
             throw new \InvalidArgumentException(sprintf(
                 'Cannot recognize input value as valid Token prototype, got "%s".',
-                is_object($token) ? get_class($token) : gettype($token)
+                \is_object($token) ? \get_class($token) : \gettype($token)
             ));
         }
     }
@@ -138,9 +156,23 @@ class Token
      */
     public function equals($other, $caseSensitive = true)
     {
-        $otherPrototype = $other instanceof self ? $other->getPrototype() : $other;
+        if ($other instanceof self) {
+            // Inlined getPrototype() on this very hot path.
+            // We access the private properties of $other directly to save function call overhead.
+            // This is only possible because $other is of the same class as `self`.
+            if (!$other->isArray) {
+                $otherPrototype = $other->content;
+            } else {
+                $otherPrototype = [
+                    $other->id,
+                    $other->content,
+                ];
+            }
+        } else {
+            $otherPrototype = $other;
+        }
 
-        if ($this->isArray !== is_array($otherPrototype)) {
+        if ($this->isArray !== \is_array($otherPrototype)) {
             return false;
         }
 
@@ -148,11 +180,11 @@ class Token
             return $this->content === $otherPrototype;
         }
 
-        if (array_key_exists(0, $otherPrototype) && $this->id !== $otherPrototype[0]) {
+        if ($this->id !== $otherPrototype[0]) {
             return false;
         }
 
-        if (array_key_exists(1, $otherPrototype)) {
+        if (isset($otherPrototype[1])) {
             if ($caseSensitive) {
                 if ($this->content !== $otherPrototype[1]) {
                     return false;
@@ -199,7 +231,7 @@ class Token
      */
     public static function isKeyCaseSensitive($caseSensitive, $key)
     {
-        if (is_array($caseSensitive)) {
+        if (\is_array($caseSensitive)) {
             return isset($caseSensitive[$key]) ? $caseSensitive[$key] : true;
         }
 
@@ -295,12 +327,12 @@ class Token
                 'T_CATCH', 'T_CLASS', 'T_CLONE', 'T_CONST', 'T_CONTINUE', 'T_DECLARE', 'T_DEFAULT', 'T_DO',
                 'T_ECHO', 'T_ELSE', 'T_ELSEIF', 'T_EMPTY', 'T_ENDDECLARE', 'T_ENDFOR', 'T_ENDFOREACH',
                 'T_ENDIF', 'T_ENDSWITCH', 'T_ENDWHILE', 'T_EVAL', 'T_EXIT', 'T_EXTENDS', 'T_FINAL',
-                'T_FINALLY', 'T_FOR', 'T_FOREACH', 'T_FUNCTION', 'T_GLOBAL', 'T_GOTO', 'T_HALT_COMPILER',
+                'T_FINALLY', 'T_FN', 'T_FOR', 'T_FOREACH', 'T_FUNCTION', 'T_GLOBAL', 'T_GOTO', 'T_HALT_COMPILER',
                 'T_IF', 'T_IMPLEMENTS', 'T_INCLUDE', 'T_INCLUDE_ONCE', 'T_INSTANCEOF', 'T_INSTEADOF',
                 'T_INTERFACE', 'T_ISSET', 'T_LIST', 'T_LOGICAL_AND', 'T_LOGICAL_OR', 'T_LOGICAL_XOR',
                 'T_NAMESPACE', 'T_NEW', 'T_PRINT', 'T_PRIVATE', 'T_PROTECTED', 'T_PUBLIC', 'T_REQUIRE',
                 'T_REQUIRE_ONCE', 'T_RETURN', 'T_STATIC', 'T_SWITCH', 'T_THROW', 'T_TRAIT', 'T_TRY',
-                'T_UNSET', 'T_USE', 'T_VAR', 'T_WHILE', 'T_YIELD',
+                'T_UNSET', 'T_USE', 'T_VAR', 'T_WHILE', 'T_YIELD', 'T_YIELD_FROM',
             ]) + [
                 CT::T_ARRAY_TYPEHINT => CT::T_ARRAY_TYPEHINT,
                 CT::T_CLASS_CONSTANT => CT::T_CLASS_CONSTANT,
@@ -318,7 +350,7 @@ class Token
     /**
      * Generate array containing all predefined constants that exists in PHP version in use.
      *
-     * @see http://php.net/manual/en/language.constants.predefined.php
+     * @see https://php.net/manual/en/language.constants.predefined.php
      *
      * @return array<int, int>
      */
@@ -412,7 +444,7 @@ class Token
      */
     public function isGivenKind($possibleKind)
     {
-        return $this->isArray && (is_array($possibleKind) ? in_array($this->id, $possibleKind, true) : $this->id === $possibleKind);
+        return $this->isArray && (\is_array($possibleKind) ? \in_array($this->id, $possibleKind, true) : $this->id === $possibleKind);
     }
 
     /**
@@ -436,13 +468,13 @@ class Token
     {
         static $nativeConstantStrings = ['true', 'false', 'null'];
 
-        return $this->isArray && in_array(strtolower($this->content), $nativeConstantStrings, true);
+        return $this->isArray && \in_array(strtolower($this->content), $nativeConstantStrings, true);
     }
 
     /**
      * Returns if the token is of a Magic constants type.
      *
-     * @see http://php.net/manual/en/language.constants.predefined.php
+     * @see https://php.net/manual/en/language.constants.predefined.php
      *
      * @return bool
      */
@@ -495,7 +527,7 @@ class Token
 
         $this->changed = true;
 
-        if (is_array($prototype)) {
+        if (\is_array($prototype)) {
             $this->isArray = true;
             $this->id = $prototype[0];
             $this->content = $prototype[1];
@@ -575,8 +607,8 @@ class Token
     {
         $keywords = [];
         foreach ($tokenNames as $keywordName) {
-            if (defined($keywordName)) {
-                $keyword = constant($keywordName);
+            if (\defined($keywordName)) {
+                $keyword = \constant($keywordName);
                 $keywords[$keyword] = $keyword;
             }
         }

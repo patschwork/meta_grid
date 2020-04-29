@@ -56,6 +56,11 @@ class ObjectcommentController extends Controller
                         'allow' => true,
                         'roles' => ['admin'],   // currently only admin may view, edit, ... @ToDo
                     ],
+					[
+						'allow' => true,
+						'actions' => ['createexternal'],
+						'roles' => ['author', 'global-create', 'create' ."-" . Yii::$app->controller->id],
+					],
                 ],
             ],			
         ];

@@ -64,5 +64,6 @@ return array(
     'Da\\User\\' => array($vendorDir . '/2amigos/yii2-usuario/src/User'),
     'Da\\TwoFA\\' => array($vendorDir . '/2amigos/2fa-library/src'),
     'Da\\QrCode\\' => array($vendorDir . '/2amigos/qrcode-library/src'),
+    'Composer\\XdebugHandler\\' => array($vendorDir . '/composer/xdebug-handler/src'),
     'Composer\\Semver\\' => array($vendorDir . '/composer/semver/src'),
 );

@@ -78,8 +78,8 @@ SET controller=Contact
 SET model=%controller%
 call yii.bat gii/crud --overwrite=%override% --interactive=%interactive% --controllerClass=app\controllers\%controller%Controller --enableI18N=1 --enablePjax=1 --modelClass=app\models\%model% --searchModelClass=app\models\%model%Search --template=myCrud --appconfig=config/console.php
 
-SET controller=ContactGroup
-SET model=%controller%
+SET controller=Contactgroup
+SET model=ContactGroup
 call yii.bat gii/crud --overwrite=%override% --interactive=%interactive% --controllerClass=app\controllers\%controller%Controller --enableI18N=1 --enablePjax=1 --modelClass=app\models\%model% --searchModelClass=app\models\%model%Search --template=myCrud --appconfig=config/console.php
 
 SET controller=Bracket
@@ -92,4 +92,8 @@ call yii.bat gii/crud --overwrite=%override% --interactive=%interactive% --contr
 
 SET controller=Objectdependson
 SET model=ObjectDependsOn
+call yii.bat gii/crud --overwrite=%override% --interactive=%interactive% --controllerClass=app\controllers\%controller%Controller --enableI18N=1 --enablePjax=1 --modelClass=app\models\%model% --searchModelClass=app\models\%model%Search --template=myCrud --appconfig=config/console.php
+
+SET controller=Url
+SET model=Url
 call yii.bat gii/crud --overwrite=%override% --interactive=%interactive% --controllerClass=app\controllers\%controller%Controller --enableI18N=1 --enablePjax=1 --modelClass=app\models\%model% --searchModelClass=app\models\%model%Search --template=myCrud --appconfig=config/console.php

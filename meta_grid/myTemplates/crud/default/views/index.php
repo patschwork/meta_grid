@@ -33,6 +33,7 @@ use yii\helpers\ArrayHelper;
 use kartik\select2\Select2; 
 use app\models\Client; 
 use vendor\meta_grid\helper\RBACHelper;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 <?= !empty($generator->searchModelClass) ? "/* @var \$searchModel " . ltrim($generator->searchModelClass, '\\') . " */\n" : '' ?>
@@ -68,11 +69,13 @@ $this->params['breadcrumbs'][] = Yii::t('app', $this->title);
 	</p>
 
 	<?php echo "<?php"; ?>
+
+	$session = Yii::$app->session;
+	
 	// Inform user about set perspective_filter
 	if (array_key_exists("fk_object_type_id",  $searchModel->attributes) === true && (isset($searchModel->find()->select(['fk_object_type_id'])->one()->fk_object_type_id) === true))
 	{
 		$fk_object_type_id=$searchModel->find()->select(['fk_object_type_id'])->one()->fk_object_type_id;
-		$session = Yii::$app->session;
 		if ($session->hasFlash('perspective_filter_for_' . $fk_object_type_id))
 		{	
 			echo yii\bootstrap\Alert::widget([
@@ -83,9 +86,20 @@ $this->params['breadcrumbs'][] = Yii::t('app', $this->title);
 			]);
 		}		
 	}
+	
+	if ($session->hasFlash('deleteError'))
+	{	
+		echo yii\bootstrap\Alert::widget([
+				'options' => [
+					'class' => 'alert alert-danger alert-dismissable',
+				],
+				'body' => $session->getFlash('deleteError'),
+		]);
+	}
+
+	Url::remember();
 	<?php echo "?>"; ?>
-	
-	
+
 <?php if ($generator->indexWidgetType === 'grid'): ?>
 	<?php //echo "<div class=\"table-responsive\">\n"; ?>
     <?= "<?= " ?>GridView::widget([

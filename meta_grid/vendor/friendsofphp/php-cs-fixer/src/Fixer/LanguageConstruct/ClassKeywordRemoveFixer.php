@@ -39,7 +39,7 @@ final class ClassKeywordRemoveFixer extends AbstractFixer
             'Converts `::class` keywords to FQCN strings.',
             [
                 new CodeSample(
-'<?php
+                    '<?php
 
 use Foo\Bar\Baz;
 
@@ -71,15 +71,14 @@ $className = Baz::class;
      *
      * It uses recursive method to get rid of token index changes.
      *
-     * @param Tokens $tokens
-     * @param int    $namespaceNumber
+     * @param int $namespaceNumber
      */
     private function replaceClassKeywords(Tokens $tokens, $namespaceNumber = -1)
     {
         $namespaceIndexes = array_keys($tokens->findGivenKind(T_NAMESPACE));
 
         // Namespace blocks
-        if (count($namespaceIndexes) && isset($namespaceIndexes[$namespaceNumber])) {
+        if (\count($namespaceIndexes) && isset($namespaceIndexes[$namespaceNumber])) {
             $startIndex = $namespaceIndexes[$namespaceNumber];
 
             $namespaceBlockStartIndex = $tokens->getNextTokenOfKind($startIndex, [';', '{']);
@@ -89,7 +88,7 @@ $className = Baz::class;
             $endIndex = $endIndex ?: $tokens->count() - 1;
         } elseif (-1 === $namespaceNumber) { // Out of any namespace block
             $startIndex = 0;
-            $endIndex = count($namespaceIndexes) ? $namespaceIndexes[0] : $tokens->count() - 1;
+            $endIndex = \count($namespaceIndexes) ? $namespaceIndexes[0] : $tokens->count() - 1;
         } else {
             return;
         }
@@ -101,9 +100,8 @@ $className = Baz::class;
     }
 
     /**
-     * @param Tokens $tokens
-     * @param int    $startIndex
-     * @param int    $endIndex
+     * @param int $startIndex
+     * @param int $endIndex
      */
     private function storeImports(Tokens $tokens, $startIndex, $endIndex)
     {
@@ -128,16 +126,16 @@ $className = Baz::class;
             if ($tokens[$index]->isGivenKind(CT::T_GROUP_IMPORT_BRACE_OPEN)) {
                 $groupEndIndex = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_GROUP_IMPORT_BRACE, $index);
                 $groupImports = array_map(
-                    function ($import) {
+                    static function ($import) {
                         return trim($import);
                     },
                     explode(',', $tokens->generatePartialCode($index + 1, $groupEndIndex - 1))
                 );
                 foreach ($groupImports as $groupImport) {
-                    $groupImportParts = array_map(function ($import) {
+                    $groupImportParts = array_map(static function ($import) {
                         return trim($import);
                     }, explode(' as ', $groupImport));
-                    if (2 === count($groupImportParts)) {
+                    if (2 === \count($groupImportParts)) {
                         $this->imports[$groupImportParts[1]] = $import.$groupImportParts[0];
                     } else {
                         $this->imports[] = $import.$groupImport;
@@ -154,27 +152,28 @@ $className = Baz::class;
     }
 
     /**
-     * @param Tokens $tokens
-     * @param int    $startIndex
-     * @param int    $endIndex
+     * @param int $startIndex
+     * @param int $endIndex
      */
     private function replaceClassKeywordsSection(Tokens $tokens, $startIndex, $endIndex)
     {
         $ctClassTokens = $tokens->findGivenKind(CT::T_CLASS_CONSTANT, $startIndex, $endIndex);
-        if (!empty($ctClassTokens)) {
-            $this->replaceClassKeyword($tokens, current(array_keys($ctClassTokens)));
-            $this->replaceClassKeywordsSection($tokens, $startIndex, $endIndex);
+        foreach (array_reverse(array_keys($ctClassTokens)) as $classIndex) {
+            $this->replaceClassKeyword($tokens, $classIndex);
         }
     }
 
     /**
-     * @param Tokens $tokens
-     * @param int    $classIndex
+     * @param int $classIndex
      */
     private function replaceClassKeyword(Tokens $tokens, $classIndex)
     {
         $classEndIndex = $tokens->getPrevMeaningfulToken($classIndex);
         $classEndIndex = $tokens->getPrevMeaningfulToken($classEndIndex);
+
+        if ($tokens[$classEndIndex]->equalsAny([[T_STRING, 'self'], [T_STATIC, 'static'], [T_STRING, 'parent']], false)) {
+            return;
+        }
 
         $classBeginIndex = $classEndIndex;
         while (true) {
@@ -204,7 +203,7 @@ $className = Baz::class;
             $classStringArray = explode('\\', $classString);
             $namespaceToTest = $classStringArray[0];
 
-            if (0 === strcmp($namespaceToTest, substr($import, -strlen($namespaceToTest)))) {
+            if (0 === strcmp($namespaceToTest, substr($import, -\strlen($namespaceToTest)))) {
                 $classImport = $import;
 
                 break;
@@ -236,16 +235,16 @@ $className = Baz::class;
         }
 
         $classStringArray = explode('\\', $classString);
-        $classStringLength = count($classStringArray);
+        $classStringLength = \count($classStringArray);
         $classImportArray = explode('\\', $classImport);
-        $classImportLength = count($classImportArray);
+        $classImportLength = \count($classImportArray);
 
         if (1 === $classStringLength) {
             return $classImport;
         }
 
         return implode('\\', array_merge(
-            array_slice($classImportArray, 0, $classImportLength - $classStringLength + 1),
+            \array_slice($classImportArray, 0, $classImportLength - $classStringLength + 1),
             $classStringArray
         ));
     }

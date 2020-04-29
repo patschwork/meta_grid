@@ -15,6 +15,9 @@ namespace PhpCsFixer\Fixer\Alias;
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\Preg;
+use PhpCsFixer\PregException;
+use PhpCsFixer\Tokenizer\Analyzer\FunctionsAnalyzer;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 use PhpCsFixer\Utils;
@@ -48,7 +51,7 @@ final class EregToPregFixer extends AbstractFixer
     public function getDefinition()
     {
         return new FixerDefinition(
-            'Replace deprecated `ereg` regular expression functions with preg.',
+            'Replace deprecated `ereg` regular expression functions with `preg`.',
             [new CodeSample("<?php \$x = ereg('[A-Z]');\n")],
             null,
             'Risky if the `ereg` function is overridden.'
@@ -77,6 +80,7 @@ final class EregToPregFixer extends AbstractFixer
     protected function applyFix(\SplFileInfo $file, Tokens $tokens)
     {
         $end = $tokens->count() - 1;
+        $functionsAnalyzer = new FunctionsAnalyzer();
 
         foreach (self::$functions as $map) {
             // the sequence is the function name, followed by "(" and a quoted string
@@ -100,9 +104,7 @@ final class EregToPregFixer extends AbstractFixer
                 // advance tokenizer cursor
                 $currIndex = $match[2];
 
-                // ensure it's a function call (not a method / static call)
-                $prev = $tokens->getPrevMeaningfulToken($match[0]);
-                if (null === $prev || $tokens[$prev]->isGivenKind([T_OBJECT_OPERATOR, T_DOUBLE_COLON])) {
+                if (!$functionsAnalyzer->isGlobalFunctionCall($tokens, $match[0])) {
                     continue;
                 }
 
@@ -140,7 +142,13 @@ final class EregToPregFixer extends AbstractFixer
      */
     private function checkPreg($pattern)
     {
-        return false !== @preg_match($pattern, '');
+        try {
+            Preg::match($pattern, '');
+
+            return true;
+        } catch (PregException $e) {
+            return false;
+        }
     }
 
     /**
@@ -163,7 +171,7 @@ final class EregToPregFixer extends AbstractFixer
         }
 
         // return the least used delimiter, using the position in the list as a tie breaker
-        uasort($delimiters, function ($a, $b) {
+        uasort($delimiters, static function ($a, $b) {
             if ($a[0] === $b[0]) {
                 return Utils::cmpInt($a, $b);
             }

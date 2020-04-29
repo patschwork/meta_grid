@@ -36,7 +36,7 @@ final class NoUselessReturnFixer extends AbstractFixer
     public function getDefinition()
     {
         return new FixerDefinition(
-            'There should not be an empty return statement at the end of a function.',
+            'There should not be an empty `return` statement at the end of a function.',
             [
                 new CodeSample(
                     '<?php
@@ -57,7 +57,7 @@ function example($b) {
      */
     public function getPriority()
     {
-        // should be run before BlankLineBeforeReturnFixer, NoExtraConsecutiveBlankLinesFixer, NoWhitespaceInBlankLineFixer and after SimplifiedNullReturnFixer and NoEmptyStatementFixer.
+        // should be run before BlankLineBeforeReturnFixer, NoExtraBlankLinesFixer, NoWhitespaceInBlankLineFixer and after SimplifiedNullReturnFixer and NoEmptyStatementFixer.
         return -18;
     }
 
@@ -79,9 +79,8 @@ function example($b) {
     }
 
     /**
-     * @param Tokens $tokens
-     * @param int    $start  Token index of the opening brace token of the function
-     * @param int    $end    Token index of the closing brace token of the function
+     * @param int $start Token index of the opening brace token of the function
+     * @param int $end   Token index of the closing brace token of the function
      */
     private function fixFunction(Tokens $tokens, $start, $end)
     {

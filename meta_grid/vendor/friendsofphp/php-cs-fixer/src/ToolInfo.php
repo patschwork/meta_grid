@@ -47,7 +47,7 @@ final class ToolInfo implements ToolInfoInterface
             $composerInstalled = json_decode(file_get_contents($this->getComposerInstalledFile()), true);
 
             foreach ($composerInstalled as $package) {
-                if (in_array($package['name'], [self::COMPOSER_PACKAGE_NAME, self::COMPOSER_LEGACY_PACKAGE_NAME], true)) {
+                if (\in_array($package['name'], [self::COMPOSER_PACKAGE_NAME, self::COMPOSER_LEGACY_PACKAGE_NAME], true)) {
                     $this->composerInstallationDetails = $package;
 
                     break;
@@ -64,7 +64,7 @@ final class ToolInfo implements ToolInfoInterface
 
         $versionSuffix = '';
 
-        if (isset($package['dist'])) {
+        if (isset($package['dist']['reference'])) {
             $versionSuffix = '#'.$package['dist']['reference'];
         }
 
@@ -92,6 +92,14 @@ final class ToolInfo implements ToolInfoInterface
         }
 
         return $this->isInstalledByComposer;
+    }
+
+    public function getPharDownloadUri($version)
+    {
+        return sprintf(
+            'https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/%s/php-cs-fixer.phar',
+            $version
+        );
     }
 
     private function getComposerInstalledFile()

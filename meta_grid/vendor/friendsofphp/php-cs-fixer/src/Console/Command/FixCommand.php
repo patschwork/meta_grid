@@ -30,6 +30,7 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Terminal;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 
 /**
@@ -40,10 +41,10 @@ use Symfony\Component\Stopwatch\Stopwatch;
  */
 final class FixCommand extends Command
 {
-    const COMMAND_NAME = 'fix';
+    protected static $defaultName = 'fix';
 
     /**
-     * @var EventDispatcher
+     * @var EventDispatcherInterface
      */
     private $eventDispatcher;
 
@@ -94,7 +95,6 @@ final class FixCommand extends Command
     protected function configure()
     {
         $this
-            ->setName(self::COMMAND_NAME)
             ->setDefinition(
                 [
                     new InputArgument('path', InputArgument::IS_ARRAY, 'The path.'),
@@ -109,7 +109,7 @@ final class FixCommand extends Command
                     new InputOption('diff-format', '', InputOption::VALUE_REQUIRED, 'Specify diff format.'),
                     new InputOption('format', '', InputOption::VALUE_REQUIRED, 'To output results in other formats.'),
                     new InputOption('stop-on-violation', '', InputOption::VALUE_NONE, 'Stop execution on first violation.'),
-                    new InputOption('show-progress', '', InputOption::VALUE_REQUIRED, 'Type of progress indicator (none, run-in, estimating or estimating-max).'),
+                    new InputOption('show-progress', '', InputOption::VALUE_REQUIRED, 'Type of progress indicator (none, run-in, estimating, estimating-max or dots).'),
                 ]
             )
             ->setDescription('Fixes a directory or a file.')
@@ -197,8 +197,8 @@ final class FixCommand extends Command
             $progressOutput = new ProcessOutput(
                 $stdErr,
                 $this->eventDispatcher,
-                'estimating-max' === $progressType ? (new Terminal())->getWidth() : null,
-                count($finder)
+                'estimating' !== $progressType ? (new Terminal())->getWidth() : null,
+                \count($finder)
             );
         }
 
@@ -244,15 +244,15 @@ final class FixCommand extends Command
         if (null !== $stdErr) {
             $errorOutput = new ErrorOutput($stdErr);
 
-            if (count($invalidErrors) > 0) {
+            if (\count($invalidErrors) > 0) {
                 $errorOutput->listErrors('linting before fixing', $invalidErrors);
             }
 
-            if (count($exceptionErrors) > 0) {
+            if (\count($exceptionErrors) > 0) {
                 $errorOutput->listErrors('fixing', $exceptionErrors);
             }
 
-            if (count($lintErrors) > 0) {
+            if (\count($lintErrors) > 0) {
                 $errorOutput->listErrors('linting after fixing', $lintErrors);
             }
         }
@@ -261,9 +261,10 @@ final class FixCommand extends Command
 
         return $exitStatusCalculator->calculate(
             $resolver->isDryRun(),
-            count($changed) > 0,
-            count($invalidErrors) > 0,
-            count($exceptionErrors) > 0
+            \count($changed) > 0,
+            \count($invalidErrors) > 0,
+            \count($exceptionErrors) > 0,
+            \count($lintErrors) > 0
         );
     }
 }

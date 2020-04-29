@@ -65,10 +65,6 @@ final class IntegrationCase
     /**
      * @param string      $fileName
      * @param string      $title
-     * @param array       $settings
-     * @param array       $requirements
-     * @param array       $config
-     * @param RuleSet     $ruleset
      * @param string      $expectedCode
      * @param null|string $inputCode
      */
@@ -124,14 +120,14 @@ final class IntegrationCase
      */
     public function getRequirement($name)
     {
-        if (!is_string($name)) {
+        if (!\is_string($name)) {
             throw new \InvalidArgumentException(sprintf(
                 'Requirement key must be a string, got "%s".',
-                is_object($name) ? get_class($name) : gettype($name).'#'.$name
+                \is_object($name) ? \get_class($name) : \gettype($name).'#'.$name
             ));
         }
 
-        if (!array_key_exists($name, $this->requirements)) {
+        if (!\array_key_exists($name, $this->requirements)) {
             throw new \InvalidArgumentException(sprintf(
                 'Unknown requirement key "%s", expected any of "%s".',
                 $name,

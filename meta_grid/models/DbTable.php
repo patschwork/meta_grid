@@ -79,12 +79,12 @@ class DbTable extends \app\models\base\DbTable
     	return $returnValue;
     }
     // ...}
-    
+	
+	// { ... phabricator-task: T59
     public function attributeLabels() {
-    	return [
-    			/* Your other attribute labels */
-    			'databaseInfoFromLocation' => Yii::t('app', 'Database'),
-    	];
+		
+		$addionalLabels = array('databaseInfoFromLocation' => Yii::t('app', 'Database'));
+		return array_merge(parent::attributeLabels(), $addionalLabels);
     }
-    
+    // ...}
 }

@@ -25,13 +25,15 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'name') ?>
 
-    <?php // echo $form->field($model, 'description') ?>
+    <?= $form->field($model, 'description') ?>
 
-    <?php // echo $form->field($model, 'fk_tool_id') ?>
+    <?= $form->field($model, 'fk_tool_id') ?>
 
-    <?php // echo $form->field($model, 'fk_data_delivery_type_id') ?>
+    <?= $form->field($model, 'fk_data_delivery_type_id') ?>
 
-    <?php // echo $form->field($model, 'fk_contact_group_id_as_data_owner') ?>
+    <?= $form->field($model, 'fk_contact_group_id_as_data_owner') ?>
+
+    <?= $form->field($model, 'fk_deleted_status_id') ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>

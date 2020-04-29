@@ -24,9 +24,21 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('create-dbtable')  ? Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) : "" ?>
-		
-        <?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('delete-dbtable')  ? Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
+		<?= Yii::$app->user->identity->isAdmin || (Yii::$app->User->can('create-dbtable') && Yii::$app->User->can('create-dbtablefield'))  ? Html::a(Yii::t('app', 'Update table and fields'), ['dbtablefieldmultipleedit/update', 'id' => $model->id], ['class' => 'btn btn-primary']) : "" ?>
+
+		<?php 
+			
+			$db_table_show_buttons_for_different_object_type_updates_arr = (new yii\db\Query())->from('app_config')->select(['valueINT'])->where(["key" => "db_table_show_buttons_for_different_object_type_updates"])->one();
+
+			$db_table_show_buttons_for_different_object_type_updates = $db_table_show_buttons_for_different_object_type_updates_arr['valueINT'];
+
+			if ($db_table_show_buttons_for_different_object_type_updates == 1) 
+			{
+				echo Yii::$app->user->identity->isAdmin || Yii::$app->User->can('create-dbtable')  ? Html::a(Yii::t('app', 'Update table'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) : "" ;
+			}
+		?>
+
+		<?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('delete-dbtable')  ? Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
@@ -59,6 +71,10 @@ $this->params['breadcrumbs'][] = $this->title;
             [
              'label' => Yii::t('app', 'Db Table Type'),
              'value' =>              	$model->fk_db_table_type_id == "" ? $model->fk_db_table_type_id : $model->fkDbTableType->name
+            ],
+            [
+             'label' => Yii::t('app', 'Deleted Status'),
+             'value' =>              	$model->fk_deleted_status_id == "" ? $model->fk_deleted_status_id : $model->fkDeletedStatus->name
             ],
         ],
     ]) ?>
@@ -115,7 +131,7 @@ $this->params['breadcrumbs'][] = $this->title;
 								    'searchModel' => $objectcommentSearchModel,
             						'dataProvider' => $objectcommentDataProvider,
 								    ]),
-					'active' => true,
+					'active' => false,
 					'options' => ['id' => 'tabComments']  // important for shortcut
 				],		
 				[
@@ -127,15 +143,15 @@ $this->params['breadcrumbs'][] = $this->title;
 					'active' => false,
 					'options' => ['id' => 'tabMapping']  // important for shortcut
 				],
-						[
+				[
 					'label' => Yii::t('app', 'Fields'),
 					'content' => $this->render('../dbtablefield/_index_external', [
 						'searchModel' => $dbTableFieldSearchModel,
-					    'dataProvider' => $dbTableFieldDataProvider,
-					    'fk_db_table_id' => $model->id,
-					    
+						'dataProvider' => $dbTableFieldDataProvider,
+						'fk_db_table_id' => $model->id,
+				
 					]),
-					'active' => false,
+					'active' => true,
 					'options' => ['id' => 'tabFields']  // important for shortcut
 				],
 		],

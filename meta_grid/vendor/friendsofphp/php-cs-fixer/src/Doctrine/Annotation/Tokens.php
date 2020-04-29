@@ -13,6 +13,7 @@
 namespace PhpCsFixer\Doctrine\Annotation;
 
 use Doctrine\Common\Annotations\DocLexer;
+use PhpCsFixer\Preg;
 use PhpCsFixer\Tokenizer\Token as PhpToken;
 
 /**
@@ -23,7 +24,6 @@ use PhpCsFixer\Tokenizer\Token as PhpToken;
 final class Tokens extends \SplFixedArray
 {
     /**
-     * @param PhpToken $input
      * @param string[] $ignoredTags
      *
      * @throws \InvalidArgumentException
@@ -42,7 +42,7 @@ final class Tokens extends \SplFixedArray
         $ignoredTextPosition = 0;
         $currentPosition = 0;
         while (false !== $nextAtPosition = strpos($content, '@', $currentPosition)) {
-            if (0 !== $nextAtPosition && !preg_match('/\s/', $content[$nextAtPosition - 1])) {
+            if (0 !== $nextAtPosition && !Preg::match('/\s/', $content[$nextAtPosition - 1])) {
                 $currentPosition = $nextAtPosition + 1;
 
                 continue;
@@ -61,14 +61,14 @@ final class Tokens extends \SplFixedArray
                 }
 
                 if (1 === $index) {
-                    if (DocLexer::T_IDENTIFIER !== $token['type'] || in_array($token['value'], $ignoredTags, true)) {
+                    if (DocLexer::T_IDENTIFIER !== $token['type'] || \in_array($token['value'], $ignoredTags, true)) {
                         break;
                     }
 
                     $nbScannedTokensToUse = 2;
                 }
 
-                if ($index >= 2 && 0 === $nbScopes && !in_array($token['type'], [DocLexer::T_NONE, DocLexer::T_OPEN_PARENTHESIS], true)) {
+                if ($index >= 2 && 0 === $nbScopes && !\in_array($token['type'], [DocLexer::T_NONE, DocLexer::T_OPEN_PARENTHESIS], true)) {
                     break;
                 }
 
@@ -78,7 +78,7 @@ final class Tokens extends \SplFixedArray
                     ++$nbScopes;
                 } elseif (DocLexer::T_CLOSE_PARENTHESIS === $token['type']) {
                     if (0 === --$nbScopes) {
-                        $nbScannedTokensToUse = count($scannedTokens);
+                        $nbScannedTokensToUse = \count($scannedTokens);
 
                         break;
                     }
@@ -98,7 +98,7 @@ final class Tokens extends \SplFixedArray
                 }
 
                 $lastTokenEndIndex = 0;
-                foreach (array_slice($scannedTokens, 0, $nbScannedTokensToUse) as $token) {
+                foreach (\array_slice($scannedTokens, 0, $nbScannedTokensToUse) as $token) {
                     if (DocLexer::T_STRING === $token['type']) {
                         $token['value'] = '"'.str_replace('"', '""', $token['value']).'"';
                     }
@@ -113,16 +113,16 @@ final class Tokens extends \SplFixedArray
                     }
 
                     $tokens[] = new Token($token['type'], $token['value']);
-                    $lastTokenEndIndex = $token['position'] + strlen($token['value']);
+                    $lastTokenEndIndex = $token['position'] + \strlen($token['value']);
                 }
 
-                $currentPosition = $ignoredTextPosition = $nextAtPosition + $token['position'] + strlen($token['value']);
+                $currentPosition = $ignoredTextPosition = $nextAtPosition + $token['position'] + \strlen($token['value']);
             } else {
                 $currentPosition = $nextAtPosition + 1;
             }
         }
 
-        if ($ignoredTextPosition < strlen($content)) {
+        if ($ignoredTextPosition < \strlen($content)) {
             $tokens[] = new Token(DocLexer::T_NONE, substr($content, $ignoredTextPosition));
         }
 
@@ -197,7 +197,7 @@ final class Tokens extends \SplFixedArray
                 isset($this[$index + 3])
                 && $this[$index + 2]->isType(DocLexer::T_NONE)
                 && $this[$index + 3]->isType(DocLexer::T_OPEN_PARENTHESIS)
-                && preg_match('/^(\R\s*\*\s*)*\s*$/', $this[$index + 2]->getContent())
+                && Preg::match('/^(\R\s*\*\s*)*\s*$/', $this[$index + 2]->getContent())
             ) {
                 $currentIndex = $index + 3;
             }
@@ -205,7 +205,7 @@ final class Tokens extends \SplFixedArray
 
         if (null !== $currentIndex) {
             $level = 0;
-            for ($max = count($this); $currentIndex < $max; ++$currentIndex) {
+            for ($max = \count($this); $currentIndex < $max; ++$currentIndex) {
                 if ($this[$currentIndex]->isType(DocLexer::T_OPEN_PARENTHESIS)) {
                     ++$level;
                 } elseif ($this[$currentIndex]->isType(DocLexer::T_CLOSE_PARENTHESIS)) {
@@ -233,7 +233,7 @@ final class Tokens extends \SplFixedArray
     public function getArrayEnd($index)
     {
         $level = 1;
-        for (++$index, $max = count($this); $index < $max; ++$index) {
+        for (++$index, $max = \count($this); $index < $max; ++$index) {
             if ($this[$index]->isType(DocLexer::T_OPEN_CURLY_BRACES)) {
                 ++$level;
             } elseif ($this[$index]->isType($index, DocLexer::T_CLOSE_CURLY_BRACES)) {
@@ -266,8 +266,7 @@ final class Tokens extends \SplFixedArray
     /**
      * Inserts a token at the given index.
      *
-     * @param int   $index
-     * @param Token $token
+     * @param int $index
      */
     public function insertAt($index, Token $token)
     {
@@ -288,19 +287,19 @@ final class Tokens extends \SplFixedArray
     public function offsetSet($index, $token)
     {
         if (!$token instanceof Token) {
-            $type = gettype($token);
+            $type = \gettype($token);
             if ('object' === $type) {
-                $type = get_class($token);
+                $type = \get_class($token);
             }
 
             throw new \InvalidArgumentException(sprintf(
-                'Token must be an instance of Symfony\\CS\\Doctrine\\Annotation\\Token, %s given.',
+                'Token must be an instance of PhpCsFixer\\Doctrine\\Annotation\\Token, %s given.',
                 $type
             ));
         }
 
         if (null === $index) {
-            $index = count($this);
+            $index = \count($this);
             $this->setSize($this->getSize() + 1);
         }
 
@@ -318,7 +317,7 @@ final class Tokens extends \SplFixedArray
             throw new \OutOfBoundsException(sprintf('Index %s is invalid or does not exist.', $index));
         }
 
-        $max = count($this) - 1;
+        $max = \count($this) - 1;
         while ($index < $max) {
             $this[$index] = $this[$index + 1];
             ++$index;

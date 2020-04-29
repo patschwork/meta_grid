@@ -8,6 +8,7 @@ use yii\helpers\ArrayHelper;
 use kartik\select2\Select2; 
 use app\models\Client; 
 use vendor\meta_grid\helper\RBACHelper;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\DbTableFieldSearch */
@@ -38,11 +39,13 @@ else
 		Yii::t('app', 'Create {modelClass}', ['modelClass' => Yii::t('app', 'Db Table Field'),]), ['create'], ['class' => 'btn btn-success']) : "" ?>
 	</p>
 
-	<?php	// Inform user about set perspective_filter
+	<?php
+	$session = Yii::$app->session;
+	
+	// Inform user about set perspective_filter
 	if (array_key_exists("fk_object_type_id",  $searchModel->attributes) === true && (isset($searchModel->find()->select(['fk_object_type_id'])->one()->fk_object_type_id) === true))
 	{
 		$fk_object_type_id=$searchModel->find()->select(['fk_object_type_id'])->one()->fk_object_type_id;
-		$session = Yii::$app->session;
 		if ($session->hasFlash('perspective_filter_for_' . $fk_object_type_id))
 		{	
 			echo yii\bootstrap\Alert::widget([
@@ -53,8 +56,19 @@ else
 			]);
 		}		
 	}
-	?>	
 	
+	if ($session->hasFlash('deleteError'))
+	{	
+		echo yii\bootstrap\Alert::widget([
+				'options' => [
+					'class' => 'alert alert-danger alert-dismissable',
+				],
+				'body' => $session->getFlash('deleteError'),
+		]);
+	}
+
+	Url::remember();
+	?>
 	    <?= GridView::widget([
         'dataProvider' => $dataProvider,
 		'pager' => [
@@ -77,7 +91,35 @@ else
         'columns' => [
         	['class' => 'yii\grid\ActionColumn', 'contentOptions'=>[ 'style'=>'white-space: nowrap;']
             ,
-				'template' => RBACHelper::filterActionColumn_meta_grid('{view} {update} {delete}'),
+				'template' => RBACHelper::filterActionColumn_meta_grid('{view} {update} {update-dbtablefield-individual} {delete}'),
+
+				'buttons' => [
+					'update-dbtablefield-individual' => function ($url, $model) {
+
+						$html_btn = Html::a('<span style="color: silver;" class="glyphicon glyphicon-pencil"></span>', $url, [
+								'title' => Yii::t('app', 'Update dbtablefield individual'),
+						]);
+
+						$db_table_show_buttons_for_different_object_type_updates_arr = (new yii\db\Query())->from('app_config')->select(['valueINT'])->where(["key" => "db_table_show_buttons_for_different_object_type_updates"])->one();
+
+						$db_table_show_buttons_for_different_object_type_updates = $db_table_show_buttons_for_different_object_type_updates_arr['valueINT'];
+			
+						if ($db_table_show_buttons_for_different_object_type_updates == 1) 
+						{
+							return $html_btn;
+						}
+					}
+				],
+				'urlCreator' => function ($action, $model, $key, $index) {
+					if ($action === 'update') {
+						$url = "?r=dbtablefieldmultipleedit/update&id=".$model->fk_db_table_id; // your own url generation logic
+						return $url;
+					}
+					if ($action === 'update-dbtablefield-individual') {
+						$url = "?r=dbtablefield/update&id=".$model->id; // your own url generation logic
+						return $url;
+					}
+				}
             ],
         	
         	['class' => 'yii\grid\SerialColumn'],
@@ -129,8 +171,27 @@ else
             		],
 			]),
             ],
-            'datatype:ntext',
+			'databaseInfoFromLocation:ntext',
+			'datatype:ntext',
             // 'bulk_load_checksum:ntext',
+/*            [
+             'label' => Yii::t('app', 'Deleted Status'),
+             'value' => function($model) {
+             		return $model->fk_deleted_status_id == "" ? $model->fk_deleted_status_id : (isset($_GET["searchShow"]) ? $model->fkDeletedStatus->name . ' [' . $model->fk_deleted_status_id . ']' : $model->fkDeletedStatus->name);
+             		},
+            'filter' => Select2::widget([
+            		'model' => $searchModel,
+            		'attribute' => 'fk_deleted_status_id',
+            		'data' => ArrayHelper::map(app\models\DeletedStatus::find()->asArray()->all(), 'id', 'name'),
+            		'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_fkDeletedStatus', 'multiple' => true],
+            		'pluginOptions' => [
+            				'allowClear' => true
+            		],
+			]),
+            ],
+*/            // 'is_PrimaryKey:boolean',
+            // 'is_BusinessKey:boolean',
+            // 'is_GDPR_relevant:boolean',
         ],
     ]); ?>
 	

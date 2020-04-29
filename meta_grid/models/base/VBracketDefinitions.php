@@ -21,6 +21,7 @@ use Yii;
  * @property string $attribute_name
  * @property integer $attribute_id
  * @property integer $attribute_fk_object_type_id
+ * @property integer $db_table_id
  */
 class VBracketDefinitions extends \yii\db\ActiveRecord
 {
@@ -38,9 +39,10 @@ class VBracketDefinitions extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['bracket_fk_attribute_id', 'fk_object_type_id_as_searchFilter', 'bracket_fk_project_id', 'fk_bracket_id', 'db_table_field_id', 'db_table_field_fk_object_type_id', 'attribute_id', 'attribute_fk_object_type_id'], 'integer'],
-            [['bracket_searchPattern', 'bracket_description'], 'string', 'max' => 500],
-            [['bracket_name', 'db_table_name', 'db_table_field_name', 'attribute_name'], 'string', 'max' => 250]
+            [['bracket_fk_attribute_id', 'fk_object_type_id_as_searchFilter', 'bracket_fk_project_id', 'fk_bracket_id', 'db_table_field_id', 'db_table_field_fk_object_type_id', 'attribute_id', 'attribute_fk_object_type_id', 'db_table_id'], 'integer'],
+            [['bracket_searchPattern'], 'string', 'max' => 500],
+            [['bracket_name', 'db_table_name', 'db_table_field_name', 'attribute_name'], 'string', 'max' => 250],
+            [['bracket_description'], 'string', 'max' => 4000],
         ];
     }
 
@@ -64,6 +66,7 @@ class VBracketDefinitions extends \yii\db\ActiveRecord
             'attribute_name' => Yii::t('app', 'Attribute Name'),
             'attribute_id' => Yii::t('app', 'Attribute ID'),
             'attribute_fk_object_type_id' => Yii::t('app', 'Attribute Fk Object Type ID'),
+            'db_table_id' => Yii::t('app', 'Db Table ID'),
         ];
     }
 }

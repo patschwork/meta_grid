@@ -21,6 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
 		'object_typeList' => $object_typeList,		// autogeneriert ueber gii/CRUD
 'projectList' => $projectList,		// autogeneriert ueber gii/CRUD
 'db_tableList' => $db_tableList,		// autogeneriert ueber gii/CRUD
+'deleted_statusList' => $deleted_statusList,		// autogeneriert ueber gii/CRUD
 			'fk_db_table_id' => isset($fk_db_table_id) ? $fk_db_table_id : null,
 					]) ?>
 

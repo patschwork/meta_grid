@@ -35,9 +35,6 @@ class TagComparator
     /**
      * Should the given tags be kept together, or kept apart?
      *
-     * @param Tag $first
-     * @param Tag $second
-     *
      * @return bool
      */
     public static function shouldBeTogether(Tag $first, Tag $second)
@@ -50,7 +47,7 @@ class TagComparator
         }
 
         foreach (self::$groups as $group) {
-            if (in_array($firstName, $group, true) && in_array($secondName, $group, true)) {
+            if (\in_array($firstName, $group, true) && \in_array($secondName, $group, true)) {
                 return true;
             }
         }

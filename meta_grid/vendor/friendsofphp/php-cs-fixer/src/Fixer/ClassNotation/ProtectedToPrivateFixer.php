@@ -34,7 +34,7 @@ final class ProtectedToPrivateFixer extends AbstractFixer
             'Converts `protected` variables and methods to `private` where possible.',
             [
                 new CodeSample(
-                '<?php
+                    '<?php
 final class Sample
 {
     protected $a;
@@ -68,7 +68,7 @@ final class Sample
      */
     protected function applyFix(\SplFileInfo $file, Tokens $tokens)
     {
-        $end = count($tokens) - 3; // min. number of tokens to form a class candidate to fix
+        $end = \count($tokens) - 3; // min. number of tokens to form a class candidate to fix
         for ($index = 0; $index < $end; ++$index) {
             if (!$tokens[$index]->isGivenKind(T_CLASS)) {
                 continue;
@@ -86,9 +86,8 @@ final class Sample
     }
 
     /**
-     * @param Tokens $tokens
-     * @param int    $classOpenIndex
-     * @param int    $classCloseIndex
+     * @param int $classOpenIndex
+     * @param int $classCloseIndex
      */
     private function fixClass(Tokens $tokens, $classOpenIndex, $classCloseIndex)
     {
@@ -110,10 +109,9 @@ final class Sample
     /**
      * Decide whether or not skip the fix for given class.
      *
-     * @param Tokens $tokens
-     * @param int    $classIndex
-     * @param int    $classOpenIndex
-     * @param int    $classCloseIndex
+     * @param int $classIndex
+     * @param int $classOpenIndex
+     * @param int $classCloseIndex
      *
      * @return bool
      */

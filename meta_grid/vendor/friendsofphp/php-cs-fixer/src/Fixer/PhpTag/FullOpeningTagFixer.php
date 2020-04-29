@@ -15,6 +15,7 @@ namespace PhpCsFixer\Fixer\PhpTag;
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\Preg;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
@@ -34,7 +35,7 @@ final class FullOpeningTagFixer extends AbstractFixer
             'PHP code must use the long `<?php` tags or short-echo `<?=` tags and not other tag variations.',
             [
                 new CodeSample(
-'<?
+                    '<?
 
 echo "Hello!";
 '
@@ -68,7 +69,7 @@ echo "Hello!";
         $content = $tokensOrg->generateCode();
 
         // replace all <? with <?php to replace all short open tags even without short_open_tag option enabled
-        $newContent = preg_replace('/<\?(?:phP|pHp|pHP|Php|PhP|PHp|PHP)?(\s|$)/', '<?php$1', $content, -1, $count);
+        $newContent = Preg::replace('/<\?(?:phP|pHp|pHP|Php|PhP|PHp|PHP)?(\s|$)/', '<?php$1', $content, -1, $count);
 
         if (!$count) {
             return;
@@ -93,7 +94,7 @@ echo "Hello!";
                 }
 
                 $tokensOldContent .= $tokenContent;
-                $tokensOldContentLength += strlen($tokenContent);
+                $tokensOldContentLength += \strlen($tokenContent);
 
                 continue;
             }
@@ -102,11 +103,11 @@ echo "Hello!";
                 $tokenContent = '';
                 $tokenContentLength = 0;
                 $parts = explode('<?php', $token->getContent());
-                $iLast = count($parts) - 1;
+                $iLast = \count($parts) - 1;
 
                 foreach ($parts as $i => $part) {
                     $tokenContent .= $part;
-                    $tokenContentLength += strlen($part);
+                    $tokenContentLength += \strlen($part);
 
                     if ($i !== $iLast) {
                         $originalTokenContent = substr($content, $tokensOldContentLength + $tokenContentLength, 5);
@@ -125,7 +126,7 @@ echo "Hello!";
             }
 
             $tokensOldContent .= $token->getContent();
-            $tokensOldContentLength += strlen($token->getContent());
+            $tokensOldContentLength += \strlen($token->getContent());
         }
 
         $tokensOrg->overrideRange(0, $tokensOrg->count() - 1, $tokens);

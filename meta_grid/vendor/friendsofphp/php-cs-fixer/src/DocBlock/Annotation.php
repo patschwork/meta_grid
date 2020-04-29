@@ -12,6 +12,8 @@
 
 namespace PhpCsFixer\DocBlock;
 
+use PhpCsFixer\Preg;
+
 /**
  * This represents an entire annotation from a docblock.
  *
@@ -34,7 +36,7 @@ class Annotation
     (?<types>
         (?<type>
             (?<array>
-                (?&simple)\[\]
+                (?&simple)(\[\])*
             )
             |
             (?<simple>
@@ -196,14 +198,14 @@ class Annotation
             $content = $this->getTypesContent();
 
             while ('' !== $content && false !== $content) {
-                preg_match(
+                Preg::match(
                     '{^'.self::REGEX_TYPES.'$}x',
                     $content,
                     $matches
                 );
 
                 $this->types[] = $matches['type'];
-                $content = substr($content, strlen($matches['type']) + 1);
+                $content = substr($content, \strlen($matches['type']) + 1);
             }
         }
 
@@ -217,11 +219,27 @@ class Annotation
      */
     public function setTypes(array $types)
     {
-        $pattern = '/'.preg_quote($this->getTypesContent()).'/';
+        $pattern = '/'.preg_quote($this->getTypesContent(), '/').'/';
 
-        $this->lines[0]->setContent(preg_replace($pattern, implode('|', $types), $this->lines[0]->getContent(), 1));
+        $this->lines[0]->setContent(Preg::replace($pattern, implode('|', $types), $this->lines[0]->getContent(), 1));
 
         $this->clearCache();
+    }
+
+    /**
+     * Get the normalized types associated with this annotation, so they can easily be compared.
+     *
+     * @return string[]
+     */
+    public function getNormalizedTypes()
+    {
+        $normalized = array_map(static function ($type) {
+            return strtolower($type);
+        }, $this->getTypes());
+
+        sort($normalized);
+
+        return $normalized;
     }
 
     /**
@@ -243,12 +261,12 @@ class Annotation
      */
     public function getContent()
     {
-        return implode($this->lines);
+        return implode('', $this->lines);
     }
 
     public function supportTypes()
     {
-        return in_array($this->getTag()->getName(), self::$tags, true);
+        return \in_array($this->getTag()->getName(), self::$tags, true);
     }
 
     /**
@@ -267,7 +285,7 @@ class Annotation
                 throw new \RuntimeException('This tag does not support types.');
             }
 
-            $matchingResult = preg_match(
+            $matchingResult = Preg::match(
                 '{^(?:\s*\*|/\*\*)\s*@'.$name.'\s+'.self::REGEX_TYPES.'(?:[ \t].*)?$}sx',
                 $this->lines[0]->getContent(),
                 $matches

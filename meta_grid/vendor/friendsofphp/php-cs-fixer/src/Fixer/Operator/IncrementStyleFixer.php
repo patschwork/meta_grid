@@ -121,8 +121,7 @@ final class IncrementStyleFixer extends AbstractFixer implements ConfigurationDe
     }
 
     /**
-     * @param Tokens $tokens
-     * @param int    $index
+     * @param int $index
      *
      * @return int
      */
@@ -137,6 +136,7 @@ final class IncrementStyleFixer extends AbstractFixer implements ConfigurationDe
             [CT::T_DYNAMIC_PROP_BRACE_OPEN],
             [CT::T_DYNAMIC_VAR_BRACE_OPEN],
             [T_NS_SEPARATOR],
+            [T_STATIC],
             [T_STRING],
             [T_VARIABLE],
         ])) {
@@ -161,8 +161,7 @@ final class IncrementStyleFixer extends AbstractFixer implements ConfigurationDe
     }
 
     /**
-     * @param Tokens $tokens
-     * @param int    $index
+     * @param int $index
      *
      * @return int
      */
@@ -174,7 +173,7 @@ final class IncrementStyleFixer extends AbstractFixer implements ConfigurationDe
 
             $blockType = Tokens::detectBlockType($token);
             if (null !== $blockType && !$blockType['isStart']) {
-                $index = $tokens->findBlockEnd($blockType['type'], $index, false);
+                $index = $tokens->findBlockStart($blockType['type'], $index);
                 $token = $tokens[$index];
             }
         } while (!$token->equalsAny(['$', [T_VARIABLE]]));
@@ -194,11 +193,11 @@ final class IncrementStyleFixer extends AbstractFixer implements ConfigurationDe
 
         if ($prevToken->isGivenKind(T_PAAMAYIM_NEKUDOTAYIM)) {
             $prevPrevIndex = $tokens->getPrevMeaningfulToken($prevIndex);
-            if (!$tokens[$prevPrevIndex]->isGivenKind(T_STRING)) {
+            if (!$tokens[$prevPrevIndex]->isGivenKind([T_STATIC, T_STRING])) {
                 return $this->findStart($tokens, $prevIndex);
             }
 
-            $index = $tokens->getTokenNotOfKindSibling($prevIndex, -1, [[T_NS_SEPARATOR], [T_STRING]]);
+            $index = $tokens->getTokenNotOfKindSibling($prevIndex, -1, [[T_NS_SEPARATOR], [T_STATIC], [T_STRING]]);
             $index = $tokens->getNextMeaningfulToken($index);
         }
 

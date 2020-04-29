@@ -3,6 +3,7 @@
  * This is the template for generating a CRUD controller class file.
  */
 
+use Symfony\Component\VarDumper\VarDumper as VarDumperVarDumper;
 use yii\db\ActiveRecordInterface;
 use yii\helpers\StringHelper;
 use yii\helpers\VarDumper;
@@ -72,6 +73,7 @@ use app\models\base\Project;
 <?php endif; ?>
 use Da\User\Filter\AccessRuleFilter;
 use yii\filters\AccessControl;
+use yii\helpers\Url;
 <?php 
 // Patrick, 2016-01-15, #fk_Felder
 $actionCreateUpdateFkList = "";
@@ -115,11 +117,17 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
 	        	if ($newClass=="ContactGroupAsSupporter") $newClass="ContactGroup";
 	        	if ($newClass=="ObjectTypeAsSearchFilter") $newClass="ObjectType";
 				$nullIsAnValidOption = 0;
+				
 				if ($generator->modelClass === 'app\models\Bracket')
 				{
 					if ($newClass === "ObjectType") $nullIsAnValidOption = 1;			
-					if ($newClass === "Attribute") $nullIsAnValidOption = 1;			
+					if ($newClass === "Attribute") $nullIsAnValidOption = 1;						
 				}
+
+				if ($newClass === "DbTable") $nullIsAnValidOption = 1;			
+				if ($newClass === "DeletedStatus") $nullIsAnValidOption = 1;			
+				if ($newClass === "DbTableContext") $nullIsAnValidOption = 1;			
+				if ($newClass === "DbTableType") $nullIsAnValidOption = 1;
 
 	        	echo "		$$fk_model_variable"."Model = new $newClass();\n";
 				echo "		$$fk_model_variable"."s = $$fk_model_variable"."Model::find()->all();\n";
@@ -629,9 +637,22 @@ $modelBracket = $this->findModel($id);
 		 }   
 		  ?>    
     
-        $this->findModel(<?= $actionParams ?>)->delete();
+		try {
+			$model = $this->findModel(<?= $actionParams ?>);
+			$model->delete();
+			return $this->redirect(['index']);
+		} catch (\Exception $e) {
+			$model->addError(null, $e->getMessage());
+			$errMsg = $e->getMessage();
+			
+			$errMsgAdd = "";
+			try{$errMsgAdd = '"'. $model->name . '"';} catch(\Exception $e){}
 
-        return $this->redirect(['index']);
+			if (strpos($errMsg, "Integrity constraint violation")) $errMsg = Yii::t('yii',"The object {errMsgAdd} is still referenced by other objects.", ['errMsgAdd' => $errMsgAdd]);
+			Yii::$app->session->setFlash('deleteError', Yii::t('yii','Object can\'t be deleted: ') . $errMsg);
+			return $this->redirect(Url::previous());  // Url::remember() is set in index-view
+		}
+
     }
 
     /**

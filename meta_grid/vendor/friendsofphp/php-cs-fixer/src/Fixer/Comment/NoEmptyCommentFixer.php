@@ -15,6 +15,7 @@ namespace PhpCsFixer\Fixer\Comment;
 use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\Preg;
 use PhpCsFixer\Tokenizer\Tokens;
 
 /**
@@ -31,7 +32,7 @@ final class NoEmptyCommentFixer extends AbstractFixer
      */
     public function getPriority()
     {
-        // should be run after PhpdocToCommentFixer and before NoExtraConsecutiveBlankLinesFixer, NoTrailingWhitespaceFixer and NoWhitespaceInBlankLineFixer.
+        // should be run after PhpdocToCommentFixer and before NoExtraBlankLinesFixer, NoTrailingWhitespaceFixer and NoWhitespaceInBlankLineFixer.
         return 2;
     }
 
@@ -59,7 +60,7 @@ final class NoEmptyCommentFixer extends AbstractFixer
      */
     protected function applyFix(\SplFileInfo $file, Tokens $tokens)
     {
-        for ($index = 1, $count = count($tokens); $index < $count; ++$index) {
+        for ($index = 1, $count = \count($tokens); $index < $count; ++$index) {
             if (!$tokens[$index]->isGivenKind(T_COMMENT)) {
                 continue;
             }
@@ -78,8 +79,7 @@ final class NoEmptyCommentFixer extends AbstractFixer
     /**
      * Return the start index, end index and a flag stating if the comment block is empty.
      *
-     * @param Tokens $tokens
-     * @param int    $index  T_COMMENT index
+     * @param int $index T_COMMENT index
      *
      * @return array
      */
@@ -88,7 +88,7 @@ final class NoEmptyCommentFixer extends AbstractFixer
         $commentType = $this->getCommentType($tokens[$index]->getContent());
         $empty = $this->isEmptyComment($tokens[$index]->getContent());
         $start = $index;
-        $count = count($tokens);
+        $count = \count($tokens);
         ++$index;
 
         for (; $index < $count; ++$index) {
@@ -131,9 +131,8 @@ final class NoEmptyCommentFixer extends AbstractFixer
     }
 
     /**
-     * @param Tokens $tokens
-     * @param int    $whiteStart
-     * @param int    $whiteEnd
+     * @param int $whiteStart
+     * @param int $whiteEnd
      *
      * @return int
      */
@@ -141,7 +140,7 @@ final class NoEmptyCommentFixer extends AbstractFixer
     {
         $lineCount = 0;
         for ($i = $whiteStart; $i < $whiteEnd; ++$i) {
-            $lineCount += substr_count($tokens[$i]->getContent(), "\n");
+            $lineCount += Preg::matchAll('/\R/u', $tokens[$i]->getContent(), $matches);
         }
 
         return $lineCount;
@@ -162,6 +161,6 @@ final class NoEmptyCommentFixer extends AbstractFixer
 
         $type = $this->getCommentType($content);
 
-        return 1 === preg_match($mapper[$type], $content);
+        return 1 === Preg::match($mapper[$type], $content);
     }
 }

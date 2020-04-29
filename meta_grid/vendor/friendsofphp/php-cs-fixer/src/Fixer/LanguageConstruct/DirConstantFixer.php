@@ -32,7 +32,7 @@ final class DirConstantFixer extends AbstractFunctionReferenceFixer
             'Replaces `dirname(__FILE__)` expression with equivalent `__DIR__` constant.',
             [new CodeSample("<?php\n\$a = dirname(__FILE__);\n")],
             null,
-            'Risky when the function `dirname()` is overridden.'
+            'Risky when the function `dirname` is overridden.'
         );
     }
 
@@ -42,6 +42,15 @@ final class DirConstantFixer extends AbstractFunctionReferenceFixer
     public function isCandidate(Tokens $tokens)
     {
         return $tokens->isTokenKindFound(T_FILE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPriority()
+    {
+        // should run before CombineNestedDirnameFixer
+        return 4;
     }
 
     /**
@@ -62,11 +71,23 @@ final class DirConstantFixer extends AbstractFunctionReferenceFixer
             $currIndex = $openParenthesis;
 
             // ensure __FILE__ is in between (...)
+
             $fileCandidateRightIndex = $tokens->getPrevMeaningfulToken($closeParenthesis);
+            $trailingCommaIndex = null;
+            if ($tokens[$fileCandidateRightIndex]->equals(',')) {
+                $trailingCommaIndex = $fileCandidateRightIndex;
+                $fileCandidateRightIndex = $tokens->getPrevMeaningfulToken($fileCandidateRightIndex);
+            }
+
             $fileCandidateRight = $tokens[$fileCandidateRightIndex];
+            if (!$fileCandidateRight->isGivenKind(T_FILE)) {
+                continue;
+            }
+
             $fileCandidateLeftIndex = $tokens->getNextMeaningfulToken($openParenthesis);
             $fileCandidateLeft = $tokens[$fileCandidateLeftIndex];
-            if (!$fileCandidateRight->isGivenKind([T_FILE]) || !$fileCandidateLeft->isGivenKind([T_FILE])) {
+
+            if (!$fileCandidateLeft->isGivenKind(T_FILE)) {
                 continue;
             }
 
@@ -78,12 +99,20 @@ final class DirConstantFixer extends AbstractFunctionReferenceFixer
                 $tokens->clearAt($namespaceCandidateIndex);
             }
 
+            if (null !== $trailingCommaIndex) {
+                if (!$tokens[$tokens->getNextNonWhitespace($trailingCommaIndex)]->isComment()) {
+                    $tokens->removeTrailingWhitespace($trailingCommaIndex);
+                }
+
+                $tokens->clearTokenAndMergeSurroundingWhitespace($trailingCommaIndex);
+            }
+
             // closing parenthesis removed with leading spaces
             if (!$tokens[$tokens->getNextNonWhitespace($closeParenthesis)]->isComment()) {
                 $tokens->removeLeadingWhitespace($closeParenthesis);
             }
 
-            $tokens->clearAt($closeParenthesis);
+            $tokens->clearTokenAndMergeSurroundingWhitespace($closeParenthesis);
 
             // opening parenthesis removed with trailing and leading spaces
             if (!$tokens[$tokens->getNextNonWhitespace($openParenthesis)]->isComment()) {
@@ -91,11 +120,11 @@ final class DirConstantFixer extends AbstractFunctionReferenceFixer
             }
 
             $tokens->removeTrailingWhitespace($openParenthesis);
-            $tokens->clearAt($openParenthesis);
+            $tokens->clearTokenAndMergeSurroundingWhitespace($openParenthesis);
 
             // replace constant and remove function name
             $tokens[$fileCandidateLeftIndex] = new Token([T_DIR, '__DIR__']);
-            $tokens->clearAt($functionNameIndex);
+            $tokens->clearTokenAndMergeSurroundingWhitespace($functionNameIndex);
         }
     }
 }

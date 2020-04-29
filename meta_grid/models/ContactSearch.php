@@ -18,7 +18,7 @@ class ContactSearch extends VContactSearchinterface
     public function rules()
     {
         return [
-            [['id', 'fk_object_type_id', 'fk_contact_group_id', 'fk_client_id'], 'integer'],
+            [['id', 'fk_object_type_id', 'fk_contact_group_id', 'fk_client_id', 'fk_deleted_status_id'], 'integer'],
             [['uuid', 'givenname', 'surname', 'email', 'phone', 'mobile', 'ldap_cn', 'description'], 'safe'],
         ];
     }
@@ -71,6 +71,7 @@ class ContactSearch extends VContactSearchinterface
             'fk_object_type_id' => $this->fk_object_type_id,
             'fk_contact_group_id' => $this->fk_contact_group_id,
             'fk_client_id' => $this->fk_client_id,
+            'fk_deleted_status_id' => $this->fk_deleted_status_id,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])

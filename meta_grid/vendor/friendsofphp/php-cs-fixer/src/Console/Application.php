@@ -17,6 +17,9 @@ use PhpCsFixer\Console\Command\FixCommand;
 use PhpCsFixer\Console\Command\HelpCommand;
 use PhpCsFixer\Console\Command\ReadmeCommand;
 use PhpCsFixer\Console\Command\SelfUpdateCommand;
+use PhpCsFixer\Console\SelfUpdate\GithubClient;
+use PhpCsFixer\Console\SelfUpdate\NewVersionChecker;
+use PhpCsFixer\PharChecker;
 use PhpCsFixer\ToolInfo;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Command\ListCommand;
@@ -32,8 +35,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 final class Application extends BaseApplication
 {
-    const VERSION = '2.8.3';
-    const VERSION_CODENAME = 'Round Numbers';
+    const VERSION = '2.16.0';
+    const VERSION_CODENAME = 'Yellow Bird';
 
     /**
      * @var ToolInfo
@@ -42,7 +45,9 @@ final class Application extends BaseApplication
 
     public function __construct()
     {
-        error_reporting(-1);
+        if (!getenv('PHP_CS_FIXER_FUTURE_MODE')) {
+            error_reporting(-1);
+        }
 
         parent::__construct('PHP CS Fixer', self::VERSION);
 
@@ -51,7 +56,11 @@ final class Application extends BaseApplication
         $this->add(new DescribeCommand());
         $this->add(new FixCommand($this->toolInfo));
         $this->add(new ReadmeCommand());
-        $this->add(new SelfUpdateCommand($this->toolInfo));
+        $this->add(new SelfUpdateCommand(
+            new NewVersionChecker(new GithubClient()),
+            $this->toolInfo,
+            new PharChecker()
+        ));
     }
 
     /**
@@ -67,9 +76,6 @@ final class Application extends BaseApplication
             $warningsDetector = new WarningsDetector($this->toolInfo);
             $warningsDetector->detectOldVendor();
             $warningsDetector->detectOldMajor();
-            if (FixCommand::COMMAND_NAME === $this->getCommandName($input)) {
-                $warningsDetector->detectXdebug();
-            }
             foreach ($warningsDetector->getWarnings() as $warning) {
                 $stdErr->writeln(sprintf($stdErr->isDecorated() ? '<bg=yellow;fg=black;>%s</>' : '%s', $warning));
             }

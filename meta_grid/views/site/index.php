@@ -43,7 +43,6 @@
 
 <?php
 use lajax\translatemanager\helpers\Language as Lx;
-use yii\helpers\VarDumper;
 /* @var $this yii\web\View */
 $this->title = 'Meta#Grid'.(stristr(Yii::$app->homeUrl, 'dev') ? ' DEV' : '');
 
@@ -65,10 +64,10 @@ $foundIssues = $datatransfertypeCount==0 	? $foundIssues + 1 : $foundIssues + 0;
 $foundIssues = $datadeliverytypeCount==0 	? $foundIssues + 1 : $foundIssues + 0;
 
 $alertBody = "<br>";
-$alertBody .= $dbtablecontextCount==0 	? '<b>'.Yii::t('app','Table Context').'</b> is empty. Open <a href="' . Yii::$app->urlManager->createUrl('dbtablecontext') . '">here</a>.<br>' : "";
 $alertBody .= $dbtabletypeCount==0 		? '<b>'.Yii::t('app','Table Type').'</b> is empty. Open <a href="' . Yii::$app->urlManager->createUrl('dbtabletype') . '">here</a>.<br>' : "";
-$alertBody .= $toolCount==0 			? '<b>'.Yii::t('app','Tool').'</b> is empty. Open <a href="' . Yii::$app->urlManager->createUrl('tool') . '">here</a>.<br>' : "";
+$alertBody .= $dbtablecontextCount==0 	? '<b>'.Yii::t('app','Table Context').'</b> is empty. Open <a href="' . Yii::$app->urlManager->createUrl('dbtablecontext') . '">here</a>.<br>' : "";
 $alertBody .= $tooltypeCount==0 		? '<b>'.Yii::t('app','Tool Type').'</b> is empty. Open <a href="' . Yii::$app->urlManager->createUrl('tooltype') . '">here</a>.<br>' : "";
+$alertBody .= $toolCount==0 			? '<b>'.Yii::t('app','Tool').'</b> is empty. Open <a href="' . Yii::$app->urlManager->createUrl('tool') . '">here</a>.<br>' : "";
 $alertBody .= $datatransfertypeCount==0 ? '<b>'.Yii::t('app','Data Transfer Type').'</b> is empty. Open <a href="' . Yii::$app->urlManager->createUrl('datatransfertype') . '">here</a>.<br>' : "";
 $alertBody .= $datadeliverytypeCount==0 ? '<b>'.Yii::t('app','Data Delivery Type').'</b> is empty. Open <a href="' . Yii::$app->urlManager->createUrl('datadeliverytype') . '">here</a>.<br>' : "";
 
@@ -85,7 +84,8 @@ if ($foundIssues>0)
 try
 {
     // get the path from the app_config database table. If not exists, then use a default.
-    $app_config_liquibase_changelog_master_filepath = ((new yii\db\Query())->from('app_config')->select(['valueSTRING'])->where(["key" => "liquibase_changelog_master_filepath"])->one())['valueSTRING'];
+    $app_config_liquibase_changelog_master_filepath_arr = ((new yii\db\Query())->from('app_config')->select(['valueSTRING'])->where(["key" => "liquibase_changelog_master_filepath"])->one());
+    $app_config_liquibase_changelog_master_filepath = $app_config_liquibase_changelog_master_filepath_arr['valueSTRING'];
     if ($app_config_liquibase_changelog_master_filepath === "") $app_config_liquibase_changelog_master_filepath = "../../../../database_model/liquibase/db.changelog-master.xml";
 
     // reads the LiquiBase Changelog-Master-XML File
@@ -154,6 +154,32 @@ if (!Yii::$app->user->isGuest)
     }
 }
 
+if (!Yii::$app->user->isGuest)
+{
+    if (Yii::$app->db->getDriverName() == "sqlite")
+    {
+        $configfile = Yii::$app->getBasePath()."/config/db.php";
+        if (file_exists($configfile))
+        {
+            $file_content = file_get_contents($configfile);
+            $stringToCheck = '$event->sender->createCommand("PRAGMA foreign_keys = ON")->execute()';
+            if( strpos($file_content,$stringToCheck) <= 0) {
+                
+                $helptextid=1000;
+                $url= Yii::$app->urlManager->createUrl(['shorthelp/index','helptextid'=>$helptextid]);
+                
+                $hlp_btn='<a class="btn btn-primary" href="' . $url . '">Help</a>';
+                echo yii\bootstrap\Alert::widget([
+                    'options' => [
+                            'class' => 'alert-danger',
+                    ],
+                    'body' => "<b>Important</b>: Please update your database connection!</br>" . "Goto $hlp_btn to see detailed information.",
+                ]);   
+            }
+        }   
+    }
+}
+
 function UseMayAccessObject($objecttype) {
     $tooltip      = "";
     $buttonTitle  = "";
@@ -190,12 +216,12 @@ function UseMayAccessObject($objecttype) {
             $buttonTitle = "Contact";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
-        case "contact-group":
+        case "contactgroup":
             // $tooltip     = "Kontaktgruppen in welchen Kontakte wirken (Abteilung, Team, Projekt, etc.)";
             $buttonTitle = "ContactGroup";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
-            case "sourcesystem":
+        case "sourcesystem":
             // $tooltip     = "Quellsysteme";
             $buttonTitle = "Sourcesystem";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
@@ -400,7 +426,7 @@ function printHeader($csvObjecttypes, $title) {
                 <!--  <p><a style="width: 250px;" class="btn btn-danger" href="<?= $wa_gui_url ?>attribute.php">Attribute &raquo;</a></p> -->
                 <h2><?= printHeader("contact;contact-group", "Organisation") ?></h2>
                 <?= UseMayAccessObject("contact") ?>
-                <?= UseMayAccessObject("contact-group") ?>
+                <?= UseMayAccessObject("contactgroup") ?>
             </div>
             <div class="col-lg-4">
                 <h2><?= printHeader("sourcesystem;dbdatabase;dbtable;dbtablefield;dbtablecontext;dbtabletype;tool;tooltype;objectcomment", "Technical Information") ?></h2>

@@ -80,7 +80,7 @@ final class ListSyntaxFixer extends AbstractFixer implements ConfigurationDefini
      */
     public function isCandidate(Tokens $tokens)
     {
-        return PHP_VERSION_ID >= 70100 && $tokens->isTokenKindFound($this->candidateTokenKind);
+        return \PHP_VERSION_ID >= 70100 && $tokens->isTokenKindFound($this->candidateTokenKind);
     }
 
     /**
@@ -113,8 +113,7 @@ final class ListSyntaxFixer extends AbstractFixer implements ConfigurationDefini
     }
 
     /**
-     * @param Tokens $tokens
-     * @param int    $index
+     * @param int $index
      */
     private function fixToLongSyntax(Tokens $tokens, $index)
     {
@@ -134,8 +133,7 @@ final class ListSyntaxFixer extends AbstractFixer implements ConfigurationDefini
     }
 
     /**
-     * @param Tokens $tokens
-     * @param int    $index
+     * @param int $index
      */
     private function fixToShortSyntax(Tokens $tokens, $index)
     {

@@ -76,9 +76,8 @@ switch ($b) {
     }
 
     /**
-     * @param Tokens $tokens
-     * @param int    $openIndex  index of `{` token
-     * @param int    $closeIndex index of `}` token
+     * @param int $openIndex  index of `{` token
+     * @param int $closeIndex index of `}` token
      */
     private function clearOverCompleteBraces(Tokens $tokens, $openIndex, $closeIndex)
     {
@@ -88,7 +87,7 @@ switch ($b) {
 
     private function findCurlyBraceOpen(Tokens $tokens)
     {
-        for ($i = count($tokens) - 1; $i > 0; --$i) {
+        for ($i = \count($tokens) - 1; $i > 0; --$i) {
             if ($tokens[$i]->equals('{')) {
                 yield $i;
             }
@@ -96,8 +95,7 @@ switch ($b) {
     }
 
     /**
-     * @param Tokens $tokens
-     * @param int    $index  index of `{` token
+     * @param int $index index of `{` token
      *
      * @return bool
      */

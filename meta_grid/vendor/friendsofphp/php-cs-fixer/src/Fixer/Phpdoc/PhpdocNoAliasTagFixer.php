@@ -19,6 +19,7 @@ use PhpCsFixer\FixerConfiguration\FixerConfigurationResolverRootless;
 use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\Preg;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
@@ -83,6 +84,15 @@ final class Example
     /**
      * {@inheritdoc}
      */
+    public function getPriority()
+    {
+        // must be run before PhpdocAddMissingParamAnnotationFixer
+        return 11;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function applyFix(\SplFileInfo $file, Tokens $tokens)
     {
         $searchFor = array_keys($this->configuration['replacements']);
@@ -115,22 +125,22 @@ final class Example
         return new FixerConfigurationResolverRootless('replacements', [
             (new FixerOptionBuilder('replacements', 'Mapping between replaced annotations with new ones.'))
                 ->setAllowedTypes(['array'])
-                ->setNormalizer(function (Options $options, $value) {
+                ->setNormalizer(static function (Options $options, $value) {
                     $normalizedValue = [];
 
                     foreach ($value as $from => $to) {
-                        if (!is_string($from)) {
+                        if (!\is_string($from)) {
                             throw new InvalidOptionsException('Tag to replace must be a string.');
                         }
 
-                        if (!is_string($to)) {
+                        if (!\is_string($to)) {
                             throw new InvalidOptionsException(sprintf(
                                 'Tag to replace to from "%s" must be a string.',
                                 $from
                             ));
                         }
 
-                        if (1 !== preg_match('#^\S+$#', $to) || false !== strpos($to, '*/')) {
+                        if (1 !== Preg::match('#^\S+$#', $to) || false !== strpos($to, '*/')) {
                             throw new InvalidOptionsException(sprintf(
                                 'Tag "%s" cannot be replaced by invalid tag "%s".',
                                 $from,
@@ -161,6 +171,6 @@ final class Example
                     'link' => 'see',
                 ])
                 ->getOption(),
-        ]);
+        ], $this->getName());
     }
 }

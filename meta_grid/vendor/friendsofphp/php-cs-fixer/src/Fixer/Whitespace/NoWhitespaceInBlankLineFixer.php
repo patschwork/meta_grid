@@ -16,6 +16,7 @@ use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\Preg;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
@@ -58,7 +59,7 @@ final class NoWhitespaceInBlankLineFixer extends AbstractFixer implements Whites
     protected function applyFix(\SplFileInfo $file, Tokens $tokens)
     {
         // skip first as it cannot be a white space token
-        for ($i = 1, $count = count($tokens); $i < $count; ++$i) {
+        for ($i = 1, $count = \count($tokens); $i < $count; ++$i) {
             if ($tokens[$i]->isWhitespace()) {
                 $this->fixWhitespaceToken($tokens, $i);
             }
@@ -66,14 +67,13 @@ final class NoWhitespaceInBlankLineFixer extends AbstractFixer implements Whites
     }
 
     /**
-     * @param Tokens $tokens
-     * @param int    $index
+     * @param int $index
      */
     private function fixWhitespaceToken(Tokens $tokens, $index)
     {
         $content = $tokens[$index]->getContent();
-        $lines = preg_split("/(\r\n|\n)/", $content);
-        $lineCount = count($lines);
+        $lines = Preg::split("/(\r\n|\n)/", $content);
+        $lineCount = \count($lines);
 
         if (
             // fix T_WHITESPACES with at least 3 lines (eg `\n   \n`)
@@ -89,7 +89,7 @@ final class NoWhitespaceInBlankLineFixer extends AbstractFixer implements Whites
             }
 
             for ($l = $lStart; $l < $lMax; ++$l) {
-                $lines[$l] = preg_replace('/^\h+$/', '', $lines[$l]);
+                $lines[$l] = Preg::replace('/^\h+$/', '', $lines[$l]);
             }
             $content = implode($this->whitespacesConfig->getLineEnding(), $lines);
             if ('' !== $content) {

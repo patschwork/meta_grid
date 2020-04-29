@@ -12,7 +12,7 @@
 
 namespace PhpCsFixer\Fixer\Phpdoc;
 
-use PhpCsFixer\AbstractFunctionReferenceFixer;
+use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\DocBlock\DocBlock;
 use PhpCsFixer\DocBlock\Line;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
@@ -21,6 +21,7 @@ use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
 use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\Preg;
 use PhpCsFixer\Tokenizer\Analyzer\ArgumentsAnalyzer;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
@@ -28,7 +29,7 @@ use PhpCsFixer\Tokenizer\Tokens;
 /**
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
  */
-final class PhpdocAddMissingParamAnnotationFixer extends AbstractFunctionReferenceFixer implements ConfigurationDefinitionFixerInterface, WhitespacesAwareFixerInterface
+final class PhpdocAddMissingParamAnnotationFixer extends AbstractFixer implements ConfigurationDefinitionFixerInterface, WhitespacesAwareFixerInterface
 {
     /**
      * {@inheritdoc}
@@ -36,7 +37,7 @@ final class PhpdocAddMissingParamAnnotationFixer extends AbstractFunctionReferen
     public function getDefinition()
     {
         return new FixerDefinition(
-            'Phpdoc should contain @param for all params.',
+            'PHPDoc should contain `@param` for all params.',
             [
                 new CodeSample(
                     '<?php
@@ -79,8 +80,9 @@ function f9(string $foo, $bar, $baz) {}
      */
     public function getPriority()
     {
-        // must be run after PhpdocNoAliasTagFixer and before PhpdocAlignFixer
-        return -1;
+        // must be run after PhpdocNoAliasTagFixer
+        // must be run before PhpdocAlignFixer and PhpdocNoEmptyReturnFixer
+        return 10;
     }
 
     /**
@@ -160,7 +162,7 @@ function f9(string $foo, $bar, $baz) {}
                 }
             }
 
-            if (!count($arguments)) {
+            if (!\count($arguments)) {
                 continue;
             }
 
@@ -168,7 +170,7 @@ function f9(string $foo, $bar, $baz) {}
             $lastParamLine = null;
 
             foreach ($doc->getAnnotationsOfType('param') as $annotation) {
-                $pregMatched = preg_match('/^[^$]+(\$\w+).*$/s', $annotation->getContent(), $matches);
+                $pregMatched = Preg::match('/^[^$]+(\$\w+).*$/s', $annotation->getContent(), $matches);
 
                 if (1 === $pregMatched) {
                     unset($arguments[$matches[1]]);
@@ -177,14 +179,14 @@ function f9(string $foo, $bar, $baz) {}
                 $lastParamLine = max($lastParamLine, $annotation->getEnd());
             }
 
-            if (!count($arguments)) {
+            if (!\count($arguments)) {
                 continue;
             }
 
             $lines = $doc->getLines();
-            $linesCount = count($lines);
+            $linesCount = \count($lines);
 
-            preg_match('/^(\s*).*$/', $lines[$linesCount - 1]->getContent(), $matches);
+            Preg::match('/^(\s*).*$/', $lines[$linesCount - 1]->getContent(), $matches);
             $indent = $matches[1];
 
             $newLines = [];
@@ -230,9 +232,8 @@ function f9(string $foo, $bar, $baz) {}
     }
 
     /**
-     * @param Tokens $tokens
-     * @param int    $start
-     * @param int    $end
+     * @param int $start
+     * @param int $end
      *
      * @return array
      */
@@ -266,8 +267,16 @@ function f9(string $foo, $bar, $baz) {}
 
             if ($sawName) {
                 $info['default'] .= $token->getContent();
-            } else {
-                $info['type'] .= $token->getContent();
+            } elseif ('&' !== $token->getContent()) {
+                if ($token->isGivenKind(T_ELLIPSIS)) {
+                    if ('' === $info['type']) {
+                        $info['type'] = 'array';
+                    } else {
+                        $info['type'] .= '[]';
+                    }
+                } else {
+                    $info['type'] .= $token->getContent();
+                }
             }
         }
 

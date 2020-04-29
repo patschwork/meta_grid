@@ -25,21 +25,23 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'name') ?>
 
-    <?php // echo $form->field($model, 'description') ?>
+    <?= $form->field($model, 'description') ?>
 
-    <?php // echo $form->field($model, 'formula') ?>
+    <?= $form->field($model, 'formula') ?>
 
-    <?php // echo $form->field($model, 'aggregation') ?>
+    <?= $form->field($model, 'aggregation') ?>
 
-    <?php // echo $form->field($model, 'character') ?>
+    <?= $form->field($model, 'character') ?>
 
-    <?php // echo $form->field($model, 'type') ?>
+    <?= $form->field($model, 'type') ?>
 
-    <?php // echo $form->field($model, 'unit') ?>
+    <?= $form->field($model, 'unit') ?>
 
-    <?php // echo $form->field($model, 'value_range') ?>
+    <?= $form->field($model, 'value_range') ?>
 
-    <?php // echo $form->field($model, 'cumulation_possible')->checkbox() ?>
+    <?= $form->field($model, 'cumulation_possible')->checkbox() ?>
+
+    <?= $form->field($model, 'fk_deleted_status_id') ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>

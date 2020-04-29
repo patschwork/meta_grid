@@ -18,6 +18,7 @@ use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
 use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\Preg;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
@@ -53,7 +54,7 @@ final class SpaceAfterSemicolonFixer extends AbstractFixer implements Configurat
      */
     public function getPriority()
     {
-        return -1; // Must run after NoMultilineWhitespaceBeforeSemicolonsFixer
+        return -1; // Must run after MultilineWhitespaceBeforeSemicolonsFixer
     }
 
     /**
@@ -84,7 +85,7 @@ final class SpaceAfterSemicolonFixer extends AbstractFixer implements Configurat
     {
         $insideForParenthesesUntil = null;
 
-        for ($index = 0, $max = count($tokens) - 1; $index < $max; ++$index) {
+        for ($index = 0, $max = \count($tokens) - 1; $index < $max; ++$index) {
             if ($this->configuration['remove_in_empty_for_expressions']) {
                 if ($tokens[$index]->isGivenKind(T_FOR)) {
                     $index = $tokens->getNextMeaningfulToken($index);
@@ -112,6 +113,7 @@ final class SpaceAfterSemicolonFixer extends AbstractFixer implements Configurat
                     )
                 ) {
                     $tokens->insertAt($index + 1, new Token([T_WHITESPACE, ' ']));
+                    ++$max;
                 }
 
                 continue;
@@ -120,7 +122,7 @@ final class SpaceAfterSemicolonFixer extends AbstractFixer implements Configurat
             if (
                 null !== $insideForParenthesesUntil
                 && ($tokens[$index + 2]->equals(';') || $index + 2 === $insideForParenthesesUntil)
-                && !preg_match('/\R/', $tokens[$index + 1]->getContent())
+                && !Preg::match('/\R/', $tokens[$index + 1]->getContent())
             ) {
                 $tokens->clearAt($index + 1);
 

@@ -39,7 +39,7 @@ final class CombineConsecutiveUnsetsFixer extends AbstractFixer
      */
     public function getPriority()
     {
-        // should ran before SpaceAfterSemicolonFixer, NoWhitespaceInBlankLineFixer, NoTrailingWhitespaceFixer and NoExtraConsecutiveBlankLinesFixer and after NoEmptyStatementFixer.
+        // should be run before SpaceAfterSemicolonFixer, NoWhitespaceInBlankLineFixer, NoTrailingWhitespaceFixer and NoExtraBlankLinesFixer and after NoEmptyStatementFixer.
         return 24;
     }
 
@@ -62,7 +62,7 @@ final class CombineConsecutiveUnsetsFixer extends AbstractFixer
             }
 
             $previousUnsetCall = $this->getPreviousUnsetCall($tokens, $index);
-            if (is_int($previousUnsetCall)) {
+            if (\is_int($previousUnsetCall)) {
                 $index = $previousUnsetCall;
 
                 continue;
@@ -99,9 +99,8 @@ final class CombineConsecutiveUnsetsFixer extends AbstractFixer
     }
 
     /**
-     * @param Tokens $tokens
-     * @param int    $offset
-     * @param int[]  $indices
+     * @param int   $offset
+     * @param int[] $indices
      */
     private function clearOffsetTokens(Tokens $tokens, $offset, array $indices)
     {
@@ -121,8 +120,7 @@ final class CombineConsecutiveUnsetsFixer extends AbstractFixer
      *
      * Or the index to where the method looked for an call.
      *
-     * @param Tokens $tokens
-     * @param int    $index
+     * @param int $index
      *
      * @return int|int[]
      */
@@ -146,7 +144,7 @@ final class CombineConsecutiveUnsetsFixer extends AbstractFixer
             return $previousUnsetBraceEnd;
         }
 
-        $previousUnsetBraceStart = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_PARENTHESIS_BRACE, $previousUnsetBraceEnd, false);
+        $previousUnsetBraceStart = $tokens->findBlockStart(Tokens::BLOCK_TYPE_PARENTHESIS_BRACE, $previousUnsetBraceEnd);
         $previousUnset = $tokens->getPrevMeaningfulToken($previousUnsetBraceStart);
         if (null === $previousUnset) {
             return $index;
@@ -165,10 +163,9 @@ final class CombineConsecutiveUnsetsFixer extends AbstractFixer
     }
 
     /**
-     * @param Tokens $tokens
-     * @param int    $start  Index previous of the first token to move
-     * @param int    $end    Index of the last token to move
-     * @param int    $to     Upper boundary index
+     * @param int $start Index previous of the first token to move
+     * @param int $end   Index of the last token to move
+     * @param int $to    Upper boundary index
      *
      * @return int Number of tokens inserted
      */

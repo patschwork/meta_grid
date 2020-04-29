@@ -16,6 +16,7 @@ use PhpCsFixer\AbstractFixer;
 use PhpCsFixer\Fixer\WhitespacesAwareFixerInterface;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\Preg;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
@@ -83,33 +84,31 @@ final class IndentationTypeFixer extends AbstractFixer implements WhitespacesAwa
     }
 
     /**
-     * @param Tokens $tokens
-     * @param int    $index
+     * @param int $index
      *
      * @return Token
      */
     private function fixIndentInComment(Tokens $tokens, $index)
     {
-        $content = preg_replace('/^(?:(?<! ) {1,3})?\t/m', '\1    ', $tokens[$index]->getContent(), -1, $count);
+        $content = Preg::replace('/^(?:(?<! ) {1,3})?\t/m', '\1    ', $tokens[$index]->getContent(), -1, $count);
 
         // Also check for more tabs.
         while (0 !== $count) {
-            $content = preg_replace('/^(\ +)?\t/m', '\1    ', $content, -1, $count);
+            $content = Preg::replace('/^(\ +)?\t/m', '\1    ', $content, -1, $count);
         }
 
         $indent = $this->indent;
 
         // change indent to expected one
-        $content = preg_replace_callback('/^(?:    )+/m', function ($matches) use ($indent) {
-            return str_replace('    ', $indent, $matches[0]);
+        $content = Preg::replaceCallback('/^(?:    )+/m', function ($matches) use ($indent) {
+            return $this->getExpectedIndent($matches[0], $indent);
         }, $content);
 
         return new Token([$tokens[$index]->getId(), $content]);
     }
 
     /**
-     * @param Tokens $tokens
-     * @param int    $index
+     * @param int $index
      *
      * @return Token
      */
@@ -125,14 +124,14 @@ final class IndentationTypeFixer extends AbstractFixer implements WhitespacesAwa
         }
 
         $indent = $this->indent;
-        $newContent = preg_replace_callback(
+        $newContent = Preg::replaceCallback(
             '/(\R)(\h+)/', // find indent
             function (array $matches) use ($indent) {
                 // normalize mixed indent
-                $content = preg_replace('/(?:(?<! ) {1,3})?\t/', '    ', $matches[2]);
+                $content = Preg::replace('/(?:(?<! ) {1,3})?\t/', '    ', $matches[2]);
 
                 // change indent to expected one
-                return $matches[1].str_replace('    ', $indent, $content);
+                return $matches[1].$this->getExpectedIndent($content, $indent);
             },
             $content
         );
@@ -142,5 +141,20 @@ final class IndentationTypeFixer extends AbstractFixer implements WhitespacesAwa
         }
 
         return new Token([T_WHITESPACE, $newContent]);
+    }
+
+    /**
+     * @param string $content
+     * @param string $indent
+     *
+     * @return string mixed
+     */
+    private function getExpectedIndent($content, $indent)
+    {
+        if ("\t" === $indent) {
+            $content = str_replace('    ', $indent, $content);
+        }
+
+        return $content;
     }
 }

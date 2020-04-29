@@ -13,8 +13,10 @@ use app\models\ObjectType;
 use app\models\Project;
 use app\models\DbTableContext;
 use app\models\DbTableType;
+use app\models\DeletedStatus;
 use Da\User\Filter\AccessRuleFilter;
 use yii\filters\AccessControl;
+use yii\helpers\Url;
 
 /**
  * DbtableController implements the CRUD actions for DbTable model.
@@ -72,6 +74,19 @@ class DbtableController extends Controller
 			$db_table_typeList[$db_table_type->id] = $db_table_type->name;
 		}
 		return $db_table_typeList;
+	}
+
+	private function getDeletedStatusList()
+	{
+		// autogeneriert ueber gii/CRUD
+		$deleted_statusModel = new DeletedStatus();
+		$deleted_statuss = $deleted_statusModel::find()->all();
+		$deleted_statusList = array();
+		foreach($deleted_statuss as $deleted_status)
+		{
+			$deleted_statusList[$deleted_status->id] = $deleted_status->name;
+		}
+		return $deleted_statusList;
 	}
 	
     public function behaviors()
@@ -222,6 +237,15 @@ class DbtableController extends Controller
      */
     public function actionCreate()
     {
+
+		$db_table_show_buttons_for_different_object_type_updates_arr = (new yii\db\Query())->from('app_config')->select(['valueINT'])->where(["key" => "db_table_show_buttons_for_different_object_type_updates"])->one();
+		$db_table_show_buttons_for_different_object_type_updates = $db_table_show_buttons_for_different_object_type_updates_arr['valueINT'];
+		if ($db_table_show_buttons_for_different_object_type_updates != 1) 
+		{
+			return $this->redirect(['dbtablefieldmultipleedit/create']);
+		}
+
+
 		        $model = new DbTable();
 
 		if (Yii::$app->request->post())
@@ -240,6 +264,7 @@ class DbtableController extends Controller
 'projectList' => $this->getProjectList(),		// autogeneriert ueber gii/CRUD
 'db_table_contextList' => $this->getDbTableContextList(),		// autogeneriert ueber gii/CRUD
 'db_table_typeList' => $this->getDbTableTypeList(),		// autogeneriert ueber gii/CRUD
+'deleted_statusList' => $this->getDeletedStatusList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
 		    }
@@ -252,6 +277,14 @@ class DbtableController extends Controller
      */
     public function actionUpdate($id)
     {
+		$db_table_show_buttons_for_different_object_type_updates_arr = (new yii\db\Query())->from('app_config')->select(['valueINT'])->where(["key" => "db_table_show_buttons_for_different_object_type_updates"])->one();
+		$db_table_show_buttons_for_different_object_type_updates = $db_table_show_buttons_for_different_object_type_updates_arr['valueINT'];
+		if ($db_table_show_buttons_for_different_object_type_updates != 1) 
+		{
+			return $this->redirect(['dbtablefieldmultipleedit/update', 'id' => $id]);
+		}
+		
+
 				$model = $this->findModel($id);
 
 		 if (!in_array($model->fkProject->id, Yii::$app->User->identity->permProjectsCanEdit)) {throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'You have no permission to edit this data.'));
@@ -267,6 +300,7 @@ class DbtableController extends Controller
 'projectList' => $this->getProjectList(),		// autogeneriert ueber gii/CRUD
 'db_table_contextList' => $this->getDbTableContextList(),		// autogeneriert ueber gii/CRUD
 'db_table_typeList' => $this->getDbTableTypeList(),		// autogeneriert ueber gii/CRUD
+'deleted_statusList' => $this->getDeletedStatusList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
 		    }
@@ -282,9 +316,22 @@ class DbtableController extends Controller
 		 if (!in_array($this->findModel($id)->fkProject->id, Yii::$app->User->identity->permProjectsCanEdit)) {throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'You have no permission to edit this data.'));
 	return;	}    
     
-        $this->findModel($id)->delete();
+		try {
+			$model = $this->findModel($id);
+			$model->delete();
+			return $this->redirect(['index']);
+		} catch (\Exception $e) {
+			$model->addError(null, $e->getMessage());
+			$errMsg = $e->getMessage();
+			
+			$errMsgAdd = "";
+			try{$errMsgAdd = '"'. $model->name . '"';} catch(\Exception $e){}
 
-        return $this->redirect(['index']);
+			if (strpos($errMsg, "Integrity constraint violation")) $errMsg = Yii::t('yii',"The object {errMsgAdd} is still referenced by other objects.", ['errMsgAdd' => $errMsgAdd]);
+			Yii::$app->session->setFlash('deleteError', Yii::t('yii','Object can\'t be deleted: ') . $errMsg);
+			return $this->redirect(Url::previous());  // Url::remember() is set in index-view
+		}
+
     }
 
     /**

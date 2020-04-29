@@ -12,7 +12,6 @@
 
 namespace PhpCsFixer;
 
-use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
 /**
@@ -25,13 +24,12 @@ abstract class AbstractNoUselessElseFixer extends AbstractFixer
      */
     public function getPriority()
     {
-        // should be run before NoWhitespaceInBlankLineFixer, NoExtraConsecutiveBlankLinesFixer, BracesFixer and after NoEmptyStatementFixer.
+        // should be run before NoWhitespaceInBlankLineFixer, NoExtraBlankLinesFixer, BracesFixer and after NoEmptyStatementFixer.
         return 25;
     }
 
     /**
-     * @param Tokens $tokens
-     * @param int    $index
+     * @param int $index
      *
      * @return bool
      */
@@ -92,8 +90,7 @@ abstract class AbstractNoUselessElseFixer extends AbstractFixer
      * [0] First is either T_IF, T_ELSE or T_ELSEIF
      * [1] Last is either '}' or ';' / T_CLOSE_TAG for short notation blocks
      *
-     * @param Tokens $tokens
-     * @param int    $index  T_IF, T_ELSE, T_ELSEIF
+     * @param int $index T_IF, T_ELSE, T_ELSEIF
      *
      * @return int[]
      */
@@ -102,7 +99,7 @@ abstract class AbstractNoUselessElseFixer extends AbstractFixer
         $close = $previous = $tokens->getPrevMeaningfulToken($index);
         // short 'if' detection
         if ($tokens[$close]->equals('}')) {
-            $previous = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_CURLY_BRACE, $close, false);
+            $previous = $tokens->findBlockStart(Tokens::BLOCK_TYPE_CURLY_BRACE, $close);
         }
 
         $open = $tokens->getPrevTokenOfKind($previous, [[T_IF], [T_ELSE], [T_ELSEIF]]);
@@ -117,9 +114,8 @@ abstract class AbstractNoUselessElseFixer extends AbstractFixer
     }
 
     /**
-     * @param Tokens $tokens
-     * @param int    $index           Index of the token to check
-     * @param int    $lowerLimitIndex Lower limit index. Since the token to check will always be in a conditional we must stop checking at this index
+     * @param int $index           Index of the token to check
+     * @param int $lowerLimitIndex Lower limit index. Since the token to check will always be in a conditional we must stop checking at this index
      *
      * @return bool
      */
@@ -137,7 +133,7 @@ abstract class AbstractNoUselessElseFixer extends AbstractFixer
         // token is always ')' here.
         // If it is part of the condition the token is always in, return false.
         // If it is not it is a nested condition so return true
-        $open = $tokens->findBlockEnd(Tokens::BLOCK_TYPE_PARENTHESIS_BRACE, $candidateIndex, false);
+        $open = $tokens->findBlockStart(Tokens::BLOCK_TYPE_PARENTHESIS_BRACE, $candidateIndex);
 
         return $tokens->getPrevMeaningfulToken($open) > $lowerLimitIndex;
     }
@@ -149,9 +145,8 @@ abstract class AbstractNoUselessElseFixer extends AbstractFixer
      * without {}. Assumes not passing the last `;`/close tag of the statement, not
      * out of range index, etc.
      *
-     * @param Tokens $tokens
-     * @param int    $index           Index of the token to check
-     * @param int    $lowerLimitIndex
+     * @param int $index           Index of the token to check
+     * @param int $lowerLimitIndex
      *
      * @return bool
      */
@@ -185,10 +180,9 @@ abstract class AbstractNoUselessElseFixer extends AbstractFixer
                     return false; // like `else {`
                 }
 
-                $index = $tokens->findBlockEnd(
+                $index = $tokens->findBlockStart(
                     Tokens::BLOCK_TYPE_PARENTHESIS_BRACE,
-                    $index,
-                    false
+                    $index
                 );
 
                 $index = $tokens->getPrevMeaningfulToken($index);
@@ -197,10 +191,9 @@ abstract class AbstractNoUselessElseFixer extends AbstractFixer
                 }
             } elseif ($token->equals(')')) {
                 $type = Tokens::detectBlockType($token);
-                $index = $tokens->findBlockEnd(
+                $index = $tokens->findBlockStart(
                     $type['type'],
-                    $index,
-                    false
+                    $index
                 );
 
                 $index = $tokens->getPrevMeaningfulToken($index);

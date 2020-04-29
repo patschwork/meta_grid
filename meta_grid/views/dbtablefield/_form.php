@@ -43,6 +43,20 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'datatype') ?>
 
+    <?= $form->field($model, 'bulk_load_checksum') ?>
+
+	<?php
+		// autogeneriert ueber gii/CRUD
+		echo $form->field($model, 'fk_deleted_status_id')->dropDownList($deleted_statusList, ['id'=>'name']);
+	?>
+ <!--  	// automatisch auskommentiert ueber gii/CRUD    <?= $form->field($model, 'fk_deleted_status_id')->textInput() ?>  -->
+
+    <?= $form->field($model, 'is_PrimaryKey')->checkbox() ?>
+
+    <?= $form->field($model, 'is_BusinessKey')->checkbox() ?>
+
+    <?= $form->field($model, 'is_GDPR_relevant')->checkbox() ?>
+
 
 
     <div class="form-group">

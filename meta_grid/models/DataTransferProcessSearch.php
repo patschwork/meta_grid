@@ -18,8 +18,8 @@ class DataTransferProcessSearch extends VDataTransferProcessSearchinterface
     public function rules()
     {
         return [
-            [['id', 'fk_object_type_id', 'fk_project_id', 'fk_data_transfer_type_id'], 'integer'],
-            [['uuid', 'name', 'description'], 'safe'],
+            [['id', 'fk_object_type_id', 'fk_project_id', 'fk_data_transfer_type_id', 'fk_deleted_status_id'], 'integer'],
+            [['uuid', 'name', 'description', 'location', 'source_internal_object_id'], 'safe'],
         ];
     }
 
@@ -71,11 +71,14 @@ class DataTransferProcessSearch extends VDataTransferProcessSearchinterface
             'fk_object_type_id' => $this->fk_object_type_id,
             'fk_project_id' => $this->fk_project_id,
             'fk_data_transfer_type_id' => $this->fk_data_transfer_type_id,
+            'fk_deleted_status_id' => $this->fk_deleted_status_id,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
             ->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'description', $this->description]);
+            ->andFilterWhere(['like', 'description', $this->description])
+            ->andFilterWhere(['like', 'location', $this->location])
+            ->andFilterWhere(['like', 'source_internal_object_id', $this->source_internal_object_id]);
 
         return $dataProvider;
     }

@@ -19,6 +19,7 @@ use PhpCsFixer\FixerConfiguration\FixerConfigurationResolver;
 use PhpCsFixer\FixerConfiguration\FixerOptionBuilder;
 use PhpCsFixer\FixerDefinition\CodeSample;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
+use PhpCsFixer\Preg;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
 
@@ -52,7 +53,7 @@ final class AlignMultilineCommentFixer extends AbstractFixer implements Configur
             'Each line of multi-line DocComments must have an asterisk [PSR-5] and must be aligned with the first one.',
             [
                 new CodeSample(
-'<?php
+                    '<?php
     /**
             * This is a DOC Comment
 with a line not prefixed with asterisk
@@ -61,7 +62,7 @@ with a line not prefixed with asterisk
 '
                 ),
                 new CodeSample(
-'<?php
+                    '<?php
     /*
             * This is a doc-like multiline comment
 */
@@ -69,7 +70,7 @@ with a line not prefixed with asterisk
                     ['comment_type' => 'phpdocs_like']
                 ),
                 new CodeSample(
-'<?php
+                    '<?php
     /*
             * This is a doc-like multiline comment
 with a line not prefixed with asterisk
@@ -80,6 +81,15 @@ with a line not prefixed with asterisk
                 ),
             ]
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPriority()
+    {
+        // Should run after ArrayIndentationFixer
+        return -40;
     }
 
     /**
@@ -108,19 +118,19 @@ with a line not prefixed with asterisk
                 --$previousIndex;
             }
             if ($tokens[$previousIndex]->isGivenKind(T_OPEN_TAG)) {
-                $whitespace = preg_replace('/\S/', '', $tokens[$previousIndex]->getContent()).$whitespace;
+                $whitespace = Preg::replace('/\S/', '', $tokens[$previousIndex]->getContent()).$whitespace;
             }
 
-            if (1 !== preg_match('/\R([ \t]*)$/', $whitespace, $matches)) {
+            if (1 !== Preg::match('/\R([ \t]*)$/', $whitespace, $matches)) {
                 continue;
             }
 
-            if ($token->isGivenKind(T_COMMENT) && 'all_multiline' !== $this->configuration['comment_type'] && 1 === preg_match('/\R(?:\R|\s*[^\s\*])/', $token->getContent())) {
+            if ($token->isGivenKind(T_COMMENT) && 'all_multiline' !== $this->configuration['comment_type'] && 1 === Preg::match('/\R(?:\R|\s*[^\s\*])/', $token->getContent())) {
                 continue;
             }
 
             $indentation = $matches[1];
-            $lines = preg_split('/\R/u', $token->getContent());
+            $lines = Preg::split('/\R/u', $token->getContent());
 
             foreach ($lines as $lineNumber => $line) {
                 if (0 === $lineNumber) {

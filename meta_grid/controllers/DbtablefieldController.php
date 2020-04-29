@@ -12,8 +12,10 @@ use yii\filters\VerbFilter;
 use app\models\ObjectType;
 use app\models\Project;
 use app\models\DbTable;
+use app\models\DeletedStatus;
 use Da\User\Filter\AccessRuleFilter;
 use yii\filters\AccessControl;
+use yii\helpers\Url;
 
 /**
  * DbtablefieldController implements the CRUD actions for DbTableField model.
@@ -53,11 +55,26 @@ class DbtablefieldController extends Controller
 		$db_tableModel = new DbTable();
 		$db_tables = $db_tableModel::find()->all();
 		$db_tableList = array();
+		$db_tableList[null] = null; // allow a NULL selection
 		foreach($db_tables as $db_table)
 		{
 			$db_tableList[$db_table->id] = $db_table->name;
 		}
 		return $db_tableList;
+	}
+
+	private function getDeletedStatusList()
+	{
+		// autogeneriert ueber gii/CRUD
+		$deleted_statusModel = new DeletedStatus();
+		$deleted_statuss = $deleted_statusModel::find()->all();
+		$deleted_statusList = array();
+		$deleted_statusList[null] = null; // allow a NULL selection
+		foreach($deleted_statuss as $deleted_status)
+		{
+			$deleted_statusList[$deleted_status->id] = $deleted_status->name;
+		}
+		return $deleted_statusList;
 	}
 	
     public function behaviors()
@@ -91,7 +108,7 @@ class DbtablefieldController extends Controller
 					],
 					[
 						'allow' => true,
-						'actions' => ['create', 'update'],
+						'actions' => ['create', 'update', 'createexternal'],
 						'roles' => ['author', 'global-create', 'create' ."-" . Yii::$app->controller->id],
 					],
 					[
@@ -225,6 +242,7 @@ class DbtablefieldController extends Controller
                 'object_typeList' => $this->getObjectTypeList(),		// autogeneriert ueber gii/CRUD
 'projectList' => $this->getProjectList(),		// autogeneriert ueber gii/CRUD
 'db_tableList' => $this->getDbTableList(),		// autogeneriert ueber gii/CRUD
+'deleted_statusList' => $this->getDeletedStatusList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
 		    }
@@ -251,6 +269,7 @@ class DbtablefieldController extends Controller
                 'object_typeList' => $this->getObjectTypeList(),		// autogeneriert ueber gii/CRUD
 'projectList' => $this->getProjectList(),		// autogeneriert ueber gii/CRUD
 'db_tableList' => $this->getDbTableList(),		// autogeneriert ueber gii/CRUD
+'deleted_statusList' => $this->getDeletedStatusList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
 		    }
@@ -266,9 +285,22 @@ class DbtablefieldController extends Controller
 		 if (!in_array($this->findModel($id)->fkProject->id, Yii::$app->User->identity->permProjectsCanEdit)) {throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'You have no permission to edit this data.'));
 	return;	}    
     
-        $this->findModel($id)->delete();
+		try {
+			$model = $this->findModel($id);
+			$model->delete();
+			return $this->redirect(['index']);
+		} catch (\Exception $e) {
+			$model->addError(null, $e->getMessage());
+			$errMsg = $e->getMessage();
+			
+			$errMsgAdd = "";
+			try{$errMsgAdd = '"'. $model->name . '"';} catch(\Exception $e){}
 
-        return $this->redirect(['index']);
+			if (strpos($errMsg, "Integrity constraint violation")) $errMsg = Yii::t('yii',"The object {errMsgAdd} is still referenced by other objects.", ['errMsgAdd' => $errMsgAdd]);
+			Yii::$app->session->setFlash('deleteError', Yii::t('yii','Object can\'t be deleted: ') . $errMsg);
+			return $this->redirect(Url::previous());  // Url::remember() is set in index-view
+		}
+
     }
 
     /**

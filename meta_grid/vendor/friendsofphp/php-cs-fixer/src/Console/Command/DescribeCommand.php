@@ -12,20 +12,23 @@
 
 namespace PhpCsFixer\Console\Command;
 
-use PhpCsFixer\Diff\GeckoPackages\DiffOutputBuilder\UnifiedDiffOutputBuilder;
-use PhpCsFixer\Diff\v2_0\Differ;
 use PhpCsFixer\Differ\DiffConsoleFormatter;
+use PhpCsFixer\Differ\FullDiffer;
 use PhpCsFixer\Fixer\ConfigurableFixerInterface;
 use PhpCsFixer\Fixer\ConfigurationDefinitionFixerInterface;
 use PhpCsFixer\Fixer\DefinedFixerInterface;
 use PhpCsFixer\Fixer\DeprecatedFixerInterface;
 use PhpCsFixer\Fixer\FixerInterface;
+use PhpCsFixer\FixerConfiguration\AliasedFixerOption;
+use PhpCsFixer\FixerConfiguration\AllowedValueSubset;
+use PhpCsFixer\FixerConfiguration\DeprecatedFixerOption;
 use PhpCsFixer\FixerDefinition\CodeSampleInterface;
 use PhpCsFixer\FixerDefinition\FileSpecificCodeSampleInterface;
 use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\FixerDefinition\FixerDefinitionInterface;
 use PhpCsFixer\FixerDefinition\VersionSpecificCodeSampleInterface;
 use PhpCsFixer\FixerFactory;
+use PhpCsFixer\Preg;
 use PhpCsFixer\RuleSet;
 use PhpCsFixer\StdinFileInfo;
 use PhpCsFixer\Tokenizer\Tokens;
@@ -45,7 +48,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 final class DescribeCommand extends Command
 {
-    const COMMAND_NAME = 'describe';
+    protected static $defaultName = 'describe';
 
     /**
      * @var string[]
@@ -62,9 +65,6 @@ final class DescribeCommand extends Command
      */
     private $fixers;
 
-    /**
-     * @param null|FixerFactory $fixerFactory
-     */
     public function __construct(FixerFactory $fixerFactory = null)
     {
         parent::__construct();
@@ -83,7 +83,6 @@ final class DescribeCommand extends Command
     protected function configure()
     {
         $this
-            ->setName(self::COMMAND_NAME)
             ->setDefinition(
                 [
                     new InputArgument('name', InputArgument::REQUIRED, 'Name of rule / set.'),
@@ -104,7 +103,7 @@ final class DescribeCommand extends Command
             if ('@' === $name[0]) {
                 $this->describeSet($output, $name);
 
-                return;
+                return 0;
             }
 
             $this->describeRule($output, $name);
@@ -124,11 +123,12 @@ final class DescribeCommand extends Command
                 null === $alternative ? '' : ' Did you mean "'.$alternative.'"?'
             ));
         }
+
+        return 0;
     }
 
     /**
-     * @param OutputInterface $output
-     * @param string          $name
+     * @param string $name
      */
     private function describeRule(OutputInterface $output, $name)
     {
@@ -152,11 +152,15 @@ final class DescribeCommand extends Command
             $message = [] === $successors
                 ? 'will be removed on next major version'
                 : sprintf('use %s instead', Utils::naturalLanguageJoinWithBackticks($successors));
-            $message = preg_replace('/(`.+?`)/', '<info>$1</info>', $message);
+            $message = Preg::replace('/(`.+?`)/', '<info>$1</info>', $message);
             $description .= sprintf(' <error>DEPRECATED</error>: %s.', $message);
         }
 
         $output->writeln(sprintf('<info>Description of</info> %s <info>rule</info>.', $name));
+        if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
+            $output->writeln(sprintf('Fixer class: <comment>%s</comment>.', \get_class($fixer)));
+        }
+
         $output->writeln($description);
         if ($definition->getDescription()) {
             $output->writeln($definition->getDescription());
@@ -177,7 +181,7 @@ final class DescribeCommand extends Command
             $configurationDefinition = $fixer->getConfigurationDefinition();
             $options = $configurationDefinition->getOptions();
 
-            $output->writeln(sprintf('Fixer is configurable using following option%s:', 1 === count($options) ? '' : 's'));
+            $output->writeln(sprintf('Fixer is configurable using following option%s:', 1 === \count($options) ? '' : 's'));
 
             foreach ($options as $option) {
                 $line = '* <info>'.OutputFormatter::escape($option->getName()).'</info>';
@@ -185,18 +189,27 @@ final class DescribeCommand extends Command
                 $allowed = HelpCommand::getDisplayableAllowedValues($option);
                 if (null !== $allowed) {
                     foreach ($allowed as &$value) {
-                        $value = HelpCommand::toString($value);
+                        if ($value instanceof AllowedValueSubset) {
+                            $value = 'a subset of <comment>'.HelpCommand::toString($value->getAllowedValues()).'</comment>';
+                        } else {
+                            $value = '<comment>'.HelpCommand::toString($value).'</comment>';
+                        }
                     }
                 } else {
-                    $allowed = $option->getAllowedTypes();
+                    $allowed = array_map(
+                        function ($type) {
+                            return '<comment>'.$type.'</comment>';
+                        },
+                        $option->getAllowedTypes()
+                    );
                 }
 
                 if (null !== $allowed) {
-                    $line .= ' (<comment>'.implode('</comment>, <comment>', $allowed).'</comment>)';
+                    $line .= ' ('.implode(', ', $allowed).')';
                 }
 
-                $description = preg_replace('/(`.+?`)/', '<info>$1</info>', OutputFormatter::escape($option->getDescription()));
-                $line .= ': '.lcfirst(preg_replace('/\.$/', '', $description)).'; ';
+                $description = Preg::replace('/(`.+?`)/', '<info>$1</info>', OutputFormatter::escape($option->getDescription()));
+                $line .= ': '.lcfirst(Preg::replace('/\.$/', '', $description)).'; ';
                 if ($option->hasDefault()) {
                     $line .= sprintf(
                         'defaults to <comment>%s</comment>',
@@ -204,6 +217,17 @@ final class DescribeCommand extends Command
                     );
                 } else {
                     $line .= '<comment>required</comment>';
+                }
+
+                if ($option instanceof DeprecatedFixerOption) {
+                    $line .= '. <error>DEPRECATED</error>: '.Preg::replace(
+                        '/(`.+?`)/',
+                        '<info>$1</info>',
+                        OutputFormatter::escape(lcfirst($option->getDeprecationMessage()))
+                    );
+                }
+                if ($option instanceof AliasedFixerOption) {
+                    $line .= '; <error>DEPRECATED</error> alias: <comment>'.$option->getAlias().'</comment>';
                 }
 
                 $output->writeln($line);
@@ -224,15 +248,16 @@ final class DescribeCommand extends Command
             $output->writeln('');
         }
 
-        $codeSamples = array_filter($definition->getCodeSamples(), function (CodeSampleInterface $codeSample) {
+        /** @var CodeSampleInterface[] $codeSamples */
+        $codeSamples = array_filter($definition->getCodeSamples(), static function (CodeSampleInterface $codeSample) {
             if ($codeSample instanceof VersionSpecificCodeSampleInterface) {
-                return $codeSample->isSuitableFor(PHP_VERSION_ID);
+                return $codeSample->isSuitableFor(\PHP_VERSION_ID);
             }
 
             return true;
         });
 
-        if (!count($codeSamples)) {
+        if (!\count($codeSamples)) {
             $output->writeln([
                 'Fixing examples can not be demonstrated on the current PHP version.',
                 '',
@@ -240,23 +265,23 @@ final class DescribeCommand extends Command
         } else {
             $output->writeln('Fixing examples:');
 
-            $differ = new Differ(new UnifiedDiffOutputBuilder([
-                'fromFile' => 'Original',
-                'toFile' => 'New',
-            ]));
-
-            $diffFormatter = new DiffConsoleFormatter($output->isDecorated(), sprintf(
-                '<comment>   ---------- begin diff ----------</comment>%s%%s%s<comment>   ----------- end diff -----------</comment>',
-                PHP_EOL,
-                PHP_EOL
-            ));
+            $differ = new FullDiffer();
+            $diffFormatter = new DiffConsoleFormatter(
+                $output->isDecorated(),
+                sprintf(
+                    '<comment>   ---------- begin diff ----------</comment>%s%%s%s<comment>   ----------- end diff -----------</comment>',
+                    PHP_EOL,
+                    PHP_EOL
+                )
+            );
 
             foreach ($codeSamples as $index => $codeSample) {
                 $old = $codeSample->getCode();
                 $tokens = Tokens::fromCode($old);
 
+                $configuration = $codeSample->getConfiguration();
+
                 if ($fixer instanceof ConfigurableFixerInterface) {
-                    $configuration = $codeSample->getConfiguration();
                     $fixer->configure(null === $configuration ? [] : $configuration);
                 }
 
@@ -285,12 +310,11 @@ final class DescribeCommand extends Command
     }
 
     /**
-     * @param OutputInterface $output
-     * @param string          $name
+     * @param string $name
      */
     private function describeSet(OutputInterface $output, $name)
     {
-        if (!in_array($name, $this->getSetNames(), true)) {
+        if (!\in_array($name, $this->getSetNames(), true)) {
             throw new DescribeNameNotFoundException($name, 'set');
         }
 
@@ -357,8 +381,7 @@ final class DescribeCommand extends Command
     }
 
     /**
-     * @param OutputInterface $output
-     * @param string          $type   'rule'|'set'
+     * @param string $type 'rule'|'set'
      */
     private function describeList(OutputInterface $output, $type)
     {
@@ -377,7 +400,7 @@ final class DescribeCommand extends Command
         foreach ($describe as $list => $items) {
             $output->writeln(sprintf('<comment>Defined %s:</comment>', $list));
             foreach ($items as $name => $item) {
-                $output->writeln(sprintf('* <info>%s</info>', is_string($name) ? $name : $item));
+                $output->writeln(sprintf('* <info>%s</info>', \is_string($name) ? $name : $item));
             }
         }
     }

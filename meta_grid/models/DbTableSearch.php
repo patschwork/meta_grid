@@ -18,7 +18,7 @@ class DbTableSearch extends VDbTableSearchinterface
     public function rules()
     {
         return [
-            [['id', 'fk_object_type_id', 'fk_project_id', 'fk_db_table_context_id', 'fk_db_table_type_id'], 'integer'],
+            [['id', 'fk_object_type_id', 'fk_project_id', 'fk_db_table_context_id', 'fk_db_table_type_id', 'fk_deleted_status_id'], 'integer'],
             [['uuid', 'name', 'description', 'location'], 'safe'],
         ];
     }
@@ -72,6 +72,7 @@ class DbTableSearch extends VDbTableSearchinterface
             'fk_project_id' => $this->fk_project_id,
             'fk_db_table_context_id' => $this->fk_db_table_context_id,
             'fk_db_table_type_id' => $this->fk_db_table_type_id,
+            'fk_deleted_status_id' => $this->fk_deleted_status_id,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])

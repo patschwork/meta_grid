@@ -7,4 +7,7 @@ return [
 #    'username' => 'root',
 #    'password' => '',
     'charset' => 'utf8',
+    'on afterOpen' => function($event) {
+       $event->sender->createCommand("PRAGMA foreign_keys = ON")->execute();
+        },
 ];
