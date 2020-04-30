@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000059/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000059" context="url table">
+
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_perspective_filter_log_DELETE;
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_perspective_filter_log_DELETE AFTER DELETE
+ON perspective_filter
+BEGIN
+   INSERT INTO perspective_filter_log (log_action, id,uuid,fk_language_id, fk_object_type_id, fk_object_type_uuid,filter_attribute_name,filter_value,ref_fk_object_type_id) VALUES ('DELETE',old.id,old.uuid,old.fk_language_id, old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.filter_attribute_name,old.filter_value,old.ref_fk_object_type_id);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+		]]>		
+		</sql>
+
+		<comment>
+		<![CDATA[
+		Bugfix trigger TRIG_perspective_filter_log_DELETE.
+		Used objects:
+			TRIG_perspective_filter_log_DELETE
+		Phabricator tasks:
+			T47
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

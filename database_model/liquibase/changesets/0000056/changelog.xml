@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000056/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000056" context="url table">
+
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	DROP TRIGGER IF EXISTS TRIG_keyfigure_log_DELETE;
+	]]>
+</sql>
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	CREATE TRIGGER TRIG_keyfigure_log_DELETE AFTER DELETE
+ON keyfigure
+BEGIN
+   INSERT INTO keyfigure_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,formula,aggregation,character,type,unit,value_range,cumulation_possible) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.formula,old.aggregation,old.character,old.type,old.unit,old.value_range,old.cumulation_possible);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+]]>
+</sql>
+
+
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	DROP TRIGGER IF EXISTS TRIG_object_type_log_DELETE;
+	]]>
+</sql>
+
+	
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	CREATE TRIGGER TRIG_object_type_log_DELETE AFTER DELETE
+ON object_type
+BEGIN
+   INSERT INTO object_type_log (log_action, id,uuid,name) VALUES ('DELETE',old.id,old.uuid,old.name);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+]]>
+</sql>
+
+
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	DROP TRIGGER IF EXISTS TRIG_client_log_DELETE;
+	]]>
+</sql>
+	
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	CREATE TRIGGER TRIG_client_log_DELETE AFTER DELETE
+ON client
+BEGIN
+   INSERT INTO client_log (log_action, id,uuid,name,description) VALUES ('DELETE',old.id,old.uuid,old.name,old.description);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+]]>
+</sql>
+
+
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	DROP TRIGGER IF EXISTS TRIG_project_log_DELETE;
+	]]>
+</sql>
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	
+	CREATE TRIGGER TRIG_project_log_DELETE AFTER DELETE
+ON project
+BEGIN
+   INSERT INTO project_log (log_action, id,uuid,fk_client_id, fk_client_uuid,name,description) VALUES ('DELETE',old.id,old.uuid,old.fk_client_id, (SELECT uuid FROM client WHERE id=old.fk_client_id),old.name,old.description);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+]]>
+</sql>
+
+
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	DROP TRIGGER IF EXISTS TRIG_sourcesystem_log_DELETE;
+	]]>
+</sql>
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	CREATE TRIGGER TRIG_sourcesystem_log_DELETE AFTER DELETE
+ON sourcesystem
+BEGIN
+   INSERT INTO sourcesystem_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_contact_group_id_as_supporter, fk_contact_group_uuid_as_supporter) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_contact_group_id_as_supporter, (SELECT uuid FROM contact_group WHERE id=old.fk_contact_group_id_as_supporter));
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+]]>
+</sql>
+
+
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	DROP TRIGGER IF EXISTS TRIG_data_delivery_object_log_DELETE;
+	]]>
+</sql>
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	CREATE TRIGGER TRIG_data_delivery_object_log_DELETE AFTER DELETE
+ON data_delivery_object
+BEGIN
+   INSERT INTO data_delivery_object_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_tool_id, fk_tool_uuid,fk_data_delivery_type_id, fk_data_delivery_type_uuid,fk_contact_group_id_as_data_owner, fk_contact_group_uuid_as_data_owner) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_tool_id, (SELECT uuid FROM tool WHERE id=old.fk_tool_id),old.fk_data_delivery_type_id, (SELECT uuid FROM data_delivery_type WHERE id=old.fk_data_delivery_type_id),old.fk_contact_group_id_as_data_owner, (SELECT uuid FROM contact_group WHERE id=old.fk_contact_group_id_as_data_owner));
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+]]>
+</sql>
+
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	DROP TRIGGER IF EXISTS TRIG_attribute_log_DELETE;
+	]]>
+</sql>
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	CREATE TRIGGER TRIG_attribute_log_DELETE AFTER DELETE
+ON attribute
+BEGIN
+   INSERT INTO attribute_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,formula) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.formula);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+]]>
+</sql>
+
+
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	DROP TRIGGER IF EXISTS TRIG_tool_type_log_DELETE;
+	]]>
+</sql>
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	CREATE TRIGGER TRIG_tool_type_log_DELETE AFTER DELETE
+ON tool_type
+BEGIN
+   INSERT INTO tool_type_log (log_action, id,uuid,name,description) VALUES ('DELETE',old.id,old.uuid,old.name,old.description);
+END;
+]]>
+</sql>
+
+
+
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	DROP TRIGGER IF EXISTS TRIG_db_table_log_DELETE;
+]]>
+</sql>
+	
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	CREATE TRIGGER TRIG_db_table_log_DELETE AFTER DELETE
+ON db_table
+BEGIN
+   INSERT INTO db_table_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,location,fk_db_table_context_id, fk_db_table_context_uuid,fk_db_table_type_id, fk_db_table_type_uuid) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.location,old.fk_db_table_context_id, (SELECT uuid FROM db_table_context WHERE id=old.fk_db_table_context_id),old.fk_db_table_type_id, (SELECT uuid FROM db_table_type WHERE id=old.fk_db_table_type_id));
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+]]>
+</sql>
+
+
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	DROP TRIGGER IF EXISTS TRIG_db_table_field_log_DELETE;
+	]]>
+</sql>
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	CREATE TRIGGER TRIG_db_table_field_log_DELETE AFTER DELETE
+ON db_table_field
+BEGIN
+   INSERT INTO db_table_field_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_db_table_id, fk_db_table_uuid,datatype,bulk_load_checksum) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_db_table_id, (SELECT uuid FROM db_table WHERE id=old.fk_db_table_id),old.datatype,old.bulk_load_checksum);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+]]>
+</sql>
+
+
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	DROP TRIGGER IF EXISTS TRIG_db_table_context_log_DELETE;
+	]]>
+</sql>
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	CREATE TRIGGER TRIG_db_table_context_log_DELETE AFTER DELETE
+ON db_table_context
+BEGIN
+   INSERT INTO db_table_context_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,prefix) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.prefix);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+]]>
+</sql>
+
+
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	DROP TRIGGER IF EXISTS TRIG_db_database_log_DELETE;
+	]]>
+</sql>
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	CREATE TRIGGER TRIG_db_database_log_DELETE AFTER DELETE
+ON db_database
+BEGIN
+   INSERT INTO db_database_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_tool_id, fk_tool_uuid) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_tool_id, (SELECT uuid FROM tool WHERE id=old.fk_tool_id));
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+]]>
+</sql>
+
+
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	DROP TRIGGER IF EXISTS TRIG_scheduling_log_DELETE;
+	]]>
+</sql>
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	CREATE TRIGGER TRIG_scheduling_log_DELETE AFTER DELETE
+ON scheduling
+BEGIN
+   INSERT INTO scheduling_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_tool_id, fk_tool_uuid,scheduling_series) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_tool_id, (SELECT uuid FROM tool WHERE id=old.fk_tool_id),old.scheduling_series);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+]]>
+</sql>
+
+
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	DROP TRIGGER IF EXISTS TRIG_parameter_log_DELETE;
+	]]>
+</sql>
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	CREATE TRIGGER TRIG_parameter_log_DELETE AFTER DELETE
+ON parameter
+BEGIN
+   INSERT INTO parameter_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,is_optional,default_value,datatype,range) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.is_optional,old.default_value,old.datatype,old.range);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+]]>
+</sql>
+
+
+
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	DROP TRIGGER IF EXISTS TRIG_object_comment_log_DELETE;
+	]]>
+</sql>
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	CREATE TRIGGER TRIG_object_comment_log_DELETE AFTER DELETE
+ON object_comment
+BEGIN
+   INSERT INTO object_comment_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,ref_fk_object_id,ref_fk_object_type_id,comment,created_at_datetime) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.ref_fk_object_id,old.ref_fk_object_type_id,old.comment,old.created_at_datetime);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+]]>
+</sql>
+
+
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	DROP TRIGGER IF EXISTS TRIG_glossary_log_DELETE;
+	]]>
+</sql>
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	CREATE TRIGGER TRIG_glossary_log_DELETE AFTER DELETE
+ON glossary
+BEGIN
+   INSERT INTO glossary_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+]]>
+</sql>
+
+
+
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	DROP TRIGGER IF EXISTS TRIG_data_transfer_process_log_DELETE;
+]]>
+</sql>
+	
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	CREATE TRIGGER TRIG_data_transfer_process_log_DELETE AFTER DELETE
+ON data_transfer_process
+BEGIN
+   INSERT INTO data_transfer_process_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_data_transfer_type_id, fk_data_transfer_type_uuid,location,source_internal_object_id) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_data_transfer_type_id, (SELECT uuid FROM data_transfer_type WHERE id=old.fk_data_transfer_type_id),old.location,old.source_internal_object_id);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+]]>
+</sql>
+
+
+
+
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	DROP TRIGGER IF EXISTS TRIG_contact_group_log_DELETE;
+	]]>
+</sql>
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	CREATE TRIGGER TRIG_contact_group_log_DELETE AFTER DELETE
+ON contact_group
+BEGIN
+   INSERT INTO contact_group_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_client_id, fk_client_uuid,name,description,short_name) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_client_id, (SELECT uuid FROM client WHERE id=old.fk_client_id),old.name,old.description,old.short_name);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+]]>
+</sql>
+
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	DROP TRIGGER IF EXISTS TRIG_contact_log_DELETE;
+	]]>
+</sql>
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	CREATE TRIGGER TRIG_contact_log_DELETE AFTER DELETE
+ON contact
+BEGIN
+   INSERT INTO contact_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_contact_group_id, fk_contact_group_uuid,fk_client_id, fk_client_uuid,givenname,surname,email,phone,mobile,ldap_cn,description) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_contact_group_id, (SELECT uuid FROM contact_group WHERE id=old.fk_contact_group_id),old.fk_client_id, (SELECT uuid FROM client WHERE id=old.fk_client_id),old.givenname,old.surname,old.email,old.phone,old.mobile,old.ldap_cn,old.description);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+]]>
+</sql>
+
+
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	DROP TRIGGER IF EXISTS TRIG_bracket_log_DELETE;
+	]]>
+</sql>
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	CREATE TRIGGER TRIG_bracket_log_DELETE AFTER DELETE
+ON bracket
+BEGIN
+   INSERT INTO bracket_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_attribute_id, fk_attribute_uuid,fk_object_type_id_as_searchFilter, fk_object_type_uuid_as_searchFilter) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_attribute_id, (SELECT uuid FROM attribute WHERE id=old.fk_attribute_id),old.fk_object_type_id_as_searchFilter, (SELECT uuid FROM object_type_as_searchFilter WHERE id=old.fk_object_type_id_as_searchFilter));
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+]]>
+</sql>
+
+
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	DROP TRIGGER IF EXISTS TRIG_bracket_searchPattern_log_DELETE;
+	]]>
+</sql>
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	CREATE TRIGGER TRIG_bracket_searchPattern_log_DELETE AFTER DELETE
+ON bracket_searchPattern
+BEGIN
+   INSERT INTO bracket_searchPattern_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_bracket_id, fk_bracket_uuid,searchPattern) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_bracket_id, (SELECT uuid FROM bracket WHERE id=old.fk_bracket_id),old.searchPattern);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+]]>
+</sql>
+
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	DROP TRIGGER IF EXISTS TRIG_perspective_filter_log_DELETE;
+	]]>
+</sql>
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	CREATE TRIGGER TRIG_perspective_filter_log_DELETE AFTER DELETE
+ON perspective_filter
+BEGIN
+   INSERT INTO perspective_filter_log (log_action, id,uuid,fk_language_id, fk_object_type_id, fk_object_type_uuid,filter_attribute_name,filter_value,ref_fk_object_type_id) VALUES ('DELETE',old.id,old.uuid,old.fk_language_id, (SELECT uuid FROM language WHERE id=old.fk_language_id),old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.filter_attribute_name,old.filter_value,old.ref_fk_object_type_id);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+]]>
+</sql>
+
+
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	DROP TRIGGER IF EXISTS TRIG_mapping_qualifier_log_DELETE;
+	]]>
+</sql>
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	CREATE TRIGGER TRIG_mapping_qualifier_log_DELETE AFTER DELETE
+ON mapping_qualifier
+BEGIN
+   INSERT INTO mapping_qualifier_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,name,short_name,description,needs_object_depends_on) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.name,old.short_name,old.description,old.needs_object_depends_on);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+]]>
+</sql>
+
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	DROP TRIGGER IF EXISTS TRIG_url_log_DELETE;
+	]]>
+</sql>
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	CREATE TRIGGER TRIG_url_log_DELETE AFTER DELETE
+ON url
+BEGIN
+   INSERT INTO url_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,url) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.url);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+]]>
+</sql>
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	DROP TRIGGER IF EXISTS TRIG_cleanup_queue_log_INSERT;
+	]]>
+</sql>
+
+<sql stripComments="false" splitStatements="false">
+	<![CDATA[
+	DROP TRIGGER IF EXISTS TRIG_cleanup_queue_log_UPDATE;
+	]]>
+</sql>
+
+
+
+		<comment>
+		<![CDATA[
+		Modified TRIGGER
+
+		Used objects:
+			TRIG_keyfigure_log_DELETE
+			TRIG_object_type_log_DELETE
+			TRIG_client_log_DELETE
+			TRIG_project_log_DELETE
+			TRIG_sourcesystem_log_DELETE
+			TRIG_data_delivery_object_log_DELETE
+			TRIG_attribute_log_DELETE
+			TRIG_tool_type_log_DELETE
+			TRIG_db_table_log_DELETE
+			TRIG_db_table_field_log_DELETE
+			TRIG_db_table_context_log_DELETE
+			TRIG_db_database_log_DELETE
+			TRIG_scheduling_log_DELETE
+			TRIG_parameter_log_DELETE
+			TRIG_object_comment_log_DELETE
+			TRIG_glossary_log_DELETE
+			TRIG_data_transfer_process_log_DELETE
+			TRIG_contact_group_log_DELETE
+			TRIG_contact_log_DELETE
+			TRIG_bracket_log_DELETE
+			TRIG_bracket_searchPattern_log_DELETE
+			TRIG_perspective_filter_log_DELETE
+			TRIG_mapping_qualifier_log_DELETE
+			TRIG_url_log_DELETE
+		Phabricator tasks:
+			T33, T45
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

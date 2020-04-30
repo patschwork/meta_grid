@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000064/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000064" context="deleted_state">
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE keyfigure_log ADD COLUMN fk_deleted_status_id INTEGER;
+		]]>
+</sql>
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE sourcesystem_log ADD COLUMN fk_deleted_status_id INTEGER;
+		]]>
+		</sql>
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE data_delivery_object_log ADD COLUMN fk_deleted_status_id INTEGER;
+		]]>
+		</sql>
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE db_table_log ADD COLUMN fk_deleted_status_id INTEGER;
+		]]>
+		</sql>
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE db_table_field_log ADD COLUMN fk_deleted_status_id INTEGER;
+		]]>
+		</sql>
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE parameter_log ADD COLUMN fk_deleted_status_id INTEGER;
+		]]>
+		</sql>
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE scheduling_log ADD COLUMN fk_deleted_status_id INTEGER;
+		]]>
+		</sql>
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE db_database_log ADD COLUMN fk_deleted_status_id INTEGER;
+		]]>
+		</sql>
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE data_transfer_process_log ADD COLUMN fk_deleted_status_id INTEGER;
+		]]>
+		</sql>
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE contact_group_log ADD COLUMN fk_deleted_status_id INTEGER;
+		]]>
+		</sql>
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE contact_log ADD COLUMN fk_deleted_status_id INTEGER;
+		]]>
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE keyfigure_log ADD COLUMN fk_deleted_status_uuid TEXT;
+		]]>
+		</sql>
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE sourcesystem_log ADD COLUMN fk_deleted_status_uuid TEXT;
+		]]>
+		</sql>
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE data_delivery_object_log ADD COLUMN fk_deleted_status_uuid TEXT;
+		]]>
+		</sql>
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE db_table_log ADD COLUMN fk_deleted_status_uuid TEXT;
+		]]>
+		</sql>
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE db_table_field_log ADD COLUMN fk_deleted_status_uuid TEXT;
+		]]>
+		</sql>
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE parameter_log ADD COLUMN fk_deleted_status_uuid TEXT;
+		]]>
+		</sql>
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE scheduling_log ADD COLUMN fk_deleted_status_uuid TEXT;
+		]]>
+		</sql>
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE db_database_log ADD COLUMN fk_deleted_status_uuid TEXT;
+		]]>
+		</sql>
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE data_transfer_process_log ADD COLUMN fk_deleted_status_uuid TEXT;
+		]]>
+		</sql>
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE contact_group_log ADD COLUMN fk_deleted_status_uuid TEXT;
+		]]>
+		</sql>
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE contact_log ADD COLUMN fk_deleted_status_uuid TEXT;
+		]]>
+		</sql>
+
+		
+		<comment>
+		<![CDATA[
+		New column "fk_deleted_status_id" for log tables
+		Used objects:
+			keyfigure_log
+			sourcesystem_log
+			data_delivery_object_log
+			db_table_log
+			db_table_field_log
+			parameter_log
+			scheduling_log
+			db_database_log
+			data_transfer_process_log
+			contact_group_log
+			contact_log
+		Phabricator tasks:
+			T28
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

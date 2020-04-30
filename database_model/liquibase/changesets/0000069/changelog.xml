@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000069/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000069" context="keyfigure">
+
+        <!-- Those views are automatically generated with a python helper tool: dwh_meta_v2\helper_tools\Python\database\create_wwwsqldesigner_model_additional_search_views.py -->
+        <createView replaceIfExists="true" viewName="v_keyfigure_SearchInterface">
+        <![CDATA[
+        SELECT
+                id
+                ,IFNULL(uuid, '') AS uuid
+                ,fk_object_type_id
+                ,fk_project_id
+                ,IFNULL(name, '') AS name
+                ,IFNULL(description, '') AS description
+                ,IFNULL(formula, '') AS formula
+                ,IFNULL(aggregation, '') AS aggregation
+                ,IFNULL(character, '') AS character
+                ,IFNULL(type, '') AS type
+                ,IFNULL(unit, '') AS unit
+                ,IFNULL(value_range, '') AS value_range
+                ,cumulation_possible
+                ,fk_deleted_status_id
+        FROM keyfigure
+        ]]>
+        </createView>
+
+        <comment>
+        <![CDATA[
+        Used objects:
+                v_keyfigure_SearchInterface
+        Phabricator tasks:
+                T64
+        ]]>
+        </comment>
+
+	</changeSet>
+</databaseChangeLog>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000062/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000062" context="url table">
+
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_bracket_log_INSERT;
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_bracket_log_INSERT AFTER INSERT
+ON bracket
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   INSERT INTO bracket_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_attribute_id, fk_attribute_uuid,fk_object_type_id_as_searchFilter, fk_object_type_uuid_as_searchFilter) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_attribute_id, (SELECT uuid FROM attribute WHERE id=new.fk_attribute_id),new.fk_object_type_id_as_searchFilter, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id_as_searchFilter));
+   UPDATE bracket SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   DELETE FROM _newUUID;
+   DELETE FROM bracket_log WHERE log_id=(SELECT MAX(log_id)+1 FROM bracket_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
+END;
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_bracket_log_UPDATE;
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_bracket_log_UPDATE AFTER UPDATE
+ON bracket
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   UPDATE bracket SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   INSERT INTO bracket_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_attribute_id, fk_attribute_uuid,fk_object_type_id_as_searchFilter, fk_object_type_uuid_as_searchFilter) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_attribute_id, (SELECT uuid FROM attribute WHERE id=new.fk_attribute_id),new.fk_object_type_id_as_searchFilter, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id_as_searchFilter));
+   DELETE FROM _newUUID;
+END;
+  		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_bracket_log_DELETE;
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_bracket_log_DELETE AFTER DELETE
+ON bracket
+BEGIN
+   INSERT INTO bracket_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_attribute_id, fk_attribute_uuid,fk_object_type_id_as_searchFilter, fk_object_type_uuid_as_searchFilter) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_attribute_id, (SELECT uuid FROM attribute WHERE id=old.fk_attribute_id),old.fk_object_type_id_as_searchFilter, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id_as_searchFilter));
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+		]]>		
+		</sql>
+
+		
+		
+		<comment>
+		<![CDATA[
+		Bugfix trigger because of _as_ handling.
+		Used objects:
+			TRIG_bracket_log_INSERT
+			TRIG_bracket_log_UPDATE
+			TRIG_bracket_log_DELETE
+		Phabricator tasks:
+			T50
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

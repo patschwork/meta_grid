@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000070/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000070" context="contact">
+
+        <!-- Those views are automatically generated with a python helper tool: dwh_meta_v2\helper_tools\Python\database\create_wwwsqldesigner_model_additional_search_views.py -->
+        <createView replaceIfExists="true" viewName="v_contact_SearchInterface">
+        <![CDATA[
+        SELECT
+                id
+                ,IFNULL(uuid, '') AS uuid
+                ,fk_object_type_id
+                ,fk_contact_group_id
+                ,fk_client_id
+                ,IFNULL(givenname, '') AS givenname
+                ,IFNULL(surname, '') AS surname
+                ,IFNULL(email, '') AS email
+                ,IFNULL(phone, '') AS phone
+                ,IFNULL(mobile, '') AS mobile
+                ,IFNULL(ldap_cn, '') AS ldap_cn
+                ,IFNULL(description, '') AS description
+                ,fk_deleted_status_id
+        FROM contact
+        ]]>
+        </createView>
+
+        <comment>
+        <![CDATA[
+        Used objects:
+                v_contact_SearchInterface
+        Phabricator tasks:
+                T64
+        ]]>
+        </comment>
+
+	</changeSet>
+</databaseChangeLog>

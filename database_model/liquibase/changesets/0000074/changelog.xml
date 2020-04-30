@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000074/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000074" context="data_transfer_process">
+
+        <!-- Those views are automatically generated with a python helper tool: dwh_meta_v2\helper_tools\Python\database\create_wwwsqldesigner_model_additional_search_views.py -->
+        <createView replaceIfExists="true" viewName="v_data_transfer_process_SearchInterface">
+        <![CDATA[
+        SELECT
+                id
+                ,IFNULL(uuid, '') AS uuid
+                ,fk_object_type_id
+                ,fk_project_id
+                ,IFNULL(name, '') AS name
+                ,IFNULL(description, '') AS description
+                ,fk_data_transfer_type_id
+                ,IFNULL(location, '') AS location
+                ,IFNULL(source_internal_object_id, '') AS source_internal_object_id
+                ,fk_deleted_status_id
+        FROM data_transfer_process
+        ]]>
+        </createView>
+
+        <comment>
+        <![CDATA[
+        Used objects:
+                v_data_transfer_process_SearchInterface
+        Phabricator tasks:
+                T64
+        ]]>
+        </comment>
+
+	</changeSet>
+</databaseChangeLog>

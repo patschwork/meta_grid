@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000067/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000067" context="db_table_field">
+
+		<!-- Those views are automatically generated with a python helper tool: dwh_meta_v2\helper_tools\Python\database\create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_db_table_field_SearchInterface">
+		<![CDATA[
+		SELECT
+				 id
+				,IFNULL(uuid, '') AS uuid
+				,fk_object_type_id
+				,fk_project_id
+				,IFNULL(name, '') AS name
+				,IFNULL(description, '') AS description
+				,fk_db_table_id
+				,IFNULL(datatype, '') AS datatype
+				,IFNULL(bulk_load_checksum, '') AS bulk_load_checksum
+				,fk_deleted_status_id
+				,is_PrimaryKey
+				,is_BusinessKey
+				,is_GDPR_relevant
+		FROM db_table_field
+		]]>
+		</createView>
+
+		<comment>
+		<![CDATA[
+		Used objects:
+			v_db_table_field_SearchInterface
+		Phabricator tasks:
+			T51
+		]]>
+		</comment>
+	</changeSet>
+</databaseChangeLog>

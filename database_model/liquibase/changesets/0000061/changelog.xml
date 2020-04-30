@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000061/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000061" context="url table">
+
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_client_log_DELETE;
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_client_log_DELETE AFTER DELETE
+ON client
+BEGIN
+   INSERT INTO client_log (log_action, id,uuid,name,description) VALUES ('DELETE',old.id,old.uuid,old.name,old.description);
+END;
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_project_log_DELETE;
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_project_log_DELETE AFTER DELETE
+ON project
+BEGIN
+   INSERT INTO project_log (log_action, id,uuid,fk_client_id, fk_client_uuid,name,description) VALUES ('DELETE',old.id,old.uuid,old.fk_client_id, (SELECT uuid FROM client WHERE id=old.fk_client_id),old.name,old.description);
+END;
+  		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_object_type_log_DELETE;
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_object_type_log_DELETE AFTER DELETE
+ON object_type
+BEGIN
+   INSERT INTO object_type_log (log_action, id,uuid,name) VALUES ('DELETE',old.id,old.uuid,old.name);
+END;
+		]]>		
+		</sql>
+
+		
+		
+		<comment>
+		<![CDATA[
+		Bugfix trigger.
+		Used objects:
+			TRIG_client_log_DELETE
+			TRIG_project_log_DELETE
+			TRIG_object_type_log_DELETE
+		Phabricator tasks:
+			T49
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

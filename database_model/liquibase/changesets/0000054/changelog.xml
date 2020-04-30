@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000054/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000054" context="url table">
+
+
+    	<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TABLE IF EXISTS cleanup_queue_log;
+		]]>	
+		</sql>		
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TABLE cleanup_queue_log (
+   log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+   log_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+   log_action TEXT,
+   id INTEGER,
+   ref_fk_object_id INTEGER,
+   ref_fk_object_type_id INTEGER,
+   created_at_datetime TIMESTAMP
+);
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_cleanup_queue_log_INSERT;
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_cleanup_queue_log_INSERT AFTER INSERT
+ON cleanup_queue
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   INSERT INTO cleanup_queue_log (log_action, id,ref_fk_object_id,ref_fk_object_type_id,created_at_datetime) VALUES ('INSERT',new.id,new.ref_fk_object_id,new.ref_fk_object_type_id,new.created_at_datetime);
+   UPDATE cleanup_queue SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   DELETE FROM _newUUID;
+   DELETE FROM cleanup_queue_log WHERE log_id=(SELECT MAX(log_id)+1 FROM cleanup_queue_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
+END;
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_cleanup_queue_log_UPDATE;
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_cleanup_queue_log_UPDATE AFTER UPDATE
+ON cleanup_queue
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   UPDATE cleanup_queue SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   INSERT INTO cleanup_queue_log (log_action, id,ref_fk_object_id,ref_fk_object_type_id,created_at_datetime) VALUES ('UPDATE',new.id,new.ref_fk_object_id,new.ref_fk_object_type_id,new.created_at_datetime);
+   DELETE FROM _newUUID;
+END;
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_cleanup_queue_log_DELETE;
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_cleanup_queue_log_DELETE AFTER DELETE
+ON cleanup_queue
+BEGIN
+   INSERT INTO cleanup_queue_log (log_action, id,ref_fk_object_id,ref_fk_object_type_id,created_at_datetime) VALUES ('DELETE',old.id,old.ref_fk_object_id,old.ref_fk_object_type_id,old.created_at_datetime);
+END;
+		]]>		
+		</sql>
+
+		<comment>
+		<![CDATA[
+		New table cleanup_queue.
+		Used objects:
+			cleanup_queue_log
+			TRIG_cleanup_queue_log_INSERT
+			TRIG_cleanup_queue_log_UPDATE
+			TRIG_cleanup_queue_log_DELETE
+		Phabricator tasks:
+			T33
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

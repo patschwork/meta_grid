@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000063/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000063" context="url table">
+
+
+		<sqlFile dbms="sqlite"
+		encoding="utf8"
+		path="./changelog.sql"
+		relativeToChangelogFile="true"
+		splitStatements="true"
+		stripComments="false"/>
+
+		
+		
+		<comment>
+		<![CDATA[
+		Migration of tables to add fk-column "fk_deleted_status_id"
+		Used objects:
+			keyfigure
+			sourcesystem
+			data_delivery_object
+			db_table
+			db_table_field
+			parameter
+			scheduling
+			db_database
+			data_transfer_process
+			contact_group
+			contact
+		Phabricator tasks:
+			T28
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

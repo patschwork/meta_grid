@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000066/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000066" context="db_table_field">
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE db_table_field ADD COLUMN is_PrimaryKey BOOLEAN;
+		]]>
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE db_table_field_log ADD COLUMN is_PrimaryKey BOOLEAN;
+		]]>
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE db_table_field ADD COLUMN is_BusinessKey BOOLEAN;
+		]]>
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE db_table_field_log ADD COLUMN is_BusinessKey BOOLEAN;
+		]]>
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE db_table_field ADD COLUMN is_GDPR_relevant BOOLEAN;
+		]]>
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE db_table_field_log ADD COLUMN is_GDPR_relevant BOOLEAN;
+		]]>
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_db_table_field_log_INSERT;
+		]]>
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_db_table_field_log_INSERT AFTER INSERT
+ON db_table_field
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   INSERT INTO db_table_field_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_db_table_id, fk_db_table_uuid,datatype,bulk_load_checksum,fk_deleted_status_id, fk_deleted_status_uuid,is_PrimaryKey,is_BusinessKey,is_GDPR_relevant) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_db_table_id, (SELECT uuid FROM db_table WHERE id=new.fk_db_table_id),new.datatype,new.bulk_load_checksum,new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id),new.is_PrimaryKey,new.is_BusinessKey,new.is_GDPR_relevant);
+   UPDATE db_table_field SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   DELETE FROM _newUUID;
+   DELETE FROM db_table_field_log WHERE log_id=(SELECT MAX(log_id)+1 FROM db_table_field_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
+END;
+		]]>
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_db_table_field_log_UPDATE;
+		]]>
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_db_table_field_log_UPDATE AFTER UPDATE
+ON db_table_field
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   UPDATE db_table_field SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   INSERT INTO db_table_field_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_db_table_id, fk_db_table_uuid,datatype,bulk_load_checksum,fk_deleted_status_id, fk_deleted_status_uuid,is_PrimaryKey,is_BusinessKey,is_GDPR_relevant) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_db_table_id, (SELECT uuid FROM db_table WHERE id=new.fk_db_table_id),new.datatype,new.bulk_load_checksum,new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id),new.is_PrimaryKey,new.is_BusinessKey,new.is_GDPR_relevant);
+   DELETE FROM _newUUID;
+END;
+		]]>
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_db_table_field_log_DELETE;
+		]]>
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_db_table_field_log_DELETE AFTER DELETE
+ON db_table_field
+BEGIN
+   INSERT INTO db_table_field_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_db_table_id, fk_db_table_uuid,datatype,bulk_load_checksum,fk_deleted_status_id, fk_deleted_status_uuid,is_PrimaryKey,is_BusinessKey,is_GDPR_relevant) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_db_table_id, (SELECT uuid FROM db_table WHERE id=old.fk_db_table_id),old.datatype,old.bulk_load_checksum,old.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=old.fk_deleted_status_id),old.is_PrimaryKey,old.is_BusinessKey,old.is_GDPR_relevant);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+		]]>
+		</sql>
+		
+		<comment>
+		<![CDATA[
+		New columns "is_PrimaryKey", "is_BusinessKey" and "is_GDPR_relevant for table db_table.
+		Used objects:
+			db_table_field
+			db_table_field_log
+			TRIG_db_table_field_log_INSERT
+			TRIG_db_table_field_log_UPDATE
+			TRIG_db_table_field_log_DELETE
+		Phabricator tasks:
+			T51
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.7"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.7
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.7.xsd" logicalFilePath="000053/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000053">
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+            CREATE TABLE cleanup_queue (
+            id INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+            ref_fk_object_id INTEGER DEFAULT NULL,
+            ref_fk_object_type_id INTEGER DEFAULT NULL REFERENCES object_type (id),
+            created_at_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+		]]>		
+		</sql>
+		<comment>
+		<![CDATA[
+		New table cleanup_queue
+		Used objects:
+			cleanup_queue
+		]]>
+		</comment>
+	</changeSet>
+</databaseChangeLog>

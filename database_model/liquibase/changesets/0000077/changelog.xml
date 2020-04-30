@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000077/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000077" context="map_object_2_object">
+
+        <!-- Those views are automatically generated with a python helper tool: dwh_meta_v2\helper_tools\Python\database\create_wwwsqldesigner_model_additional_search_views.py -->
+        <createView replaceIfExists="true" viewName="v_map_object_2_object_SearchInterface">
+        <![CDATA[
+        SELECT
+                id
+                ,IFNULL(uuid, '') AS uuid
+                ,fk_mapping_qualifier_id
+                ,ref_fk_object_id_1
+                ,ref_fk_object_type_id_1
+                ,ref_fk_object_id_2
+                ,ref_fk_object_type_id_2
+        FROM map_object_2_object
+        ]]>
+        </createView>
+
+        <comment>
+        <![CDATA[
+        Used objects:
+                v_map_object_2_object_SearchInterface
+        Phabricator tasks:
+                T64
+        ]]>
+        </comment>
+
+	</changeSet>
+</databaseChangeLog>

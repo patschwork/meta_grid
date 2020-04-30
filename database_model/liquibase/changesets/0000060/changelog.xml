@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000060/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000060" context="deleted_status table">
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TABLE deleted_status (
+id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+uuid TEXT DEFAULT NULL,
+fk_object_type_id INTEGER DEFAULT 25 REFERENCES object_type (id),
+name TEXT(250) DEFAULT NULL,
+description TEXT(4000) DEFAULT NULL
+);
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TABLE deleted_status_log (
+   log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+   log_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+   log_action TEXT,
+   id INTEGER,
+   uuid TEXT,
+   fk_object_type_id INTEGER,
+   fk_object_type_uuid TEXT,
+   name TEXT(250),
+   description TEXT(4000)
+);
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_deleted_status_log_INSERT;
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_deleted_status_log_INSERT AFTER INSERT
+ON deleted_status
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   INSERT INTO deleted_status_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,name,description) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.name,new.description);
+   UPDATE deleted_status SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   DELETE FROM _newUUID;
+   DELETE FROM deleted_status_log WHERE log_id=(SELECT MAX(log_id)+1 FROM deleted_status_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
+END;	
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_deleted_status_log_UPDATE;	
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_deleted_status_log_UPDATE AFTER UPDATE
+ON deleted_status
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   UPDATE deleted_status SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   INSERT INTO deleted_status_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,name,description) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.name,new.description);
+   DELETE FROM _newUUID;
+END;
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_deleted_status_log_DELETE;
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_deleted_status_log_DELETE AFTER DELETE
+ON deleted_status
+BEGIN
+   INSERT INTO deleted_status_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,name,description) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.name,old.description);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;	
+		]]>		
+		</sql>
+
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO object_type (id,name) VALUES (25,'deleted_status');
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO deleted_status (name,description) VALUES ('Deleted by user/frontend', 'Mark object as deleted in frontend');
+		]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO deleted_status (name,description) VALUES ('Deleted source', 'Object can not be found anymore in source');
+		]]>		
+		</sql>
+
+
+		<comment>
+		<![CDATA[
+		Add new table "deleted_status".
+		Used objects:
+			deleted_status
+			deleted_status_log
+			TRIG_deleted_status_log_INSERT
+			TRIG_deleted_status_log_UPDATE
+			TRIG_deleted_status_log_DELETE
+			object_type
+		Phabricator tasks:
+			T28
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>
