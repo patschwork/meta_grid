@@ -11,7 +11,8 @@ character TEXT(500) DEFAULT NULL,
 type TEXT(500) DEFAULT NULL,
 unit TEXT(500) DEFAULT NULL,
 value_range TEXT(500) DEFAULT NULL,
-cumulation_possible BOOLEAN DEFAULT NULL
+cumulation_possible BOOLEAN DEFAULT NULL,
+fk_deleted_status_id INTEGER DEFAULT NULL REFERENCES deleted_status (id)
 );
 
 CREATE TABLE object_type (
@@ -42,7 +43,8 @@ fk_object_type_id INTEGER NOT NULL  DEFAULT 2 REFERENCES object_type (id),
 fk_project_id INTEGER DEFAULT NULL REFERENCES project (id),
 name TEXT(250) DEFAULT NULL,
 description TEXT(500) DEFAULT NULL,
-fk_contact_group_id_as_supporter INTEGER DEFAULT NULL REFERENCES contact_group (id)
+fk_contact_group_id_as_supporter INTEGER DEFAULT NULL REFERENCES contact_group (id),
+fk_deleted_status_id INTEGER DEFAULT NULL REFERENCES deleted_status (id)
 );
 
 CREATE TABLE data_delivery_object (
@@ -54,7 +56,8 @@ name TEXT(250) DEFAULT NULL,
 description TEXT(500) DEFAULT NULL,
 fk_tool_id INTEGER NOT NULL  DEFAULT NULL REFERENCES tool (id),
 fk_data_delivery_type_id INTEGER DEFAULT NULL REFERENCES data_delivery_type (id),
-fk_contact_group_id_as_data_owner INTEGER DEFAULT NULL REFERENCES contact_group (id)
+fk_contact_group_id_as_data_owner INTEGER DEFAULT NULL REFERENCES contact_group (id),
+fk_deleted_status_id INTEGER DEFAULT NULL REFERENCES deleted_status (id)
 );
 
 CREATE TABLE map_object_2_object (
@@ -113,7 +116,8 @@ name TEXT(250) DEFAULT NULL,
 description TEXT(500) DEFAULT NULL,
 location TEXT DEFAULT NULL,
 fk_db_table_context_id INTEGER DEFAULT NULL REFERENCES db_table_context (id),
-fk_db_table_type_id INTEGER DEFAULT NULL REFERENCES db_table_type (id)
+fk_db_table_type_id INTEGER DEFAULT NULL REFERENCES db_table_type (id),
+fk_deleted_status_id INTEGER DEFAULT NULL REFERENCES deleted_status (id)
 );
 
 CREATE TABLE db_table_field (
@@ -125,7 +129,11 @@ name TEXT(250) DEFAULT NULL,
 description TEXT(500) DEFAULT NULL,
 fk_db_table_id INTEGER DEFAULT NULL REFERENCES db_table (id),
 datatype TEXT(250) DEFAULT NULL,
-bulk_load_checksum TEXT(200) DEFAULT NULL
+bulk_load_checksum TEXT(200) DEFAULT NULL,
+fk_deleted_status_id INTEGER DEFAULT NULL REFERENCES deleted_status (id),
+is_PrimaryKey BOOLEAN DEFAULT NULL,
+is_BusinessKey BOOLEAN DEFAULT NULL,
+is_GDPR_relevant BOOLEAN DEFAULT NULL
 );
 
 CREATE TABLE db_table_context (
@@ -145,7 +153,8 @@ fk_object_type_id INTEGER NOT NULL  DEFAULT 11 REFERENCES object_type (id),
 fk_project_id INTEGER NOT NULL  DEFAULT NULL REFERENCES project (id),
 name TEXT DEFAULT NULL,
 description TEXT DEFAULT NULL,
-fk_tool_id INTEGER NOT NULL  DEFAULT NULL REFERENCES tool (id)
+fk_tool_id INTEGER NOT NULL  DEFAULT NULL REFERENCES tool (id),
+fk_deleted_status_id INTEGER DEFAULT NULL REFERENCES deleted_status (id)
 );
 
 CREATE TABLE scheduling (
@@ -156,7 +165,8 @@ fk_project_id INTEGER NOT NULL  DEFAULT NULL REFERENCES project (id),
 name TEXT DEFAULT NULL,
 description TEXT DEFAULT NULL,
 fk_tool_id INTEGER NOT NULL  DEFAULT NULL REFERENCES tool (id),
-scheduling_series TEXT DEFAULT NULL
+scheduling_series TEXT DEFAULT NULL,
+fk_deleted_status_id INTEGER DEFAULT NULL REFERENCES deleted_status (id)
 );
 
 CREATE TABLE parameter (
@@ -169,7 +179,8 @@ description TEXT DEFAULT NULL,
 is_optional INTEGER DEFAULT NULL,
 default_value TEXT DEFAULT NULL,
 datatype TEXT DEFAULT NULL,
-range TEXT DEFAULT NULL
+range TEXT DEFAULT NULL,
+fk_deleted_status_id INTEGER DEFAULT NULL REFERENCES deleted_status (id)
 );
 
 CREATE TABLE db_table_type (
@@ -214,7 +225,8 @@ name TEXT(250) DEFAULT NULL,
 description TEXT(4000) DEFAULT NULL,
 fk_data_transfer_type_id INTEGER DEFAULT NULL REFERENCES data_transfer_type (id),
 location TEXT(500) DEFAULT NULL,
-source_internal_object_id TEXT(500) DEFAULT NULL
+source_internal_object_id TEXT(500) DEFAULT NULL,
+fk_deleted_status_id INTEGER DEFAULT NULL REFERENCES deleted_status (id)
 );
 
 CREATE TABLE data_transfer_type (
@@ -240,7 +252,8 @@ fk_object_type_id INTEGER DEFAULT 14 REFERENCES object_type (id),
 fk_client_id INTEGER NOT NULL  DEFAULT NULL REFERENCES client (id),
 name TEXT DEFAULT NULL,
 description TEXT DEFAULT NULL,
-short_name TEXT DEFAULT NULL
+short_name TEXT DEFAULT NULL,
+fk_deleted_status_id INTEGER DEFAULT NULL REFERENCES deleted_status (id)
 );
 
 CREATE TABLE contact (
@@ -255,7 +268,8 @@ email TEXT DEFAULT NULL,
 phone TEXT DEFAULT NULL,
 mobile TEXT DEFAULT NULL,
 ldap_cn TEXT DEFAULT NULL,
-description TEXT DEFAULT NULL
+description TEXT DEFAULT NULL,
+fk_deleted_status_id INTEGER DEFAULT NULL REFERENCES deleted_status (id)
 );
 
 CREATE TABLE bracket (
@@ -321,8 +335,23 @@ CREATE TABLE url (
 id INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
 uuid TEXT DEFAULT NULL,
 fk_object_type_id INTEGER DEFAULT 24 REFERENCES object_type (id),
-fk_project_id INTEGER NOT NULL  DEFAULT NULL REFERENCES project (id),
+fk_project_id INTEGER DEFAULT NULL REFERENCES project (id),
 name TEXT(250) DEFAULT NULL,
 description TEXT(4000) DEFAULT NULL,
 url TEXT(4000) DEFAULT NULL
+);
+
+CREATE TABLE cleanup_queue (
+id INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+ref_fk_object_id INTEGER DEFAULT NULL,
+ref_fk_object_type_id INTEGER DEFAULT NULL REFERENCES object_type (id),
+created_at_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE deleted_status (
+id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+uuid TEXT DEFAULT NULL,
+fk_object_type_id INTEGER DEFAULT 25 REFERENCES object_type (id),
+name TEXT(250) DEFAULT NULL,
+description TEXT(4000) DEFAULT NULL
 );

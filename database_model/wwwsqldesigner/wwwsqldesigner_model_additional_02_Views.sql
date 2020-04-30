@@ -1,4 +1,4 @@
--- View für alle Objekte
+-- View for all objekts
 	DROP VIEW v_All_Objects_Union;
 	CREATE VIEW v_All_Objects_Union AS
 		SELECT 
@@ -42,7 +42,7 @@
 				WHEN db_database.fk_project_id IS NOT NULL THEN db_database.fk_project_id
 				WHEN db_table.fk_project_id IS NOT NULL THEN db_table.fk_project_id
 				WHEN db_table_field.fk_project_id IS NOT NULL THEN db_table_field.fk_project_id
-				WHEN scheduling.fk_project_id IS NOT NULL THEN scheduling.fk_project_id
+				WHEN scheduling.fk_project_id IS NOT NULL THEN scheduliï¿½ng.fk_project_id
 				WHEN keyfigure.fk_project_id IS NOT NULL THEN keyfigure.fk_project_id
 				WHEN db_table_context.fk_project_id IS NOT NULL THEN db_table_context.fk_project_id
 				WHEN parameter.fk_project_id IS NOT NULL THEN parameter.fk_project_id
@@ -274,7 +274,7 @@
 		LEFT JOIN bracket ON bracket.id = obj.fk_bracket_id
 		ORDER BY fk_object_type_id;
 
--- View für alle Mappings
+-- View for all mappings
 	DROP VIEW v_All_Mappings_Union;
 	CREATE VIEW v_All_Mappings_Union AS 
 	WITH cte_v_All_Objects_Union AS
@@ -384,7 +384,7 @@
 				AND childAttr.fk_object_type_id						=	child.ref_fk_object_type_id_parent
 		) AS un;
 
--- View fuer einen Lookup zu allen verfuegbaren Datentypen
+-- View for a lookup to all available datatypes
 	DROP VIEW v_datatypes_Lookup;
 	CREATE VIEW v_datatypes_Lookup AS 
 	SELECT 
@@ -427,7 +427,7 @@
 		SELECT 'CURRENCY' AS datatype
 	);
 
--- View fuer um eine Ansicht aller gefilterten Projekte zu liefern
+-- View to get a sight on all filteres projects
 	DROP VIEW v_Project_Filter;
 	CREATE VIEW v_Project_Filter
 	AS
@@ -436,7 +436,7 @@
 	SELECT id FROM project WHERE (SELECT COUNT(valueINT) FROM app_config WHERE key='project_filter')=0		
 	;
 
--- View fuer um eine Liste der letzten Aenderungen aus den Log-Tabellen
+-- View for a list of last changes from log tables
 	DROP VIEW v_LastChangesLog_List;
 	CREATE VIEW v_LastChangesLog_List AS
 	SELECT
@@ -505,7 +505,7 @@
 	) 
 	ORDER BY log_datetime DESC
 
--- View fuer Bracket Definitionen	
+-- View for bracket definitiones
 	DROP VIEW v_Bracket_Definitions;
 	CREATE VIEW v_Bracket_Definitions AS 
 	SELECT 
@@ -517,6 +517,7 @@
 		,ATT.name							AS attribute_name
 		,ATT.id							AS attribute_id
 		,ATT.fk_object_type_id				AS attribute_fk_object_type_id
+		,DBF.db_table_id                        AS db_table_id
 	FROM 
 	(
 		SELECT 
@@ -540,6 +541,7 @@
 			,F.fk_object_type_id				AS db_table_field_fk_object_type_id
 			,F.fk_project_id					AS db_table_fk_project_id
 			,T.name							AS db_table_name
+			,T.id                                   AS db_table_id
 		FROM 
 			db_table_field F
 		LEFT JOIN

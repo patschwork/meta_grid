@@ -1,5 +1,5 @@
 -- Diese Datei wurde automatisiert ueber das Python-Script create_wwwsqldesigner_model_additional.py erstellt
--- 2019-10-27 14:45:10
+-- 2020-04-14 00:01:02
 
 PRAGMA foreign_keys = ON;
 
@@ -24,7 +24,9 @@ CREATE TABLE keyfigure_log (
    type TEXT(500),
    unit TEXT(500),
    value_range TEXT(500),
-   cumulation_possible BOOLEAN
+   cumulation_possible BOOLEAN,
+   fk_deleted_status_id INTEGER,
+   fk_deleted_status_uuid TEXT
 );
 
 DROP TRIGGER IF EXISTS TRIG_keyfigure_log_INSERT;
@@ -32,7 +34,7 @@ CREATE TRIGGER TRIG_keyfigure_log_INSERT AFTER INSERT
 ON keyfigure
 BEGIN
    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
-   INSERT INTO keyfigure_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,formula,aggregation,character,type,unit,value_range,cumulation_possible) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.formula,new.aggregation,new.character,new.type,new.unit,new.value_range,new.cumulation_possible);
+   INSERT INTO keyfigure_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,formula,aggregation,character,type,unit,value_range,cumulation_possible,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.formula,new.aggregation,new.character,new.type,new.unit,new.value_range,new.cumulation_possible,new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id));
    UPDATE keyfigure SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
    DELETE FROM _newUUID;
    DELETE FROM keyfigure_log WHERE log_id=(SELECT MAX(log_id)+1 FROM keyfigure_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
@@ -44,7 +46,7 @@ ON keyfigure
 BEGIN
    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
    UPDATE keyfigure SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
-   INSERT INTO keyfigure_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,formula,aggregation,character,type,unit,value_range,cumulation_possible) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.formula,new.aggregation,new.character,new.type,new.unit,new.value_range,new.cumulation_possible);
+   INSERT INTO keyfigure_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,formula,aggregation,character,type,unit,value_range,cumulation_possible,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.formula,new.aggregation,new.character,new.type,new.unit,new.value_range,new.cumulation_possible,new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id));
    DELETE FROM _newUUID;
 END;
 
@@ -52,7 +54,9 @@ DROP TRIGGER IF EXISTS TRIG_keyfigure_log_DELETE;
 CREATE TRIGGER TRIG_keyfigure_log_DELETE AFTER DELETE
 ON keyfigure
 BEGIN
-   INSERT INTO keyfigure_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,formula,aggregation,character,type,unit,value_range,cumulation_possible) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.formula,old.aggregation,old.character,old.type,old.unit,old.value_range,old.cumulation_possible);
+   INSERT INTO keyfigure_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,formula,aggregation,character,type,unit,value_range,cumulation_possible,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.formula,old.aggregation,old.character,old.type,old.unit,old.value_range,old.cumulation_possible,old.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=old.fk_deleted_status_id));
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
 END;
 
 
@@ -191,7 +195,9 @@ CREATE TABLE sourcesystem_log (
    name TEXT(250),
    description TEXT(500),
    fk_contact_group_id_as_supporter INTEGER,
-   fk_contact_group_uuid_as_supporter TEXT
+   fk_contact_group_uuid_as_supporter TEXT,
+   fk_deleted_status_id INTEGER,
+   fk_deleted_status_uuid TEXT
 );
 
 DROP TRIGGER IF EXISTS TRIG_sourcesystem_log_INSERT;
@@ -199,7 +205,7 @@ CREATE TRIGGER TRIG_sourcesystem_log_INSERT AFTER INSERT
 ON sourcesystem
 BEGIN
    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
-   INSERT INTO sourcesystem_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_contact_group_id_as_supporter, fk_contact_group_uuid_as_supporter) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_contact_group_id_as_supporter, (SELECT uuid FROM contact_group WHERE id=new.fk_contact_group_id_as_supporter));
+   INSERT INTO sourcesystem_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_contact_group_id_as_supporter, fk_contact_group_uuid_as_supporter,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_contact_group_id_as_supporter, (SELECT uuid FROM contact_group WHERE id=new.fk_contact_group_id_as_supporter),new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id));
    UPDATE sourcesystem SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
    DELETE FROM _newUUID;
    DELETE FROM sourcesystem_log WHERE log_id=(SELECT MAX(log_id)+1 FROM sourcesystem_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
@@ -211,7 +217,7 @@ ON sourcesystem
 BEGIN
    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
    UPDATE sourcesystem SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
-   INSERT INTO sourcesystem_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_contact_group_id_as_supporter, fk_contact_group_uuid_as_supporter) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_contact_group_id_as_supporter, (SELECT uuid FROM contact_group WHERE id=new.fk_contact_group_id_as_supporter));
+   INSERT INTO sourcesystem_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_contact_group_id_as_supporter, fk_contact_group_uuid_as_supporter,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_contact_group_id_as_supporter, (SELECT uuid FROM contact_group WHERE id=new.fk_contact_group_id_as_supporter),new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id));
    DELETE FROM _newUUID;
 END;
 
@@ -219,7 +225,9 @@ DROP TRIGGER IF EXISTS TRIG_sourcesystem_log_DELETE;
 CREATE TRIGGER TRIG_sourcesystem_log_DELETE AFTER DELETE
 ON sourcesystem
 BEGIN
-   INSERT INTO sourcesystem_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_contact_group_id_as_supporter, fk_contact_group_uuid_as_supporter) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_contact_group_id_as_supporter, (SELECT uuid FROM contact_group WHERE id=old.fk_contact_group_id_as_supporter));
+   INSERT INTO sourcesystem_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_contact_group_id_as_supporter, fk_contact_group_uuid_as_supporter,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_contact_group_id_as_supporter, (SELECT uuid FROM contact_group WHERE id=old.fk_contact_group_id_as_supporter),old.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=old.fk_deleted_status_id));
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
 END;
 
 
@@ -241,7 +249,9 @@ CREATE TABLE data_delivery_object_log (
    fk_data_delivery_type_id INTEGER,
    fk_data_delivery_type_uuid TEXT,
    fk_contact_group_id_as_data_owner INTEGER,
-   fk_contact_group_uuid_as_data_owner TEXT
+   fk_contact_group_uuid_as_data_owner TEXT,
+   fk_deleted_status_id INTEGER,
+   fk_deleted_status_uuid TEXT
 );
 
 DROP TRIGGER IF EXISTS TRIG_data_delivery_object_log_INSERT;
@@ -249,7 +259,7 @@ CREATE TRIGGER TRIG_data_delivery_object_log_INSERT AFTER INSERT
 ON data_delivery_object
 BEGIN
    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
-   INSERT INTO data_delivery_object_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_tool_id, fk_tool_uuid,fk_data_delivery_type_id, fk_data_delivery_type_uuid,fk_contact_group_id_as_data_owner, fk_contact_group_uuid_as_data_owner) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_tool_id, (SELECT uuid FROM tool WHERE id=new.fk_tool_id),new.fk_data_delivery_type_id, (SELECT uuid FROM data_delivery_type WHERE id=new.fk_data_delivery_type_id),new.fk_contact_group_id_as_data_owner, (SELECT uuid FROM contact_group WHERE id=new.fk_contact_group_id_as_data_owner));
+   INSERT INTO data_delivery_object_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_tool_id, fk_tool_uuid,fk_data_delivery_type_id, fk_data_delivery_type_uuid,fk_contact_group_id_as_data_owner, fk_contact_group_uuid_as_data_owner,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_tool_id, (SELECT uuid FROM tool WHERE id=new.fk_tool_id),new.fk_data_delivery_type_id, (SELECT uuid FROM data_delivery_type WHERE id=new.fk_data_delivery_type_id),new.fk_contact_group_id_as_data_owner, (SELECT uuid FROM contact_group WHERE id=new.fk_contact_group_id_as_data_owner),new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id));
    UPDATE data_delivery_object SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
    DELETE FROM _newUUID;
    DELETE FROM data_delivery_object_log WHERE log_id=(SELECT MAX(log_id)+1 FROM data_delivery_object_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
@@ -261,7 +271,7 @@ ON data_delivery_object
 BEGIN
    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
    UPDATE data_delivery_object SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
-   INSERT INTO data_delivery_object_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_tool_id, fk_tool_uuid,fk_data_delivery_type_id, fk_data_delivery_type_uuid,fk_contact_group_id_as_data_owner, fk_contact_group_uuid_as_data_owner) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_tool_id, (SELECT uuid FROM tool WHERE id=new.fk_tool_id),new.fk_data_delivery_type_id, (SELECT uuid FROM data_delivery_type WHERE id=new.fk_data_delivery_type_id),new.fk_contact_group_id_as_data_owner, (SELECT uuid FROM contact_group WHERE id=new.fk_contact_group_id_as_data_owner));
+   INSERT INTO data_delivery_object_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_tool_id, fk_tool_uuid,fk_data_delivery_type_id, fk_data_delivery_type_uuid,fk_contact_group_id_as_data_owner, fk_contact_group_uuid_as_data_owner,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_tool_id, (SELECT uuid FROM tool WHERE id=new.fk_tool_id),new.fk_data_delivery_type_id, (SELECT uuid FROM data_delivery_type WHERE id=new.fk_data_delivery_type_id),new.fk_contact_group_id_as_data_owner, (SELECT uuid FROM contact_group WHERE id=new.fk_contact_group_id_as_data_owner),new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id));
    DELETE FROM _newUUID;
 END;
 
@@ -269,7 +279,9 @@ DROP TRIGGER IF EXISTS TRIG_data_delivery_object_log_DELETE;
 CREATE TRIGGER TRIG_data_delivery_object_log_DELETE AFTER DELETE
 ON data_delivery_object
 BEGIN
-   INSERT INTO data_delivery_object_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_tool_id, fk_tool_uuid,fk_data_delivery_type_id, fk_data_delivery_type_uuid,fk_contact_group_id_as_data_owner, fk_contact_group_uuid_as_data_owner) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_tool_id, (SELECT uuid FROM tool WHERE id=old.fk_tool_id),old.fk_data_delivery_type_id, (SELECT uuid FROM data_delivery_type WHERE id=old.fk_data_delivery_type_id),old.fk_contact_group_id_as_data_owner, (SELECT uuid FROM contact_group WHERE id=old.fk_contact_group_id_as_data_owner));
+   INSERT INTO data_delivery_object_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_tool_id, fk_tool_uuid,fk_data_delivery_type_id, fk_data_delivery_type_uuid,fk_contact_group_id_as_data_owner, fk_contact_group_uuid_as_data_owner,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_tool_id, (SELECT uuid FROM tool WHERE id=old.fk_tool_id),old.fk_data_delivery_type_id, (SELECT uuid FROM data_delivery_type WHERE id=old.fk_data_delivery_type_id),old.fk_contact_group_id_as_data_owner, (SELECT uuid FROM contact_group WHERE id=old.fk_contact_group_id_as_data_owner),old.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=old.fk_deleted_status_id));
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
 END;
 
 
@@ -446,6 +458,8 @@ CREATE TRIGGER TRIG_attribute_log_DELETE AFTER DELETE
 ON attribute
 BEGIN
    INSERT INTO attribute_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,formula) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.formula);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
 END;
 
 
@@ -506,7 +520,9 @@ CREATE TABLE db_table_log (
    fk_db_table_context_id INTEGER,
    fk_db_table_context_uuid TEXT,
    fk_db_table_type_id INTEGER,
-   fk_db_table_type_uuid TEXT
+   fk_db_table_type_uuid TEXT,
+   fk_deleted_status_id INTEGER,
+   fk_deleted_status_uuid TEXT
 );
 
 DROP TRIGGER IF EXISTS TRIG_db_table_log_INSERT;
@@ -514,7 +530,7 @@ CREATE TRIGGER TRIG_db_table_log_INSERT AFTER INSERT
 ON db_table
 BEGIN
    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
-   INSERT INTO db_table_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,location,fk_db_table_context_id, fk_db_table_context_uuid,fk_db_table_type_id, fk_db_table_type_uuid) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.location,new.fk_db_table_context_id, (SELECT uuid FROM db_table_context WHERE id=new.fk_db_table_context_id),new.fk_db_table_type_id, (SELECT uuid FROM db_table_type WHERE id=new.fk_db_table_type_id));
+   INSERT INTO db_table_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,location,fk_db_table_context_id, fk_db_table_context_uuid,fk_db_table_type_id, fk_db_table_type_uuid,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.location,new.fk_db_table_context_id, (SELECT uuid FROM db_table_context WHERE id=new.fk_db_table_context_id),new.fk_db_table_type_id, (SELECT uuid FROM db_table_type WHERE id=new.fk_db_table_type_id),new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id));
    UPDATE db_table SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
    DELETE FROM _newUUID;
    DELETE FROM db_table_log WHERE log_id=(SELECT MAX(log_id)+1 FROM db_table_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
@@ -526,7 +542,7 @@ ON db_table
 BEGIN
    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
    UPDATE db_table SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
-   INSERT INTO db_table_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,location,fk_db_table_context_id, fk_db_table_context_uuid,fk_db_table_type_id, fk_db_table_type_uuid) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.location,new.fk_db_table_context_id, (SELECT uuid FROM db_table_context WHERE id=new.fk_db_table_context_id),new.fk_db_table_type_id, (SELECT uuid FROM db_table_type WHERE id=new.fk_db_table_type_id));
+   INSERT INTO db_table_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,location,fk_db_table_context_id, fk_db_table_context_uuid,fk_db_table_type_id, fk_db_table_type_uuid,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.location,new.fk_db_table_context_id, (SELECT uuid FROM db_table_context WHERE id=new.fk_db_table_context_id),new.fk_db_table_type_id, (SELECT uuid FROM db_table_type WHERE id=new.fk_db_table_type_id),new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id));
    DELETE FROM _newUUID;
 END;
 
@@ -534,7 +550,9 @@ DROP TRIGGER IF EXISTS TRIG_db_table_log_DELETE;
 CREATE TRIGGER TRIG_db_table_log_DELETE AFTER DELETE
 ON db_table
 BEGIN
-   INSERT INTO db_table_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,location,fk_db_table_context_id, fk_db_table_context_uuid,fk_db_table_type_id, fk_db_table_type_uuid) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.location,old.fk_db_table_context_id, (SELECT uuid FROM db_table_context WHERE id=old.fk_db_table_context_id),old.fk_db_table_type_id, (SELECT uuid FROM db_table_type WHERE id=old.fk_db_table_type_id));
+   INSERT INTO db_table_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,location,fk_db_table_context_id, fk_db_table_context_uuid,fk_db_table_type_id, fk_db_table_type_uuid,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.location,old.fk_db_table_context_id, (SELECT uuid FROM db_table_context WHERE id=old.fk_db_table_context_id),old.fk_db_table_type_id, (SELECT uuid FROM db_table_type WHERE id=old.fk_db_table_type_id),old.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=old.fk_deleted_status_id));
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
 END;
 
 
@@ -554,7 +572,12 @@ CREATE TABLE db_table_field_log (
    fk_db_table_id INTEGER,
    fk_db_table_uuid TEXT,
    datatype TEXT(250),
-   bulk_load_checksum TEXT(200)
+   bulk_load_checksum TEXT(200),
+   fk_deleted_status_id INTEGER,
+   fk_deleted_status_uuid TEXT,
+   is_PrimaryKey BOOLEAN,
+   is_BusinessKey BOOLEAN,
+   is_GDPR_relevant BOOLEAN
 );
 
 DROP TRIGGER IF EXISTS TRIG_db_table_field_log_INSERT;
@@ -562,7 +585,7 @@ CREATE TRIGGER TRIG_db_table_field_log_INSERT AFTER INSERT
 ON db_table_field
 BEGIN
    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
-   INSERT INTO db_table_field_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_db_table_id, fk_db_table_uuid,datatype,bulk_load_checksum) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_db_table_id, (SELECT uuid FROM db_table WHERE id=new.fk_db_table_id),new.datatype,new.bulk_load_checksum);
+   INSERT INTO db_table_field_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_db_table_id, fk_db_table_uuid,datatype,bulk_load_checksum,fk_deleted_status_id, fk_deleted_status_uuid,is_PrimaryKey,is_BusinessKey,is_GDPR_relevant) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_db_table_id, (SELECT uuid FROM db_table WHERE id=new.fk_db_table_id),new.datatype,new.bulk_load_checksum,new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id),new.is_PrimaryKey,new.is_BusinessKey,new.is_GDPR_relevant);
    UPDATE db_table_field SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
    DELETE FROM _newUUID;
    DELETE FROM db_table_field_log WHERE log_id=(SELECT MAX(log_id)+1 FROM db_table_field_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
@@ -574,7 +597,7 @@ ON db_table_field
 BEGIN
    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
    UPDATE db_table_field SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
-   INSERT INTO db_table_field_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_db_table_id, fk_db_table_uuid,datatype,bulk_load_checksum) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_db_table_id, (SELECT uuid FROM db_table WHERE id=new.fk_db_table_id),new.datatype,new.bulk_load_checksum);
+   INSERT INTO db_table_field_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_db_table_id, fk_db_table_uuid,datatype,bulk_load_checksum,fk_deleted_status_id, fk_deleted_status_uuid,is_PrimaryKey,is_BusinessKey,is_GDPR_relevant) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_db_table_id, (SELECT uuid FROM db_table WHERE id=new.fk_db_table_id),new.datatype,new.bulk_load_checksum,new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id),new.is_PrimaryKey,new.is_BusinessKey,new.is_GDPR_relevant);
    DELETE FROM _newUUID;
 END;
 
@@ -582,7 +605,9 @@ DROP TRIGGER IF EXISTS TRIG_db_table_field_log_DELETE;
 CREATE TRIGGER TRIG_db_table_field_log_DELETE AFTER DELETE
 ON db_table_field
 BEGIN
-   INSERT INTO db_table_field_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_db_table_id, fk_db_table_uuid,datatype,bulk_load_checksum) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_db_table_id, (SELECT uuid FROM db_table WHERE id=old.fk_db_table_id),old.datatype,old.bulk_load_checksum);
+   INSERT INTO db_table_field_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_db_table_id, fk_db_table_uuid,datatype,bulk_load_checksum,fk_deleted_status_id, fk_deleted_status_uuid,is_PrimaryKey,is_BusinessKey,is_GDPR_relevant) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_db_table_id, (SELECT uuid FROM db_table WHERE id=old.fk_db_table_id),old.datatype,old.bulk_load_checksum,old.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=old.fk_deleted_status_id),old.is_PrimaryKey,old.is_BusinessKey,old.is_GDPR_relevant);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
 END;
 
 
@@ -628,6 +653,8 @@ CREATE TRIGGER TRIG_db_table_context_log_DELETE AFTER DELETE
 ON db_table_context
 BEGIN
    INSERT INTO db_table_context_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,prefix) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.prefix);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
 END;
 
 
@@ -645,7 +672,9 @@ CREATE TABLE db_database_log (
    name TEXT,
    description TEXT,
    fk_tool_id INTEGER,
-   fk_tool_uuid TEXT
+   fk_tool_uuid TEXT,
+   fk_deleted_status_id INTEGER,
+   fk_deleted_status_uuid TEXT
 );
 
 DROP TRIGGER IF EXISTS TRIG_db_database_log_INSERT;
@@ -653,7 +682,7 @@ CREATE TRIGGER TRIG_db_database_log_INSERT AFTER INSERT
 ON db_database
 BEGIN
    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
-   INSERT INTO db_database_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_tool_id, fk_tool_uuid) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_tool_id, (SELECT uuid FROM tool WHERE id=new.fk_tool_id));
+   INSERT INTO db_database_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_tool_id, fk_tool_uuid,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_tool_id, (SELECT uuid FROM tool WHERE id=new.fk_tool_id),new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id));
    UPDATE db_database SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
    DELETE FROM _newUUID;
    DELETE FROM db_database_log WHERE log_id=(SELECT MAX(log_id)+1 FROM db_database_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
@@ -665,7 +694,7 @@ ON db_database
 BEGIN
    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
    UPDATE db_database SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
-   INSERT INTO db_database_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_tool_id, fk_tool_uuid) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_tool_id, (SELECT uuid FROM tool WHERE id=new.fk_tool_id));
+   INSERT INTO db_database_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_tool_id, fk_tool_uuid,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_tool_id, (SELECT uuid FROM tool WHERE id=new.fk_tool_id),new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id));
    DELETE FROM _newUUID;
 END;
 
@@ -673,7 +702,9 @@ DROP TRIGGER IF EXISTS TRIG_db_database_log_DELETE;
 CREATE TRIGGER TRIG_db_database_log_DELETE AFTER DELETE
 ON db_database
 BEGIN
-   INSERT INTO db_database_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_tool_id, fk_tool_uuid) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_tool_id, (SELECT uuid FROM tool WHERE id=old.fk_tool_id));
+   INSERT INTO db_database_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_tool_id, fk_tool_uuid,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_tool_id, (SELECT uuid FROM tool WHERE id=old.fk_tool_id),old.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=old.fk_deleted_status_id));
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
 END;
 
 
@@ -692,7 +723,9 @@ CREATE TABLE scheduling_log (
    description TEXT,
    fk_tool_id INTEGER,
    fk_tool_uuid TEXT,
-   scheduling_series TEXT
+   scheduling_series TEXT,
+   fk_deleted_status_id INTEGER,
+   fk_deleted_status_uuid TEXT
 );
 
 DROP TRIGGER IF EXISTS TRIG_scheduling_log_INSERT;
@@ -700,7 +733,7 @@ CREATE TRIGGER TRIG_scheduling_log_INSERT AFTER INSERT
 ON scheduling
 BEGIN
    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
-   INSERT INTO scheduling_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_tool_id, fk_tool_uuid,scheduling_series) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_tool_id, (SELECT uuid FROM tool WHERE id=new.fk_tool_id),new.scheduling_series);
+   INSERT INTO scheduling_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_tool_id, fk_tool_uuid,scheduling_series,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_tool_id, (SELECT uuid FROM tool WHERE id=new.fk_tool_id),new.scheduling_series,new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id));
    UPDATE scheduling SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
    DELETE FROM _newUUID;
    DELETE FROM scheduling_log WHERE log_id=(SELECT MAX(log_id)+1 FROM scheduling_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
@@ -712,7 +745,7 @@ ON scheduling
 BEGIN
    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
    UPDATE scheduling SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
-   INSERT INTO scheduling_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_tool_id, fk_tool_uuid,scheduling_series) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_tool_id, (SELECT uuid FROM tool WHERE id=new.fk_tool_id),new.scheduling_series);
+   INSERT INTO scheduling_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_tool_id, fk_tool_uuid,scheduling_series,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_tool_id, (SELECT uuid FROM tool WHERE id=new.fk_tool_id),new.scheduling_series,new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id));
    DELETE FROM _newUUID;
 END;
 
@@ -720,7 +753,9 @@ DROP TRIGGER IF EXISTS TRIG_scheduling_log_DELETE;
 CREATE TRIGGER TRIG_scheduling_log_DELETE AFTER DELETE
 ON scheduling
 BEGIN
-   INSERT INTO scheduling_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_tool_id, fk_tool_uuid,scheduling_series) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_tool_id, (SELECT uuid FROM tool WHERE id=old.fk_tool_id),old.scheduling_series);
+   INSERT INTO scheduling_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_tool_id, fk_tool_uuid,scheduling_series,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_tool_id, (SELECT uuid FROM tool WHERE id=old.fk_tool_id),old.scheduling_series,old.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=old.fk_deleted_status_id));
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
 END;
 
 
@@ -740,7 +775,9 @@ CREATE TABLE parameter_log (
    is_optional INTEGER,
    default_value TEXT,
    datatype TEXT,
-   range TEXT
+   range TEXT,
+   fk_deleted_status_id INTEGER,
+   fk_deleted_status_uuid TEXT
 );
 
 DROP TRIGGER IF EXISTS TRIG_parameter_log_INSERT;
@@ -748,7 +785,7 @@ CREATE TRIGGER TRIG_parameter_log_INSERT AFTER INSERT
 ON parameter
 BEGIN
    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
-   INSERT INTO parameter_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,is_optional,default_value,datatype,range) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.is_optional,new.default_value,new.datatype,new.range);
+   INSERT INTO parameter_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,is_optional,default_value,datatype,range,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.is_optional,new.default_value,new.datatype,new.range,new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id));
    UPDATE parameter SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
    DELETE FROM _newUUID;
    DELETE FROM parameter_log WHERE log_id=(SELECT MAX(log_id)+1 FROM parameter_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
@@ -760,7 +797,7 @@ ON parameter
 BEGIN
    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
    UPDATE parameter SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
-   INSERT INTO parameter_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,is_optional,default_value,datatype,range) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.is_optional,new.default_value,new.datatype,new.range);
+   INSERT INTO parameter_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,is_optional,default_value,datatype,range,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.is_optional,new.default_value,new.datatype,new.range,new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id));
    DELETE FROM _newUUID;
 END;
 
@@ -768,7 +805,9 @@ DROP TRIGGER IF EXISTS TRIG_parameter_log_DELETE;
 CREATE TRIGGER TRIG_parameter_log_DELETE AFTER DELETE
 ON parameter
 BEGIN
-   INSERT INTO parameter_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,is_optional,default_value,datatype,range) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.is_optional,old.default_value,old.datatype,old.range);
+   INSERT INTO parameter_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,is_optional,default_value,datatype,range,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.is_optional,old.default_value,old.datatype,old.range,old.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=old.fk_deleted_status_id));
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
 END;
 
 
@@ -853,6 +892,8 @@ CREATE TRIGGER TRIG_object_comment_log_DELETE AFTER DELETE
 ON object_comment
 BEGIN
    INSERT INTO object_comment_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,ref_fk_object_id,ref_fk_object_type_id,comment,created_at_datetime) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.ref_fk_object_id,old.ref_fk_object_type_id,old.comment,old.created_at_datetime);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
 END;
 
 
@@ -897,6 +938,8 @@ CREATE TRIGGER TRIG_glossary_log_DELETE AFTER DELETE
 ON glossary
 BEGIN
    INSERT INTO glossary_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
 END;
 
 
@@ -956,7 +999,9 @@ CREATE TABLE data_transfer_process_log (
    fk_data_transfer_type_id INTEGER,
    fk_data_transfer_type_uuid TEXT,
    location TEXT(500),
-   source_internal_object_id TEXT(500)
+   source_internal_object_id TEXT(500),
+   fk_deleted_status_id INTEGER,
+   fk_deleted_status_uuid TEXT
 );
 
 DROP TRIGGER IF EXISTS TRIG_data_transfer_process_log_INSERT;
@@ -964,7 +1009,7 @@ CREATE TRIGGER TRIG_data_transfer_process_log_INSERT AFTER INSERT
 ON data_transfer_process
 BEGIN
    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
-   INSERT INTO data_transfer_process_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_data_transfer_type_id, fk_data_transfer_type_uuid,location,source_internal_object_id) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_data_transfer_type_id, (SELECT uuid FROM data_transfer_type WHERE id=new.fk_data_transfer_type_id),new.location,new.source_internal_object_id);
+   INSERT INTO data_transfer_process_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_data_transfer_type_id, fk_data_transfer_type_uuid,location,source_internal_object_id,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_data_transfer_type_id, (SELECT uuid FROM data_transfer_type WHERE id=new.fk_data_transfer_type_id),new.location,new.source_internal_object_id,new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id));
    UPDATE data_transfer_process SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
    DELETE FROM _newUUID;
    DELETE FROM data_transfer_process_log WHERE log_id=(SELECT MAX(log_id)+1 FROM data_transfer_process_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
@@ -976,7 +1021,7 @@ ON data_transfer_process
 BEGIN
    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
    UPDATE data_transfer_process SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
-   INSERT INTO data_transfer_process_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_data_transfer_type_id, fk_data_transfer_type_uuid,location,source_internal_object_id) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_data_transfer_type_id, (SELECT uuid FROM data_transfer_type WHERE id=new.fk_data_transfer_type_id),new.location,new.source_internal_object_id);
+   INSERT INTO data_transfer_process_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_data_transfer_type_id, fk_data_transfer_type_uuid,location,source_internal_object_id,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_data_transfer_type_id, (SELECT uuid FROM data_transfer_type WHERE id=new.fk_data_transfer_type_id),new.location,new.source_internal_object_id,new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id));
    DELETE FROM _newUUID;
 END;
 
@@ -984,7 +1029,9 @@ DROP TRIGGER IF EXISTS TRIG_data_transfer_process_log_DELETE;
 CREATE TRIGGER TRIG_data_transfer_process_log_DELETE AFTER DELETE
 ON data_transfer_process
 BEGIN
-   INSERT INTO data_transfer_process_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_data_transfer_type_id, fk_data_transfer_type_uuid,location,source_internal_object_id) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_data_transfer_type_id, (SELECT uuid FROM data_transfer_type WHERE id=old.fk_data_transfer_type_id),old.location,old.source_internal_object_id);
+   INSERT INTO data_transfer_process_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_data_transfer_type_id, fk_data_transfer_type_uuid,location,source_internal_object_id,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_data_transfer_type_id, (SELECT uuid FROM data_transfer_type WHERE id=old.fk_data_transfer_type_id),old.location,old.source_internal_object_id,old.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=old.fk_deleted_status_id));
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
 END;
 
 
@@ -1083,7 +1130,9 @@ CREATE TABLE contact_group_log (
    fk_client_uuid TEXT,
    name TEXT,
    description TEXT,
-   short_name TEXT
+   short_name TEXT,
+   fk_deleted_status_id INTEGER,
+   fk_deleted_status_uuid TEXT
 );
 
 DROP TRIGGER IF EXISTS TRIG_contact_group_log_INSERT;
@@ -1091,7 +1140,7 @@ CREATE TRIGGER TRIG_contact_group_log_INSERT AFTER INSERT
 ON contact_group
 BEGIN
    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
-   INSERT INTO contact_group_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_client_id, fk_client_uuid,name,description,short_name) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_client_id, (SELECT uuid FROM client WHERE id=new.fk_client_id),new.name,new.description,new.short_name);
+   INSERT INTO contact_group_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_client_id, fk_client_uuid,name,description,short_name,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_client_id, (SELECT uuid FROM client WHERE id=new.fk_client_id),new.name,new.description,new.short_name,new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id));
    UPDATE contact_group SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
    DELETE FROM _newUUID;
    DELETE FROM contact_group_log WHERE log_id=(SELECT MAX(log_id)+1 FROM contact_group_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
@@ -1103,7 +1152,7 @@ ON contact_group
 BEGIN
    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
    UPDATE contact_group SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
-   INSERT INTO contact_group_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_client_id, fk_client_uuid,name,description,short_name) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_client_id, (SELECT uuid FROM client WHERE id=new.fk_client_id),new.name,new.description,new.short_name);
+   INSERT INTO contact_group_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_client_id, fk_client_uuid,name,description,short_name,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_client_id, (SELECT uuid FROM client WHERE id=new.fk_client_id),new.name,new.description,new.short_name,new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id));
    DELETE FROM _newUUID;
 END;
 
@@ -1111,7 +1160,9 @@ DROP TRIGGER IF EXISTS TRIG_contact_group_log_DELETE;
 CREATE TRIGGER TRIG_contact_group_log_DELETE AFTER DELETE
 ON contact_group
 BEGIN
-   INSERT INTO contact_group_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_client_id, fk_client_uuid,name,description,short_name) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_client_id, (SELECT uuid FROM client WHERE id=old.fk_client_id),old.name,old.description,old.short_name);
+   INSERT INTO contact_group_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_client_id, fk_client_uuid,name,description,short_name,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_client_id, (SELECT uuid FROM client WHERE id=old.fk_client_id),old.name,old.description,old.short_name,old.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=old.fk_deleted_status_id));
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
 END;
 
 
@@ -1134,7 +1185,9 @@ CREATE TABLE contact_log (
    phone TEXT,
    mobile TEXT,
    ldap_cn TEXT,
-   description TEXT
+   description TEXT,
+   fk_deleted_status_id INTEGER,
+   fk_deleted_status_uuid TEXT
 );
 
 DROP TRIGGER IF EXISTS TRIG_contact_log_INSERT;
@@ -1142,7 +1195,7 @@ CREATE TRIGGER TRIG_contact_log_INSERT AFTER INSERT
 ON contact
 BEGIN
    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
-   INSERT INTO contact_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_contact_group_id, fk_contact_group_uuid,fk_client_id, fk_client_uuid,givenname,surname,email,phone,mobile,ldap_cn,description) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_contact_group_id, (SELECT uuid FROM contact_group WHERE id=new.fk_contact_group_id),new.fk_client_id, (SELECT uuid FROM client WHERE id=new.fk_client_id),new.givenname,new.surname,new.email,new.phone,new.mobile,new.ldap_cn,new.description);
+   INSERT INTO contact_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_contact_group_id, fk_contact_group_uuid,fk_client_id, fk_client_uuid,givenname,surname,email,phone,mobile,ldap_cn,description,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_contact_group_id, (SELECT uuid FROM contact_group WHERE id=new.fk_contact_group_id),new.fk_client_id, (SELECT uuid FROM client WHERE id=new.fk_client_id),new.givenname,new.surname,new.email,new.phone,new.mobile,new.ldap_cn,new.description,new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id));
    UPDATE contact SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
    DELETE FROM _newUUID;
    DELETE FROM contact_log WHERE log_id=(SELECT MAX(log_id)+1 FROM contact_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
@@ -1154,7 +1207,7 @@ ON contact
 BEGIN
    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
    UPDATE contact SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
-   INSERT INTO contact_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_contact_group_id, fk_contact_group_uuid,fk_client_id, fk_client_uuid,givenname,surname,email,phone,mobile,ldap_cn,description) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_contact_group_id, (SELECT uuid FROM contact_group WHERE id=new.fk_contact_group_id),new.fk_client_id, (SELECT uuid FROM client WHERE id=new.fk_client_id),new.givenname,new.surname,new.email,new.phone,new.mobile,new.ldap_cn,new.description);
+   INSERT INTO contact_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_contact_group_id, fk_contact_group_uuid,fk_client_id, fk_client_uuid,givenname,surname,email,phone,mobile,ldap_cn,description,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_contact_group_id, (SELECT uuid FROM contact_group WHERE id=new.fk_contact_group_id),new.fk_client_id, (SELECT uuid FROM client WHERE id=new.fk_client_id),new.givenname,new.surname,new.email,new.phone,new.mobile,new.ldap_cn,new.description,new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id));
    DELETE FROM _newUUID;
 END;
 
@@ -1162,7 +1215,9 @@ DROP TRIGGER IF EXISTS TRIG_contact_log_DELETE;
 CREATE TRIGGER TRIG_contact_log_DELETE AFTER DELETE
 ON contact
 BEGIN
-   INSERT INTO contact_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_contact_group_id, fk_contact_group_uuid,fk_client_id, fk_client_uuid,givenname,surname,email,phone,mobile,ldap_cn,description) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_contact_group_id, (SELECT uuid FROM contact_group WHERE id=old.fk_contact_group_id),old.fk_client_id, (SELECT uuid FROM client WHERE id=old.fk_client_id),old.givenname,old.surname,old.email,old.phone,old.mobile,old.ldap_cn,old.description);
+   INSERT INTO contact_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_contact_group_id, fk_contact_group_uuid,fk_client_id, fk_client_uuid,givenname,surname,email,phone,mobile,ldap_cn,description,fk_deleted_status_id, fk_deleted_status_uuid) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_contact_group_id, (SELECT uuid FROM contact_group WHERE id=old.fk_contact_group_id),old.fk_client_id, (SELECT uuid FROM client WHERE id=old.fk_client_id),old.givenname,old.surname,old.email,old.phone,old.mobile,old.ldap_cn,old.description,old.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=old.fk_deleted_status_id));
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
 END;
 
 
@@ -1190,7 +1245,7 @@ CREATE TRIGGER TRIG_bracket_log_INSERT AFTER INSERT
 ON bracket
 BEGIN
    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
-   INSERT INTO bracket_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_attribute_id, fk_attribute_uuid,fk_object_type_id_as_searchFilter, fk_object_type_uuid_as_searchFilter) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_attribute_id, (SELECT uuid FROM attribute WHERE id=new.fk_attribute_id),new.fk_object_type_id_as_searchFilter, (SELECT uuid FROM object_type_as_searchFilter WHERE id=new.fk_object_type_id_as_searchFilter));
+   INSERT INTO bracket_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_attribute_id, fk_attribute_uuid,fk_object_type_id_as_searchFilter, fk_object_type_uuid_as_searchFilter) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_attribute_id, (SELECT uuid FROM attribute WHERE id=new.fk_attribute_id),new.fk_object_type_id_as_searchFilter, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id_as_searchFilter));
    UPDATE bracket SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
    DELETE FROM _newUUID;
    DELETE FROM bracket_log WHERE log_id=(SELECT MAX(log_id)+1 FROM bracket_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
@@ -1202,7 +1257,7 @@ ON bracket
 BEGIN
    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
    UPDATE bracket SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
-   INSERT INTO bracket_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_attribute_id, fk_attribute_uuid,fk_object_type_id_as_searchFilter, fk_object_type_uuid_as_searchFilter) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_attribute_id, (SELECT uuid FROM attribute WHERE id=new.fk_attribute_id),new.fk_object_type_id_as_searchFilter, (SELECT uuid FROM object_type_as_searchFilter WHERE id=new.fk_object_type_id_as_searchFilter));
+   INSERT INTO bracket_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_attribute_id, fk_attribute_uuid,fk_object_type_id_as_searchFilter, fk_object_type_uuid_as_searchFilter) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_attribute_id, (SELECT uuid FROM attribute WHERE id=new.fk_attribute_id),new.fk_object_type_id_as_searchFilter, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id_as_searchFilter));
    DELETE FROM _newUUID;
 END;
 
@@ -1210,7 +1265,9 @@ DROP TRIGGER IF EXISTS TRIG_bracket_log_DELETE;
 CREATE TRIGGER TRIG_bracket_log_DELETE AFTER DELETE
 ON bracket
 BEGIN
-   INSERT INTO bracket_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_attribute_id, fk_attribute_uuid,fk_object_type_id_as_searchFilter, fk_object_type_uuid_as_searchFilter) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_attribute_id, (SELECT uuid FROM attribute WHERE id=old.fk_attribute_id),old.fk_object_type_id_as_searchFilter, (SELECT uuid FROM object_type_as_searchFilter WHERE id=old.fk_object_type_id_as_searchFilter));
+   INSERT INTO bracket_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_attribute_id, fk_attribute_uuid,fk_object_type_id_as_searchFilter, fk_object_type_uuid_as_searchFilter) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_attribute_id, (SELECT uuid FROM attribute WHERE id=old.fk_attribute_id),old.fk_object_type_id_as_searchFilter, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id_as_searchFilter));
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
 END;
 
 
@@ -1254,6 +1311,8 @@ CREATE TRIGGER TRIG_bracket_searchPattern_log_DELETE AFTER DELETE
 ON bracket_searchPattern
 BEGIN
    INSERT INTO bracket_searchPattern_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_bracket_id, fk_bracket_uuid,searchPattern) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_bracket_id, (SELECT uuid FROM bracket WHERE id=old.fk_bracket_id),old.searchPattern);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
 END;
 
 
@@ -1307,6 +1366,8 @@ END;
 -- ON import_stage_db_table
 -- BEGIN
 --    INSERT INTO import_stage_db_table_log (log_action, id,client_name,project_name,db_table_name,db_table_description,db_table_field_name,db_table_field_datatype,db_table_field_description,db_table_type_name,db_table_context_name,db_table_context_prefix,isPrimaryKeyField,isForeignKeyField,foreignKey_table_name,foreignKey_table_field_name,_import_state,_import_date) VALUES ('DELETE',old.id,old.client_name,old.project_name,old.db_table_name,old.db_table_description,old.db_table_field_name,old.db_table_field_datatype,old.db_table_field_description,old.db_table_type_name,old.db_table_context_name,old.db_table_context_prefix,old.isPrimaryKeyField,old.isForeignKeyField,old.foreignKey_table_name,old.foreignKey_table_field_name,old._import_state,old._import_date);
+-- 
+--    INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
 -- END;
 
 
@@ -1351,7 +1412,9 @@ DROP TRIGGER IF EXISTS TRIG_perspective_filter_log_DELETE;
 CREATE TRIGGER TRIG_perspective_filter_log_DELETE AFTER DELETE
 ON perspective_filter
 BEGIN
-   INSERT INTO perspective_filter_log (log_action, id,uuid,fk_language_id, fk_object_type_id, fk_object_type_uuid,filter_attribute_name,filter_value,ref_fk_object_type_id) VALUES ('DELETE',old.id,old.uuid,old.fk_language_id, (SELECT uuid FROM language WHERE id=old.fk_language_id),old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.filter_attribute_name,old.filter_value,old.ref_fk_object_type_id);
+   INSERT INTO perspective_filter_log (log_action, id,uuid,fk_language_id, fk_object_type_id, fk_object_type_uuid,filter_attribute_name,filter_value,ref_fk_object_type_id) VALUES ('DELETE',old.id,old.uuid,old.fk_language_id, old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.filter_attribute_name,old.filter_value,old.ref_fk_object_type_id);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
 END;
 
 
@@ -1396,6 +1459,8 @@ CREATE TRIGGER TRIG_mapping_qualifier_log_DELETE AFTER DELETE
 ON mapping_qualifier
 BEGIN
    INSERT INTO mapping_qualifier_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,name,short_name,description,needs_object_depends_on) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.name,old.short_name,old.description,old.needs_object_depends_on);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
 END;
 
 
@@ -1441,5 +1506,91 @@ CREATE TRIGGER TRIG_url_log_DELETE AFTER DELETE
 ON url
 BEGIN
    INSERT INTO url_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,url) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.url);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+
+
+DROP TABLE IF EXISTS cleanup_queue_log;
+CREATE TABLE cleanup_queue_log (
+   log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+   log_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+   log_action TEXT,
+   id INTEGER,
+   ref_fk_object_id INTEGER,
+   ref_fk_object_type_id INTEGER,
+   created_at_datetime TIMESTAMP
+);
+
+-- DROP TRIGGER IF EXISTS TRIG_cleanup_queue_log_INSERT;
+-- CREATE TRIGGER TRIG_cleanup_queue_log_INSERT AFTER INSERT
+-- ON cleanup_queue
+-- BEGIN
+--    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+--    INSERT INTO cleanup_queue_log (log_action, id,ref_fk_object_id,ref_fk_object_type_id,created_at_datetime) VALUES ('INSERT',new.id,new.ref_fk_object_id,new.ref_fk_object_type_id,new.created_at_datetime);
+--    UPDATE cleanup_queue SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+--    DELETE FROM _newUUID;
+--    DELETE FROM cleanup_queue_log WHERE log_id=(SELECT MAX(log_id)+1 FROM cleanup_queue_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
+-- END;
+
+-- DROP TRIGGER IF EXISTS TRIG_cleanup_queue_log_UPDATE;
+-- CREATE TRIGGER TRIG_cleanup_queue_log_UPDATE AFTER UPDATE
+-- ON cleanup_queue
+-- BEGIN
+--    INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+--    UPDATE cleanup_queue SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+--    INSERT INTO cleanup_queue_log (log_action, id,ref_fk_object_id,ref_fk_object_type_id,created_at_datetime) VALUES ('UPDATE',new.id,new.ref_fk_object_id,new.ref_fk_object_type_id,new.created_at_datetime);
+--    DELETE FROM _newUUID;
+-- END;
+
+DROP TRIGGER IF EXISTS TRIG_cleanup_queue_log_DELETE;
+CREATE TRIGGER TRIG_cleanup_queue_log_DELETE AFTER DELETE
+ON cleanup_queue
+BEGIN
+   INSERT INTO cleanup_queue_log (log_action, id,ref_fk_object_id,ref_fk_object_type_id,created_at_datetime) VALUES ('DELETE',old.id,old.ref_fk_object_id,old.ref_fk_object_type_id,old.created_at_datetime);
+END;
+
+
+DROP TABLE IF EXISTS deleted_status_log;
+CREATE TABLE deleted_status_log (
+   log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+   log_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+   log_action TEXT,
+   id INTEGER,
+   uuid TEXT,
+   fk_object_type_id INTEGER,
+   fk_object_type_uuid TEXT,
+   name TEXT(250),
+   description TEXT(4000)
+);
+
+DROP TRIGGER IF EXISTS TRIG_deleted_status_log_INSERT;
+CREATE TRIGGER TRIG_deleted_status_log_INSERT AFTER INSERT
+ON deleted_status
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   INSERT INTO deleted_status_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,name,description) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.name,new.description);
+   UPDATE deleted_status SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   DELETE FROM _newUUID;
+   DELETE FROM deleted_status_log WHERE log_id=(SELECT MAX(log_id)+1 FROM deleted_status_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
+END;
+
+DROP TRIGGER IF EXISTS TRIG_deleted_status_log_UPDATE;
+CREATE TRIGGER TRIG_deleted_status_log_UPDATE AFTER UPDATE
+ON deleted_status
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   UPDATE deleted_status SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   INSERT INTO deleted_status_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,name,description) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.name,new.description);
+   DELETE FROM _newUUID;
+END;
+
+DROP TRIGGER IF EXISTS TRIG_deleted_status_log_DELETE;
+CREATE TRIGGER TRIG_deleted_status_log_DELETE AFTER DELETE
+ON deleted_status
+BEGIN
+   INSERT INTO deleted_status_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,name,description) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.name,old.description);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
 END;
 

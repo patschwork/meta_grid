@@ -56,6 +56,10 @@
 <row name="cumulation_possible" null="1" autoincrement="0">
 <datatype>BOOLEAN</datatype>
 <default>NULL</default></row>
+<row name="fk_deleted_status_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="deleted_status" row="id" />
+</row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
@@ -142,6 +146,10 @@
 <default>NULL</default><relation table="contact_group" row="id" />
 <comment>Ansprechpartner</comment>
 </row>
+<row name="fk_deleted_status_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="deleted_status" row="id" />
+</row>
 <key type="PRIMARY" name="pk_id_sourcesystem">
 <part>id</part>
 </key>
@@ -180,6 +188,10 @@
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="contact_group" row="id" />
 <comment>Wer verantwortet die Daten</comment>
+</row>
+<row name="fk_deleted_status_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="deleted_status" row="id" />
 </row>
 <key type="PRIMARY" name="pk_id_report">
 <part>id</part>
@@ -355,6 +367,10 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="db_table_type" row="id" />
 </row>
+<row name="fk_deleted_status_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="deleted_status" row="id" />
+</row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
@@ -392,6 +408,19 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <datatype>TEXT(200)</datatype>
 <default>NULL</default><comment>checksum from bulk load with kettle pdi</comment>
 </row>
+<row name="fk_deleted_status_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="deleted_status" row="id" />
+</row>
+<row name="is_PrimaryKey" null="1" autoincrement="0">
+<datatype>BOOLEAN</datatype>
+<default>NULL</default></row>
+<row name="is_BusinessKey" null="1" autoincrement="0">
+<datatype>BOOLEAN</datatype>
+<default>NULL</default></row>
+<row name="is_GDPR_relevant" null="1" autoincrement="0">
+<datatype>BOOLEAN</datatype>
+<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
@@ -451,6 +480,10 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="tool" row="id" />
 </row>
+<row name="fk_deleted_status_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="deleted_status" row="id" />
+</row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
@@ -484,6 +517,10 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <row name="scheduling_series" null="1" autoincrement="0">
 <datatype>TEXT</datatype>
 <default>NULL</default><comment>When does the scheduling starts</comment>
+</row>
+<row name="fk_deleted_status_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="deleted_status" row="id" />
 </row>
 <key type="PRIMARY" name="">
 <part>id</part>
@@ -524,6 +561,10 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <row name="range" null="1" autoincrement="0">
 <datatype>TEXT</datatype>
 <default>NULL</default></row>
+<row name="fk_deleted_status_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="deleted_status" row="id" />
+</row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
@@ -655,6 +696,10 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <datatype>TEXT(500)</datatype>
 <default>NULL</default><comment>Internal ID from the object of the source (e.g. the objectId of a PROCEDURE in a RDBMS)</comment>
 </row>
+<row name="fk_deleted_status_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="deleted_status" row="id" />
+</row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
@@ -726,6 +771,10 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <row name="short_name" null="1" autoincrement="0">
 <datatype>TEXT</datatype>
 <default>NULL</default></row>
+<row name="fk_deleted_status_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="deleted_status" row="id" />
+</row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
@@ -771,6 +820,10 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <row name="description" null="1" autoincrement="0">
 <datatype>TEXT</datatype>
 <default>NULL</default></row>
+<row name="fk_deleted_status_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="deleted_status" row="id" />
+</row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
@@ -981,5 +1034,46 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 </key>
 <comment>Holds Links to webpages or files or JDBC Connections, etc.
 Are used for mapping_objects_2_objects only.</comment>
+</table>
+<table x="1130" y="1652" name="cleanup_queue">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="ref_fk_object_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="ref_fk_object_type_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_type" row="id" />
+</row>
+<row name="created_at_datetime" null="1" autoincrement="0">
+<datatype>TIMESTAMP</datatype>
+<default>CURRENT_TIMESTAMP</default></row>
+<key type="PRIMARY" name="PK">
+<part>id</part>
+</key>
+<comment>This table holds temporary items to be cleaned up</comment>
+</table>
+<table x="979" y="31" name="deleted_status">
+<row name="id" null="0" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_object_type_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>25</default><relation table="object_type" row="id" />
+</row>
+<row name="name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT(4000)</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+<comment>Indicates a soft delete: E.g. deleted on source system or by user (before hard deleted in the object table)</comment>
 </table>
 </sql>

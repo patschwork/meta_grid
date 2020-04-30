@@ -60,7 +60,7 @@
   <include relativeToChangelogFile="true" file="changesets/0000038/changelog.xml"/>  <!-- Create view | v_url_SearchInterface -->
   <include relativeToChangelogFile="true" file="changesets/0000039/changelog.xml"/>  <!-- SQL INSERT | language_source -->
   <include relativeToChangelogFile="true" file="changesets/0000040/changelog.xml"/>  <!-- SQL INSERT | language_source -->
-  <include relativeToChangelogFile="true" file="changesets/0000041/changelog.xml"/>  <!-- SQL INSERT | language_translate -->
+  <include relativeToChangelogFile="true" file="changesets/0000041/changelog.xml"/>  <!-- SQL INSERT | language_tranTRIG_perspective_filter_log_DELETEslate -->
   <include relativeToChangelogFile="true" file="changesets/0000042/changelog.xml"/>  <!-- SQL DELETE | language_source -->
   <include relativeToChangelogFile="true" file="changesets/0000043/changelog.xml"/>  <!-- SQL UPDATE | language_translate -->
   <include relativeToChangelogFile="true" file="changesets/0000044/changelog.xml"/>  <!-- SQL INSERT | language_translate -->
@@ -72,4 +72,32 @@
   <include relativeToChangelogFile="true" file="changesets/0000050/changelog.xml"/>  <!-- Alter view | v_url_SearchInterface -->
   <include relativeToChangelogFile="true" file="changesets/0000051/changelog.xml"/>  <!-- Update view | v_All_Objects_Union -->
   <include relativeToChangelogFile="true" file="changesets/0000052/changelog.xml"/>  <!-- Update view | v_LastChangesLog_List -->
+  <include relativeToChangelogFile="true" file="changesets/0000053/changelog.xml"/>  <!-- SQL Create table (with PK, FK) | cleanup_queue -->
+  <include relativeToChangelogFile="true" file="changesets/0000054/changelog.xml"/>  <!-- SQL DROP and CREATE table | cleanup_queue_log;TRIG_cleanup_queue_log_INSERT;TRIG_cleanup_queue_log_UPDATE;TRIG_cleanup_queue_log_DELETE -->
+  <include relativeToChangelogFile="true" file="changesets/0000055/changelog.xml"/>  <!-- SQL CREATE trigger | TRIG_cleanup_queue_process_INSERT -->
+  <include relativeToChangelogFile="true" file="changesets/0000056/changelog.xml"/>  <!-- SQL DROP and CREATE trigger | TRIG_keyfigure_log_DELETE ;TRIG_object_type_log_DELETE ;TRIG_client_log_DELETE ;TRIG_project_log_DELETE ;TRIG_sourcesystem_log_DELETE ;TRIG_data_delivery_object_log_DELETE ;TRIG_attribute_log_DELETE ;TRIG_tool_type_log_DELETE ;TRIG_db_table_log_DELETE ;TRIG_db_table_field_log_DELETE ;TRIG_db_table_context_log_DELETE ;TRIG_db_database_log_DELETE ;TRIG_scheduling_log_DELETE ;TRIG_parameter_log_DELETE ;TRIG_object_comment_log_DELETE ;TRIG_glossary_log_DELETE ;TRIG_data_transfer_process_log_DELETE ;TRIG_contact_group_log_DELETE ;TRIG_contact_log_DELETE ;TRIG_bracket_log_DELETE ;TRIG_bracket_searchPattern_log_DELETE ;TRIG_perspective_filter_log_DELETE ;TRIG_mapping_qualifier_log_DELETE ;TRIG_url_log_DELETE -->
+  <include relativeToChangelogFile="true" file="changesets/0000057/changelog.xml"/>  <!-- SQL DROP and CREATE trigger | TRIG_cleanup_queue_process_INSERT -->
+  <include relativeToChangelogFile="true" file="changesets/0000058/changelog.xml"/>  <!-- SQL INSERT | cleanup_queue -->
+  <include relativeToChangelogFile="true" file="changesets/0000059/changelog.xml"/>  <!-- SQL DROP and CREATE trigger | TRIG_perspective_filter_log_DELETE -->
+  <include relativeToChangelogFile="true" file="changesets/0000060/changelog.xml"/>  <!-- SQL Create table | deleted_status ;deleted_status_log;TRIG_deleted_status_log_INSERT;TRIG_deleted_status_log_UPDATE;TRIG_deleted_status_log_DELETE;object_type -->
+  <include relativeToChangelogFile="true" file="changesets/0000061/changelog.xml"/>  <!-- SQL DROP and CREATE trigger | TRIG_client_log_DELETE;TRIG_project_log_DELETE;TRIG_object_type_log_DELETE -->
+  <include relativeToChangelogFile="true" file="changesets/0000062/changelog.xml"/>  <!-- SQL DROP and CREATE trigger | TRIG_bracket_log_INSERT;TRIG_bracket_log_UPDATE;TRIG_bracket_log_DELETE -->
+  <include relativeToChangelogFile="true" file="changesets/0000063/changelog.xml"/>  <!-- SQL INSERT and DROP | keyfigure;sourcesystem;data_delivery_object;db_table;db_table_field;parameter;scheduling;db_database;data_transfer_process;contact_group;contact -->
+  <include relativeToChangelogFile="true" file="changesets/0000064/changelog.xml"/>  <!-- SQL ALTER TABLE | keyfigure_log;sourcesystem_log;data_delivery_object_log;db_table_log;db_table_field_log;parameter_log;scheduling_log;db_database_log;data_transfer_process_log;contact_group_log;contact_log -->
+  <include relativeToChangelogFile="true" file="changesets/0000065/changelog.xml"/>  <!-- SQL DROP and CREATE trigger | TRIG_keyfigure_log_INSERT;TRIG_sourcesystem_log_INSERT;TRIG_data_delivery_object_log_INSERT;TRIG_db_table_log_INSERT;TRIG_db_table_field_log_INSERT;TRIG_parameter_log_INSERT;TRIG_scheduling_log_INSERT;TRIG_db_database_log_INSERT;TRIG_data_transfer_process_log_INSERT;TRIG_contact_group_log_INSERT;TRIG_contact_log_INSERT;TRIG_keyfigure_log_UPDATE;TRIG_sourcesystem_log_UPDATE;TRIG_data_delivery_object_log_UPDATE;TRIG_db_table_log_UPDATE;TRIG_db_table_field_log_UPDATE;TRIG_parameter_log_UPDATE;TRIG_scheduling_log_UPDATE;TRIG_db_database_log_UPDATE;TRIG_data_transfer_process_log_UPDATE;TRIG_contact_group_log_UPDATE;TRIG_contact_log_UPDATE;TRIG_keyfigure_log_DELETE;TRIG_sourcesystem_log_DELETE;TRIG_data_delivery_object_log_DELETE;TRIG_db_table_log_DELETE;TRIG_db_table_field_log_DELETE;TRIG_parameter_log_DELETE;TRIG_scheduling_log_DELETE;TRIG_db_database_log_DELETE;TRIG_data_transfer_process_log_DELETE;TRIG_contact_group_log_DELETE;TRIG_contact_log_DELETE -->
+  <include relativeToChangelogFile="true" file="changesets/feat_dbmultipleedit_0000001/changelog.xml"/>  <!-- SQL INSERT | app_config -->
+  <include relativeToChangelogFile="true" file="changesets/feat_dbmultipleedit_0000002/changelog.xml"/>  <!-- Update view | v_Bracket_Definitions -->
+  <include relativeToChangelogFile="true" file="changesets/feat_dbmultipleedit_0000003/changelog.xml"/>  <!-- SQL INSERT | language_source;language_translate -->
+  <include relativeToChangelogFile="true" file="changesets/0000066/changelog.xml"/>  <!-- SQL ALTER TABLE and DROP/CREATE trigger | db_table_field;db_table_field_log;TRIG_db_table_field_log_INSERT;TRIG_db_table_field_log_UPDATE;TRIG_db_table_field_log_DELETE; -->
+  <include relativeToChangelogFile="true" file="changesets/0000067/changelog.xml"/>  <!-- Update view | v_db_table_field_SearchInterface -->
+  <include relativeToChangelogFile="true" file="changesets/0000068/changelog.xml"/>  <!-- Update view | v_db_table_SearchInterface -->
+  <include relativeToChangelogFile="true" file="changesets/0000069/changelog.xml"/>  <!-- Update view | v_keyfigure_SearchInterface -->
+  <include relativeToChangelogFile="true" file="changesets/0000070/changelog.xml"/>  <!-- Update view | v_contact_SearchInterface -->
+  <include relativeToChangelogFile="true" file="changesets/0000071/changelog.xml"/>  <!-- Update view | v_contact_group_SearchInterface -->
+  <include relativeToChangelogFile="true" file="changesets/0000072/changelog.xml"/>  <!-- Update view | v_sourcesystem_SearchInterface -->
+  <include relativeToChangelogFile="true" file="changesets/0000073/changelog.xml"/>  <!-- Update view | v_db_database_SearchInterface -->
+  <include relativeToChangelogFile="true" file="changesets/0000074/changelog.xml"/>  <!-- Update view | v_data_transfer_process_SearchInterface -->
+  <include relativeToChangelogFile="true" file="changesets/0000075/changelog.xml"/>  <!-- Update view | v_data_delivery_object_SearchInterface -->
+  <include relativeToChangelogFile="true" file="changesets/0000076/changelog.xml"/>  <!-- Update view | v_scheduling_SearchInterface -->
+  <include relativeToChangelogFile="true" file="changesets/0000077/changelog.xml"/>  <!-- Update view | v_map_object_2_object_SearchInterface -->
 </databaseChangeLog> 

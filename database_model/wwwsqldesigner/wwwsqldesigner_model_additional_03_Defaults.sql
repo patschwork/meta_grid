@@ -20,6 +20,7 @@ INSERT INTO object_type (id,name) VALUES (18,'perspective_filter');
 INSERT INTO object_type (id,name) VALUES (19,'mapping_qualifier');
 -- 20-23 reservation for branch feature_interface_contract and tagging
 INSERT INTO object_type (id,name) VALUES (24,'url');
+INSERT INTO object_type (id,name) VALUES (25,'deleted_status');
 
 -- app_config
 INSERT INTO app_config (key,valueINT,description) VALUES ('project_filter',2,'Set a filter to a specific project id (INT). Maybe more than one row/entry.');
@@ -39,3 +40,7 @@ INSERT INTO mapping_qualifier (name,short_name,description,needs_object_depends_
 
 -- data_transfer_type
 INSERT INTO data_transfer_type (name,description) VALUES ('Stored Procedure','PROCEDURES of a RDBMS to manipulate data (e.g. in a ETL workflow)');
+
+-- deleted_status
+INSERT INTO deleted_status (name,description) VALUES ('Deleted by user/frontend', 'Mark object as deleted in frontend');
+INSERT INTO deleted_status (name,description) VALUES ('Deleted source', 'Object can not be found anymore in source');
