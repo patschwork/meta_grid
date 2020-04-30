@@ -10,9 +10,9 @@ print('%s %s' % (sys.executable or sys.platform, sys.version))
 # Config
 wwwsqldesignermodelfile = "../../../database_model/wwwsqldesigner/wwwsqldesigner_model.xml"
 output = "liquibase" # sql or liquibase
-replaceIfExists = False
+replaceIfExists = True
 folderForYii2ModelClasses = "../../../frontend/yii/basic/models"
-filterOnSpecificDbObject = "url" # Table
+filterOnSpecificDbObject = "map_object_2_object" # Table
 
 isLinuxOrDarwin = False
 if _platform == "linux" or _platform == "linux2":
@@ -121,6 +121,8 @@ if output=="liquibase":
         if tablename=="app_config":
             continue
         print "\t" + newViewName
+    print("Phabricator tasks:")
+    print "\t" + "T64"
     print("]]>")
     print("</comment>")
 

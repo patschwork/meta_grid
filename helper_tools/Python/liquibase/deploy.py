@@ -126,14 +126,21 @@ if liquibaseDriver == "org.sqlite.JDBC":
 # exec liquibase
 if liquibaseActionValue != "":
     #subprocess.call([liquibasePathExe, "--driver=" + liquibaseDriver, "--changeLogFile=" + getFilePathRelativeScriptPath(liquibaseChangeLogFile), "--url=" + liquibaseDriverUrlprefix , liquibaseAction, liquibaseActionValue])
-	try:
-		output = subprocess.check_output([liquibasePathExe, "--driver=" + liquibaseDriver, "--changeLogFile=" + getFilePathRelativeScriptPath(liquibaseChangeLogFile), "--url=" + liquibaseDriverUrlprefix , liquibaseAction, liquibaseActionValue], stderr=subprocess.STDOUT).decode()
-		success = True 
-	except subprocess.CalledProcessError as e:
-		output = e.output.decode()
-		success = False
-	writeOutputLog(logfilepath, output)
-	print output
+    try:
+        try:
+            output = subprocess.check_output([liquibasePathExe, "--driver=" + liquibaseDriver, "--changeLogFile=" + getFilePathRelativeScriptPath(liquibaseChangeLogFile), "--url=" + liquibaseDriverUrlprefix , liquibaseAction, liquibaseActionValue], stderr=subprocess.STDOUT).decode()
+        except:
+            output = subprocess.check_output([liquibasePathExe, "--driver=" + liquibaseDriver, "--changeLogFile=" + getFilePathRelativeScriptPath(liquibaseChangeLogFile), "--url=" + liquibaseDriverUrlprefix , liquibaseAction, liquibaseActionValue], stderr=subprocess.STDOUT)     
+        success = True
+    except subprocess.CalledProcessError as e:
+        output = ""
+        try:
+            output = e.output.decode()
+        except:
+            output = e.output
+        success = False
+    writeOutputLog(logfilepath, output)
+    print output
 else:
     #subprocess.call([liquibasePathExe, "--driver=" + liquibaseDriver, "--changeLogFile=" + getFilePathRelativeScriptPath(liquibaseChangeLogFile), "--url=" + liquibaseDriverUrlprefix , liquibaseAction])        
 	try:

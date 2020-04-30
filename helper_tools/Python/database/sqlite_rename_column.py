@@ -7,10 +7,14 @@
 import sqlite3
 import uuid
 
-databasefile = "D:\\Entwicklung\\_Privat\\meta_grid\\DWH_Meta_wrkCpy_DEV\\dwh_meta_v2\\dwh_meta.sqlite"
-table = "map_object_2_object_log"
-old_column_def = "log_action TEXT"
-new_column_def = "log_action TEXT"
+endOfTableDefinition = ");"
+
+databasefile = "/home/patrick/Development_WorkingCopies/dwh_meta/dwh_meta_v2/dwh_meta.sqlite"
+table = "sourcesystem_TEST"
+old_column_def = "dummy TEXT"
+new_column_def = ""
+
+add_column_def = "fk_deleted_status_id INTEGER NOT NULL  DEFAULT NULL REFERENCES deleted_status (id)"
 
 # Set connection for database
 connection = sqlite3.connect(databasefile)
@@ -42,7 +46,7 @@ SELECT * FROM [[[temptablename]]];
 #     ORDER BY name;
 # """
 
-def generate_change_script(table, old_column_def, new_column_def):
+def generate_change_script(table, old_column_def, new_column_def, add_column_def):
     
     global connection
     global basesqltable
@@ -87,11 +91,13 @@ def generate_change_script(table, old_column_def, new_column_def):
                     insertfields += l.strip().split(" ")[0]
                     if (l.find(",")>0):
                         insertfields += ","
-            if (l.find(old_column_def)>=0):
+            if (l.find(old_column_def)>=0) & (old_column_def<>""):
 #                 print "-- Old line: "
 #                 print "-- " + l
 #                 print "-- New line: " 
                 print l.replace(old_column_def, new_column_def)
+            if (l.find(endOfTableDefinition)>=0) & (add_column_def<>""):
+				print l.replace(endOfTableDefinition, ", " + add_column_def + "\n" + endOfTableDefinition)
             else:
                 print l
         print ";"
@@ -111,5 +117,5 @@ def generate_change_script(table, old_column_def, new_column_def):
 
     print "DROP TABLE " + temptablename + ";"
 
-generate_change_script(table, old_column_def, new_column_def)
-# generate_change_script(table + "_log", old_column_def, new_column_def)
+generate_change_script(table, old_column_def, new_column_def, add_column_def)
+# generate_change_script(table + "_log", old_column_def, new_column_def, add_column_def)
