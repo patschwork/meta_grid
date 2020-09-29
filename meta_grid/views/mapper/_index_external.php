@@ -1,3 +1,40 @@
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.loader {
+  display: none;
+  top: 50%;
+  left: 50%;
+  position: fixed;
+  transform: translate(-50%, -50%);
+}
+
+.loading {
+  border: 4px solid #ccc;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border-top-color: #1ecd97;
+  border-left-color: #1ecd97;
+  animation: spin 1s infinite ease-in;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+</style>
+
+
 <?php
 
 use yii\helpers\Html;
@@ -35,6 +72,7 @@ use app\models\Url;
 ]), ['create'], ['class' => 'btn btn-success']) ?>   -->
     </p>
 
+	<?php yii\widgets\Pjax::begin(['id' => 'mapping_grid_pjax']); ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -60,7 +98,7 @@ use app\models\Url;
 	            			return Html::a('<span class="glyphicon glyphicon-info-sign"></span>', $url, [
 	            					'title' => Yii::t('app', 'Info'),
 	            			]);
-	            		}
+	            		},
 	            ],
 	            'urlCreator' => function ($action, $model, $key, $index) {
 	            	if ($action === 'view') {
@@ -97,7 +135,7 @@ use app\models\Url;
 			[
 	            'class' => 'yii\grid\DataColumn',
 	            'attribute' => 'connectiondirection',
-	            'format' => 'html',				
+	            'format' => 'raw',				
 	            'label' => 'Direction',
 				'value' => function ($model) {
 						$retValue = '<span style="color: #204d74;" class="glyphicon glyphicon-arrow-left"></span>';
@@ -105,7 +143,7 @@ use app\models\Url;
 						{
 							$retValue = '<span style="color: #337ab7;" class="glyphicon glyphicon-arrow-right"></span>';
 						}
-						return $retValue;
+						return "<div name='direction_arrow_" . $model->id . "'>" . $retValue . "</div>";
 					}			
 			],
 			[
@@ -142,8 +180,99 @@ use app\models\Url;
 	            'attribute' => 'object_type_name',
 	            'format' => 'text',
 	            'label' => 'Type',
-            ],            
+			],     
+            [
+	            'class' => 'yii\grid\ActionColumn',
+	            'template' => '{change_direction} {delete}',
+	            'buttons' => [
+						'change_direction' => function ($url, $model) {
+							return Html::button('<i class="glyphicon glyphicon-retweet"></i>',  
+								['value' =>'Changing mapping direction','style' =>'background:none;border:none;','onclick'=>'callChangeDirection('.$model->id.')']);
+						},
+						'delete' => function ($url, $model) {
+							return Html::button('<i class="glyphicon glyphicon-trash"></i>',  
+								['value' =>'Changing mapping direction','style' =>'background:none;border:none;','onclick'=>'callRemoveMapping('.$model->id.')']);
+						},
+				'visibleButtons' => [
+					'change_direction' => function ($model) {
+						return \Yii::$app->user->can('create-mapper', ['post' => $model]);
+					},
+					'delete' => function ($model) {
+						return \Yii::$app->user->can('delete-mapper', ['post' => $model]);
+					},
+				]
+	            ],
+            ],   
            ],
     ]); ?>
+<div class="loader">
+  <div class="loading">
+  </div>
+</div>
+<?php yii\widgets\Pjax::end(); ?>
+<?php
+					$urlAjaxCallChangeDirection = Yii::$app->getUrlManager()->createUrl('mapper/changedirectionajax');
+					$urlAjaxCallRemoveMapping = Yii::$app->getUrlManager()->createUrl('mapper/deleteajax');
+					$errorMsg = Yii::t('app', 'Error at changing direction call!');
+	    			echo $this->registerJs(
+						"
+						function spinner() {
+							document.getElementsByClassName(\"loader\")[0].style.display = \"block\";
+						}
+
+						function callChangeDirection(id) {
+							spinner();
+							$.ajax({
+								type: 'POST',
+								url: '$urlAjaxCallChangeDirection',
+								data: {'id': id},
+								success: function (data) {
+									if (data > 0)
+									{	
+										$.pjax.reload({container: '#mapping_grid_pjax', async: false});
+									}
+									else
+									{
+										alert('$errorMsg' + \"\\n\" + 'Error code: ' + data);
+										$.pjax.reload({container: '#mapping_grid_pjax', async: false});
+									}
+								},
+								error: function (exception) {
+									alert('$errorMsg: ' + exception);
+									$.pjax.reload({container: '#mapping_grid_pjax', async: false});
+								}
+							})
+							;
+						}						
+						
+						function callRemoveMapping(id) {
+							spinner();
+							$.ajax({
+								type: 'POST',
+								url: '$urlAjaxCallRemoveMapping',
+								data: {'id': id},
+								success: function (data) {
+									if (data > 0)
+									{
+										$.pjax.reload({container: '#mapping_grid_pjax', async: false});
+									}
+									else
+									{
+										alert('$errorMsg' + \"\\n\" + 'Error code: ' + data);
+										$.pjax.reload({container: '#mapping_grid_pjax', async: false});
+									}
+								},
+								error: function (exception) {
+									alert('$errorMsg: ' + exception);
+									$.pjax.reload({container: '#mapping_grid_pjax', async: false});
+								}
+							})
+							;
+						}
+						",
+						yii\web\View::POS_HEAD,
+						null
+				);
+?>
 
 </div>

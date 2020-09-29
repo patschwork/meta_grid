@@ -14,6 +14,7 @@ use Da\User\Filter\AccessRuleFilter;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
 
+
 /**
  * ToolController implements the CRUD actions for Tool model.
  */
@@ -181,7 +182,8 @@ class ToolController extends Controller
      */
     public function actionCreate()
     {
-		        $model = new Tool();
+				
+		$model = new Tool();
 
 		if (Yii::$app->request->post())
 		{
@@ -190,14 +192,14 @@ class ToolController extends Controller
     	}    
 			
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-				        	return $this->redirect(['view', 'id' => $model->id]);
+        	return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
                 'tool_typeList' => $this->getToolTypeList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
-		    }
+    }
 
     /**
      * Updates an existing Tool model.
@@ -207,7 +209,8 @@ class ToolController extends Controller
      */
     public function actionUpdate($id)
     {
-				$model = $this->findModel($id);
+				
+		$model = $this->findModel($id);
 
 		     
 		

@@ -42,6 +42,12 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'cumulation_possible')->checkbox() ?>
 
+	<?php
+		// autogeneriert ueber gii/CRUD
+		echo $form->field($model, 'fk_deleted_status_id')->dropDownList($deleted_statusList, ['id'=>'name']);
+	?>
+ <!--  	// automatisch auskommentiert ueber gii/CRUD    <?= $form->field($model, 'fk_deleted_status_id')->textInput() ?>  -->
+
 
 
     <div class="form-group">

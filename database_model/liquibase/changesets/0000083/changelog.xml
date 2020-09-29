@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000083/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000083" context="floatthead,app_config">
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO auth_item (name, type, description, rule_name) VALUES ('show-bulkloader-template-in-dbdatabase', 2, 'User can see the button "show" for a "Bulkloader Execution Script" to present a template', 'isNotAGuest');
+        ]]>		
+		</sql>
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO auth_item_child (parent,child) VALUES ('global-view','show-bulkloader-template-in-dbdatabase');
+        ]]>		
+		</sql>
+
+		<comment>
+		<![CDATA[
+		Insert new permission "show-bulkloader-template-in-dbdatabase" and add it to the role "global-view".
+		Used objects:
+			auth_item
+			auth_item_child
+        Phabricator tasks:
+            T108
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

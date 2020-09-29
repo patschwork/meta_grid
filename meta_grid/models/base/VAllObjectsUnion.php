@@ -5,7 +5,7 @@ namespace app\models\base;
 use Yii;
 
 /**
- * This is the base-model class for table "v_All_Objects_Union".
+ * This is the model class for table "v_All_Objects_Union".
  *
  * @property integer $id
  * @property integer $fk_object_type_id
@@ -16,6 +16,8 @@ use Yii;
  * @property string $listkey
  * @property string $fk_client_id
  * @property integer $fk_project_id
+ * @property string $listvalue_1_with_client_or_project
+ * @property string $listvalue_2_with_client_or_project
  */
 class VAllObjectsUnion extends \yii\db\ActiveRecord
 {
@@ -34,8 +36,9 @@ class VAllObjectsUnion extends \yii\db\ActiveRecord
     {
         return [
             [['id', 'fk_object_type_id', 'fk_project_id'], 'integer'],
-            [['listvalue_1', 'listvalue_2', 'listkey', 'fk_client_id'], 'string'],
-            [['name', 'object_type_name'], 'string', 'max' => 250]
+            [['listvalue_1', 'listvalue_2', 'listkey', 'fk_client_id', 'listvalue_1_with_client_or_project', 'listvalue_2_with_client_or_project'], 'string'],
+            [['name'], 'string', 'max' => 500],
+            [['object_type_name'], 'string', 'max' => 250],
         ];
     }
 
@@ -54,6 +57,8 @@ class VAllObjectsUnion extends \yii\db\ActiveRecord
             'listkey' => Yii::t('app', 'Listkey'),
             'fk_client_id' => Yii::t('app', 'Fk Client ID'),
             'fk_project_id' => Yii::t('app', 'Fk Project ID'),
+            'listvalue_1_with_client_or_project' => Yii::t('app', 'Listvalue 1 With Client Or Project'),
+            'listvalue_2_with_client_or_project' => Yii::t('app', 'Listvalue 2 With Client Or Project'),
         ];
     }
 }

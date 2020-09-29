@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000079/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000079" context="db_table">
+
+		<!-- Those views are automatically generated with a python helper tool: dwh_meta_v2\helper_tools\Python\database\create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_db_table_SearchInterface">
+		<![CDATA[
+SELECT
+     id
+    ,IFNULL(uuid, '') AS uuid
+    ,fk_object_type_id
+    ,fk_project_id
+    ,IFNULL(name, '') AS name
+    ,IFNULL(description, '') AS description
+    ,IFNULL(location, '') AS location
+    ,fk_db_table_context_id
+    ,fk_db_table_type_id
+    ,fk_deleted_status_id
+    ,CASE 
+        WHEN (LENGTH(location) - LENGTH(REPLACE(location, '"."', ''))) / LENGTH('"."')>=2 THEN REPLACE(SUBSTR(location ,1, INSTR(location,'.')-1),'"','')        
+        ELSE ''
+     END AS databaseInfoFromLocation
+FROM db_table
+		]]>
+		</createView>
+
+		<comment>
+		<![CDATA[
+		Used objects:
+			v_db_table_SearchInterface
+		Phabricator tasks:
+			T82
+		]]>
+		</comment>
+	</changeSet>
+</databaseChangeLog>

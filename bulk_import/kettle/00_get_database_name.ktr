@@ -795,7 +795,7 @@
       <schema_name/>
     </partitioning>
     <connectionSource>Connection</connectionSource>
-    <connectionName>[local] mip_fc_p (MSSQL)</connectionName>
+    <connectionName>[local] chinook (MSSQL)</connectionName>
     <connectionField/>
     <jdbcDriverField/>
     <jdbcUrlField/>

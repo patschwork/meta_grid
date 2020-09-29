@@ -13,6 +13,7 @@ use Da\User\Filter\AccessRuleFilter;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
 
+
 /**
  * ClientController implements the CRUD actions for Client model.
  */
@@ -166,7 +167,18 @@ class ClientController extends Controller
   		$this->createClientPermissions();
   		echo "Client permissions created if needed.";
   		die;
-  	}  
+	}  
+	  
+	protected function addPermissionToUser($client_id, $user_id)
+	{
+		$auth = Yii::$app->authManager;
+		$newRoleOrPermName="client-".$client_id."-read";
+		$perm=$auth->getPermission($newRoleOrPermName);
+		$auth->assign($perm, $user_id);
+		$newRoleOrPermName="client-".$client_id."-write";
+		$perm=$auth->getPermission($newRoleOrPermName);
+		$auth->assign($perm, $user_id);
+	}
 
 
     /**
@@ -203,7 +215,8 @@ class ClientController extends Controller
      */
     public function actionCreate()
     {
-		        $model = new Client();
+				
+		$model = new Client();
 
 		if (Yii::$app->request->post())
 		{
@@ -212,14 +225,16 @@ class ClientController extends Controller
     	}    
 			
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-		        	$this->createClientPermissions();
-				        	return $this->redirect(['view', 'id' => $model->id]);
+$this->createClientPermissions();
+			$userId = Yii::$app->User->Id;
+			$this->addPermissionToUser($model->id, $userId);	
+        	return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
                             ]);
         }
-		    }
+    }
 
     /**
      * Updates an existing Client model.
@@ -229,13 +244,14 @@ class ClientController extends Controller
      */
     public function actionUpdate($id)
     {
-				$model = $this->findModel($id);
+				
+		$model = $this->findModel($id);
 
 		     
 		
 		
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-		        	$this->createClientPermissions();
+					$this->createClientPermissions();
 				            return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [

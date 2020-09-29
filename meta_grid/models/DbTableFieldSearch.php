@@ -21,6 +21,8 @@ class DbTableFieldSearch extends VDbTableFieldSearchinterface
             [['id', 'fk_object_type_id', 'fk_project_id', 'fk_db_table_id', 'fk_deleted_status_id'], 'integer'],
             [['uuid', 'name', 'description', 'datatype', 'bulk_load_checksum'], 'safe'],
             [['is_PrimaryKey', 'is_BusinessKey', 'is_GDPR_relevant'], 'boolean'],
+            [['fk_client_id'], 'integer'],
+            [['databaseInfoFromLocation'], 'safe'],
         ];
     }
 
@@ -71,6 +73,7 @@ class DbTableFieldSearch extends VDbTableFieldSearchinterface
             'id' => $this->id,
             'fk_object_type_id' => $this->fk_object_type_id,
             'fk_project_id' => $this->fk_project_id,
+            'fk_client_id' => $this->fk_client_id,
             'fk_db_table_id' => $this->fk_db_table_id,
             'fk_deleted_status_id' => $this->fk_deleted_status_id,
             'is_PrimaryKey' => $this->is_PrimaryKey,
@@ -79,6 +82,7 @@ class DbTableFieldSearch extends VDbTableFieldSearchinterface
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
+            ->andFilterWhere(['like', 'databaseInfoFromLocation', $this->databaseInfoFromLocation])
             ->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['like', 'description', $this->description])
             ->andFilterWhere(['like', 'datatype', $this->datatype])

@@ -17,6 +17,7 @@ use app\models\DeletedStatus;
 use Da\User\Filter\AccessRuleFilter;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
+use yii2tech\csvgrid\CsvGrid;
 
 /**
  * DbtableController implements the CRUD actions for DbTable model.
@@ -56,6 +57,7 @@ class DbtableController extends Controller
 		$db_table_contextModel = new DbTableContext();
 		$db_table_contexts = $db_table_contextModel::find()->all();
 		$db_table_contextList = array();
+		$db_table_contextList[null] = null;
 		foreach($db_table_contexts as $db_table_context)
 		{
 			$db_table_contextList[$db_table_context->id] = $db_table_context->name;
@@ -69,6 +71,7 @@ class DbtableController extends Controller
 		$db_table_typeModel = new DbTableType();
 		$db_table_types = $db_table_typeModel::find()->all();
 		$db_table_typeList = array();
+		$db_table_typeList[null] = null;
 		foreach($db_table_types as $db_table_type)
 		{
 			$db_table_typeList[$db_table_type->id] = $db_table_type->name;
@@ -82,6 +85,7 @@ class DbtableController extends Controller
 		$deleted_statusModel = new DeletedStatus();
 		$deleted_statuss = $deleted_statusModel::find()->all();
 		$deleted_statusList = array();
+		$deleted_statusList[null] = null;
 		foreach($deleted_statuss as $deleted_status)
 		{
 			$deleted_statusList[$deleted_status->id] = $deleted_status->name;
@@ -115,7 +119,7 @@ class DbtableController extends Controller
                     ],
 					[
 						'allow' => true,
-						'actions' => ['index','view'],
+						'actions' => ['index','view','export_csv'],
 						'roles' => ['author', 'global-view', 'view' ."-" . Yii::$app->controller->id],
 					],
 					[
@@ -227,7 +231,8 @@ class DbtableController extends Controller
     {
 		        return $this->render('view', [
             'model' => $this->findModel($id),
-        ]);
+		'SQLSelectStatement' => $this->buildSQLSelectStatement($id),
+			        ]);
 		}
 
     /**
@@ -237,16 +242,14 @@ class DbtableController extends Controller
      */
     public function actionCreate()
     {
+		$db_table_show_buttons_for_different_object_type_updates=\vendor\meta_grid\helper\Utils::get_app_config("db_table_show_buttons_for_different_object_type_updates");
 
-		$db_table_show_buttons_for_different_object_type_updates_arr = (new yii\db\Query())->from('app_config')->select(['valueINT'])->where(["key" => "db_table_show_buttons_for_different_object_type_updates"])->one();
-		$db_table_show_buttons_for_different_object_type_updates = $db_table_show_buttons_for_different_object_type_updates_arr['valueINT'];
 		if ($db_table_show_buttons_for_different_object_type_updates != 1) 
 		{
 			return $this->redirect(['dbtablefieldmultipleedit/create']);
 		}
-
-
-		        $model = new DbTable();
+				
+		$model = new DbTable();
 
 		if (Yii::$app->request->post())
 		{
@@ -256,7 +259,7 @@ class DbtableController extends Controller
     	}    
 			
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-				        	return $this->redirect(['view', 'id' => $model->id]);
+        	return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -267,7 +270,7 @@ class DbtableController extends Controller
 'deleted_statusList' => $this->getDeletedStatusList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
-		    }
+    }
 
     /**
      * Updates an existing DbTable model.
@@ -277,15 +280,13 @@ class DbtableController extends Controller
      */
     public function actionUpdate($id)
     {
-		$db_table_show_buttons_for_different_object_type_updates_arr = (new yii\db\Query())->from('app_config')->select(['valueINT'])->where(["key" => "db_table_show_buttons_for_different_object_type_updates"])->one();
-		$db_table_show_buttons_for_different_object_type_updates = $db_table_show_buttons_for_different_object_type_updates_arr['valueINT'];
+		$db_table_show_buttons_for_different_object_type_updates = \vendor\meta_grid\helper\Utils::get_app_config("db_table_show_buttons_for_different_object_type_updates");
 		if ($db_table_show_buttons_for_different_object_type_updates != 1) 
 		{
 			return $this->redirect(['dbtablefieldmultipleedit/update', 'id' => $id]);
-		}
-		
-
-				$model = $this->findModel($id);
+		}	
+				
+		$model = $this->findModel($id);
 
 		 if (!in_array($model->fkProject->id, Yii::$app->User->identity->permProjectsCanEdit)) {throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'You have no permission to edit this data.'));
 	return;	}    
@@ -349,4 +350,189 @@ class DbtableController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+	private function buildSQLSelectStatement($id)
+	{
+		$modelDbTableField = \app\models\DbTableField::find()->select(["name", "datatype", "is_PrimaryKey"])->where(["fk_db_table_id" => $id])->all();
+		$model = $this->findModel($id);
+		$returnValue = "";
+		
+		$returnValue .= "SELECT" . "\n";
+		$i=0;
+		foreach($modelDbTableField as $key=>$value)
+		{
+			$i++;
+			$returnValue .= $i > 1 ? "   ," : "    ";
+			$returnValue .= "\"". $value->name . "\"" . "\n";
+		}
+		$returnValue .= "FROM " . $model->location;
+		$returnValue .= ";" . "\n";
+		$returnValue .= "\n";
+		
+		$returnValue .= "CREATE TABLE" ." " . $model->location . "\n";
+		$returnValue .= "(" . "\n";
+		
+		$j=0;
+		foreach($modelDbTableField as $key=>$value)
+		{
+			$j++;
+			$returnValue .= $j > 1 ? "   ," : "    ";
+			$returnValue .= "\"". $value->name . "\"" ;
+			$returnValue .= " " . $value->datatype;
+			$returnValue .= $value->is_PrimaryKey === true ? " NOT NULL PRIMARY KEY" : "";
+			$returnValue .= "\n";
+		}
+		$returnValue .= ")";
+		$returnValue .= ";" . "\n";
+		
+		return $i === 0 ? "" : $returnValue;
+	}
+
+	private function replaceKeys($oldKey, $newKey, array $input){
+		$return = array(); 
+		foreach ($input as $key => $value) {
+			if ($key===$oldKey)
+				$key = $newKey;
+	
+			if (is_array($value))
+				$value = $this->replaceKeys( $oldKey, $newKey, $value);
+	
+			$return[$key] = $value;
+		}
+		return $return; 
+	}
+
+    protected function CreateCSV($export_fk_ids = 0, $sessionPrepKey, $exportFilename)
+    {
+		$searchModel = new \app\models\ExportFileDbTableResultSearch();
+		$queryParams = $this->replaceKeys( "DbTableSearch", "ExportFileDbTableResultSearch", Yii::$app->request->queryParams);
+		$queryParams["ExportFileDbTableResultSearch"]["session"]=$sessionPrepKey;
+		$dataProvider = $searchModel->search($queryParams);
+
+		$columns = [
+			['attribute' => 'id'],
+			['attribute' => 'client_name'],
+			['attribute' => 'project_name'],
+			['attribute' => 'name'],
+			['attribute' => 'description'],
+			['attribute' => 'location'],
+			['attribute' => 'db_table_context_name'],
+			['attribute' => 'db_table_type_name'],
+			['attribute' => 'deleted_status_name'],
+			['attribute' => 'databaseInfoFromLocation'],
+			['attribute' => 'mappings'],
+			['attribute' => 'comments'],
+		];
+		
+		if ($export_fk_ids === "1")
+		{
+			$columns = array_merge($columns, 				[
+				['attribute' => 'uuid'],
+				['attribute' => 'fk_object_type_id'],
+				['attribute' => 'fk_client_id'],
+				['attribute' => 'fk_project_id'],
+				['attribute' => 'fk_db_table_type_id'],
+				['attribute' => 'fk_db_table_context_id'],
+				['attribute' => 'fk_deleted_status_id'],
+			]);
+		}
+
+		$exporter = new CsvGrid([
+			'dataProvider' => $dataProvider,
+			'columns' => $columns,
+		]);
+		$exporter->export()->saveAs($exportFilename);
+	}
+
+	protected function initDownload($exportFilePath) 
+	{
+		$file = $exportFilePath;
+		if (file_exists($file)) {
+			Yii::$app->response->sendFile($file);
+		   } 
+		}
+	
+	protected function prepareExportData($sessionPrepKey)
+	{
+		Yii::trace($sessionPrepKey, '$sessionPrepKey');
+		$permProjectsCanSee = Yii::$app->User->identity->permProjectsCanSee;
+		foreach($permProjectsCanSee as $key=>$value)
+		{
+			$model = new \app\models\base\ExportFileDbTableParams();
+			$model->session = $sessionPrepKey;
+			$model->allowed_fk_project_id = $value;
+			$model->save();
+			unset($model);
+		}
+
+		$permClientsCanSee = Yii::$app->User->identity->permClientsCanSee;
+		foreach($permClientsCanSee as $key=>$value)
+		{
+			$model = new \app\models\base\ExportFileDbTableParams();
+			$model->session = $sessionPrepKey;
+			$model->allowed_fk_client_id = $value;
+			$model->save();
+			unset($model);
+		}
+		
+		$model = new \app\models\base\ExportFileDbTableQueue();
+		$model->session = $sessionPrepKey;
+		$model->save(); // fires DB-TRIGGER
+		unset($model);
+	}
+
+	protected function cleanupResultTable($sessionPrepKey)
+	{
+		\app\models\base\ExportFileDbTableResult::deleteAll(['session' => $sessionPrepKey]);
+	}
+
+	/**
+	 * Checks if a folder exist and return canonicalized absolute pathname (sort version)
+	 * @param string $folder the path being checked.
+	 * @return mixed returns TRUE on success otherwise FALSE
+	 */
+	private function folder_exist($folder)
+	{
+		// Get canonicalized absolute pathname
+		$path = realpath($folder);
+
+		// If it exist, check if it's a directory
+		return ($path !== false AND is_dir($path)) ? true : false;
+	}
+
+	protected function createOutputDir($path)
+	{
+		if (! $this->folder_exist($path))
+		{
+			\yii\helpers\FileHelper::createDirectory($path, $mode = 0775, $recursive = true);
+		}
+		return $this->folder_exist($path);
+	}
+	
+	protected function cleanupResultFile($exportFilePath)
+	{
+		unlink($exportFilePath);
+	}
+
+	public function actionExport_csv($export_fk_ids = "0", $no_cleanup = "0")
+	{
+		$path = Yii::getAlias('@app') . "/exportfiles";
+		$dt = date("Y-m-d_H-m-s");
+		$dirExists=$this->createOutputDir($path);
+		if (! $dirExists)
+		{
+			throw new \yii\base\UserException( Yii::t("app","Output directory couldn't be created!") );
+		}
+		$sessionPrepKey = Yii::$app->controller->id . "|" . $dt . "|" . Yii::$app->session->id . "|" . Yii::$app->user->id;
+		$this->prepareExportData($sessionPrepKey);
+		$exportFilePath = $path . '/'. Yii::$app->controller->id . '_export_' . date("Y-m-d_H-m-s") . '.csv';
+		$this->CreateCSV($export_fk_ids, $sessionPrepKey, $exportFilePath);
+		$this->initDownload($exportFilePath);
+		if ($no_cleanup !== "1")
+		{
+			$this->cleanupResultTable($sessionPrepKey);
+			$this->cleanupResultFile($exportFilePath);
+		}
+		return;
+	}
 }

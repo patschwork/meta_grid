@@ -10,7 +10,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h2> This the application version: <?= \vendor\meta_grid\helper\ApplicationVersion::getVersion() ?></h2>
     <p>
-		a1682446effe from 2020-04-30
+		$Revision$ from $Date$
     </p>
 
 </div>

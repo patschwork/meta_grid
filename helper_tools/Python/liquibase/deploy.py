@@ -143,11 +143,17 @@ if liquibaseActionValue != "":
     print output
 else:
     #subprocess.call([liquibasePathExe, "--driver=" + liquibaseDriver, "--changeLogFile=" + getFilePathRelativeScriptPath(liquibaseChangeLogFile), "--url=" + liquibaseDriverUrlprefix , liquibaseAction])        
-	try:
-		output = subprocess.check_output([liquibasePathExe, "--driver=" + liquibaseDriver, "--changeLogFile=" + getFilePathRelativeScriptPath(liquibaseChangeLogFile), "--url=" + liquibaseDriverUrlprefix , liquibaseAction], stderr=subprocess.STDOUT).decode()
-		success = True 
-	except subprocess.CalledProcessError as e:
-		output = e.output.decode()
-		success = False
-	writeOutputLog(logfilepath, output)
-	print output
+    try:
+        try:
+            output = subprocess.check_output([liquibasePathExe, "--driver=" + liquibaseDriver, "--changeLogFile=" + getFilePathRelativeScriptPath(liquibaseChangeLogFile), "--url=" + liquibaseDriverUrlprefix , liquibaseAction], stderr=subprocess.STDOUT).decode()
+        except:
+            output = subprocess.check_output([liquibasePathExe, "--driver=" + liquibaseDriver, "--changeLogFile=" + getFilePathRelativeScriptPath(liquibaseChangeLogFile), "--url=" + liquibaseDriverUrlprefix , liquibaseAction], stderr=subprocess.STDOUT)
+        success = True 
+    except subprocess.CalledProcessError as e:
+        try:
+            output = e.output.decode()
+        except:
+            output = e.output
+        success = False
+    writeOutputLog(logfilepath, output)
+    print output

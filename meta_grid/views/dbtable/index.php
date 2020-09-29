@@ -1,15 +1,18 @@
+<style>
+.thead_white table thead {
+    background-color: #FFFFFF;
+}
+</style>
 
 <?php
 
 use yii\helpers\Html;
 use yii\grid\GridView;
-use app\models\Project; 
 use yii\helpers\ArrayHelper; 
 use kartik\select2\Select2; 
-use app\models\Client; 
 use vendor\meta_grid\helper\RBACHelper;
 use yii\helpers\Url;
-
+use app\models\VDbTableSearchinterface;
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\DbTableSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -37,7 +40,18 @@ else
     <p>
 		<?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('create-dbtable')  ? Html::a(
 		Yii::t('app', 'Create {modelClass}', ['modelClass' => Yii::t('app', 'Db Table'),]), ['create'], ['class' => 'btn btn-success']) : "" ?>
-	</p>
+		<?php				$request = Yii::$app->request;
+		$queryString = $request->queryString;
+		$controllerid = Yii::$app->controller->id;
+		$destAction4CSVExport = "r=$controllerid/export_csv";
+		$queryString4Export = str_replace("r=$controllerid", $destAction4CSVExport, $queryString);
+		if (stristr($queryString, "r=$controllerid/index") || stristr($queryString, "r=$controllerid%2Findex"))
+		{
+			$queryString4Export = str_replace("r=$controllerid/index", $destAction4CSVExport, $queryString);
+			$queryString4Export = str_replace("r=$controllerid%2Findex", $destAction4CSVExport, $queryString);
+		}
+		echo "<a class='btn btn-primary' href='index.php?$queryString4Export'>".Yii::t('app', 'Export as CSV')."</a></br></br>";
+		?>	</p>
 
 	<?php
 	$session = Yii::$app->session;
@@ -70,7 +84,8 @@ else
 	Url::remember();
 	?>
 	    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
+		'tableOptions' => ['id' => 'grid-view-db-table', 'class' => 'table table-striped table-bordered'],
+		'dataProvider' => $dataProvider,
 		'pager' => [
 			'firstPageLabel' => '<span class="glyphicon glyphicon-chevron-left"></span><span class="glyphicon glyphicon-chevron-left"></span>',
 			'lastPageLabel' => '<span class="glyphicon glyphicon-chevron-right"></span><span class="glyphicon glyphicon-chevron-right"></span>',
@@ -86,7 +101,10 @@ else
        				. Yii::$app->urlManager->createUrl([$controller . '/view','id'=>$key])
        				. '"',
        		];
-       	},    
+       	},
+		'options' => [
+			'class' => 'thead_white',
+		],    
         'filterModel' => $searchModel,
         'columns' => [
         	['class' => 'yii\grid\ActionColumn', 'contentOptions'=>[ 'style'=>'white-space: nowrap;']
@@ -103,8 +121,8 @@ else
              		},
              		'filter' => Select2::widget([
              				'model' => $searchModel,
-             				'attribute' => 'fk_project_id',
-             				'data' => ArrayHelper::map(Project::find()->select('project.id, client.name, project.fk_client_id')->distinct()->joinWith('fkClient')->asArray()->all(), 'id', 'name'),
+             				'attribute' => 'fk_client_id',
+             				'data' => ArrayHelper::map(VDbTableSearchinterface::find()->select(['fk_client_id', 'client_name'])->distinct()->asArray()->all(), 'fk_client_id', 'client_name'),
              				'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_client_id'],
              				'pluginOptions' => [
              						'allowClear' => true
@@ -119,14 +137,26 @@ else
             'filter' => Select2::widget([
             		'model' => $searchModel,
             		'attribute' => 'fk_project_id',
-            		'data' => ArrayHelper::map(app\models\Project::find()->asArray()->all(), 'id', 'name'),
+            		'data' => ArrayHelper::map(VDbTableSearchinterface::find()->select(['fk_project_id', 'project_name'])->distinct()->asArray()->all(), 'fk_project_id', 'project_name'),
             		'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_fkProject'],
             		'pluginOptions' => [
             				'allowClear' => true
             		],
 			]),
             ],
-            'databaseInfoFromLocation:ntext',
+            [
+             'label' => Yii::t('app', 'Database'),
+             'attribute' => 'databaseInfoFromLocation',
+            'filter' => Select2::widget([
+            		'model' => $searchModel,
+            		'attribute' => 'databaseInfoFromLocation',
+            		'data' => ArrayHelper::map(app\models\VDbTableSearchinterface::find()->asArray()->all(), 'databaseInfoFromLocation', 'databaseInfoFromLocation'),
+            		'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_databaseInfoFromLocation'],
+            		'pluginOptions' => [
+            				'allowClear' => true
+            		],
+                 ]),
+            ],
             'name:ntext',
             [
              'label' => Yii::t('app', 'Db Table Context'),
@@ -160,5 +190,19 @@ else
             ],
         ],
     ]); ?>
+
+	<?php 	if (\vendor\meta_grid\helper\Utils::get_app_config("floatthead_for_gridviews") == 1)
+	{
+		\bluezed\floatThead\FloatThead::widget(
+			[
+				'tableId' => 'grid-view-db-table', 
+				'options' => [
+					'top'=>'50'
+				]
+			]
+		);
+	}
+	?>
+
 	
 </div>

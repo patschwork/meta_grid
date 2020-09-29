@@ -9,19 +9,36 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
+use app\models\MappingQualifier;
 use yii\models\ObjectType;
 use yii\helpers\Html;
 use yii\helpers\Json;
 use app\models\base\Project;
 use Da\User\Filter\AccessRuleFilter;
 use yii\filters\AccessControl;
+use yii\helpers\Url;
+
 
 /**
  * MapperController implements the CRUD actions for MapObject2Object model.
  */
 class MapperController extends Controller
 {
-		
+	
+	private function getMappingQualifierList()
+	{
+		// autogeneriert ueber gii/CRUD
+		$mapping_qualifierModel = new MappingQualifier();
+		$mapping_qualifiers = $mapping_qualifierModel::find()->all();
+		$mapping_qualifierList = array();
+		$mapping_qualifierList[null] = null;
+		foreach($mapping_qualifiers as $mapping_qualifier)
+		{
+			$mapping_qualifierList[$mapping_qualifier->id] = $mapping_qualifier->name;
+		}
+		return $mapping_qualifierList;
+	}
+	
     public function behaviors()
     {
 		if (YII_ENV_DEV)
@@ -53,12 +70,12 @@ class MapperController extends Controller
 					],
 					[
 						'allow' => true,
-						'actions' => ['create', 'update', 'createexternal'],
+						'actions' => ['create', 'update', 'createexternal', 'changedirectionajax'],
 						'roles' => ['author', 'global-create', 'create' ."-" . Yii::$app->controller->id],
 					],
 					[
 						'allow' => true,
-						'actions' => ['delete'],
+						'actions' => ['delete', 'deleteajax'],
 						'roles' => ['author', 'global-delete', 'delete' ."-" . Yii::$app->controller->id],
 					],
                 ],
@@ -170,7 +187,8 @@ class MapperController extends Controller
      */
     public function actionCreate()
     {
-		        $model = new MapObject2Object();
+				
+		$model = new MapObject2Object();
 
 		if (Yii::$app->request->post())
 		{
@@ -179,13 +197,14 @@ class MapperController extends Controller
     	}    
 			
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-				        	return $this->redirect(['view', 'id' => $model->id]);
+        	return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
-                            ]);
+                'mapping_qualifierList' => $this->getMappingQualifierList(),		// autogeneriert ueber gii/CRUD
+            ]);
         }
-		    }
+    }
 
     /**
      * Updates an existing MapObject2Object model.
@@ -195,7 +214,8 @@ class MapperController extends Controller
      */
     public function actionUpdate($id)
     {
-				$model = $this->findModel($id);
+				
+		$model = $this->findModel($id);
 
 		     
 		
@@ -205,7 +225,8 @@ class MapperController extends Controller
         } else {
             return $this->render('update', [
                 'model' => $model,
-                            ]);
+                'mapping_qualifierList' => $this->getMappingQualifierList(),		// autogeneriert ueber gii/CRUD
+            ]);
         }
 		    }
 
@@ -219,9 +240,22 @@ class MapperController extends Controller
     {
 		     
     
-        $this->findModel($id)->delete();
+		try {
+			$model = $this->findModel($id);
+			$model->delete();
+			return $this->redirect(['index']);
+		} catch (\Exception $e) {
+			$model->addError(null, $e->getMessage());
+			$errMsg = $e->getMessage();
+			
+			$errMsgAdd = "";
+			try{$errMsgAdd = '"'. $model->name . '"';} catch(\Exception $e){}
 
-        return $this->redirect(['index']);
+			if (strpos($errMsg, "Integrity constraint violation")) $errMsg = Yii::t('yii',"The object {errMsgAdd} is still referenced by other objects.", ['errMsgAdd' => $errMsgAdd]);
+			Yii::$app->session->setFlash('deleteError', Yii::t('yii','Object can\'t be deleted: ') . $errMsg);
+			return $this->redirect(Url::previous());  // Url::remember() is set in index-view
+		}
+
     }
 
     /**
@@ -250,7 +284,8 @@ class MapperController extends Controller
 			if ($parents != null)
 			{
 				$objType_id = $parents[0];
-				$out = $this->getVallobjectsunionListDepDrop($objType_id);
+				$filter_on_client_or_project = $parents[1]; // values can be a value of fk_project_id (with prefix "fk_project_id;") or fk_client_id (with prefix "fk_client_id;") or -1 (if -1 then show all)
+				$out = $this->getVallobjectsunionListDepDrop($objType_id, $filter_on_client_or_project);
 				$selected="";
 				echo Json::encode(['output'=>$out, 'selected'=>$selected]);
 				return;
@@ -259,28 +294,63 @@ class MapperController extends Controller
 		echo Json::encode(['output'=>'', 'selected'=>'']);
 	}
 	
-	private function getVallobjectsunionListDepDrop($objType_id)
+	private function getVallobjectsunionListDepDrop($objType_id, $filter_on_client_or_project)
 	{
-		// Liste der Objekte aufbereiten fuer DepDrop Liste
-		$object_type_Model = new \app\models\ObjectType();
+		// Create list of objects for DepDrop
 		$model1 = new \app\models\VAllObjectsUnion();
-		$all_objects = $model1::find()->all();
+		if ($filter_on_client_or_project != "-1")
+		{
+			// The format can be of: "fk_project_id;<id or fk_project_id>" or "fk_client_id;<id or fk_client_id>"
+			$client_Or_Project = explode(";", $filter_on_client_or_project)[0];
+			if ($client_Or_Project == "fk_project_id")
+			{
+				$filter_project_id_param = explode(";", $filter_on_client_or_project)[1];
+				$filter_client_id = \app\models\Project::find()->select("fk_client_id")->where(["id" => $filter_project_id_param]);
+				$filter_project_id = \app\models\Project::find()->select("id")->where(["id" => $filter_project_id_param]);
+			}
+			else
+			{
+				$filter_client_id_param = explode(";", $filter_on_client_or_project)[1];
+				$filter_client_id = \app\models\Project::find()->select("fk_client_id")->where(["fk_client_id" => $filter_client_id_param]);
+				$filter_project_id = \app\models\Project::find()->select("id")->where(["fk_client_id" => $filter_client_id_param]);
+			}
+
+			$all_objects = $model1::find()
+			   ->where(['in', "fk_project_id", $filter_project_id])
+			   ->orWhere(['in', "fk_client_id", $filter_client_id])
+			   ->all();
+		}
+		else
+		{
+			$all_objects = $model1::find()->all();
+		}
 		$object_typeList = [];
 		foreach($all_objects as $object_item)
 		{
-			if ($objType_id=="*")		// Alle Objekttypen anzeigen
+			if ($objType_id=="*")		// show all object types
 			{
-				// Wenn alle angezeigt weden sollen, dann als gruppierte DropDown Liste
-				$object_typeList[$object_item->object_type_name][$object_item->listkey] = ['id' => $object_item->listkey, 'name' => $object_item->listvalue_1 ];
-	
-				// 				// listvalue_2 Beispiel: sourcesystem - SAP HR
-				// 				$object_typeList[$object_item->object_type_name][$object_item->listkey] = ['id' => $object_item->listkey, 'name' => $object_item->listvalue_2 ];
+				// if all shall be shown, then as a grouped dropdown list
+				if ($filter_on_client_or_project != "-1")
+				{
+					$object_typeList[$object_item->object_type_name][$object_item->listkey] = ['id' => $object_item->listkey, 'name' => $object_item->listvalue_1 ];
+				}
+				else
+				{
+					$object_typeList[$object_item->object_type_name][$object_item->listkey] = ['id' => $object_item->listkey, 'name' => $object_item->listvalue_1_with_client_or_project ];
+				}
 			}
 			else
 			{
 				if ($object_item->fk_object_type_id==$objType_id)
 				{
-					array_push($object_typeList, ['id' => $object_item->listkey, 'name' => $object_item->listvalue_1 ]);
+					if ($filter_on_client_or_project != "-1")
+					{							
+						array_push($object_typeList, ['id' => $object_item->listkey, 'name' => $object_item->listvalue_1 ]);
+					}
+					else
+					{							
+						array_push($object_typeList, ['id' => $object_item->listkey, 'name' => $object_item->listvalue_1_with_client_or_project ]);
+					}
 				}
 			}
 		}
@@ -293,6 +363,7 @@ class MapperController extends Controller
 		$objectTypeModel = new \app\models\ObjectType ();
 		$objectTypes = $objectTypeModel::find ()->all ();
 		$objectTypesList = array ();
+		$objectTypesList [null] = Yii::t('app', "Select...");
 		foreach ( $objectTypes as $objectType ) {
 			$objectTypesList [$objectType->id] = $objectType->name;
 		}
@@ -311,11 +382,25 @@ class MapperController extends Controller
 		$model->ref_fk_object_type_id_1 = $ref_fk_object_type_id;
 
 		if (Yii::$app->request->post ())
-		{
-			$listkey = $_POST["VAllObjectsUnion"]["listkey"];
-				
-			$model->ref_fk_object_id_2 = explode(";", $listkey)[0];
-			$model->ref_fk_object_type_id_2 = explode(";", $listkey)[1];
+		{	
+			if (isset($_POST["VAllObjectsUnion"]["listkey"]))
+			{
+				$listkey = $_POST["VAllObjectsUnion"]["listkey"];
+
+				if (! isset($listkey[1]))
+				{
+					$model->addError('ref_fk_object_type_id_2', '$listkey[1] may not be NULL!!'); // this message will not be seen. Prepared for future use!
+				}
+				else
+				{
+					$model->ref_fk_object_id_2 = explode(";", $listkey)[0];
+					$model->ref_fk_object_type_id_2 = explode(";", $listkey)[1];
+				}			
+			}
+			else
+			{
+				$model->addError('ref_fk_object_type_id_1', '$listkey not set!'); // this message will not be seen. Prepared for future use!
+			}
 		}
 		
 		// Information about source mapping object
@@ -338,6 +423,7 @@ class MapperController extends Controller
 		}
 
 		$TitleSrcInformation = $SrcObjectInfo->listvalue_1;
+		$SrcFilterValueClientOrProjekt = $SrcObjectInfo->fk_project_id === null ? ("fk_client_id;" . $SrcObjectInfo->fk_client_id) : ("fk_project_id;" . $SrcObjectInfo->fk_project_id);
 
     	if ($model->load(Yii::$app->request->post()) && $model->save()) {
     		
@@ -351,7 +437,8 @@ class MapperController extends Controller
 					'model' => $model,
 					'objectTypesList' => $objectTypesList,
 					'VAllObjectsUnionList' => $VAllObjectsUnionList,
-					'TitleSrcInformation' => $TitleSrcInformation
+					'TitleSrcInformation' => $TitleSrcInformation,
+					'SrcFilterValueClientOrProjekt' => $SrcFilterValueClientOrProjekt
 			] );
 		}
 	}
@@ -415,4 +502,75 @@ class MapperController extends Controller
 			] );
 		}
 	}
+	
+	public function actionChangedirectionajax()
+	{
+		$data = Yii::$app->request->post('id');
+		if (isset($data)) {
+			$returnValue = $this->actionChangedirection($data);
+			$chk = $returnValue;
+		} else {
+			$chk = -500;
+		}
+		return \yii\helpers\Json::encode($chk);
+	}
+
+	private function actionChangedirection($id) {
+		
+		try{
+			$model = MapObject2Object::findOne($id);
+			if ($model == null) {
+				return -100;
+			}
+			$ref_fk_object_id_1 = $model->ref_fk_object_id_1;
+			$ref_fk_object_type_id_1 = $model->ref_fk_object_type_id_1;
+			$ref_fk_object_id_2 = $model->ref_fk_object_id_2;
+			$ref_fk_object_type_id_2 = $model->ref_fk_object_type_id_2;
+			
+			$model->ref_fk_object_id_1 = $ref_fk_object_id_2;
+			$model->ref_fk_object_type_id_1 = $ref_fk_object_type_id_2;
+			$model->ref_fk_object_id_2 = $ref_fk_object_id_1;
+			$model->ref_fk_object_type_id_2 = $ref_fk_object_type_id_1;
+			
+			$model->save();
+			return 100;
+		}
+		catch (\Exception $e) 
+		{
+			Yii::trace($e, 'MapperController -> actionChangedirection');
+			return -999;
+		}
+	}
+
+	public function actionDeleteajax()
+	{
+		$data = Yii::$app->request->post('id');
+		if (isset($data)) {
+			$returnValue = $this->delete($data);
+			$chk = $returnValue;
+		} else {
+			$chk = -500;
+		}
+		return \yii\helpers\Json::encode($chk);
+	}
+
+	private function delete($id)
+    {
+		try {
+			$model = $this->findModel($id);
+			$model->delete();
+			return 100;
+		} catch (\Exception $e) {
+			$model->addError(null, $e->getMessage());
+			$errMsg = $e->getMessage();
+			
+			$errMsgAdd = "";
+			try{$errMsgAdd = '"'. $model->name . '"';} catch(\Exception $e){}
+
+			if (strpos($errMsg, "Integrity constraint violation")) $errMsg = Yii::t('yii',"The object {errMsgAdd} is still referenced by other objects.", ['errMsgAdd' => $errMsgAdd]);
+			Yii::$app->session->setFlash('deleteError', Yii::t('yii','Object can\'t be deleted: ') . $errMsg);
+			return -999;
+		}
+    }
+
 }

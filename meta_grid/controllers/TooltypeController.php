@@ -13,6 +13,7 @@ use Da\User\Filter\AccessRuleFilter;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
 
+
 /**
  * TooltypeController implements the CRUD actions for ToolType model.
  */
@@ -167,7 +168,8 @@ class TooltypeController extends Controller
      */
     public function actionCreate()
     {
-		        $model = new ToolType();
+				
+		$model = new ToolType();
 
 		if (Yii::$app->request->post())
 		{
@@ -176,13 +178,13 @@ class TooltypeController extends Controller
     	}    
 			
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-				        	return $this->redirect(['view', 'id' => $model->id]);
+        	return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
                             ]);
         }
-		    }
+    }
 
     /**
      * Updates an existing ToolType model.
@@ -192,7 +194,8 @@ class TooltypeController extends Controller
      */
     public function actionUpdate($id)
     {
-				$model = $this->findModel($id);
+				
+		$model = $this->findModel($id);
 
 		     
 		

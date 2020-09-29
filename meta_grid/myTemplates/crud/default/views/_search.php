@@ -33,6 +33,10 @@ foreach ($generator->getColumnNames() as $attribute) {
         echo "    <?php // echo " . $generator->generateActiveSearchField($attribute) . " ?>\n\n";
     }
 }
+if ($generator->modelClass==="app\models\DbTableField")
+{
+    echo "    <?= " . "\$form->field(\$model, 'databaseInfoFromLocation')" . " ?>\n\n";
+}
 ?>
     <div class="form-group">
         <?= "<?= " ?>Html::submitButton(<?= $generator->generateString('Search') ?>, ['class' => 'btn btn-primary']) ?>

@@ -25,7 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('create-attribute')  ? Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) : "" ?>
-		
+
         <?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('delete-attribute')  ? Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
@@ -33,7 +33,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) : "" ?>
-		    </p>
+	
+    </p>
 
     <?= DetailView::widget([
         'model' => $model,
@@ -51,14 +52,6 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'name:ntext',
             'description:html',
-            [
-             'label' => Yii::t('app', 'Client'),
-             'value' =>              		$model->fk_project_id == "" ? $model->fk_project_id : $model->fkProject->fkClient->name
-            ],
-            [
-             'label' => Yii::t('app', 'Project'),
-             'value' =>              	$model->fk_project_id == "" ? $model->fk_project_id : $model->fkProject->name
-            ],
             [
              'label' => Yii::t('app', 'Formula'),
              'value' =>              	$model->formula == "" ? NULL : "<pre>" . $model->formulaWithLinks . "</pre>",

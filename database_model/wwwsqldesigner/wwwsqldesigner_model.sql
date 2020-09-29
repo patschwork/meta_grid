@@ -308,7 +308,25 @@ isForeignKeyField BOOLEAN DEFAULT NULL,
 foreignKey_table_name TEXT(250) DEFAULT NULL,
 foreignKey_table_field_name TEXT(250) DEFAULT NULL,
 _import_state INTEGER DEFAULT NULL,
-_import_date TIMESTAMP DEFAULT NULL
+_import_date TIMESTAMP DEFAULT NULL,
+is_BusinessKey BOOLEAN DEFAULT NULL,
+is_GDPR_relevant BOOLEAN DEFAULT NULL,
+location TEXT DEFAULT NULL,
+database_or_catalog TEXT(1000) DEFAULT NULL,
+schema TEXT(4000) DEFAULT NULL,
+fk_project_id TEXT DEFAULT NULL,
+fk_db_database_id TEXT DEFAULT NULL,
+column_default_value TEXT(1000) DEFAULT NULL,
+column_cant_be_null BOOLEAN DEFAULT NULL,
+additional_field_1 TEXT(4000) DEFAULT NULL,
+additional_field_2 TEXT(4000) DEFAULT NULL,
+additional_field_3 TEXT(4000) DEFAULT NULL,
+additional_field_4 TEXT(4000) DEFAULT NULL,
+additional_field_5 TEXT(4000) DEFAULT NULL,
+additional_field_6 TEXT(4000) DEFAULT NULL,
+additional_field_7 TEXT(4000) DEFAULT NULL,
+additional_field_8 TEXT(4000) DEFAULT NULL,
+additional_field_9 TEXT(4000) DEFAULT NULL
 );
 
 CREATE TABLE perspective_filter (
@@ -354,4 +372,41 @@ uuid TEXT DEFAULT NULL,
 fk_object_type_id INTEGER DEFAULT 25 REFERENCES object_type (id),
 name TEXT(250) DEFAULT NULL,
 description TEXT(4000) DEFAULT NULL
+);
+
+CREATE TABLE export_file_db_table_queue (
+id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY,
+session TEXT(200) DEFAULT NULL
+);
+
+CREATE TABLE export_file_db_table_params (
+id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+session TEXT(200) DEFAULT NULL,
+allowed_fk_project_id INTEGER DEFAULT NULL,
+allowed_fk_client_id INTEGER DEFAULT NULL
+);
+
+CREATE TABLE export_file_db_table_result (
+id INTEGER NOT NULL  DEFAULT NULL AUTOINCREMENT,
+uuid TEXT DEFAULT NULL,
+fk_object_type_id INTEGER DEFAULT NULL,
+fk_project_id INTEGER DEFAULT NULL,
+fk_client_id INTEGER DEFAULT NULL,
+project_name TEXT(250) DEFAULT NULL,
+client_name TEXT(250) DEFAULT NULL,
+name TEXT(250) DEFAULT NULL,
+description TEXT(4000) DEFAULT NULL,
+location TEXT DEFAULT NULL,
+fk_db_table_context_id INTEGER DEFAULT NULL,
+db_table_context_name TEXT(250) DEFAULT NULL,
+fk_db_table_type_id INTEGER DEFAULT NULL,
+db_table_type_name TEXT(250) DEFAULT NULL,
+fk_deleted_status_id INTEGER DEFAULT NULL,
+deleted_status_name TEXT(250) DEFAULT NULL,
+databaseInfoFromLocation TEXT DEFAULT NULL,
+comments TEXT DEFAULT NULL,
+mappings TEXT DEFAULT NULL,
+session TEXT(200) DEFAULT NULL,
+_auto_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+_created_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

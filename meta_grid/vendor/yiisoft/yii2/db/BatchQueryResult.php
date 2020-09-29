@@ -176,4 +176,16 @@ class BatchQueryResult extends Object implements \Iterator
     {
         return !empty($this->_batch);
     }
+
+    // {... https://github.com/advisories/GHSA-699q-wcff-g9mj | T118
+    public function __sleep()
+    {
+        throw new \BadMethodCallException('Cannot serialize '.__CLASS__);
+    }
+    
+    public function __wakeup()
+    {
+        throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);
+    }
+    // ...}
 }

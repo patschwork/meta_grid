@@ -14,9 +14,11 @@ use app\models\Project;
 use app\models\Tool;
 use app\models\DataDeliveryType;
 use app\models\ContactGroup;
+use app\models\DeletedStatus;
 use Da\User\Filter\AccessRuleFilter;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
+
 
 /**
  * DatadeliveryobjectController implements the CRUD actions for DataDeliveryObject model.
@@ -82,11 +84,26 @@ class DatadeliveryobjectController extends Controller
 		$contact_group_as_data_ownerModel = new ContactGroup();
 		$contact_group_as_data_owners = $contact_group_as_data_ownerModel::find()->all();
 		$contact_group_as_data_ownerList = array();
+		$contact_group_as_data_ownerList[null] = null;
 		foreach($contact_group_as_data_owners as $contact_group_as_data_owner)
 		{
 			$contact_group_as_data_ownerList[$contact_group_as_data_owner->id] = $contact_group_as_data_owner->name;
 		}
 		return $contact_group_as_data_ownerList;
+	}
+
+	private function getDeletedStatusList()
+	{
+		// autogeneriert ueber gii/CRUD
+		$deleted_statusModel = new DeletedStatus();
+		$deleted_statuss = $deleted_statusModel::find()->all();
+		$deleted_statusList = array();
+		$deleted_statusList[null] = null;
+		foreach($deleted_statuss as $deleted_status)
+		{
+			$deleted_statusList[$deleted_status->id] = $deleted_status->name;
+		}
+		return $deleted_statusList;
 	}
 	
     public function behaviors()
@@ -237,7 +254,8 @@ class DatadeliveryobjectController extends Controller
      */
     public function actionCreate()
     {
-		        $model = new DataDeliveryObject();
+				
+		$model = new DataDeliveryObject();
 
 		if (Yii::$app->request->post())
 		{
@@ -247,7 +265,7 @@ class DatadeliveryobjectController extends Controller
     	}    
 			
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-				        	return $this->redirect(['view', 'id' => $model->id]);
+        	return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -256,9 +274,10 @@ class DatadeliveryobjectController extends Controller
 'toolList' => $this->getToolList(),		// autogeneriert ueber gii/CRUD
 'data_delivery_typeList' => $this->getDataDeliveryTypeList(),		// autogeneriert ueber gii/CRUD
 'contact_group_as_data_ownerList' => $this->getContactGroupAsDataOwnerList(),		// autogeneriert ueber gii/CRUD
+'deleted_statusList' => $this->getDeletedStatusList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
-		    }
+    }
 
     /**
      * Updates an existing DataDeliveryObject model.
@@ -268,7 +287,8 @@ class DatadeliveryobjectController extends Controller
      */
     public function actionUpdate($id)
     {
-				$model = $this->findModel($id);
+				
+		$model = $this->findModel($id);
 
 		 if (!in_array($model->fkProject->id, Yii::$app->User->identity->permProjectsCanEdit)) {throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'You have no permission to edit this data.'));
 	return;	}    
@@ -284,6 +304,7 @@ class DatadeliveryobjectController extends Controller
 'toolList' => $this->getToolList(),		// autogeneriert ueber gii/CRUD
 'data_delivery_typeList' => $this->getDataDeliveryTypeList(),		// autogeneriert ueber gii/CRUD
 'contact_group_as_data_ownerList' => $this->getContactGroupAsDataOwnerList(),		// autogeneriert ueber gii/CRUD
+'deleted_statusList' => $this->getDeletedStatusList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
 		    }

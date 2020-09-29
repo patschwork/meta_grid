@@ -251,4 +251,22 @@ return array (
       '@wbraganca/dynamicform' => $vendorDir . '/wbraganca/yii2-dynamicform',
     ),
   ),
+  'bluezed/yii2-float-thead' => 
+  array (
+    'name' => 'bluezed/yii2-float-thead',
+    'version' => '1.0.9.0',
+    'alias' => 
+    array (
+      '@bluezed/floatThead' => $vendorDir . '/bluezed/yii2-float-thead',
+    ),
+  ),
+  'yii2tech/csv-grid' => 
+  array (
+    'name' => 'yii2tech/csv-grid',
+    'version' => '1.0.1.0',
+    'alias' => 
+    array (
+      '@yii2tech/csvgrid' => $vendorDir . '/yii2tech/csv-grid',
+    ),
+  ),
 );

@@ -20,6 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
 		//'projectList' => $projectList,		// autogeneriert ueber gii/CRUD
 		'object_typeList' => $object_typeList,		// autogeneriert ueber gii/CRUD
 'projectList' => $projectList,		// autogeneriert ueber gii/CRUD
+'deleted_statusList' => $deleted_statusList,		// autogeneriert ueber gii/CRUD
 					]) ?>
 
 </div>

@@ -932,10 +932,64 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <default>NULL</default></row>
 <row name="_import_state" null="1" autoincrement="0">
 <datatype>INTEGER</datatype>
-<default>NULL</default><comment>0=no, 1=all fields matched, 2=problems while import</comment>
+<default>NULL</default><comment>0=no, 1=all fields inserted, 2=database_mapping inserted, -1/-2=problems while import</comment>
 </row>
 <row name="_import_date" null="1" autoincrement="0">
 <datatype>TIMESTAMP</datatype>
+<default>NULL</default></row>
+<row name="is_BusinessKey" null="1" autoincrement="0">
+<datatype>BOOLEAN</datatype>
+<default>NULL</default></row>
+<row name="is_GDPR_relevant" null="1" autoincrement="0">
+<datatype>BOOLEAN</datatype>
+<default>NULL</default></row>
+<row name="location" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="database_or_catalog" null="1" autoincrement="0">
+<datatype>TEXT(1000)</datatype>
+<default>NULL</default></row>
+<row name="schema" null="1" autoincrement="0">
+<datatype>TEXT(4000)</datatype>
+<default>NULL</default></row>
+<row name="fk_project_id" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_db_database_id" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="column_default_value" null="1" autoincrement="0">
+<datatype>TEXT(1000)</datatype>
+<default>NULL</default></row>
+<row name="column_cant_be_null" null="1" autoincrement="0">
+<datatype>BOOLEAN</datatype>
+<default>NULL</default></row>
+<row name="additional_field_1" null="1" autoincrement="0">
+<datatype>TEXT(4000)</datatype>
+<default>NULL</default></row>
+<row name="additional_field_2" null="1" autoincrement="0">
+<datatype>TEXT(4000)</datatype>
+<default>NULL</default></row>
+<row name="additional_field_3" null="1" autoincrement="0">
+<datatype>TEXT(4000)</datatype>
+<default>NULL</default></row>
+<row name="additional_field_4" null="1" autoincrement="0">
+<datatype>TEXT(4000)</datatype>
+<default>NULL</default></row>
+<row name="additional_field_5" null="1" autoincrement="0">
+<datatype>TEXT(4000)</datatype>
+<default>NULL</default></row>
+<row name="additional_field_6" null="1" autoincrement="0">
+<datatype>TEXT(4000)</datatype>
+<default>NULL</default></row>
+<row name="additional_field_7" null="1" autoincrement="0">
+<datatype>TEXT(4000)</datatype>
+<default>NULL</default></row>
+<row name="additional_field_8" null="1" autoincrement="0">
+<datatype>TEXT(4000)</datatype>
+<default>NULL</default></row>
+<row name="additional_field_9" null="1" autoincrement="0">
+<datatype>TEXT(4000)</datatype>
 <default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
@@ -1035,7 +1089,7 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <comment>Holds Links to webpages or files or JDBC Connections, etc.
 Are used for mapping_objects_2_objects only.</comment>
 </table>
-<table x="1130" y="1652" name="cleanup_queue">
+<table x="1086" y="1526" name="cleanup_queue">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -1075,5 +1129,104 @@ Are used for mapping_objects_2_objects only.</comment>
 <part>id</part>
 </key>
 <comment>Indicates a soft delete: E.g. deleted on source system or by user (before hard deleted in the object table)</comment>
+</table>
+<table x="1395" y="1668" name="export_file_db_table_queue">
+<row name="id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="session" null="1" autoincrement="0">
+<datatype>TEXT(200)</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="PK">
+<part>id</part>
+</key>
+</table>
+<table x="1396" y="1750" name="export_file_db_table_params">
+<row name="id" null="0" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="session" null="1" autoincrement="0">
+<datatype>TEXT(200)</datatype>
+<default>NULL</default></row>
+<row name="allowed_fk_project_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="allowed_fk_client_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="PK">
+<part>id</part>
+</key>
+</table>
+<table x="1127" y="1667" name="export_file_db_table_result">
+<row name="id" null="0" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_object_type_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="fk_project_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="fk_client_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="project_name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="client_name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT(4000)</datatype>
+<default>NULL</default></row>
+<row name="location" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_db_table_context_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="db_table_context_name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="fk_db_table_type_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="db_table_type_name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="fk_deleted_status_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="deleted_status_name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="databaseInfoFromLocation" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="comments" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="mappings" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="session" null="1" autoincrement="0">
+<datatype>TEXT(200)</datatype>
+<default>NULL</default></row>
+<row name="_auto_id" null="0" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="_created_datetime" null="1" autoincrement="0">
+<datatype>TIMESTAMP</datatype>
+<default>CURRENT_TIMESTAMP</default></row>
+<key type="PRIMARY" name="PK">
+<part>_auto_id</part>
+</key>
 </table>
 </sql>

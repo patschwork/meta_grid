@@ -18,7 +18,7 @@ use yii\widgets\ActiveForm;
 
 	<?php
 		// autogeneriert ueber gii/CRUD
-		echo $form->field($model, 'fk_contact_group_id')->dropDownList($contact_groupList, ['id'=>'name']);
+		echo $form->field($model, 'fk_contact_group_id')->widget(\vendor\meta_grid\contactgroup_select\ContactGroupSelectWidget::className());
 	?>
  <!--  	// automatisch auskommentiert ueber gii/CRUD    <?= $form->field($model, 'fk_contact_group_id')->textInput() ?>  -->
 

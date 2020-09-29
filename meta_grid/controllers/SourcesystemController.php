@@ -12,9 +12,11 @@ use yii\filters\VerbFilter;
 use app\models\ObjectType;
 use app\models\Project;
 use app\models\ContactGroup;
+use app\models\DeletedStatus;
 use Da\User\Filter\AccessRuleFilter;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
+
 
 /**
  * SourcesystemController implements the CRUD actions for Sourcesystem model.
@@ -54,11 +56,26 @@ class SourcesystemController extends Controller
 		$contact_group_as_supporterModel = new ContactGroup();
 		$contact_group_as_supporters = $contact_group_as_supporterModel::find()->all();
 		$contact_group_as_supporterList = array();
+		$contact_group_as_supporterList[null] = null;
 		foreach($contact_group_as_supporters as $contact_group_as_supporter)
 		{
 			$contact_group_as_supporterList[$contact_group_as_supporter->id] = $contact_group_as_supporter->name;
 		}
 		return $contact_group_as_supporterList;
+	}
+
+	private function getDeletedStatusList()
+	{
+		// autogeneriert ueber gii/CRUD
+		$deleted_statusModel = new DeletedStatus();
+		$deleted_statuss = $deleted_statusModel::find()->all();
+		$deleted_statusList = array();
+		$deleted_statusList[null] = null;
+		foreach($deleted_statuss as $deleted_status)
+		{
+			$deleted_statusList[$deleted_status->id] = $deleted_status->name;
+		}
+		return $deleted_statusList;
 	}
 	
     public function behaviors()
@@ -209,7 +226,8 @@ class SourcesystemController extends Controller
      */
     public function actionCreate()
     {
-		        $model = new Sourcesystem();
+				
+		$model = new Sourcesystem();
 
 		if (Yii::$app->request->post())
 		{
@@ -219,16 +237,17 @@ class SourcesystemController extends Controller
     	}    
 			
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-				        	return $this->redirect(['view', 'id' => $model->id]);
+        	return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
                 'object_typeList' => $this->getObjectTypeList(),		// autogeneriert ueber gii/CRUD
 'projectList' => $this->getProjectList(),		// autogeneriert ueber gii/CRUD
 'contact_group_as_supporterList' => $this->getContactGroupAsSupporterList(),		// autogeneriert ueber gii/CRUD
+'deleted_statusList' => $this->getDeletedStatusList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
-		    }
+    }
 
     /**
      * Updates an existing Sourcesystem model.
@@ -238,7 +257,8 @@ class SourcesystemController extends Controller
      */
     public function actionUpdate($id)
     {
-				$model = $this->findModel($id);
+				
+		$model = $this->findModel($id);
 
 		 if (!in_array($model->fkProject->id, Yii::$app->User->identity->permProjectsCanEdit)) {throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'You have no permission to edit this data.'));
 	return;	}    
@@ -252,6 +272,7 @@ class SourcesystemController extends Controller
                 'object_typeList' => $this->getObjectTypeList(),		// autogeneriert ueber gii/CRUD
 'projectList' => $this->getProjectList(),		// autogeneriert ueber gii/CRUD
 'contact_group_as_supporterList' => $this->getContactGroupAsSupporterList(),		// autogeneriert ueber gii/CRUD
+'deleted_statusList' => $this->getDeletedStatusList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
 		    }

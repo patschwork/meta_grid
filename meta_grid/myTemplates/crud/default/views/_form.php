@@ -100,7 +100,7 @@ var p_scope_field		 = '#fk_project_id :selected';
     if (in_array($attribute, $safeAttributes)) {
 		$ignore1 = "";
 		$ignore2 = "";
-		if (($attribute=="uuid") || (substr($attribute,0,3)=="fk_") || ($attribute=="description"))
+		if (($attribute=="uuid") || (substr($attribute,0,3)=="fk_") || ($attribute=="description") || ($attribute=="comment"))
 		{
 			$ignore1 = "<!--  	// automatisch auskommentiert ueber gii/CRUD";
 			$ignore2 = "  -->";
@@ -111,16 +111,14 @@ var p_scope_field		 = '#fk_project_id :selected';
 		$createAttributeSelectWidget = 0;
 		if (substr($attribute,0,3)=="fk_") $createDropDown = 1;
 		if ($attribute=="fk_object_type_id") $createDropDown = 0;
-		if ($attribute=="fk_contact_group_id_as_supporter")
+
+
+		if (explode("_as_",$attribute)[0] === "fk_contact_group_id")
 		{
             $createDropDown = 0;
             $createContactGroupSelectWidget = 1;
         }
-		if ($attribute=="fk_contact_group_id_as_data_owner")
-		{
-            $createDropDown = 0;
-            $createContactGroupSelectWidget = 1;
-        }
+
 		
 		if ($attribute=="fk_attribute_id")
 		{

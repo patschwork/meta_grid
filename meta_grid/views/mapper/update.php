@@ -17,7 +17,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 
     <?= $this->render('_form', [
         'model' => $model, 
-               
+       'mapping_qualifierList' => $mapping_qualifierList,		// autogeneriert ueber gii/CRUD
+        
 				    ]) ?>
 
 </div>

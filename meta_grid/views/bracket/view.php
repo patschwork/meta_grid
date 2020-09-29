@@ -53,7 +53,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('create-bracket')  ? Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) : "" ?>
-		    </p>
+
+	
+    </p>
 
     <?= DetailView::widget([
         'model' => $model,

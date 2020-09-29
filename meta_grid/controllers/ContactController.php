@@ -12,9 +12,11 @@ use yii\filters\VerbFilter;
 use app\models\ObjectType;
 use app\models\ContactGroup;
 use app\models\Client;
+use app\models\DeletedStatus;
 use Da\User\Filter\AccessRuleFilter;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
+
 
 /**
  * ContactController implements the CRUD actions for Contact model.
@@ -41,6 +43,7 @@ class ContactController extends Controller
 		$contact_groupModel = new ContactGroup();
 		$contact_groups = $contact_groupModel::find()->all();
 		$contact_groupList = array();
+		$contact_groupList[null] = null;
 		foreach($contact_groups as $contact_group)
 		{
 			$contact_groupList[$contact_group->id] = $contact_group->name;
@@ -59,6 +62,20 @@ class ContactController extends Controller
 			$clientList[$client->id] = $client->name;
 		}
 		return $clientList;
+	}
+
+	private function getDeletedStatusList()
+	{
+		// autogeneriert ueber gii/CRUD
+		$deleted_statusModel = new DeletedStatus();
+		$deleted_statuss = $deleted_statusModel::find()->all();
+		$deleted_statusList = array();
+		$deleted_statusList[null] = null;
+		foreach($deleted_statuss as $deleted_status)
+		{
+			$deleted_statusList[$deleted_status->id] = $deleted_status->name;
+		}
+		return $deleted_statusList;
 	}
 	
     public function behaviors()
@@ -209,7 +226,8 @@ class ContactController extends Controller
      */
     public function actionCreate()
     {
-		        $model = new Contact();
+				
+		$model = new Contact();
 
 		if (Yii::$app->request->post())
 		{
@@ -219,16 +237,17 @@ class ContactController extends Controller
     	}    
 			
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-				        	return $this->redirect(['view', 'id' => $model->id]);
+        	return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
                 'object_typeList' => $this->getObjectTypeList(),		// autogeneriert ueber gii/CRUD
 'contact_groupList' => $this->getContactGroupList(),		// autogeneriert ueber gii/CRUD
 'clientList' => $this->getClientList(),		// autogeneriert ueber gii/CRUD
+'deleted_statusList' => $this->getDeletedStatusList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
-		    }
+    }
 
     /**
      * Updates an existing Contact model.
@@ -238,7 +257,8 @@ class ContactController extends Controller
      */
     public function actionUpdate($id)
     {
-				$model = $this->findModel($id);
+				
+		$model = $this->findModel($id);
 
 		 if (!in_array($model->fkClient->id, Yii::$app->User->identity->permClientsCanEdit)) {throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'You have no permission to edit this data.'));
 	return;	}    
@@ -252,6 +272,7 @@ class ContactController extends Controller
                 'object_typeList' => $this->getObjectTypeList(),		// autogeneriert ueber gii/CRUD
 'contact_groupList' => $this->getContactGroupList(),		// autogeneriert ueber gii/CRUD
 'clientList' => $this->getClientList(),		// autogeneriert ueber gii/CRUD
+'deleted_statusList' => $this->getDeletedStatusList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
 		    }

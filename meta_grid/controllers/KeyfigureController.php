@@ -11,9 +11,11 @@ use yii\filters\VerbFilter;
 
 use app\models\ObjectType;
 use app\models\Project;
+use app\models\DeletedStatus;
 use Da\User\Filter\AccessRuleFilter;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
+
 
 /**
  * KeyfigureController implements the CRUD actions for Keyfigure model.
@@ -45,6 +47,20 @@ class KeyfigureController extends Controller
 			$projectList[$project->id] = $project->name;
 		}
 		return $projectList;
+	}
+
+	private function getDeletedStatusList()
+	{
+		// autogeneriert ueber gii/CRUD
+		$deleted_statusModel = new DeletedStatus();
+		$deleted_statuss = $deleted_statusModel::find()->all();
+		$deleted_statusList = array();
+		$deleted_statusList[null] = null;
+		foreach($deleted_statuss as $deleted_status)
+		{
+			$deleted_statusList[$deleted_status->id] = $deleted_status->name;
+		}
+		return $deleted_statusList;
 	}
 	
     public function behaviors()
@@ -195,7 +211,8 @@ class KeyfigureController extends Controller
      */
     public function actionCreate()
     {
-		        $model = new Keyfigure();
+				
+		$model = new Keyfigure();
 
 		if (Yii::$app->request->post())
 		{
@@ -205,15 +222,16 @@ class KeyfigureController extends Controller
     	}    
 			
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-				        	return $this->redirect(['view', 'id' => $model->id]);
+        	return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
                 'object_typeList' => $this->getObjectTypeList(),		// autogeneriert ueber gii/CRUD
 'projectList' => $this->getProjectList(),		// autogeneriert ueber gii/CRUD
+'deleted_statusList' => $this->getDeletedStatusList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
-		    }
+    }
 
     /**
      * Updates an existing Keyfigure model.
@@ -223,7 +241,8 @@ class KeyfigureController extends Controller
      */
     public function actionUpdate($id)
     {
-				$model = $this->findModel($id);
+				
+		$model = $this->findModel($id);
 
 		 if (!in_array($model->fkProject->id, Yii::$app->User->identity->permProjectsCanEdit)) {throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'You have no permission to edit this data.'));
 	return;	}    
@@ -236,6 +255,7 @@ class KeyfigureController extends Controller
                 'model' => $model,
                 'object_typeList' => $this->getObjectTypeList(),		// autogeneriert ueber gii/CRUD
 'projectList' => $this->getProjectList(),		// autogeneriert ueber gii/CRUD
+'deleted_statusList' => $this->getDeletedStatusList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
 		    }

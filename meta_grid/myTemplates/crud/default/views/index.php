@@ -1,6 +1,9 @@
+<style>
+.thead_white table thead {
+    background-color: #FFFFFF;
+}
 <?php if($generator->modelClass === "app\models\Attribute"): ?>
 
-<style>
 pre {
     white-space: pre-wrap;       /* Since CSS 2.1 */
     white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
@@ -8,9 +11,8 @@ pre {
     white-space: -o-pre-wrap;    /* Opera 7 */
     word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
-</style>
-
 <?php endif;?>
+</style>
 
 <?php
 
@@ -23,17 +25,19 @@ use yii\helpers\StringHelper;
 $urlParams = $generator->generateUrlParams();
 $nameAttribute = $generator->getNameAttribute();
 
+$searchModelClassViewInterfaceFullpath = str_replace('app\models\\', 'app\models\V',  ltrim($generator->searchModelClass, '\\')) . "interface";
+$searchModelClassViewInterface = "V" . str_replace('app\models\\', '',  ltrim($generator->searchModelClass, '\\')) . "interface";
+
 echo "<?php\n";
 ?>
 
 use yii\helpers\Html;
 use <?= $generator->indexWidgetType === 'grid' ? "yii\\grid\\GridView" : "yii\\widgets\\ListView" ?>;
-use app\models\Project; 
 use yii\helpers\ArrayHelper; 
 use kartik\select2\Select2; 
-use app\models\Client; 
 use vendor\meta_grid\helper\RBACHelper;
 use yii\helpers\Url;
+<?= array_key_exists("fk_project_id", $generator->getTableSchema()->columns) ? "use $searchModelClassViewInterfaceFullpath;" : "" ?>
 
 /* @var $this yii\web\View */
 <?= !empty($generator->searchModelClass) ? "/* @var \$searchModel " . ltrim($generator->searchModelClass, '\\') . " */\n" : '' ?>
@@ -66,6 +70,21 @@ $this->params['breadcrumbs'][] = Yii::t('app', $this->title);
     <p>
 		<?= "<?= Yii::\$app->user->identity->isAdmin || Yii::\$app->User->can('create-" . str_replace("controller", "", strtolower ( StringHelper::basename($generator->controllerClass) ) ) . "')  ? " ?>Html::a(
 		<?php echo "Yii::t('app', 'Create {modelClass}', ['modelClass' => Yii::t('app', '" . Inflector::camel2words(StringHelper::basename($generator->modelClass)) . "'),])"; ?>, ['create'], ['class' => 'btn btn-success']) : "" ?>
+		<?= ($generator->modelClass === "app\models\DbTable" || ($generator->modelClass === "app\models\DbTableField")) ? "<?php" : ""  ?>
+		<?php if ($generator->modelClass === "app\models\DbTable" || ($generator->modelClass === "app\models\DbTableField")): ?>
+		$request = Yii::$app->request;
+		$queryString = $request->queryString;
+		$controllerid = Yii::$app->controller->id;
+		$destAction4CSVExport = "r=$controllerid/export_csv";
+		$queryString4Export = str_replace("r=$controllerid", $destAction4CSVExport, $queryString);
+		if (stristr($queryString, "r=$controllerid/index") || stristr($queryString, "r=$controllerid%2Findex"))
+		{
+			$queryString4Export = str_replace("r=$controllerid/index", $destAction4CSVExport, $queryString);
+			$queryString4Export = str_replace("r=$controllerid%2Findex", $destAction4CSVExport, $queryString);
+		}
+		echo "<a class='btn btn-primary' href='index.php?$queryString4Export'>".Yii::t('app', 'Export as CSV')."</a></br></br>";
+		<?php endif; ?>
+<?= ($generator->modelClass === "app\models\DbTable" || ($generator->modelClass === "app\models\DbTableField")) ? "?>" : ""  ?>
 	</p>
 
 	<?php echo "<?php"; ?>
@@ -103,7 +122,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', $this->title);
 <?php if ($generator->indexWidgetType === 'grid'): ?>
 	<?php //echo "<div class=\"table-responsive\">\n"; ?>
     <?= "<?= " ?>GridView::widget([
-        'dataProvider' => $dataProvider,
+		'tableOptions' => ['id' => 'grid-view-<?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>', 'class' => 'table table-striped table-bordered'],
+		'dataProvider' => $dataProvider,
 		'pager' => [
 			'firstPageLabel' => '<span class="glyphicon glyphicon-chevron-left"></span><span class="glyphicon glyphicon-chevron-left"></span>',
 			'lastPageLabel' => '<span class="glyphicon glyphicon-chevron-right"></span><span class="glyphicon glyphicon-chevron-right"></span>',
@@ -119,7 +139,10 @@ $this->params['breadcrumbs'][] = Yii::t('app', $this->title);
        				. Yii::$app->urlManager->createUrl([$controller . '/view','id'=>$key])
        				. '"',
        		];
-       	},    
+       	},
+		'options' => [
+			'class' => 'thead_white',
+		],    
         <?= !empty($generator->searchModelClass) ? "'filterModel' => \$searchModel,\n        'columns' => [\n" : "'columns' => [\n"; ?>
         	['class' => 'yii\grid\ActionColumn', 'contentOptions'=>[ 'style'=>'white-space: nowrap;']
             <?php
@@ -155,8 +178,44 @@ $this->params['breadcrumbs'][] = Yii::t('app', $this->title);
 				}
 				else
 				{
+					$update_dbtablefield_individual = "";
+					$dbtablefield_additional = "";
+					if ($generator->modelClass === "app\models\DbTableField")
+					{
+						$update_dbtablefield_individual = "{update-dbtablefield-individual} ";
+						$dbtablefield_additional = '
+						\'buttons\' => [
+							\'update-dbtablefield-individual\' => function ($url, $model) {
+		
+								$html_btn = Html::a(\'<span style="color: silver;" class="glyphicon glyphicon-pencil"></span>\', $url, [
+										\'title\' => Yii::t(\'app\', \'Update dbtablefield individual\'),
+								]);
+		
+								$db_table_show_buttons_for_different_object_type_updates = \vendor\meta_grid\helper\Utils::get_app_config("db_table_show_buttons_for_different_object_type_updates");
+								if ($db_table_show_buttons_for_different_object_type_updates == 1) 
+								{
+									return $html_btn;
+								}
+							}
+						],
+						\'urlCreator\' => function ($action, $model, $key, $index) {
+							if ($action === \'update\') {
+								$url = "?r=dbtablefieldmultipleedit/update&id=".$model->fk_db_table_id; // your own url generation logic
+								return $url;
+							}
+							if ($action === \'update-dbtablefield-individual\') {
+								$url = "?r=dbtablefield/update&id=".$model->id; // your own url generation logic
+								return $url;
+							}
+							// general button actions
+							$controller = Yii::$app->controller->id;
+							return Yii::$app->urlManager->createUrl([$controller . \'/\' . $action ,\'id\'=>$key]);
+						}
+						';
+					} 
             		echo ",\n";
-            		echo "\t\t\t\t" . "'template' => RBACHelper::filterActionColumn_meta_grid('{view} {update} {delete}')," . "\n";
+					echo "\t\t\t\t" . "'template' => RBACHelper::filterActionColumn_meta_grid('{view} {update} $update_dbtablefield_individual{delete}')," . "\n";
+					if ($dbtablefield_additional !== "")  echo "\t\t\t\t" . $dbtablefield_additional;
 				}            
             ?>
             ],
@@ -188,7 +247,8 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
         if ($column->name=="uuid") continue;
         if ($column->name=="fk_object_type_id") continue;
         if ($column->name=="location") continue;
-        
+        if ($column->name=="fk_deleted_status_id") continue; // not for now
+		
         if ($column->name=="description" && $generator->modelClass=="app\models\DbTable") continue; // phabricator-task: T23
 
         // Patrick, 2016-01-16, "related" Infos anzeigen
@@ -237,8 +297,10 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
 	        	
 	        	$genCode .= "             		'filter' => Select2::widget([" . "\n";
 	        	$genCode .= "             				'model' => " . '$searchModel' . "," . "\n";
-	        	$genCode .= "             				'attribute' => 'fk_project_id'," . "\n";
-	        	$genCode .= "             				'data' => ArrayHelper::map(Project::find()->select('project.id, client.name, project.fk_client_id')->distinct()->joinWith('fkClient')->asArray()->all(), 'id', 'name')," . "\n";
+	        	// $genCode .= "             				'attribute' => 'fk_project_id'," . "\n";
+	        	$genCode .= "             				'attribute' => 'fk_client_id'," . "\n";
+	        	// $genCode .= "             				'data' => ArrayHelper::map(Project::find()->select('project.id, client.name, project.fk_client_id')->distinct()->joinWith('fkClient')->asArray()->all(), 'id', 'name')," . "\n";
+	        	$genCode .= "             				'data' => ArrayHelper::map($searchModelClassViewInterface::find()->select(['fk_client_id', 'client_name'])->distinct()->asArray()->all(), 'fk_client_id', 'client_name')," . "\n";
 	        	$genCode .= "             				'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_client_id']," . "\n";
 	        	$genCode .= "             				'pluginOptions' => [" . "\n";
 	        	$genCode .= "             						'allowClear' => true" . "\n";
@@ -282,7 +344,8 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
 			$genCode .= "            'filter' => Select2::widget([" . "\n";
 			$genCode .= "            		'model' => " . '$searchModel' . "," . "\n";
 			$genCode .= "            		'attribute' => '" . $column->name . "'," . "\n";
-			$genCode .= "            		'data' => ArrayHelper::map(app\\models\\" . $relModelClassName . "::find()->asArray()->all(), 'id', '$nameFieldProperty')," . "\n";
+			$genCode .= $column->name=="fk_project_id" ? "            		'data' => ArrayHelper::map($searchModelClassViewInterface::find()->select(['fk_project_id', 'project_name'])->distinct()->asArray()->all(), 'fk_project_id', 'project_name')," . "\n" : "            		'data' => ArrayHelper::map(app\\models\\" . $relModelClassName . "::find()->asArray()->all(), 'id', '$nameFieldProperty')," . "\n";
+			// $genCode .= "            		'data' => ArrayHelper::map(app\\models\\" . $relModelClassName . "::find()->asArray()->all(), 'id', '$nameFieldProperty')," . "\n";
 			$genCode .= "            		'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_" . $relFieldname . "'$multiple]," . "\n";
 			$genCode .= "            		'pluginOptions' => [" . "\n";
 			$genCode .= "            				'allowClear' => true" . "\n";
@@ -307,6 +370,7 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
 		if ($column->name=="formula" && $generator->modelClass=="app\models\Attribute")
 		{
 			$useGenCode = 1;
+			$genCode = "";
 			$genCode .= "            [\n";
 			$genCode .= "             'label' => Yii::t('app', 'Formula'),\n";
 			$genCode .= "             'value' => function(\$model) {\n";
@@ -320,21 +384,35 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
         $fieldFormat = "";
         if ($format != 'text')
         {
-        	$fieldFormat = ":" . $format;
+			$fieldFormat = ":" . $format;
         	if ($column->name=="email") $fieldFormat = ":email";
         	if ($column->name=="description") $fieldFormat = ":html";
         	if ($column->name=="comment") $fieldFormat = ":html";
         }
         
         // { ... phabricator-task: T23
-        if ($column->name=="name" && $generator->modelClass=="app\models\DbTable")
-        {
-        	$useGenCode = 1;
-        	$genCode = "";
-        	$genCode .= "            '" . "databaseInfoFromLocation" . ":ntext" . "',\n";
-        	$genCode .= "            '" . $column->name . $fieldFormat . "',\n";
-        }
-        // ...}
+			if ($column->name=="name" && ($generator->modelClass=="app\models\DbTable" || $generator->modelClass=="app\models\DbTableField"))
+			{
+				$useGenCode = 1;
+				$genCode = "";
+				$genCode .= "            [\n";
+				$genCode .= "             'label' => Yii::t('app', 'Database'),\n";
+				$genCode .= "             'attribute' => 'databaseInfoFromLocation',\n";
+				$genCode .= "            'filter' => Select2::widget([\n";
+				$genCode .= "            		'model' => \$searchModel,\n";
+				$genCode .= "            		'attribute' => 'databaseInfoFromLocation',\n";
+				$genCode .= "            		'data' => ArrayHelper::map(app\models\VDbTable" . ($generator->modelClass=="app\models\DbTableField" ? "Field" : "") . "Searchinterface::find()->asArray()->all(), 'databaseInfoFromLocation', 'databaseInfoFromLocation'),\n";
+				$genCode .= "            		'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_databaseInfoFromLocation'],\n";
+				$genCode .= "            		'pluginOptions' => [\n";
+				$genCode .= "            				'allowClear' => true\n";
+				$genCode .= "            		],\n";
+				$genCode .= "                 ]),\n";
+				$genCode .= "            ],\n";
+				
+				// now "name" will be generated...
+				$genCode .= "            '" . $column->name . $fieldFormat . "',\n";
+			}
+			// ...}
         
         if (++$count < 6) {
 		
@@ -364,6 +442,21 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
 ?>
         ],
     ]); ?>
+
+	<?= "<?php " ?>
+	if (\vendor\meta_grid\helper\Utils::get_app_config("floatthead_for_gridviews") == 1)
+	{
+		\bluezed\floatThead\FloatThead::widget(
+			[
+				'tableId' => 'grid-view-<?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>', 
+				'options' => [
+					'top'=>'50'
+				]
+			]
+		);
+	}
+	?>
+
 	<?php // echo "</div>\n"; ?>
 <?php else: ?>
     <?= "<?= " ?>ListView::widget([

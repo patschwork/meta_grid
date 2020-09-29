@@ -43,6 +43,7 @@
 
 <?php
 use lajax\translatemanager\helpers\Language as Lx;
+
 /* @var $this yii\web\View */
 $this->title = 'Meta#Grid'.(stristr(Yii::$app->homeUrl, 'dev') ? ' DEV' : '');
 
@@ -84,9 +85,7 @@ if ($foundIssues>0)
 try
 {
     // get the path from the app_config database table. If not exists, then use a default.
-    $app_config_liquibase_changelog_master_filepath_arr = ((new yii\db\Query())->from('app_config')->select(['valueSTRING'])->where(["key" => "liquibase_changelog_master_filepath"])->one());
-    $app_config_liquibase_changelog_master_filepath = $app_config_liquibase_changelog_master_filepath_arr['valueSTRING'];
-    if ($app_config_liquibase_changelog_master_filepath === "") $app_config_liquibase_changelog_master_filepath = "../../../../database_model/liquibase/db.changelog-master.xml";
+    $app_config_liquibase_changelog_master_filepath = \vendor\meta_grid\helper\Utils::get_app_config("liquibase_changelog_master_filepath");
 
     // reads the LiquiBase Changelog-Master-XML File
     $xml=simplexml_load_file($app_config_liquibase_changelog_master_filepath) or die("Error: Cannot create object");
@@ -177,6 +176,36 @@ if (!Yii::$app->user->isGuest)
                 ]);   
             }
         }   
+    }
+
+    $configfile = Yii::$app->getBasePath()."/config/web.php";
+    if (file_exists($configfile))
+    {
+        $file_content = file_get_contents($configfile);
+        $file_content = trim(preg_replace('!\s+!', ' ', $file_content)); // ignore tab intend
+
+        $stringToCheck = <<<CONFIGWEGITEM
+    'aliases' => [
+        '@bower' => '@vendor/bower-asset',
+        '@npm'   => '@vendor/npm-asset',
+    ],
+CONFIGWEGITEM;
+
+        $stringToCheck = trim(preg_replace('!\s+!', ' ', $stringToCheck)); // ignore tab intend
+
+        if( strpos($file_content,$stringToCheck) <= 0) 
+        {
+            $helptextid=1001;
+            $url= Yii::$app->urlManager->createUrl(['shorthelp/index','helptextid'=>$helptextid]);
+            
+            $hlp_btn='<a class="btn btn-primary" href="' . $url . '">Help</a>';
+            echo yii\bootstrap\Alert::widget([
+                'options' => [
+                        'class' => 'alert-danger',
+                ],
+                'body' => "<b>Important</b>: Please update your config file!</br>" . "Goto $hlp_btn to see detailed information.",
+            ]);   
+        }
     }
 }
 

@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000086/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000086" context="db_table export">
+
+
+    	<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TABLE IF EXISTS export_file_db_table_queue;
+		]]>	
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TABLE export_file_db_table_queue (
+    id      INTEGER       NOT NULL
+                          PRIMARY KEY AUTOINCREMENT,
+    session VARCHAR (200) 
+);
+		]]>		
+		</sql>		
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TABLE IF EXISTS export_file_db_table_params;
+		]]>	
+		</sql>	
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TABLE export_file_db_table_params (
+    id                    INTEGER       NOT NULL
+                                        PRIMARY KEY AUTOINCREMENT,
+    session               VARCHAR (200),
+    allowed_fk_project_id INT,
+    allowed_fk_client_id  INT
+);
+		]]>		
+		</sql>	
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TABLE IF EXISTS export_file_db_table_result;
+		]]>	
+		</sql>		
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TABLE export_file_db_table_result
+(
+   id integer,
+   uuid TEXT,
+   fk_object_type_id integer,
+   fk_project_id integer,
+   fk_client_id integer,
+   project_name varchar(250),
+   client_name varchar(250),
+   name varchar(250),
+   description varchar(4000),
+   location TEXT,
+   fk_db_table_context_id integer,
+   db_table_context_name varchar(250),
+   fk_db_table_type_id integer,
+   db_table_type_name varchar(250),
+   fk_deleted_status_id integer,
+   deleted_status_name varchar(250),
+   databaseInfoFromLocation TEXT,
+   comments TEXT,
+   mappings TEXT,
+   session VARCHAR(200),
+   _auto_id integer PRIMARY KEY AUTOINCREMENT,
+   _created_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+;
+		]]>		
+		</sql>	
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_export_file_db_table_queue_INSERT;
+		]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_export_file_db_table_queue_INSERT
+         AFTER INSERT
+            ON export_file_db_table_queue
+BEGIN
+	DELETE FROM export_file_db_table_result 
+          WHERE _created_datetime<=date('now','-60 day');
+    DELETE FROM export_file_db_table_result
+          WHERE session = new.session;
+    INSERT INTO export_file_db_table_result (
+                                                id,
+                                                uuid,
+                                                fk_object_type_id,
+                                                fk_project_id,
+                                                fk_client_id,
+                                                project_name,
+                                                client_name,
+                                                name,
+                                                description,
+                                                location,
+                                                fk_db_table_context_id,
+                                                db_table_context_name,
+                                                fk_db_table_type_id,
+                                                db_table_type_name,
+                                                fk_deleted_status_id,
+                                                deleted_status_name,
+                                                databaseInfoFromLocation,
+                                                comments,
+                                                mappings,
+                                                session
+                                            )
+    SELECT 
+            sq01.* 
+           ,sq02.mappings 
+           ,new.session 
+    FROM   
+    (
+            SELECT 
+                    dbt.id 
+                   ,IFNULL(dbt.uuid, '')                                                                  AS uuid 
+                   ,dbt.fk_object_type_id                                                                 
+                   ,dbt.fk_project_id                                                                     
+                   ,p.fk_client_id                                                                        
+                   ,p.name                                                                                AS project_name 
+                   ,IFNULL(client.name, '')                                                               AS client_name 
+                   ,IFNULL(dbt.name, '')                                                                  AS name 
+                   ,IFNULL([REPLACE]([REPLACE](dbt.description, Char(13), '\r'), Char(10), '\n'), '')     AS description 
+                   ,IFNULL([REPLACE]([REPLACE](dbt.location, Char(13), '\r'), Char(10),'\n'), '')         AS location 
+                   ,dbt.fk_db_table_context_id                                                            
+                   ,dbtc.name                                                                             AS db_table_context_name 
+                   ,dbt.fk_db_table_type_id                                                               
+                   ,dbtt.name                                                                             AS db_table_type_name 
+                   ,dbt.fk_deleted_status_id                                                               
+                   ,dels.name                                                                             AS deleted_status_name 
+                   ,CASE 
+                      WHEN ( LENGTH(location) - LENGTH([REPLACE](location, '"."', '')) ) / LENGTH('"."') >= 2 THEN [REPLACE]([REPLACE]([REPLACE](SUBSTR(location, 1, INSTR(location, '.') - 1),                                                   '"'                                                                 , ''),                                                                 Char(13), '\r'),                               Char(                               10), '\n'                               ) 
+                      ELSE '' 
+                    END                                                                                   AS databaseInfoFromLocation 
+                   ,[REPLACE]([REPLACE](GROUP_CONCAT(oc.comment, '||'), Char(13), '\r'), Char(10), '\n')  AS comments 
+            FROM   db_table dbt 
+                   INNER JOIN export_file_db_table_params params 
+                           ON 1 = 1 
+                              AND params.allowed_fk_project_id = dbt.fk_project_id 
+                              AND params.allowed_fk_project_id IS NOT NULL
+                              AND params.session = new.session 
+                   LEFT JOIN project p 
+                          ON 1 = 1 
+                             AND p.id = dbt.fk_project_id 
+                   LEFT JOIN client 
+                          ON client.id = p.fk_client_id 
+                   LEFT JOIN db_table_context dbtc 
+                          ON 1 = 1 
+                             AND dbtc.id = dbt.fk_db_table_context_id 
+                   LEFT JOIN db_table_type dbtt 
+                          ON 1 = 1 
+                             AND dbtt.id = dbt.fk_db_table_type_id 
+                   LEFT JOIN deleted_status dels 
+                          ON 1 = 1 
+                             AND dels.id = dbt.fk_deleted_status_id 
+                   LEFT JOIN object_comment oc 
+                          ON 1 = 1 
+                             AND oc.ref_fk_object_type_id = dbt.fk_object_type_id 
+                             AND oc.ref_fk_object_id = dbt.id 
+            GROUP  BY dbt.id 
+                      ,dbt.uuid 
+                      ,dbt.fk_object_type_id 
+                      ,dbt.fk_project_id 
+                      ,p.fk_client_id 
+                      ,p.name 
+                      ,client.name 
+                      ,dbt.name 
+                      ,dbt.description 
+                      ,dbt.location 
+                      ,dbt.fk_db_table_context_id 
+                      ,dbtc.name 
+                      ,dbt.fk_db_table_type_id 
+                      ,dbtt.name 
+                      ,dbt.fk_deleted_status_id 
+                      ,dels.name 
+                      ,CASE 
+                         WHEN ( LENGTH(location) - LENGTH([REPLACE](location, '"."', '')) ) / LENGTH( '"."') >= 2 THEN [REPLACE]([REPLACE]([REPLACE](SUBSTR(location, 1, INSTR(location, '.') - 1 ), '"' , ''), Char(13), '\r'), Char(10), '\n' ) 
+                         ELSE '' 
+                       END
+    ) sq01 
+    LEFT JOIN 
+    (
+              SELECT 
+    		          dbt.id 
+    				 ,[REPLACE]([REPLACE](GROUP_CONCAT(mo2o.listvalue_2, '||'), Char(13), '\r'), Char( 10), '\n') AS mappings 
+    		  FROM   db_table dbt 
+    				 INNER JOIN export_file_db_table_params params 
+    						 ON 1 = 1 
+    							AND params.allowed_fk_project_id = 
+    								dbt.fk_project_id 
+    							AND params.allowed_fk_project_id IS NOT NULL 
+    				 AND  
+    				 params.session = new.session 
+    				 LEFT OUTER JOIN v_all_mappings_union mo2o 
+    					  ON 1 = 1 
+    						 AND mo2o.filter_ref_fk_object_id = 
+    							 dbt.id 
+    						 AND mo2o.filter_ref_fk_object_type_id = 
+    							 dbt.fk_object_type_id 
+    						 AND 
+    						 ( mo2o.fk_client_id IN 
+    							 (SELECT DISTINCT allowed_fk_client_id FROM export_file_db_table_params WHERE  1 = 1 
+    							   AND session = new.session  
+    							   AND allowed_fk_client_id IS NOT NULL
+    							 ) 
+    						   OR 
+    						   mo2o.fk_project_id IN 
+    							 (SELECT DISTINCT allowed_fk_project_id FROM   export_file_db_table_params WHERE  1 = 1 
+    							   AND session = new.session  
+    							   AND allowed_fk_project_id IS NOT NULL
+    							 ) 
+    				        ) 
+    		  GROUP  BY dbt.id
+    ) sq02 ON 1 = 1 
+    AND sq02.id = sq01.id 
+    ;
+
+    DELETE FROM export_file_db_table_params
+          WHERE session = new.session;
+    DELETE FROM export_file_db_table_queue
+          WHERE session = new.session;
+END
+;
+		]]>		
+		</sql>
+
+		<comment>
+		<![CDATA[
+		New tables and trigger to support the exporting of data for db_table.
+		Used objects:
+			export_file_db_table_queue
+			export_file_db_table_params
+			export_file_db_table_result
+			TRIG_export_file_db_table_queue_INSERT
+		Phabricator tasks:
+			T110
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

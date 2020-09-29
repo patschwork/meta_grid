@@ -22,11 +22,20 @@ class MapObject2Object extends \app\models\base\MapObject2Object
 	
 	public static function find()
 	{
+
 		$obj=Yii::createObject(yii\db\ActiveQuery::className(), [get_called_class()]);
+	
+		$permProjectsCanSee = Yii::$app->User->identity->permProjectsCanSee;
+		$permClientsCanSee = Yii::$app->User->identity->permClientsCanSee;
+
+		$chkPermModel = VAllMappingsUnion::find()->select(['id'])
+			->Where(['in','fk_project_id', $permProjectsCanSee])
+			->orWhere(['in','fk_client_id', $permClientsCanSee])
+			;
 		if (!Yii::$app->User->identity->isAdmin)
 		{
 			$obj->Where([
-					'in','id', [-1234567]
+					'in','id', $chkPermModel
 			]);
 		}
 		return $obj;
@@ -38,4 +47,10 @@ class MapObject2Object extends \app\models\base\MapObject2Object
 		return null;
 			
 	}
+
+    public function rules()
+    {
+		$addionalRules = array([['ref_fk_object_type_id_2'], 'required', 'message'=>Yii::t('app', 'Please choose a mapping object.')]);
+		return array_merge(parent::rules(), $addionalRules);
+    }
 }

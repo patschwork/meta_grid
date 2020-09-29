@@ -16,6 +16,7 @@ use Da\User\Filter\AccessRuleFilter;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
 
+
 /**
  * ContactgroupController implements the CRUD actions for ContactGroup model.
  */
@@ -210,7 +211,8 @@ class ContactgroupController extends Controller
      */
     public function actionCreate()
     {
-		        $model = new ContactGroup();
+				
+		$model = new ContactGroup();
 
 		if (Yii::$app->request->post())
 		{
@@ -220,7 +222,7 @@ class ContactgroupController extends Controller
     	}    
 			
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-				        	return $this->redirect(['view', 'id' => $model->id]);
+        	return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -229,7 +231,7 @@ class ContactgroupController extends Controller
 'deleted_statusList' => $this->getDeletedStatusList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
-		    }
+    }
 
     /**
      * Updates an existing ContactGroup model.
@@ -239,7 +241,8 @@ class ContactgroupController extends Controller
      */
     public function actionUpdate($id)
     {
-				$model = $this->findModel($id);
+				
+		$model = $this->findModel($id);
 
 		 if (!in_array($model->fkClient->id, Yii::$app->User->identity->permClientsCanEdit)) {throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'You have no permission to edit this data.'));
 	return;	}    

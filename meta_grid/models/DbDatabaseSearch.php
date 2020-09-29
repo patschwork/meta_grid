@@ -20,6 +20,7 @@ class DbDatabaseSearch extends VDbDatabaseSearchinterface
         return [
             [['id', 'fk_object_type_id', 'fk_project_id', 'fk_tool_id', 'fk_deleted_status_id'], 'integer'],
             [['uuid', 'name', 'description'], 'safe'],
+            [['fk_client_id'], 'integer'],
         ];
     }
 
@@ -70,6 +71,7 @@ class DbDatabaseSearch extends VDbDatabaseSearchinterface
             'id' => $this->id,
             'fk_object_type_id' => $this->fk_object_type_id,
             'fk_project_id' => $this->fk_project_id,
+            'fk_client_id' => $this->fk_client_id,
             'fk_tool_id' => $this->fk_tool_id,
             'fk_deleted_status_id' => $this->fk_deleted_status_id,
         ]);

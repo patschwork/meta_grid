@@ -3,8 +3,10 @@
  * This is the template for generating CRUD search class of the specified model.
  */
 
+use Symfony\Component\VarDumper\Cloner\VarCloner;
+use Symfony\Component\VarDumper\VarDumper as VarDumperVarDumper;
 use yii\helpers\StringHelper;
-
+use yii\helpers\VarDumper;
 
 /* @var $this yii\web\View */
 /* @var $generator yii\gii\generators\crud\Generator */
@@ -18,6 +20,24 @@ $rules = $generator->generateSearchRules();
 $labels = $generator->generateSearchLabels();
 $searchAttributes = $generator->getSearchAttributes();
 $searchConditions = $generator->generateSearchConditions();
+
+$add_fk_client_id = false;
+if (strstr(implode(" ", $rules), 'fk_project_id'))
+{
+    $add_fk_client_id = true;
+    $searchFor = '\'fk_project_id\' => $this->fk_project_id,';
+    $replaceWith = $searchFor . "\n" . str_repeat(' ', 12) . '\'fk_client_id\' => $this->fk_client_id,';
+    $searchConditions[0] = str_replace($searchFor, $replaceWith, $searchConditions[0]);
+}
+
+$add_databaseInfoFromLocation = false;
+if ($modelClass === "DbTable" || $modelClass === "DbTableField")
+{
+    $add_databaseInfoFromLocation = true;
+    $searchFor = '$query->andFilterWhere([\'like\', \'uuid\', $this->uuid])';
+    $replaceWith = $searchFor . "\n" . str_repeat(' ', 12) . '->andFilterWhere([\'like\', \'databaseInfoFromLocation\', $this->databaseInfoFromLocation])';
+    $searchConditions[1] = str_replace($searchFor, $replaceWith, $searchConditions[1]);
+}
 
 echo "<?php\n";
 $searchInterfaceModelClassName = "V" . StringHelper::basename($generator->searchModelClass) . "interface";
@@ -43,7 +63,7 @@ class <?= $searchModelClass ?> extends <?= $searchInterfaceModelClassName ?>
     public function rules()
     {
         return [
-            <?= implode(",\n            ", $rules) ?>,
+            <?= implode(",\n            ", $rules) . ($add_fk_client_id ? ",\n". str_repeat(' ', 12) . "[['fk_client_id'], 'integer']" : '') . ($add_databaseInfoFromLocation ? ",\n". str_repeat(' ', 12) . "[['databaseInfoFromLocation'], 'safe']" : '') ?>,
         ];
     }
 

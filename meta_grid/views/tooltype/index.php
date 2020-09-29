@@ -1,12 +1,15 @@
+<style>
+.thead_white table thead {
+    background-color: #FFFFFF;
+}
+</style>
 
 <?php
 
 use yii\helpers\Html;
 use yii\grid\GridView;
-use app\models\Project; 
 use yii\helpers\ArrayHelper; 
 use kartik\select2\Select2; 
-use app\models\Client; 
 use vendor\meta_grid\helper\RBACHelper;
 use yii\helpers\Url;
 
@@ -37,7 +40,7 @@ else
     <p>
 		<?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('create-tooltype')  ? Html::a(
 		Yii::t('app', 'Create {modelClass}', ['modelClass' => Yii::t('app', 'Tool Type'),]), ['create'], ['class' => 'btn btn-success']) : "" ?>
-	</p>
+					</p>
 
 	<?php
 	$session = Yii::$app->session;
@@ -70,7 +73,8 @@ else
 	Url::remember();
 	?>
 	    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
+		'tableOptions' => ['id' => 'grid-view-tool-type', 'class' => 'table table-striped table-bordered'],
+		'dataProvider' => $dataProvider,
 		'pager' => [
 			'firstPageLabel' => '<span class="glyphicon glyphicon-chevron-left"></span><span class="glyphicon glyphicon-chevron-left"></span>',
 			'lastPageLabel' => '<span class="glyphicon glyphicon-chevron-right"></span><span class="glyphicon glyphicon-chevron-right"></span>',
@@ -86,7 +90,10 @@ else
        				. Yii::$app->urlManager->createUrl([$controller . '/view','id'=>$key])
        				. '"',
        		];
-       	},    
+       	},
+		'options' => [
+			'class' => 'thead_white',
+		],    
         'filterModel' => $searchModel,
         'columns' => [
         	['class' => 'yii\grid\ActionColumn', 'contentOptions'=>[ 'style'=>'white-space: nowrap;']
@@ -100,5 +107,19 @@ else
             'description:html',
         ],
     ]); ?>
+
+	<?php 	if (\vendor\meta_grid\helper\Utils::get_app_config("floatthead_for_gridviews") == 1)
+	{
+		\bluezed\floatThead\FloatThead::widget(
+			[
+				'tableId' => 'grid-view-tool-type', 
+				'options' => [
+					'top'=>'50'
+				]
+			]
+		);
+	}
+	?>
+
 	
 </div>

@@ -25,7 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('create-datadeliveryobject')  ? Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) : "" ?>
-		
+
         <?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('delete-datadeliveryobject')  ? Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
@@ -33,7 +33,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) : "" ?>
-		    </p>
+	
+    </p>
 
     <?= DetailView::widget([
         'model' => $model,
@@ -62,6 +63,10 @@ $this->params['breadcrumbs'][] = $this->title;
             [
              'label' => Yii::t('app', 'Contact Group As Data Owner'),
              'value' =>              	$model->fk_contact_group_id_as_data_owner == "" ? $model->fk_contact_group_id_as_data_owner : $model->fkContactGroupIdAsDataOwner->name
+            ],
+            [
+             'label' => Yii::t('app', 'Deleted Status'),
+             'value' =>              	$model->fk_deleted_status_id == "" ? $model->fk_deleted_status_id : $model->fkDeletedStatus->name
             ],
         ],
     ]) ?>

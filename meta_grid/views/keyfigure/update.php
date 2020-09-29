@@ -19,6 +19,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
         'model' => $model, 
        'object_typeList' => $object_typeList,		// autogeneriert ueber gii/CRUD
 'projectList' => $projectList,		// autogeneriert ueber gii/CRUD
+'deleted_statusList' => $deleted_statusList,		// autogeneriert ueber gii/CRUD
         
 				    ]) ?>
 

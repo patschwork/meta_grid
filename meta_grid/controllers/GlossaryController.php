@@ -15,6 +15,7 @@ use Da\User\Filter\AccessRuleFilter;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
 
+
 /**
  * GlossaryController implements the CRUD actions for Glossary model.
  */
@@ -195,7 +196,8 @@ class GlossaryController extends Controller
      */
     public function actionCreate()
     {
-		        $model = new Glossary();
+				
+		$model = new Glossary();
 
 		if (Yii::$app->request->post())
 		{
@@ -205,7 +207,7 @@ class GlossaryController extends Controller
     	}    
 			
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-				        	return $this->redirect(['view', 'id' => $model->id]);
+        	return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -213,7 +215,7 @@ class GlossaryController extends Controller
 'projectList' => $this->getProjectList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
-		    }
+    }
 
     /**
      * Updates an existing Glossary model.
@@ -223,7 +225,8 @@ class GlossaryController extends Controller
      */
     public function actionUpdate($id)
     {
-				$model = $this->findModel($id);
+				
+		$model = $this->findModel($id);
 
 		 if (!in_array($model->fkProject->id, Yii::$app->User->identity->permProjectsCanEdit)) {throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'You have no permission to edit this data.'));
 	return;	}    

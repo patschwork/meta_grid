@@ -21,6 +21,7 @@ class KeyfigureSearch extends VKeyfigureSearchinterface
             [['id', 'fk_object_type_id', 'fk_project_id', 'fk_deleted_status_id'], 'integer'],
             [['uuid', 'name', 'description', 'formula', 'aggregation', 'character', 'type', 'unit', 'value_range'], 'safe'],
             [['cumulation_possible'], 'boolean'],
+            [['fk_client_id'], 'integer'],
         ];
     }
 
@@ -71,6 +72,7 @@ class KeyfigureSearch extends VKeyfigureSearchinterface
             'id' => $this->id,
             'fk_object_type_id' => $this->fk_object_type_id,
             'fk_project_id' => $this->fk_project_id,
+            'fk_client_id' => $this->fk_client_id,
             'cumulation_possible' => $this->cumulation_possible,
             'fk_deleted_status_id' => $this->fk_deleted_status_id,
         ]);

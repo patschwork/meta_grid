@@ -28,7 +28,7 @@ use yii\widgets\ActiveForm;
 
 	<?php
 		echo $form->field($model, 'comment')->widget(\yii\redactor\widgets\Redactor::className());	?>
-     <?= $form->field($model, 'comment') ?>
+ <!--  	// automatisch auskommentiert ueber gii/CRUD    <?= $form->field($model, 'comment') ?>  -->
 
 
 

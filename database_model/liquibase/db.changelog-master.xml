@@ -100,4 +100,19 @@
   <include relativeToChangelogFile="true" file="changesets/0000075/changelog.xml"/>  <!-- Update view | v_data_delivery_object_SearchInterface -->
   <include relativeToChangelogFile="true" file="changesets/0000076/changelog.xml"/>  <!-- Update view | v_scheduling_SearchInterface -->
   <include relativeToChangelogFile="true" file="changesets/0000077/changelog.xml"/>  <!-- Update view | v_map_object_2_object_SearchInterface -->
+  <include relativeToChangelogFile="true" file="changesets/0000078/changelog.xml"/>  <!-- SQL INSERT | app_config -->
+  <include relativeToChangelogFile="true" file="changesets/0000079/changelog.xml"/>  <!-- Update view | v_db_table_SearchInterface -->
+  <include relativeToChangelogFile="true" file="changesets/0000080/changelog.xml"/>  <!-- Update view | v_db_table_field_SearchInterface -->
+  <include relativeToChangelogFile="true" file="changesets/0000081/changelog.xml"/>  <!-- Update view | v_All_Objects_Union -->
+  <include relativeToChangelogFile="true" file="changesets/0000082/changelog.xml"/>  <!-- Update view | v_keyfigure_SearchInterface; v_object_type_SearchInterface; v_client_SearchInterface; v_project_SearchInterface; v_sourcesystem_SearchInterface; v_data_delivery_object_SearchInterface; v_map_object_2_object_SearchInterface; v_tool_SearchInterface; v_object_depends_on_SearchInterface; v_attribute_SearchInterface; v_tool_type_SearchInterface; v_db_table_SearchInterface; v_db_table_field_SearchInterface; v_db_table_context_SearchInterface; v_db_database_SearchInterface; v_scheduling_SearchInterface; v_parameter_SearchInterface; v_db_table_type_SearchInterface; v_object_comment_SearchInterface; v_glossary_SearchInterface; v_data_delivery_type_SearchInterface; v_data_transfer_process_SearchInterface; v_data_transfer_type_SearchInterface; v_contact_group_SearchInterface; v_contact_SearchInterface; v_bracket_SearchInterface; v_url_SearchInterface -->
+  <include relativeToChangelogFile="true" file="changesets/0000083/changelog.xml"/>  <!-- SQL INSERT | auth_item; auth_item_child -->
+  <include relativeToChangelogFile="true" file="changesets/0000084/changelog.xml"/>  <!-- Update view | v_All_Mappings_Union -->
+  <include relativeToChangelogFile="true" file="changesets/0000085/changelog.xml"/>  <!-- Update view | v_All_Mappings_Union -->
+  <include relativeToChangelogFile="true" file="changesets/0000086/changelog.xml"/>  <!-- SQL DROP and CREATE table and trigger | export_file_db_table_queue;export_file_db_table_params;export_file_db_table_result;TRIG_export_file_db_table_queue_INSERT -->
+  <include relativeToChangelogFile="true" file="changesets/0000087/changelog.xml"/>  <!-- SQL DROP and CREATE table and trigger | export_file_db_table_fieldqueue;export_file_db_table_fieldparams;export_file_db_table_fieldresult;TRIG_export_file_db_table_fieldqueue_INSERT -->
+  <include relativeToChangelogFile="true" file="changesets/0000088/changelog.xml"/>  <!-- SQL INSERT | app_config -->
+  <include relativeToChangelogFile="true" file="changesets/0000089/changelog.xml"/>  <!-- Update view | v_All_Objects_Union -->
+  <include relativeToChangelogFile="true" file="changesets/0000090/changelog.xml"/>  <!-- SQL DROP and CREATE trigger | TRIG_cleanup_queue_process_INSERT -->
+  <include relativeToChangelogFile="true" file="changesets/0000091/changelog.xml"/>  <!-- SQL ALTER TABLE | import_stage_db_table -->
+  <include relativeToChangelogFile="true" file="changesets/0000092/changelog.xml"/>  <!-- SQL INSERT | app_config -->
 </databaseChangeLog> 

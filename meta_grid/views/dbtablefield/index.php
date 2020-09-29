@@ -1,15 +1,18 @@
+<style>
+.thead_white table thead {
+    background-color: #FFFFFF;
+}
+</style>
 
 <?php
 
 use yii\helpers\Html;
 use yii\grid\GridView;
-use app\models\Project; 
 use yii\helpers\ArrayHelper; 
 use kartik\select2\Select2; 
-use app\models\Client; 
 use vendor\meta_grid\helper\RBACHelper;
 use yii\helpers\Url;
-
+use app\models\VDbTableFieldSearchinterface;
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\DbTableFieldSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -37,7 +40,18 @@ else
     <p>
 		<?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('create-dbtablefield')  ? Html::a(
 		Yii::t('app', 'Create {modelClass}', ['modelClass' => Yii::t('app', 'Db Table Field'),]), ['create'], ['class' => 'btn btn-success']) : "" ?>
-	</p>
+		<?php				$request = Yii::$app->request;
+		$queryString = $request->queryString;
+		$controllerid = Yii::$app->controller->id;
+		$destAction4CSVExport = "r=$controllerid/export_csv";
+		$queryString4Export = str_replace("r=$controllerid", $destAction4CSVExport, $queryString);
+		if (stristr($queryString, "r=$controllerid/index") || stristr($queryString, "r=$controllerid%2Findex"))
+		{
+			$queryString4Export = str_replace("r=$controllerid/index", $destAction4CSVExport, $queryString);
+			$queryString4Export = str_replace("r=$controllerid%2Findex", $destAction4CSVExport, $queryString);
+		}
+		echo "<a class='btn btn-primary' href='index.php?$queryString4Export'>".Yii::t('app', 'Export as CSV')."</a></br></br>";
+		?>	</p>
 
 	<?php
 	$session = Yii::$app->session;
@@ -70,7 +84,8 @@ else
 	Url::remember();
 	?>
 	    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
+		'tableOptions' => ['id' => 'grid-view-db-table-field', 'class' => 'table table-striped table-bordered'],
+		'dataProvider' => $dataProvider,
 		'pager' => [
 			'firstPageLabel' => '<span class="glyphicon glyphicon-chevron-left"></span><span class="glyphicon glyphicon-chevron-left"></span>',
 			'lastPageLabel' => '<span class="glyphicon glyphicon-chevron-right"></span><span class="glyphicon glyphicon-chevron-right"></span>',
@@ -86,41 +101,44 @@ else
        				. Yii::$app->urlManager->createUrl([$controller . '/view','id'=>$key])
        				. '"',
        		];
-       	},    
+       	},
+		'options' => [
+			'class' => 'thead_white',
+		],    
         'filterModel' => $searchModel,
         'columns' => [
         	['class' => 'yii\grid\ActionColumn', 'contentOptions'=>[ 'style'=>'white-space: nowrap;']
             ,
 				'template' => RBACHelper::filterActionColumn_meta_grid('{view} {update} {update-dbtablefield-individual} {delete}'),
-
-				'buttons' => [
-					'update-dbtablefield-individual' => function ($url, $model) {
-
-						$html_btn = Html::a('<span style="color: silver;" class="glyphicon glyphicon-pencil"></span>', $url, [
-								'title' => Yii::t('app', 'Update dbtablefield individual'),
-						]);
-
-						$db_table_show_buttons_for_different_object_type_updates_arr = (new yii\db\Query())->from('app_config')->select(['valueINT'])->where(["key" => "db_table_show_buttons_for_different_object_type_updates"])->one();
-
-						$db_table_show_buttons_for_different_object_type_updates = $db_table_show_buttons_for_different_object_type_updates_arr['valueINT'];
-			
-						if ($db_table_show_buttons_for_different_object_type_updates == 1) 
-						{
-							return $html_btn;
+				
+						'buttons' => [
+							'update-dbtablefield-individual' => function ($url, $model) {
+		
+								$html_btn = Html::a('<span style="color: silver;" class="glyphicon glyphicon-pencil"></span>', $url, [
+										'title' => Yii::t('app', 'Update dbtablefield individual'),
+								]);
+		
+								$db_table_show_buttons_for_different_object_type_updates = \vendor\meta_grid\helper\Utils::get_app_config("db_table_show_buttons_for_different_object_type_updates");
+								if ($db_table_show_buttons_for_different_object_type_updates == 1) 
+								{
+									return $html_btn;
+								}
+							}
+						],
+						'urlCreator' => function ($action, $model, $key, $index) {
+							if ($action === 'update') {
+								$url = "?r=dbtablefieldmultipleedit/update&id=".$model->fk_db_table_id; // your own url generation logic
+								return $url;
+							}
+							if ($action === 'update-dbtablefield-individual') {
+								$url = "?r=dbtablefield/update&id=".$model->id; // your own url generation logic
+								return $url;
+							}
+							// general button actions
+							$controller = Yii::$app->controller->id;
+							return Yii::$app->urlManager->createUrl([$controller . '/' . $action ,'id'=>$key]);
 						}
-					}
-				],
-				'urlCreator' => function ($action, $model, $key, $index) {
-					if ($action === 'update') {
-						$url = "?r=dbtablefieldmultipleedit/update&id=".$model->fk_db_table_id; // your own url generation logic
-						return $url;
-					}
-					if ($action === 'update-dbtablefield-individual') {
-						$url = "?r=dbtablefield/update&id=".$model->id; // your own url generation logic
-						return $url;
-					}
-				}
-            ],
+						            ],
         	
         	['class' => 'yii\grid\SerialColumn'],
 
@@ -131,8 +149,8 @@ else
              		},
              		'filter' => Select2::widget([
              				'model' => $searchModel,
-             				'attribute' => 'fk_project_id',
-             				'data' => ArrayHelper::map(Project::find()->select('project.id, client.name, project.fk_client_id')->distinct()->joinWith('fkClient')->asArray()->all(), 'id', 'name'),
+             				'attribute' => 'fk_client_id',
+             				'data' => ArrayHelper::map(VDbTableFieldSearchinterface::find()->select(['fk_client_id', 'client_name'])->distinct()->asArray()->all(), 'fk_client_id', 'client_name'),
              				'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_client_id'],
              				'pluginOptions' => [
              						'allowClear' => true
@@ -147,12 +165,25 @@ else
             'filter' => Select2::widget([
             		'model' => $searchModel,
             		'attribute' => 'fk_project_id',
-            		'data' => ArrayHelper::map(app\models\Project::find()->asArray()->all(), 'id', 'name'),
+            		'data' => ArrayHelper::map(VDbTableFieldSearchinterface::find()->select(['fk_project_id', 'project_name'])->distinct()->asArray()->all(), 'fk_project_id', 'project_name'),
             		'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_fkProject'],
             		'pluginOptions' => [
             				'allowClear' => true
             		],
 			]),
+            ],
+            [
+             'label' => Yii::t('app', 'Database'),
+             'attribute' => 'databaseInfoFromLocation',
+            'filter' => Select2::widget([
+            		'model' => $searchModel,
+            		'attribute' => 'databaseInfoFromLocation',
+            		'data' => ArrayHelper::map(app\models\VDbTableFieldSearchinterface::find()->asArray()->all(), 'databaseInfoFromLocation', 'databaseInfoFromLocation'),
+            		'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_databaseInfoFromLocation'],
+            		'pluginOptions' => [
+            				'allowClear' => true
+            		],
+                 ]),
             ],
             'name:ntext',
             'description:html',
@@ -171,28 +202,26 @@ else
             		],
 			]),
             ],
-			'databaseInfoFromLocation:ntext',
-			'datatype:ntext',
+            'datatype:ntext',
             // 'bulk_load_checksum:ntext',
-/*            [
-             'label' => Yii::t('app', 'Deleted Status'),
-             'value' => function($model) {
-             		return $model->fk_deleted_status_id == "" ? $model->fk_deleted_status_id : (isset($_GET["searchShow"]) ? $model->fkDeletedStatus->name . ' [' . $model->fk_deleted_status_id . ']' : $model->fkDeletedStatus->name);
-             		},
-            'filter' => Select2::widget([
-            		'model' => $searchModel,
-            		'attribute' => 'fk_deleted_status_id',
-            		'data' => ArrayHelper::map(app\models\DeletedStatus::find()->asArray()->all(), 'id', 'name'),
-            		'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_fkDeletedStatus', 'multiple' => true],
-            		'pluginOptions' => [
-            				'allowClear' => true
-            		],
-			]),
-            ],
-*/            // 'is_PrimaryKey:boolean',
+            // 'is_PrimaryKey:boolean',
             // 'is_BusinessKey:boolean',
             // 'is_GDPR_relevant:boolean',
         ],
     ]); ?>
+
+	<?php 	if (\vendor\meta_grid\helper\Utils::get_app_config("floatthead_for_gridviews") == 1)
+	{
+		\bluezed\floatThead\FloatThead::widget(
+			[
+				'tableId' => 'grid-view-db-table-field', 
+				'options' => [
+					'top'=>'50'
+				]
+			]
+		);
+	}
+	?>
+
 	
 </div>

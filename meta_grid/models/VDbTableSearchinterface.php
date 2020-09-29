@@ -10,6 +10,7 @@ use Yii;
  */
 class VDbTableSearchinterface extends \app\models\DbTable
 {
+
     /**
      * @inheritdoc
      */
@@ -21,4 +22,12 @@ class VDbTableSearchinterface extends \app\models\DbTable
     {
         return array('id');
     }
+
+	// { ... phabricator-task: T59
+    public function attributeLabels() {
+		
+		$addionalLabels = array('databaseInfoFromLocation' => Yii::t('app', 'Database'));
+		return array_merge(parent::attributeLabels(), $addionalLabels);
+    }
+    // ...}
 }

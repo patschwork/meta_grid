@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000092/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000092" context="beta,app_config">
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO app_config (key,valueINT,description) 
+VALUES ('enable_beta_features','0','Enables beta features to be accessable in meta#grid (0=no, 1=yes)');
+        ]]>		
+		</sql>
+
+		<comment>
+		<![CDATA[
+		Insert new parameter into app_config.
+		Used objects:
+			app_config
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

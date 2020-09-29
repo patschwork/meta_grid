@@ -1,5 +1,8 @@
-
 <style>
+.thead_white table thead {
+    background-color: #FFFFFF;
+}
+
 pre {
     white-space: pre-wrap;       /* Since CSS 2.1 */
     white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
@@ -9,18 +12,15 @@ pre {
 }
 </style>
 
-
 <?php
 
 use yii\helpers\Html;
 use yii\grid\GridView;
-use app\models\Project; 
 use yii\helpers\ArrayHelper; 
 use kartik\select2\Select2; 
-use app\models\Client; 
 use vendor\meta_grid\helper\RBACHelper;
 use yii\helpers\Url;
-
+use app\models\VAttributeSearchinterface;
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\AttributeSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -48,7 +48,7 @@ else
     <p>
 		<?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('create-attribute')  ? Html::a(
 		Yii::t('app', 'Create {modelClass}', ['modelClass' => Yii::t('app', 'Attribute'),]), ['create'], ['class' => 'btn btn-success']) : "" ?>
-	</p>
+					</p>
 
 	<?php
 	$session = Yii::$app->session;
@@ -81,7 +81,8 @@ else
 	Url::remember();
 	?>
 	    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
+		'tableOptions' => ['id' => 'grid-view-attribute', 'class' => 'table table-striped table-bordered'],
+		'dataProvider' => $dataProvider,
 		'pager' => [
 			'firstPageLabel' => '<span class="glyphicon glyphicon-chevron-left"></span><span class="glyphicon glyphicon-chevron-left"></span>',
 			'lastPageLabel' => '<span class="glyphicon glyphicon-chevron-right"></span><span class="glyphicon glyphicon-chevron-right"></span>',
@@ -97,7 +98,10 @@ else
        				. Yii::$app->urlManager->createUrl([$controller . '/view','id'=>$key])
        				. '"',
        		];
-       	},    
+       	},
+		'options' => [
+			'class' => 'thead_white',
+		],    
         'filterModel' => $searchModel,
         'columns' => [
         	['class' => 'yii\grid\ActionColumn', 'contentOptions'=>[ 'style'=>'white-space: nowrap;']
@@ -114,8 +118,8 @@ else
              		},
              		'filter' => Select2::widget([
              				'model' => $searchModel,
-             				'attribute' => 'fk_project_id',
-             				'data' => ArrayHelper::map(Project::find()->select('project.id, client.name, project.fk_client_id')->distinct()->joinWith('fkClient')->asArray()->all(), 'id', 'name'),
+             				'attribute' => 'fk_client_id',
+             				'data' => ArrayHelper::map(VAttributeSearchinterface::find()->select(['fk_client_id', 'client_name'])->distinct()->asArray()->all(), 'fk_client_id', 'client_name'),
              				'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_client_id'],
              				'pluginOptions' => [
              						'allowClear' => true
@@ -130,7 +134,7 @@ else
             'filter' => Select2::widget([
             		'model' => $searchModel,
             		'attribute' => 'fk_project_id',
-            		'data' => ArrayHelper::map(app\models\Project::find()->asArray()->all(), 'id', 'name'),
+            		'data' => ArrayHelper::map(VAttributeSearchinterface::find()->select(['fk_project_id', 'project_name'])->distinct()->asArray()->all(), 'fk_project_id', 'project_name'),
             		'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_fkProject'],
             		'pluginOptions' => [
             				'allowClear' => true
@@ -140,36 +144,6 @@ else
             'name:ntext',
             'description:html',
             [
-             'label' => Yii::t('app', 'Client'),
-             'value' => function($model) {
-             		return $model->fk_project_id == "" ? $model->fk_project_id : $model->fkProject->fkClient->name;
-             		},
-             		'filter' => Select2::widget([
-             				'model' => $searchModel,
-             				'attribute' => 'fk_project_id',
-             				'data' => ArrayHelper::map(Project::find()->select('project.id, client.name, project.fk_client_id')->distinct()->joinWith('fkClient')->asArray()->all(), 'id', 'name'),
-             				'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_client_id'],
-             				'pluginOptions' => [
-             						'allowClear' => true
-             				],
-             		]),
-            ],
-            [
-             'label' => Yii::t('app', 'Project'),
-             'value' => function($model) {
-             		return $model->fk_project_id == "" ? $model->fk_project_id : (isset($_GET["searchShow"]) ? $model->fkProject->name . ' [' . $model->fk_project_id . ']' : $model->fkProject->name);
-             		},
-            'filter' => Select2::widget([
-            		'model' => $searchModel,
-            		'attribute' => 'fk_project_id',
-            		'data' => ArrayHelper::map(app\models\Project::find()->asArray()->all(), 'id', 'name'),
-            		'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_fkProject'],
-            		'pluginOptions' => [
-            				'allowClear' => true
-            		],
-			]),
-            ],
-            [
              'label' => Yii::t('app', 'Formula'),
              'value' => function($model) {
              		return $model->formula == "" ? NULL : "<pre>" . $model->formulaWithLinks . "</pre>";
@@ -178,5 +152,19 @@ else
             ],
         ],
     ]); ?>
+
+	<?php 	if (\vendor\meta_grid\helper\Utils::get_app_config("floatthead_for_gridviews") == 1)
+	{
+		\bluezed\floatThead\FloatThead::widget(
+			[
+				'tableId' => 'grid-view-attribute', 
+				'options' => [
+					'top'=>'50'
+				]
+			]
+		);
+	}
+	?>
+
 	
 </div>

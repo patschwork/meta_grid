@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000088/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000088" context="app_config,bulk_loader">
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO APP_CONFIG (key,valueSTRING,description) VALUES ('bulk_loader_executable','','Executable file for Pentaho Data Integration (a.k.a. Kettle). E.g. /path/kitchen.sh or C:\path\kitchen.bat');
+        ]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO APP_CONFIG (key,valueSTRING,description) VALUES ('bulk_loader_metagrid_jdbc_url','','JDBC URL of the source system to write in meta#grid database (including IP/DNS, Port, Databasename)');
+        ]]>		
+		</sql>
+
+		<comment>
+		<![CDATA[
+		Insert new parameter into app_config.
+		Used objects:
+			app_config
+		Phabricator tasks:
+			T112
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

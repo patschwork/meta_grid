@@ -23,6 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
 'toolList' => $toolList,		// autogeneriert ueber gii/CRUD
 'data_delivery_typeList' => $data_delivery_typeList,		// autogeneriert ueber gii/CRUD
 'contact_group_as_data_ownerList' => $contact_group_as_data_ownerList,		// autogeneriert ueber gii/CRUD
+'deleted_statusList' => $deleted_statusList,		// autogeneriert ueber gii/CRUD
 					]) ?>
 
 </div>

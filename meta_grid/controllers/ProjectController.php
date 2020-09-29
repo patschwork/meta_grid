@@ -14,6 +14,7 @@ use Da\User\Filter\AccessRuleFilter;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
 
+
 /**
  * ProjectController implements the CRUD actions for Project model.
  */
@@ -184,6 +185,16 @@ class ProjectController extends Controller
 		die;
 	}
 	
+	protected function addPermissionToUser($project_id, $user_id)
+	{
+		$auth = Yii::$app->authManager;
+		$newRoleOrPermName="project-".$project_id."-read";
+		$perm=$auth->getPermission($newRoleOrPermName);
+		$auth->assign($perm, $user_id);
+		$newRoleOrPermName="project-".$project_id."-write";
+		$perm=$auth->getPermission($newRoleOrPermName);
+		$auth->assign($perm, $user_id);
+	}
 
     /**
      * Lists all Project models.
@@ -219,7 +230,8 @@ class ProjectController extends Controller
      */
     public function actionCreate()
     {
-		        $model = new Project();
+				
+		$model = new Project();
 
 		if (Yii::$app->request->post())
 		{
@@ -229,15 +241,17 @@ class ProjectController extends Controller
     	}    
 			
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-				        	$this->createProjectPermissions();			
-		        	return $this->redirect(['view', 'id' => $model->id]);
+			$this->createProjectPermissions();
+			$userId = Yii::$app->User->Id;
+			$this->addPermissionToUser($model->id, $userId);	
+        	return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
                 'clientList' => $this->getClientList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
-		    }
+    }
 
     /**
      * Updates an existing Project model.
@@ -247,14 +261,15 @@ class ProjectController extends Controller
      */
     public function actionUpdate($id)
     {
-				$model = $this->findModel($id);
+				
+		$model = $this->findModel($id);
 
 		 if (!in_array($model->fkClient->id, Yii::$app->User->identity->permClientsCanEdit)) {throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'You have no permission to edit this data.'));
 	return;	}    
 		
 		
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-				        	$this->createProjectPermissions();			
+							$this->createProjectPermissions();			
 		            return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [

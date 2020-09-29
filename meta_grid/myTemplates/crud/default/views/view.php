@@ -67,9 +67,41 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= "<?= " ?>Html::encode($this->title) ?></h1>
 
     <p>
+<?php
+$is_DbTable_Or_DbTableField = false;
+if ($generator->modelClass === 'app\models\DbTable' || $generator->modelClass === 'app\models\DbTableField') $is_DbTable_Or_DbTableField = true;
+?>
+<?php if (! $is_DbTable_Or_DbTableField): ?>
         <?= "<?= Yii::\$app->user->identity->isAdmin || Yii::\$app->User->can('create-" . str_replace("controller", "", strtolower ( StringHelper::basename($generator->controllerClass) ) ) . "')  ? " ?>Html::a(<?= $generator->generateString('Update') ?>, ['update', <?= $urlParams ?>], ['class' => 'btn btn-primary']) : "" ?>
-		<?php if ($generator->modelClass !== "app\models\Bracket"): ?>
+<?php endif; ?>
+<?php if ($is_DbTable_Or_DbTableField): ?>
+<?php $dbtableadditioncode1 = "";
+$dbtableadditioncode2 = "";
+$dbtablefieldadditioncode1 = "id";
+$dbtablefieldadditioncode2 = "";
+if ($generator->modelClass === 'app\models\DbTable')
+{
+	$dbtableadditioncode1 = "&& Yii::\$app->User->can('create-dbtable')";
+	$dbtableadditioncode2 = " table";
+}
+if ($generator->modelClass === 'app\models\DbTableField')
+{
+	$dbtablefieldadditioncode1 = "fk_db_table_" . $dbtablefieldadditioncode1;
+	$dbtablefieldadditioncode2 = "field";
+}
+?>
+	<?= "<?= Yii::\$app->user->identity->isAdmin || (Yii::\$app->User->can('create-dbtablefield')) $dbtableadditioncode1 ? Html::a(Yii::t('app', 'Update table and fields'), ['dbtablefieldmultipleedit/update', 'id' => \$model->$dbtablefieldadditioncode1], ['class' => 'btn btn-primary']) : \"\" ?>
 
+		<?php
+			\$db_table_show_buttons_for_different_object_type_updates = \\vendor\\meta_grid\\helper\\Utils::get_app_config(\"db_table_show_buttons_for_different_object_type_updates\");
+			if (\$db_table_show_buttons_for_different_object_type_updates == 1) 
+			{
+				echo Yii::\$app->user->identity->isAdmin || Yii::\$app->User->can('create-dbtable$dbtablefieldadditioncode2')  ? Html::a(Yii::t('app', 'Update$dbtableadditioncode2'), ['update', 'id' => \$model->id], ['class' => 'btn btn-primary']) : \"\";
+			}
+		?>" ?>
+<?php endif; ?>
+
+<?php if ($generator->modelClass !== "app\models\Bracket"): ?>
         <?= "<?= Yii::\$app->user->identity->isAdmin || Yii::\$app->User->can('delete-" . str_replace("controller", "", strtolower ( StringHelper::basename($generator->controllerClass) ) ) . "')  ? " ?>Html::a(<?= $generator->generateString('Delete') ?>, ['delete', <?= $urlParams ?>], [
             'class' => 'btn btn-danger',
             'data' => [
@@ -77,7 +109,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) : "" ?>
-		<?php endif; ?>
+<?php endif; ?>	
     </p>
 
     <?= "<?= " ?>DetailView::widget([
@@ -148,6 +180,7 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
 		if ($column->name=="formula" && $generator->modelClass=="app\models\Attribute")
 		{
 			$useGenCode = 1;
+			$genCode  = "";
     		$genCode .= "            [\n";
     		$genCode .= "             'label' => Yii::t('app', 'Formula'),\n";
     		$genCode .= "             'value' => ";
@@ -197,7 +230,18 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
         {
         	echo "            '" . $column->name . $fieldFormat . "',\n";
         }
-    }
+	}
+}
+if ($generator->modelClass=="app\models\DbDatabase")
+{
+	$genCode  = "            [\n";
+	$genCode .= "             'label' => Yii::t('app', 'Bulkloader Execution Script'),\n";
+	$genCode .= "             'value' => ";
+	$genCode .= "'<button class=\"btn btn-default\" type=\"button\" id=\"btn_show_code\" onclick=\"document.getElementById(\'bulkloaderExecutionString\').style.display=\'block\'; document.getElementById(\'btn_show_code\').style.display=\'none\';\">' . Yii::t('app', 'Show') . '</button><div id=\"bulkloaderExecutionString\" style=\"display: none;\"><pre>' . \$bulkloaderExecutionString . \"</pre></div>\",\n";
+	$genCode .= "             'format' => 'raw',\n";
+	$genCode .= "             'visible' => Yii::\$app->user->identity->isAdmin || Yii::\$app->User->can('show-bulkloader-template-in-dbdatabase')\n";
+	$genCode .= "            ],\n";
+	echo $genCode;
 }
 ?>
         ],
@@ -383,7 +427,7 @@ echo '</div>' . "\n";
 								    'searchModel' => $objectcommentSearchModel,
             						'dataProvider' => $objectcommentDataProvider,
 								    ]),
-					'active' => true,
+					'active' => <?= $generator->modelClass==="app\models\DbTable" ? "false" : "true" ?>,
 					'options' => ['id' => 'tabComments']  // important for shortcut
 				],		
 				[
@@ -420,9 +464,18 @@ echo '</div>' . "\n";
 			echo "\t\t\t\t\t\t" . '\'fk_db_table_id\' => $model->id,' . "\n";
 			echo "\t\t\t\t" . "\n";
 			echo "\t\t\t\t	])," . "\n";
-			echo "\t\t\t\t	'active' => false," . "\n";
+			echo "\t\t\t\t	'active' => true," . "\n";
 			echo "\t\t\t\t	'options' => ['id' => 'tabFields']  // important for shortcut" . "\n";
 			echo "\t\t\t\t]," . "\n";
+			echo "\t\t\t\t[" . "\n";
+			echo "\t\t\t\t	'label' => Yii::t('app', 'SQL'),\n";
+			echo "\t\t\t\t	'content' => \"<br><button class=\\\"btn btn-default\\\" id=\\\"btn_copy_SQLSelectStatement\\\">\" . Yii::t('app', 'Copy to clipboard') .  \"</button><br><br><pre id='SQLSelectStatement'>\$SQLSelectStatement</pre>\",\n";
+			echo "\t\t\t\t	'active' => false,\n";
+			echo "\t\t\t\t	'options' => ['id' => 'tabSQLExmaple'],  // important for shortcut\n";
+			echo "\t\t\t\t	'headerOptions' => [\n";
+			echo "\t\t\t\t		'class'=> \$SQLSelectStatement === \"\" ? 'disabled' : \"\"\n";
+			echo "\t\t\t\t		]\n";
+			echo "\t\t\t\t],\n";
 		}
 		?>
 		],
@@ -434,7 +487,28 @@ echo '</div>' . "\n";
 		// bei Objekttyp "client" keine Kommentierung oder Mapping...
 		if ($commentTabGeneration) echo "*/\n";
 		?>
-		
+		<?php if ($generator->modelClass==="app\models\DbTable"): ?>
+	echo $this->registerJs(
+				"
+				function copyFunction() {
+					const copyText = document.getElementById(\"SQLSelectStatement\").textContent;
+					const textArea = document.createElement('textarea');
+					textArea.style.position = 'absolute';
+					textArea.style.left = '-100%';
+					textArea.textContent = copyText;
+					document.body.append(textArea);
+					textArea.select();
+					document.execCommand(\"copy\");
+					textArea.remove();
+				}
+				
+				document.getElementById('btn_copy_SQLSelectStatement').addEventListener('click', copyFunction);
+				",
+				yii\web\View::POS_READY,
+				null
+		);
+		<?php endif; ?>
+
 	?>  
     
     

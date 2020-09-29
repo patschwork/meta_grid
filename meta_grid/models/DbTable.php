@@ -60,31 +60,4 @@ class DbTable extends \app\models\base\DbTable
 		return null;			
     	
     }
-    
-    // { ... phabricator-task: T23
-    public function getDatabaseInfoFromLocation()
-    {
-    	// The bulk loader sets the location attrbute as follows: "Databasename"."Schema"."Table"
-    	$returnValue = "";
-    	
-    	if ((strpos($this->location, '"."')) !== false)
-    	{
-    		if (count(explode('"."', $this->location)) >= 3)
-    		{
-    			$returnValue = explode(".", $this->location)[0];
-    			$returnValue = str_replace('"',"",$returnValue);
-    		}
-    	}
-    	
-    	return $returnValue;
-    }
-    // ...}
-	
-	// { ... phabricator-task: T59
-    public function attributeLabels() {
-		
-		$addionalLabels = array('databaseInfoFromLocation' => Yii::t('app', 'Database'));
-		return array_merge(parent::attributeLabels(), $addionalLabels);
-    }
-    // ...}
 }

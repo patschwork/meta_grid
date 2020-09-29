@@ -25,7 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('create-keyfigure')  ? Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) : "" ?>
-		
+
         <?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('delete-keyfigure')  ? Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
@@ -33,7 +33,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) : "" ?>
-		    </p>
+	
+    </p>
 
     <?= DetailView::widget([
         'model' => $model,
@@ -58,6 +59,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'unit:ntext',
             'value_range:ntext',
             'cumulation_possible:boolean',
+            [
+             'label' => Yii::t('app', 'Deleted Status'),
+             'value' =>              	$model->fk_deleted_status_id == "" ? $model->fk_deleted_status_id : $model->fkDeletedStatus->name
+            ],
         ],
     ]) ?>
 

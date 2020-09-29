@@ -1,15 +1,18 @@
+<style>
+.thead_white table thead {
+    background-color: #FFFFFF;
+}
+</style>
 
 <?php
 
 use yii\helpers\Html;
 use yii\grid\GridView;
-use app\models\Project; 
 use yii\helpers\ArrayHelper; 
 use kartik\select2\Select2; 
-use app\models\Client; 
 use vendor\meta_grid\helper\RBACHelper;
 use yii\helpers\Url;
-
+use app\models\VDbTableContextSearchinterface;
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\DbTableContextSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -37,7 +40,7 @@ else
     <p>
 		<?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('create-dbtablecontext')  ? Html::a(
 		Yii::t('app', 'Create {modelClass}', ['modelClass' => Yii::t('app', 'Db Table Context'),]), ['create'], ['class' => 'btn btn-success']) : "" ?>
-	</p>
+					</p>
 
 	<?php
 	$session = Yii::$app->session;
@@ -70,7 +73,8 @@ else
 	Url::remember();
 	?>
 	    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
+		'tableOptions' => ['id' => 'grid-view-db-table-context', 'class' => 'table table-striped table-bordered'],
+		'dataProvider' => $dataProvider,
 		'pager' => [
 			'firstPageLabel' => '<span class="glyphicon glyphicon-chevron-left"></span><span class="glyphicon glyphicon-chevron-left"></span>',
 			'lastPageLabel' => '<span class="glyphicon glyphicon-chevron-right"></span><span class="glyphicon glyphicon-chevron-right"></span>',
@@ -86,7 +90,10 @@ else
        				. Yii::$app->urlManager->createUrl([$controller . '/view','id'=>$key])
        				. '"',
        		];
-       	},    
+       	},
+		'options' => [
+			'class' => 'thead_white',
+		],    
         'filterModel' => $searchModel,
         'columns' => [
         	['class' => 'yii\grid\ActionColumn', 'contentOptions'=>[ 'style'=>'white-space: nowrap;']
@@ -103,8 +110,8 @@ else
              		},
              		'filter' => Select2::widget([
              				'model' => $searchModel,
-             				'attribute' => 'fk_project_id',
-             				'data' => ArrayHelper::map(Project::find()->select('project.id, client.name, project.fk_client_id')->distinct()->joinWith('fkClient')->asArray()->all(), 'id', 'name'),
+             				'attribute' => 'fk_client_id',
+             				'data' => ArrayHelper::map(VDbTableContextSearchinterface::find()->select(['fk_client_id', 'client_name'])->distinct()->asArray()->all(), 'fk_client_id', 'client_name'),
              				'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_client_id'],
              				'pluginOptions' => [
              						'allowClear' => true
@@ -119,7 +126,7 @@ else
             'filter' => Select2::widget([
             		'model' => $searchModel,
             		'attribute' => 'fk_project_id',
-            		'data' => ArrayHelper::map(app\models\Project::find()->asArray()->all(), 'id', 'name'),
+            		'data' => ArrayHelper::map(VDbTableContextSearchinterface::find()->select(['fk_project_id', 'project_name'])->distinct()->asArray()->all(), 'fk_project_id', 'project_name'),
             		'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_fkProject'],
             		'pluginOptions' => [
             				'allowClear' => true
@@ -131,5 +138,19 @@ else
             'prefix:ntext',
         ],
     ]); ?>
+
+	<?php 	if (\vendor\meta_grid\helper\Utils::get_app_config("floatthead_for_gridviews") == 1)
+	{
+		\bluezed\floatThead\FloatThead::widget(
+			[
+				'tableId' => 'grid-view-db-table-context', 
+				'options' => [
+					'top'=>'50'
+				]
+			]
+		);
+	}
+	?>
+
 	
 </div>

@@ -24,28 +24,24 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-		<?= Yii::$app->user->identity->isAdmin || (Yii::$app->User->can('create-dbtable') && Yii::$app->User->can('create-dbtablefield'))  ? Html::a(Yii::t('app', 'Update table and fields'), ['dbtablefieldmultipleedit/update', 'id' => $model->id], ['class' => 'btn btn-primary']) : "" ?>
+	<?= Yii::$app->user->identity->isAdmin || (Yii::$app->User->can('create-dbtablefield')) && Yii::$app->User->can('create-dbtable') ? Html::a(Yii::t('app', 'Update table and fields'), ['dbtablefieldmultipleedit/update', 'id' => $model->id], ['class' => 'btn btn-primary']) : "" ?>
 
-		<?php 
-			
-			$db_table_show_buttons_for_different_object_type_updates_arr = (new yii\db\Query())->from('app_config')->select(['valueINT'])->where(["key" => "db_table_show_buttons_for_different_object_type_updates"])->one();
-
-			$db_table_show_buttons_for_different_object_type_updates = $db_table_show_buttons_for_different_object_type_updates_arr['valueINT'];
-
+		<?php
+			$db_table_show_buttons_for_different_object_type_updates = \vendor\meta_grid\helper\Utils::get_app_config("db_table_show_buttons_for_different_object_type_updates");
 			if ($db_table_show_buttons_for_different_object_type_updates == 1) 
 			{
-				echo Yii::$app->user->identity->isAdmin || Yii::$app->User->can('create-dbtable')  ? Html::a(Yii::t('app', 'Update table'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) : "" ;
+				echo Yii::$app->user->identity->isAdmin || Yii::$app->User->can('create-dbtable')  ? Html::a(Yii::t('app', 'Update table'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) : "";
 			}
 		?>
-
-		<?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('delete-dbtable')  ? Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
+        <?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('delete-dbtable')  ? Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
                 'method' => 'post',
             ],
         ]) : "" ?>
-		    </p>
+	
+    </p>
 
     <?= DetailView::widget([
         'model' => $model,
@@ -154,11 +150,39 @@ $this->params['breadcrumbs'][] = $this->title;
 					'active' => true,
 					'options' => ['id' => 'tabFields']  // important for shortcut
 				],
+				[
+					'label' => Yii::t('app', 'SQL'),
+					'content' => "<br><button class=\"btn btn-default\" id=\"btn_copy_SQLSelectStatement\">" . Yii::t('app', 'Copy to clipboard') .  "</button><br><br><pre id='SQLSelectStatement'>$SQLSelectStatement</pre>",
+					'active' => false,
+					'options' => ['id' => 'tabSQLExmaple'],  // important for shortcut
+					'headerOptions' => [
+						'class'=> $SQLSelectStatement === "" ? 'disabled' : ""
+						]
+				],
 		],
 		]);
 		// Kommentierung pro Object ...}
 	
-	    		
+	    			echo $this->registerJs(
+				"
+				function copyFunction() {
+					const copyText = document.getElementById(\"SQLSelectStatement\").textContent;
+					const textArea = document.createElement('textarea');
+					textArea.style.position = 'absolute';
+					textArea.style.left = '-100%';
+					textArea.textContent = copyText;
+					document.body.append(textArea);
+					textArea.select();
+					document.execCommand(\"copy\");
+					textArea.remove();
+				}
+				
+				document.getElementById('btn_copy_SQLSelectStatement').addEventListener('click', copyFunction);
+				",
+				yii\web\View::POS_READY,
+				null
+		);
+		
 	?>  
     
     

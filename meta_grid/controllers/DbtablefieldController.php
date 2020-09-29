@@ -16,6 +16,7 @@ use app\models\DeletedStatus;
 use Da\User\Filter\AccessRuleFilter;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
+use yii2tech\csvgrid\CsvGrid;
 
 /**
  * DbtablefieldController implements the CRUD actions for DbTableField model.
@@ -55,7 +56,7 @@ class DbtablefieldController extends Controller
 		$db_tableModel = new DbTable();
 		$db_tables = $db_tableModel::find()->all();
 		$db_tableList = array();
-		$db_tableList[null] = null; // allow a NULL selection
+		$db_tableList[null] = null;
 		foreach($db_tables as $db_table)
 		{
 			$db_tableList[$db_table->id] = $db_table->name;
@@ -69,7 +70,7 @@ class DbtablefieldController extends Controller
 		$deleted_statusModel = new DeletedStatus();
 		$deleted_statuss = $deleted_statusModel::find()->all();
 		$deleted_statusList = array();
-		$deleted_statusList[null] = null; // allow a NULL selection
+		$deleted_statusList[null] = null;
 		foreach($deleted_statuss as $deleted_status)
 		{
 			$deleted_statusList[$deleted_status->id] = $deleted_status->name;
@@ -103,7 +104,7 @@ class DbtablefieldController extends Controller
                     ],
 					[
 						'allow' => true,
-						'actions' => ['index','view'],
+						'actions' => ['index','view','export_csv'],
 						'roles' => ['author', 'global-view', 'view' ."-" . Yii::$app->controller->id],
 					],
 					[
@@ -225,7 +226,8 @@ class DbtablefieldController extends Controller
      */
     public function actionCreate()
     {
-		        $model = new DbTableField();
+				
+		$model = new DbTableField();
 
 		if (Yii::$app->request->post())
 		{
@@ -235,7 +237,7 @@ class DbtablefieldController extends Controller
     	}    
 			
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-				        	return $this->redirect(['view', 'id' => $model->id]);
+        	return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -245,7 +247,7 @@ class DbtablefieldController extends Controller
 'deleted_statusList' => $this->getDeletedStatusList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
-		    }
+    }
 
     /**
      * Updates an existing DbTableField model.
@@ -255,7 +257,8 @@ class DbtablefieldController extends Controller
      */
     public function actionUpdate($id)
     {
-				$model = $this->findModel($id);
+				
+		$model = $this->findModel($id);
 
 		 if (!in_array($model->fkProject->id, Yii::$app->User->identity->permProjectsCanEdit)) {throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'You have no permission to edit this data.'));
 	return;	}    
@@ -336,4 +339,154 @@ class DbtablefieldController extends Controller
     		]);
     	}
     }
+
+	private function replaceKeys($oldKey, $newKey, array $input){
+		$return = array(); 
+		foreach ($input as $key => $value) {
+			if ($key===$oldKey)
+				$key = $newKey;
+	
+			if (is_array($value))
+				$value = $this->replaceKeys( $oldKey, $newKey, $value);
+	
+			$return[$key] = $value;
+		}
+		return $return; 
+	}
+
+    protected function CreateCSV($export_fk_ids = 0, $sessionPrepKey, $exportFilename)
+    {
+		$searchModel = new \app\models\ExportFileDbTableFieldResultSearch();
+		$queryParams = $this->replaceKeys( "DbTableFieldSearch", "ExportFileDbTableFieldResultSearch", Yii::$app->request->queryParams);
+		$queryParams["ExportFileDbTableFieldResultSearch"]["session"]=$sessionPrepKey;
+		$dataProvider = $searchModel->search($queryParams);
+
+		$columns = [
+			['attribute' => 'id'],
+			['attribute' => 'project_name'],
+			['attribute' => 'client_name'],
+			['attribute' => 'name'],
+			['attribute' => 'description'],
+			['attribute' => 'datatype'],
+			['attribute' => 'is_PrimaryKey'],
+			['attribute' => 'is_BusinessKey'],
+			['attribute' => 'is_GDPR_relevant'],
+			['attribute' => 'databaseInfoFromLocation'],
+			['attribute' => 'db_table_name'],
+			['attribute' => 'deleted_status_name'],
+			['attribute' => 'comments'],
+			['attribute' => 'mappings'],
+		];
+		
+		if ($export_fk_ids === "1")
+		{
+			$columns = array_merge($columns, 				[
+				['attribute' => 'uuid'],
+				['attribute' => 'fk_object_type_id'],
+				['attribute' => 'fk_client_id'],
+				['attribute' => 'fk_project_id'],
+				['attribute' => 'fk_db_table_id'],
+				['attribute' => 'fk_deleted_status_id'],
+				['attribute' => 'bulk_load_checksum'],
+			]);
+		}
+
+		$exporter = new CsvGrid([
+			'dataProvider' => $dataProvider,
+			'columns' => $columns,
+		]);
+		$exporter->export()->saveAs($exportFilename);
+	}
+
+	protected function initDownload($exportFilePath) 
+	{
+		$file = $exportFilePath;
+		if (file_exists($file)) {
+			Yii::$app->response->sendFile($file);
+		   } 
+		}
+	
+	protected function prepareExportData($sessionPrepKey)
+	{
+		Yii::trace($sessionPrepKey, '$sessionPrepKey');
+		$permProjectsCanSee = Yii::$app->User->identity->permProjectsCanSee;
+		foreach($permProjectsCanSee as $key=>$value)
+		{
+			$model = new \app\models\base\ExportFileDbTableFieldParams();
+			$model->session = $sessionPrepKey;
+			$model->allowed_fk_project_id = $value;
+			$model->save();
+			unset($model);
+		}
+
+		$permClientsCanSee = Yii::$app->User->identity->permClientsCanSee;
+		foreach($permClientsCanSee as $key=>$value)
+		{
+			$model = new \app\models\base\ExportFileDbTableFieldParams();
+			$model->session = $sessionPrepKey;
+			$model->allowed_fk_client_id = $value;
+			$model->save();
+			unset($model);
+		}
+		
+		$model = new \app\models\base\ExportFileDbTableFieldQueue();
+		$model->session = $sessionPrepKey;
+		$model->save(); // fires DB-TRIGGER
+		unset($model);
+	}
+
+	protected function cleanupResultTable($sessionPrepKey)
+	{
+		\app\models\base\ExportFileDbTableFieldResult::deleteAll(['session' => $sessionPrepKey]);
+	}
+
+	/**
+	 * Checks if a folder exist and return canonicalized absolute pathname (sort version)
+	 * @param string $folder the path being checked.
+	 * @return mixed returns TRUE on success otherwise FALSE
+	 */
+	private function folder_exist($folder)
+	{
+		// Get canonicalized absolute pathname
+		$path = realpath($folder);
+
+		// If it exist, check if it's a directory
+		return ($path !== false AND is_dir($path)) ? true : false;
+	}
+
+	protected function createOutputDir($path)
+	{
+		if (! $this->folder_exist($path))
+		{
+			\yii\helpers\FileHelper::createDirectory($path, $mode = 0775, $recursive = true);
+		}
+		return $this->folder_exist($path);
+	}
+	
+	protected function cleanupResultFile($exportFilePath)
+	{
+		unlink($exportFilePath);
+	}
+
+	public function actionExport_csv($export_fk_ids = "0", $no_cleanup = "0")
+	{
+		$path = Yii::getAlias('@app') . "/exportfiles";
+		$dt = date("Y-m-d_H-m-s");
+		$dirExists=$this->createOutputDir($path);
+		if (! $dirExists)
+		{
+			throw new \yii\base\UserException( Yii::t("app","Output directory couldn't be created!") );
+		}
+		$sessionPrepKey = Yii::$app->controller->id . "|" . $dt . "|" . Yii::$app->session->id . "|" . Yii::$app->user->id;
+		$this->prepareExportData($sessionPrepKey);
+		$exportFilePath = $path . '/'. Yii::$app->controller->id . '_export_' . date("Y-m-d_H-m-s") . '.csv';
+		$this->CreateCSV($export_fk_ids, $sessionPrepKey, $exportFilePath);
+		$this->initDownload($exportFilePath);
+		if ($no_cleanup !== "1")
+		{
+			$this->cleanupResultTable($sessionPrepKey);
+			$this->cleanupResultFile($exportFilePath);
+		}
+		return;
+	}
 }

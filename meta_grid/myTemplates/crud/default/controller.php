@@ -73,7 +73,12 @@ use app\models\base\Project;
 <?php endif; ?>
 use Da\User\Filter\AccessRuleFilter;
 use yii\filters\AccessControl;
-use yii\helpers\Url;
+<?php if ($generator->modelClass !== "app\models\Url"): ?>
+use yii\helpers\Url;<?php endif; ?>
+
+<?php if ($generator->modelClass === "app\models\DbTable" || ($generator->modelClass === "app\models\DbTableField")): ?>
+use yii2tech\csvgrid\CsvGrid;<?php endif; ?>
+
 <?php 
 // Patrick, 2016-01-15, #fk_Felder
 $actionCreateUpdateFkList = "";
@@ -128,6 +133,8 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
 				if ($newClass === "DeletedStatus") $nullIsAnValidOption = 1;			
 				if ($newClass === "DbTableContext") $nullIsAnValidOption = 1;			
 				if ($newClass === "DbTableType") $nullIsAnValidOption = 1;
+				if ($newClass === "ContactGroup") $nullIsAnValidOption = 1;
+				if ($newClass === "MappingQualifier") $nullIsAnValidOption = 1;
 
 	        	echo "		$$fk_model_variable"."Model = new $newClass();\n";
 				echo "		$$fk_model_variable"."s = $$fk_model_variable"."Model::find()->all();\n";
@@ -173,17 +180,17 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
                     ],
 					[
 						'allow' => true,
-						'actions' => ['index','view'],
+						'actions' => ['index','view'<?php if ($generator->modelClass === 'app\models\MapObject2Object'): ?>,'vallobjectsuniondepdrop'<?php endif; ?><?php if ($generator->modelClass === 'app\models\DbTable' || ($generator->modelClass === 'app\models\DbTableField')): ?>,'export_csv'<?php endif; ?>],
 						'roles' => ['author', 'global-view', 'view' ."-" . Yii::$app->controller->id],
 					],
 					[
 						'allow' => true,
-						'actions' => ['create', 'update', 'createexternal'],
+						'actions' => ['create', 'update', 'createexternal'<?php if ($generator->modelClass === 'app\models\MapObject2Object'): ?>, 'changedirectionajax'<?php endif; ?>],
 						'roles' => ['author', 'global-create', 'create' ."-" . Yii::$app->controller->id],
 					],
 					[
 						'allow' => true,
-						'actions' => ['delete'],
+						'actions' => ['delete'<?php if ($generator->modelClass === 'app\models\MapObject2Object'): ?>, 'deleteajax'<?php endif; ?>],
 						'roles' => ['author', 'global-delete', 'delete' ."-" . Yii::$app->controller->id],
 					],
                 ],
@@ -295,7 +302,18 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
   		$this->createClientPermissions();
   		echo "Client permissions created if needed.";
   		die;
-  	}  
+	}  
+	  
+	protected function addPermissionToUser($client_id, $user_id)
+	{
+		$auth = Yii::$app->authManager;
+		$newRoleOrPermName="client-".$client_id."-read";
+		$perm=$auth->getPermission($newRoleOrPermName);
+		$auth->assign($perm, $user_id);
+		$newRoleOrPermName="client-".$client_id."-write";
+		$perm=$auth->getPermission($newRoleOrPermName);
+		$auth->assign($perm, $user_id);
+	}
 <?php endif; ?>
 
 <?php if ($generator->modelClass === 'app\models\Project'): ?>
@@ -337,6 +355,16 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
 		die;
 	}
 	
+	protected function addPermissionToUser($project_id, $user_id)
+	{
+		$auth = Yii::$app->authManager;
+		$newRoleOrPermName="project-".$project_id."-read";
+		$perm=$auth->getPermission($newRoleOrPermName);
+		$auth->assign($perm, $user_id);
+		$newRoleOrPermName="project-".$project_id."-write";
+		$perm=$auth->getPermission($newRoleOrPermName);
+		$auth->assign($perm, $user_id);
+	}
 <?php endif; ?>
 
     /**
@@ -382,6 +410,12 @@ $modelBracket = $this->findModel($id);
 		<?php else: ?>
         return $this->render('view', [
             'model' => $this->findModel(<?= $actionParams ?>),
+<?php if ($generator->modelClass === 'app\models\DbDatabase'): ?>
+            'bulkloaderExecutionString' => $this->buildBulkloaderExecutionString($id)
+			<?php endif; ?>
+<?php if ($generator->modelClass === 'app\models\DbTable'): ?>
+		'SQLSelectStatement' => $this->buildSQLSelectStatement($id),
+			<?php endif; ?>
         ]);
 		<?php endif; ?>
 }
@@ -461,9 +495,15 @@ $modelBracket = new Bracket();
   				'object_type_as_searchFilterList' => $this->getObjectTypeAsSearchFilterList(),		// autogeneriert ueber gii/CRUD
   				'modelsBracketSearchPattern' => (empty($modelsBracketSearchPattern)) ? [new BracketSearchPattern] : $modelsBracketSearchPattern
       		]);
-
 		<?php else: ?>
-        $model = new <?= $modelClass ?>();
+<?php if ($generator->modelClass === 'app\models\DbTable'): ?>$db_table_show_buttons_for_different_object_type_updates=\vendor\meta_grid\helper\Utils::get_app_config("db_table_show_buttons_for_different_object_type_updates");
+
+		if ($db_table_show_buttons_for_different_object_type_updates != 1) 
+		{
+			return $this->redirect(['dbtablefieldmultipleedit/create']);
+		}
+		<?php endif; ?>		
+		$model = new <?= $modelClass ?>();
 
 		if (Yii::$app->request->post())
 		{
@@ -487,12 +527,16 @@ $modelBracket = new Bracket();
     	}    
 			
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-		<?php if ($generator->modelClass === 'app\models\Client'): ?>
-        	$this->createClientPermissions();
-		<?php endif; ?>
-		<?php if ($generator->modelClass === 'app\models\Project'): ?>
-        	$this->createProjectPermissions();			
-		<?php endif; ?>
+<?php if ($generator->modelClass === 'app\models\Client'): ?>
+$this->createClientPermissions();
+			$userId = Yii::$app->User->Id;
+			$this->addPermissionToUser($model->id, $userId);	
+<?php endif; ?>
+<?php if ($generator->modelClass === 'app\models\Project'): ?>
+			$this->createProjectPermissions();
+			$userId = Yii::$app->User->Id;
+			$this->addPermissionToUser($model->id, $userId);	
+<?php endif; ?>
         	return $this->redirect(['view', <?= $urlParams ?>]);
         } else {
             return $this->render('create', [
@@ -500,7 +544,7 @@ $modelBracket = new Bracket();
                 <?= $actionCreateUpdateFkList ?>
             ]);
         }
-		<?php endif; ?>
+<?php endif; ?>
     }
 
     /**
@@ -575,6 +619,12 @@ $modelBracket = $this->findModel($id);
   				'modelsBracketSearchPattern' => (empty($modelsBracketSearchPattern)) ? [new BracketSearchPattern] : $modelsBracketSearchPattern
         ]);
 		<?php else: ?>
+<?php if ($generator->modelClass === 'app\models\DbTable'): ?>$db_table_show_buttons_for_different_object_type_updates = \vendor\meta_grid\helper\Utils::get_app_config("db_table_show_buttons_for_different_object_type_updates");
+		if ($db_table_show_buttons_for_different_object_type_updates != 1) 
+		{
+			return $this->redirect(['dbtablefieldmultipleedit/update', 'id' => $id]);
+		}	
+		<?php endif; ?>		
 		$model = $this->findModel(<?= $actionParams ?>);
 
 		 <?php 
@@ -597,10 +647,10 @@ $modelBracket = $this->findModel($id);
 		
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 		<?php if ($generator->modelClass === 'app\models\Client'): ?>
-        	$this->createClientPermissions();
+			$this->createClientPermissions();
 		<?php endif; ?>
 		<?php if ($generator->modelClass === 'app\models\Project'): ?>
-        	$this->createProjectPermissions();			
+			$this->createProjectPermissions();			
 		<?php endif; ?>
             return $this->redirect(['view', <?= $urlParams ?>]);
         } else {
@@ -813,6 +863,156 @@ if (count($pks) === 1) {
     		]);
     	}
     }
+
+	private function replaceKeys($oldKey, $newKey, array $input){
+		$return = array(); 
+		foreach ($input as $key => $value) {
+			if ($key===$oldKey)
+				$key = $newKey;
+	
+			if (is_array($value))
+				$value = $this->replaceKeys( $oldKey, $newKey, $value);
+	
+			$return[$key] = $value;
+		}
+		return $return; 
+	}
+
+    protected function CreateCSV($export_fk_ids = 0, $sessionPrepKey, $exportFilename)
+    {
+		$searchModel = new \app\models\ExportFileDbTableFieldResultSearch();
+		$queryParams = $this->replaceKeys( "DbTableFieldSearch", "ExportFileDbTableFieldResultSearch", Yii::$app->request->queryParams);
+		$queryParams["ExportFileDbTableFieldResultSearch"]["session"]=$sessionPrepKey;
+		$dataProvider = $searchModel->search($queryParams);
+
+		$columns = [
+			['attribute' => 'id'],
+			['attribute' => 'project_name'],
+			['attribute' => 'client_name'],
+			['attribute' => 'name'],
+			['attribute' => 'description'],
+			['attribute' => 'datatype'],
+			['attribute' => 'is_PrimaryKey'],
+			['attribute' => 'is_BusinessKey'],
+			['attribute' => 'is_GDPR_relevant'],
+			['attribute' => 'databaseInfoFromLocation'],
+			['attribute' => 'db_table_name'],
+			['attribute' => 'deleted_status_name'],
+			['attribute' => 'comments'],
+			['attribute' => 'mappings'],
+		];
+		
+		if ($export_fk_ids === "1")
+		{
+			$columns = array_merge($columns, 				[
+				['attribute' => 'uuid'],
+				['attribute' => 'fk_object_type_id'],
+				['attribute' => 'fk_client_id'],
+				['attribute' => 'fk_project_id'],
+				['attribute' => 'fk_db_table_id'],
+				['attribute' => 'fk_deleted_status_id'],
+				['attribute' => 'bulk_load_checksum'],
+			]);
+		}
+
+		$exporter = new CsvGrid([
+			'dataProvider' => $dataProvider,
+			'columns' => $columns,
+		]);
+		$exporter->export()->saveAs($exportFilename);
+	}
+
+	protected function initDownload($exportFilePath) 
+	{
+		$file = $exportFilePath;
+		if (file_exists($file)) {
+			Yii::$app->response->sendFile($file);
+		   } 
+		}
+	
+	protected function prepareExportData($sessionPrepKey)
+	{
+		Yii::trace($sessionPrepKey, '$sessionPrepKey');
+		$permProjectsCanSee = Yii::$app->User->identity->permProjectsCanSee;
+		foreach($permProjectsCanSee as $key=>$value)
+		{
+			$model = new \app\models\base\ExportFileDbTableFieldParams();
+			$model->session = $sessionPrepKey;
+			$model->allowed_fk_project_id = $value;
+			$model->save();
+			unset($model);
+		}
+
+		$permClientsCanSee = Yii::$app->User->identity->permClientsCanSee;
+		foreach($permClientsCanSee as $key=>$value)
+		{
+			$model = new \app\models\base\ExportFileDbTableFieldParams();
+			$model->session = $sessionPrepKey;
+			$model->allowed_fk_client_id = $value;
+			$model->save();
+			unset($model);
+		}
+		
+		$model = new \app\models\base\ExportFileDbTableFieldQueue();
+		$model->session = $sessionPrepKey;
+		$model->save(); // fires DB-TRIGGER
+		unset($model);
+	}
+
+	protected function cleanupResultTable($sessionPrepKey)
+	{
+		\app\models\base\ExportFileDbTableFieldResult::deleteAll(['session' => $sessionPrepKey]);
+	}
+
+	/**
+	 * Checks if a folder exist and return canonicalized absolute pathname (sort version)
+	 * @param string $folder the path being checked.
+	 * @return mixed returns TRUE on success otherwise FALSE
+	 */
+	private function folder_exist($folder)
+	{
+		// Get canonicalized absolute pathname
+		$path = realpath($folder);
+
+		// If it exist, check if it's a directory
+		return ($path !== false AND is_dir($path)) ? true : false;
+	}
+
+	protected function createOutputDir($path)
+	{
+		if (! $this->folder_exist($path))
+		{
+			\yii\helpers\FileHelper::createDirectory($path, $mode = 0775, $recursive = true);
+		}
+		return $this->folder_exist($path);
+	}
+	
+	protected function cleanupResultFile($exportFilePath)
+	{
+		unlink($exportFilePath);
+	}
+
+	public function actionExport_csv($export_fk_ids = "0", $no_cleanup = "0")
+	{
+		$path = Yii::getAlias('@app') . "/exportfiles";
+		$dt = date("Y-m-d_H-m-s");
+		$dirExists=$this->createOutputDir($path);
+		if (! $dirExists)
+		{
+			throw new \yii\base\UserException( Yii::t("app","Output directory couldn't be created!") );
+		}
+		$sessionPrepKey = Yii::$app->controller->id . "|" . $dt . "|" . Yii::$app->session->id . "|" . Yii::$app->user->id;
+		$this->prepareExportData($sessionPrepKey);
+		$exportFilePath = $path . '/'. Yii::$app->controller->id . '_export_' . date("Y-m-d_H-m-s") . '.csv';
+		$this->CreateCSV($export_fk_ids, $sessionPrepKey, $exportFilePath);
+		$this->initDownload($exportFilePath);
+		if ($no_cleanup !== "1")
+		{
+			$this->cleanupResultTable($sessionPrepKey);
+			$this->cleanupResultFile($exportFilePath);
+		}
+		return;
+	}
 <?php endif; ?>
 <?php if ($generator->modelClass === "app\models\MapObject2Object"): ?>
 	// Custom functions for MapObject2Object/Mapper.
@@ -826,7 +1026,8 @@ if (count($pks) === 1) {
 			if ($parents != null)
 			{
 				$objType_id = $parents[0];
-				$out = $this->getVallobjectsunionListDepDrop($objType_id);
+				$filter_on_client_or_project = $parents[1]; // values can be a value of fk_project_id (with prefix "fk_project_id;") or fk_client_id (with prefix "fk_client_id;") or -1 (if -1 then show all)
+				$out = $this->getVallobjectsunionListDepDrop($objType_id, $filter_on_client_or_project);
 				$selected="";
 				echo Json::encode(['output'=>$out, 'selected'=>$selected]);
 				return;
@@ -835,28 +1036,63 @@ if (count($pks) === 1) {
 		echo Json::encode(['output'=>'', 'selected'=>'']);
 	}
 	
-	private function getVallobjectsunionListDepDrop($objType_id)
+	private function getVallobjectsunionListDepDrop($objType_id, $filter_on_client_or_project)
 	{
-		// Liste der Objekte aufbereiten fuer DepDrop Liste
-		$object_type_Model = new \app\models\ObjectType();
+		// Create list of objects for DepDrop
 		$model1 = new \app\models\VAllObjectsUnion();
-		$all_objects = $model1::find()->all();
+		if ($filter_on_client_or_project != "-1")
+		{
+			// The format can be of: "fk_project_id;<id or fk_project_id>" or "fk_client_id;<id or fk_client_id>"
+			$client_Or_Project = explode(";", $filter_on_client_or_project)[0];
+			if ($client_Or_Project == "fk_project_id")
+			{
+				$filter_project_id_param = explode(";", $filter_on_client_or_project)[1];
+				$filter_client_id = \app\models\Project::find()->select("fk_client_id")->where(["id" => $filter_project_id_param]);
+				$filter_project_id = \app\models\Project::find()->select("id")->where(["id" => $filter_project_id_param]);
+			}
+			else
+			{
+				$filter_client_id_param = explode(";", $filter_on_client_or_project)[1];
+				$filter_client_id = \app\models\Project::find()->select("fk_client_id")->where(["fk_client_id" => $filter_client_id_param]);
+				$filter_project_id = \app\models\Project::find()->select("id")->where(["fk_client_id" => $filter_client_id_param]);
+			}
+
+			$all_objects = $model1::find()
+			   ->where(['in', "fk_project_id", $filter_project_id])
+			   ->orWhere(['in', "fk_client_id", $filter_client_id])
+			   ->all();
+		}
+		else
+		{
+			$all_objects = $model1::find()->all();
+		}
 		$object_typeList = [];
 		foreach($all_objects as $object_item)
 		{
-			if ($objType_id=="*")		// Alle Objekttypen anzeigen
+			if ($objType_id=="*")		// show all object types
 			{
-				// Wenn alle angezeigt weden sollen, dann als gruppierte DropDown Liste
-				$object_typeList[$object_item->object_type_name][$object_item->listkey] = ['id' => $object_item->listkey, 'name' => $object_item->listvalue_1 ];
-	
-				// 				// listvalue_2 Beispiel: sourcesystem - SAP HR
-				// 				$object_typeList[$object_item->object_type_name][$object_item->listkey] = ['id' => $object_item->listkey, 'name' => $object_item->listvalue_2 ];
+				// if all shall be shown, then as a grouped dropdown list
+				if ($filter_on_client_or_project != "-1")
+				{
+					$object_typeList[$object_item->object_type_name][$object_item->listkey] = ['id' => $object_item->listkey, 'name' => $object_item->listvalue_1 ];
+				}
+				else
+				{
+					$object_typeList[$object_item->object_type_name][$object_item->listkey] = ['id' => $object_item->listkey, 'name' => $object_item->listvalue_1_with_client_or_project ];
+				}
 			}
 			else
 			{
 				if ($object_item->fk_object_type_id==$objType_id)
 				{
-					array_push($object_typeList, ['id' => $object_item->listkey, 'name' => $object_item->listvalue_1 ]);
+					if ($filter_on_client_or_project != "-1")
+					{							
+						array_push($object_typeList, ['id' => $object_item->listkey, 'name' => $object_item->listvalue_1 ]);
+					}
+					else
+					{							
+						array_push($object_typeList, ['id' => $object_item->listkey, 'name' => $object_item->listvalue_1_with_client_or_project ]);
+					}
 				}
 			}
 		}
@@ -869,6 +1105,7 @@ if (count($pks) === 1) {
 		$objectTypeModel = new \app\models\ObjectType ();
 		$objectTypes = $objectTypeModel::find ()->all ();
 		$objectTypesList = array ();
+		$objectTypesList [null] = Yii::t('app', "Select...");
 		foreach ( $objectTypes as $objectType ) {
 			$objectTypesList [$objectType->id] = $objectType->name;
 		}
@@ -887,13 +1124,49 @@ if (count($pks) === 1) {
 		$model->ref_fk_object_type_id_1 = $ref_fk_object_type_id;
 
 		if (Yii::$app->request->post ())
-		{
-			$listkey = $_POST["VAllObjectsUnion"]["listkey"];
-				
-			$model->ref_fk_object_id_2 = explode(";", $listkey)[0];
-			$model->ref_fk_object_type_id_2 = explode(";", $listkey)[1];
+		{	
+			if (isset($_POST["VAllObjectsUnion"]["listkey"]))
+			{
+				$listkey = $_POST["VAllObjectsUnion"]["listkey"];
+
+				if (! isset($listkey[1]))
+				{
+					$model->addError('ref_fk_object_type_id_2', '$listkey[1] may not be NULL!!'); // this message will not be seen. Prepared for future use!
+				}
+				else
+				{
+					$model->ref_fk_object_id_2 = explode(";", $listkey)[0];
+					$model->ref_fk_object_type_id_2 = explode(";", $listkey)[1];
+				}			
+			}
+			else
+			{
+				$model->addError('ref_fk_object_type_id_1', '$listkey not set!'); // this message will not be seen. Prepared for future use!
+			}
 		}
 		
+		// Information about source mapping object
+
+		$permClientsCanSee = Yii::$app->User->identity->permClientsCanSee;
+    	$permProjectsCanSee = Yii::$app->User->identity->permProjectsCanSee;
+
+		$SrcObjectInfo = new \app\models\VAllObjectsUnion ();
+		$SrcObjectInfo = $VAllObjectsUnionModel::find()
+			->where(['id' => $ref_fk_object_id, 'fk_object_type_id' => $ref_fk_object_type_id])
+			->andWhere(['or',
+				['in','fk_client_id', $permClientsCanSee],
+				['in','fk_project_id', $permProjectsCanSee]
+				])
+			->one();
+
+		if ($SrcObjectInfo == NULL)
+		{
+			throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'No data or you have no permission for this data.'));
+		}
+
+		$TitleSrcInformation = $SrcObjectInfo->listvalue_1;
+		$SrcFilterValueClientOrProjekt = $SrcObjectInfo->fk_project_id === null ? ("fk_client_id;" . $SrcObjectInfo->fk_client_id) : ("fk_project_id;" . $SrcObjectInfo->fk_project_id);
+
     	if ($model->load(Yii::$app->request->post()) && $model->save()) {
     		
     		// zurueck woher man gekommen ist...
@@ -905,7 +1178,9 @@ if (count($pks) === 1) {
 			return $this->render ( '_create_external', [ 
 					'model' => $model,
 					'objectTypesList' => $objectTypesList,
-					'VAllObjectsUnionList' => $VAllObjectsUnionList 
+					'VAllObjectsUnionList' => $VAllObjectsUnionList,
+					'TitleSrcInformation' => $TitleSrcInformation,
+					'SrcFilterValueClientOrProjekt' => $SrcFilterValueClientOrProjekt
 			] );
 		}
 	}
@@ -969,6 +1244,77 @@ if (count($pks) === 1) {
 			] );
 		}
 	}
+	
+	public function actionChangedirectionajax()
+	{
+		$data = Yii::$app->request->post('id');
+		if (isset($data)) {
+			$returnValue = $this->actionChangedirection($data);
+			$chk = $returnValue;
+		} else {
+			$chk = -500;
+		}
+		return \yii\helpers\Json::encode($chk);
+	}
+
+	private function actionChangedirection($id) {
+		
+		try{
+			$model = MapObject2Object::findOne($id);
+			if ($model == null) {
+				return -100;
+			}
+			$ref_fk_object_id_1 = $model->ref_fk_object_id_1;
+			$ref_fk_object_type_id_1 = $model->ref_fk_object_type_id_1;
+			$ref_fk_object_id_2 = $model->ref_fk_object_id_2;
+			$ref_fk_object_type_id_2 = $model->ref_fk_object_type_id_2;
+			
+			$model->ref_fk_object_id_1 = $ref_fk_object_id_2;
+			$model->ref_fk_object_type_id_1 = $ref_fk_object_type_id_2;
+			$model->ref_fk_object_id_2 = $ref_fk_object_id_1;
+			$model->ref_fk_object_type_id_2 = $ref_fk_object_type_id_1;
+			
+			$model->save();
+			return 100;
+		}
+		catch (\Exception $e) 
+		{
+			Yii::trace($e, 'MapperController -> actionChangedirection');
+			return -999;
+		}
+	}
+
+	public function actionDeleteajax()
+	{
+		$data = Yii::$app->request->post('id');
+		if (isset($data)) {
+			$returnValue = $this->delete($data);
+			$chk = $returnValue;
+		} else {
+			$chk = -500;
+		}
+		return \yii\helpers\Json::encode($chk);
+	}
+
+	private function delete($id)
+    {
+		try {
+			$model = $this->findModel($id);
+			$model->delete();
+			return 100;
+		} catch (\Exception $e) {
+			$model->addError(null, $e->getMessage());
+			$errMsg = $e->getMessage();
+			
+			$errMsgAdd = "";
+			try{$errMsgAdd = '"'. $model->name . '"';} catch(\Exception $e){}
+
+			if (strpos($errMsg, "Integrity constraint violation")) $errMsg = Yii::t('yii',"The object {errMsgAdd} is still referenced by other objects.", ['errMsgAdd' => $errMsgAdd]);
+			Yii::$app->session->setFlash('deleteError', Yii::t('yii','Object can\'t be deleted: ') . $errMsg);
+			return -999;
+		}
+    }
+
 <?php endif; ?>
 <?php if ($generator->modelClass === "app\models\Objectcomment"): ?>
 	// Custom function.
@@ -1000,5 +1346,315 @@ if (count($pks) === 1) {
                 ]);
             }
         }
+<?php endif; ?>
+<?php if ($generator->modelClass === "app\models\DbDatabase"): ?>
+
+	private function bulkloadertemplate()
+	{
+		// Template text generated with 'kitchen.sh -file:"run_import.kjb" -listparam | grep "Parameter:"'
+		$template_string_linux='
+Parameter: changeset_path=, default=- : Path to scan for liquibase changesets
+Parameter: filter_routine_names= : Filter routine names based on parameter value (like operation without wildcards). Attention: Case sensitive
+Parameter: get_description_from_routine_definition=, default=Y : Extract the comment from the SQL Definition. Y=Yes | N=No
+Parameter: get_description_from_routine_definition_SplitElemenent_1=, default=1 : Element to use for result of get_description_from_routine_definition_SplitOnString_1
+Parameter: get_description_from_routine_definition_SplitElemenent_2=, default=0 : Element to use for result of get_description_from_routine_definition_SplitOnString_2
+Parameter: get_description_from_routine_definition_SplitOnString_1=, default=Description:  : First substring to split the routine definition (e.g.  "Description: ") without quotations
+Parameter: get_description_from_routine_definition_SplitOnString_2=, default=\n : Second substring to split the routine definition (e.g.  "\n") without quotations
+Parameter: handle_descriptions=, default=3 : 1=Use only database object description | 2=Use only from routine description | 3=Use both
+Parameter: location_lookup_database=, default=db_name : Database for liquibase changeset lookup db_table
+Parameter: map_db_table_to_db_database_id=, default=11 : DB_Database ID which will be used to map (new) database tables found
+Parameter: map_transfer_process_to_db_database_id=, default=11 : DB_Database ID which will be used to map (new) database routines found
+Parameter: metagrid_jdbc_db_pwd= : JDBC Database Password for meta#grid
+Parameter: metagrid_jdbc_db_user= : JDBC Database User for meta#grid
+Parameter: metagrid_jdbc_driver_class=, default=org.sqlite.JDBC : JDBC Java Driver Class to use to write in meta#grid database
+Parameter: metagrid_jdbc_url=, default=jdbc:sqlite:/home/patrick/Development_WorkingCopies/dwh_meta/dwh_meta_v2/dwh_meta.sqlite : JDBC URL of the source system to write in meta#grid database (including IP/DNS, Port, Databasename)
+Parameter: project_id=, default=7 : Project ID which information belongs to
+Parameter: source_db_schema_exclude=, default=sys,INFORMATION_SCHEMA,Backup,zz_Attic,information_schema,pg_catalog,pg_toast : Ignore special schemes in databse e.g. sys
+Parameter: source_jdbc_db_pwd=, default=<PASSWORD> : JDBC Database Password
+Parameter: source_jdbc_db_user=, default=<USER> : JDBC Database User for source
+Parameter: source_jdbc_driver_class=, default=net.sourceforge.jtds.jdbc.Driver : JDBC Java Driver Class to use to read from source
+Parameter: source_jdbc_url=, default=jdbc:jtds:sqlserver://127.0.0.1:1433/Chinook : JDBC URL of the source system to read from (including IP/DNS, Port, Databasename)
+Parameter: filter_view_names= : Filter view names based on parameter value (like operation without wildcards). Attention: Case sensitive and only affects reading view descriptions
+Parameter: overwrite_description_if_existing_differs=, default=Y : If there description is already filled and differs, shall it be overwritten. Y=Overwrite | N=Do not overwrite. Attention: only affects reading view descriptions
+		';
+
+		$arr = array();
+
+		$line = explode("\n",str_replace("\t","", $template_string_linux))[3];
+		$parameter = explode("=", explode(": ", $line)[1])[0];
+		$default_value = "";
+		if (strpos($line, "default") > 0)
+		{	
+			$default_value = explode("default=", explode(": ", $line)[1])[1];
+		}
+
+		foreach(explode("\n",str_replace("\t","", $template_string_linux)) as $key=>$value)
+		{
+			if (strpos($value, "=")>0 && strpos($value, ": ")>0)
+			{
+				$parameter = explode("=", explode(": ", $value)[1])[0];
+				$default_value = "";
+				if (strpos($value, "default") > 0)
+				{	
+					$default_value = rtrim(explode("default=", explode(": ", $value)[1])[1]);
+				}
+				$arr[$parameter]=$default_value;
+			}
+		}
+		return $arr;
+	}
+
+	private function buildBulkloaderExecutionString($id)
+	{
+
+		$bulk_loader_executable = \vendor\meta_grid\helper\Utils::get_app_config("bulk_loader_executable");
+		$bulk_loader_metagrid_jdbc_url = \vendor\meta_grid\helper\Utils::get_app_config("bulk_loader_metagrid_jdbc_url");
+
+		$model = $this->findModel($id);
+		$bulkLoaderParameterArr = $this->bulkloadertemplate();
+		$bulkLoaderParameterArr["project_id"] = $model->fk_project_id;
+		$bulkLoaderParameterArr["map_db_table_to_db_database_id"] = $model->id;
+		$bulkLoaderParameterArr["map_transfer_process_to_db_database_id"] = $model->id;
+		
+		if (Yii::$app->db->getDriverName() == "sqlite")
+		{
+			$sqlitePath = str_replace("sqlite:", "", Yii::$app->db->dsn);
+			$sqliteRealPath = realpath($sqlitePath);
+			$bulkLoaderParameterArr["metagrid_jdbc_url"] = "jdbc:sqlite:" . $sqliteRealPath;
+		}
+		
+		if ($bulk_loader_metagrid_jdbc_url !== NULL && $bulk_loader_metagrid_jdbc_url !== "")
+		{
+			$bulkLoaderParameterArr["metagrid_jdbc_url"] = $bulk_loader_metagrid_jdbc_url;
+		}
+		
+		$bulkLoaderParameterArr["location_lookup_database"] = $model->name;
+		$bulkLoaderParameterArr["source_jdbc_driver_class"] = "[--> JDBC DRIVER CLASS <--]";
+		$bulkLoaderParameterArr["source_jdbc_url"] = "[--> JDBC URL <--]";
+
+		if (stripos($model->fkTool->vendor, "Microsoft") !== false)
+		{
+			if (stripos($model->fkTool->tool_name, "SQL") !== false)
+			{
+				$bulkLoaderParameterArr["source_jdbc_driver_class"] = "net.sourceforge.jtds.jdbc.Driver";
+				$bulkLoaderParameterArr["source_jdbc_url"] = "jdbc:jtds:sqlserver://127.0.0.1:1433/$model->name";
+			}
+		}
+		if (stripos($model->fkTool->vendor, "Postgres") !== false)
+		{
+			if (stripos($model->fkTool->tool_name, "SQL") !== false)
+			{
+				$bulkLoaderParameterArr["source_jdbc_driver_class"] = "org.postgresql.Driver";
+				$bulkLoaderParameterArr["source_jdbc_url"] = "jdbc:postgresql://127.0.0.1:5432/$model->name";
+			}
+		}
+
+		$exec = ($bulk_loader_executable !== NULL && $bulk_loader_executable !== "") ? $bulk_loader_executable : "kitchen.sh";
+		$returnValue = "";
+		$returnValue .= "## Linux". "\n";
+		$returnValue .= $exec.' -file:"run_import.kjb" \\' . "\n";
+		foreach($bulkLoaderParameterArr as $key=>$value)
+		{
+			$returnValue .= "-param:" . $key . "=" . '"' . $value . '"' . " \\" . "\n";
+		}
+		
+		$exec = ($bulk_loader_executable !== NULL && $bulk_loader_executable !== "") ? $bulk_loader_executable : "kitchen.bat";
+		$returnValue .= "\n";
+		$returnValue .= ":: Windows". "\n";
+		$returnValue .= $exec.' /file:"run_import.kjb"' . " ";
+		foreach($bulkLoaderParameterArr as $key=>$value)
+		{
+			$returnValue .= '"/param:' . $key . "=" . $value . '"' . " ^" . "\n";
+		}
+
+		return $returnValue;
+	}
+<?php endif; ?>
+<?php if ($generator->modelClass === "app\models\DbTable"): ?>
+
+	private function buildSQLSelectStatement($id)
+	{
+		$modelDbTableField = \app\models\DbTableField::find()->select(["name", "datatype", "is_PrimaryKey"])->where(["fk_db_table_id" => $id])->all();
+		$model = $this->findModel($id);
+		$returnValue = "";
+		
+		$returnValue .= "SELECT" . "\n";
+		$i=0;
+		foreach($modelDbTableField as $key=>$value)
+		{
+			$i++;
+			$returnValue .= $i > 1 ? "   ," : "    ";
+			$returnValue .= "\"". $value->name . "\"" . "\n";
+		}
+		$returnValue .= "FROM " . $model->location;
+		$returnValue .= ";" . "\n";
+		$returnValue .= "\n";
+		
+		$returnValue .= "CREATE TABLE" ." " . $model->location . "\n";
+		$returnValue .= "(" . "\n";
+		
+		$j=0;
+		foreach($modelDbTableField as $key=>$value)
+		{
+			$j++;
+			$returnValue .= $j > 1 ? "   ," : "    ";
+			$returnValue .= "\"". $value->name . "\"" ;
+			$returnValue .= " " . $value->datatype;
+			$returnValue .= $value->is_PrimaryKey === true ? " NOT NULL PRIMARY KEY" : "";
+			$returnValue .= "\n";
+		}
+		$returnValue .= ")";
+		$returnValue .= ";" . "\n";
+		
+		return $i === 0 ? "" : $returnValue;
+	}
+
+	private function replaceKeys($oldKey, $newKey, array $input){
+		$return = array(); 
+		foreach ($input as $key => $value) {
+			if ($key===$oldKey)
+				$key = $newKey;
+	
+			if (is_array($value))
+				$value = $this->replaceKeys( $oldKey, $newKey, $value);
+	
+			$return[$key] = $value;
+		}
+		return $return; 
+	}
+
+    protected function CreateCSV($export_fk_ids = 0, $sessionPrepKey, $exportFilename)
+    {
+		$searchModel = new \app\models\ExportFileDbTableResultSearch();
+		$queryParams = $this->replaceKeys( "DbTableSearch", "ExportFileDbTableResultSearch", Yii::$app->request->queryParams);
+		$queryParams["ExportFileDbTableResultSearch"]["session"]=$sessionPrepKey;
+		$dataProvider = $searchModel->search($queryParams);
+
+		$columns = [
+			['attribute' => 'id'],
+			['attribute' => 'client_name'],
+			['attribute' => 'project_name'],
+			['attribute' => 'name'],
+			['attribute' => 'description'],
+			['attribute' => 'location'],
+			['attribute' => 'db_table_context_name'],
+			['attribute' => 'db_table_type_name'],
+			['attribute' => 'deleted_status_name'],
+			['attribute' => 'databaseInfoFromLocation'],
+			['attribute' => 'mappings'],
+			['attribute' => 'comments'],
+		];
+		
+		if ($export_fk_ids === "1")
+		{
+			$columns = array_merge($columns, 				[
+				['attribute' => 'uuid'],
+				['attribute' => 'fk_object_type_id'],
+				['attribute' => 'fk_client_id'],
+				['attribute' => 'fk_project_id'],
+				['attribute' => 'fk_db_table_type_id'],
+				['attribute' => 'fk_db_table_context_id'],
+				['attribute' => 'fk_deleted_status_id'],
+			]);
+		}
+
+		$exporter = new CsvGrid([
+			'dataProvider' => $dataProvider,
+			'columns' => $columns,
+		]);
+		$exporter->export()->saveAs($exportFilename);
+	}
+
+	protected function initDownload($exportFilePath) 
+	{
+		$file = $exportFilePath;
+		if (file_exists($file)) {
+			Yii::$app->response->sendFile($file);
+		   } 
+		}
+	
+	protected function prepareExportData($sessionPrepKey)
+	{
+		Yii::trace($sessionPrepKey, '$sessionPrepKey');
+		$permProjectsCanSee = Yii::$app->User->identity->permProjectsCanSee;
+		foreach($permProjectsCanSee as $key=>$value)
+		{
+			$model = new \app\models\base\ExportFileDbTableParams();
+			$model->session = $sessionPrepKey;
+			$model->allowed_fk_project_id = $value;
+			$model->save();
+			unset($model);
+		}
+
+		$permClientsCanSee = Yii::$app->User->identity->permClientsCanSee;
+		foreach($permClientsCanSee as $key=>$value)
+		{
+			$model = new \app\models\base\ExportFileDbTableParams();
+			$model->session = $sessionPrepKey;
+			$model->allowed_fk_client_id = $value;
+			$model->save();
+			unset($model);
+		}
+		
+		$model = new \app\models\base\ExportFileDbTableQueue();
+		$model->session = $sessionPrepKey;
+		$model->save(); // fires DB-TRIGGER
+		unset($model);
+	}
+
+	protected function cleanupResultTable($sessionPrepKey)
+	{
+		\app\models\base\ExportFileDbTableResult::deleteAll(['session' => $sessionPrepKey]);
+	}
+
+	/**
+	 * Checks if a folder exist and return canonicalized absolute pathname (sort version)
+	 * @param string $folder the path being checked.
+	 * @return mixed returns TRUE on success otherwise FALSE
+	 */
+	private function folder_exist($folder)
+	{
+		// Get canonicalized absolute pathname
+		$path = realpath($folder);
+
+		// If it exist, check if it's a directory
+		return ($path !== false AND is_dir($path)) ? true : false;
+	}
+
+	protected function createOutputDir($path)
+	{
+		if (! $this->folder_exist($path))
+		{
+			\yii\helpers\FileHelper::createDirectory($path, $mode = 0775, $recursive = true);
+		}
+		return $this->folder_exist($path);
+	}
+	
+	protected function cleanupResultFile($exportFilePath)
+	{
+		unlink($exportFilePath);
+	}
+
+	public function actionExport_csv($export_fk_ids = "0", $no_cleanup = "0")
+	{
+		$path = Yii::getAlias('@app') . "/exportfiles";
+		$dt = date("Y-m-d_H-m-s");
+		$dirExists=$this->createOutputDir($path);
+		if (! $dirExists)
+		{
+			throw new \yii\base\UserException( Yii::t("app","Output directory couldn't be created!") );
+		}
+		$sessionPrepKey = Yii::$app->controller->id . "|" . $dt . "|" . Yii::$app->session->id . "|" . Yii::$app->user->id;
+		$this->prepareExportData($sessionPrepKey);
+		$exportFilePath = $path . '/'. Yii::$app->controller->id . '_export_' . date("Y-m-d_H-m-s") . '.csv';
+		$this->CreateCSV($export_fk_ids, $sessionPrepKey, $exportFilePath);
+		$this->initDownload($exportFilePath);
+		if ($no_cleanup !== "1")
+		{
+			$this->cleanupResultTable($sessionPrepKey);
+			$this->cleanupResultFile($exportFilePath);
+		}
+		return;
+	}
 <?php endif; ?>
 }

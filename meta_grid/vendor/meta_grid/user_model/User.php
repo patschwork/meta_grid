@@ -78,5 +78,14 @@ class User extends \Da\User\Model\User
 			}
        	}   
         return $arrCanEdit;
-    }
+	}
+
+	// { ... phabricator-task: T80
+	public function rules()
+	{
+		$rules = parent::rules();
+		unset($rules['twoFactorEnabledNumber']);
+		return $rules; 
+	}
+	// ...}
 }

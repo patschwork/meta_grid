@@ -3,7 +3,12 @@
 $params = require(__DIR__ . '/params.php');
 
 $config = [
+    'aliases' => [
+        '@bower' => '@vendor/bower-asset',
+        '@npm'   => '@vendor/npm-asset',
+    ],
     'id' => 'basic',
+    'name' => 'meta#grid',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log', 'translatemanager','app\components\LanguageSelector' ],	// 2016-03-21 // 2016-04-01
 	// 'language' => 'de-DE',				// 2016-03-01
@@ -33,6 +38,14 @@ $config = [
             // 'useFileTransport' to false and configure a transport
             // for the mailer to send real emails.
             'useFileTransport' => true,
+            'transport' => [
+                'class' => 'Swift_SmtpTransport',
+                'encryption' => 'ssl',
+                'host' => 'smtp.xyz.com',
+                'port' => '465',
+                'username' => 'MAIL_USER_ACCOUNT',
+                'password' => 'MAIL_USER_PASSWORD',
+            ],             
         ],
         // 'log' => [
             // 'traceLevel' => YII_DEBUG ? 3 : 0,
@@ -132,6 +145,9 @@ $config = [
 					],
                     'administrators' => ['admin'],
                     'administratorPermissionName' => 'mgadmin',
+                    'mailParams' => [
+                        'fromEmail' => $params['adminEmail'],
+                    ],
 				],
 		],
 ];

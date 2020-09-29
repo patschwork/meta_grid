@@ -2,21 +2,21 @@
 <transformation>
   <info>
     <name>05 bulk import from datasource 03 mappings</name>
-    <description/>
-    <extended_description/>
-    <trans_version/>
+    <description />
+    <extended_description />
+    <trans_version />
     <trans_type>Normal</trans_type>
     <trans_status>0</trans_status>
     <directory>/</directory>
     <parameters>
       <parameter>
         <name>metagrid_jdbc_db_pwd</name>
-        <default_value/>
+        <default_value />
         <description>JDBC Database Password for meta#grid</description>
       </parameter>
       <parameter>
         <name>metagrid_jdbc_db_user</name>
-        <default_value/>
+        <default_value />
         <description>JDBC Database User for meta#grid</description>
       </parameter>
       <parameter>
@@ -26,7 +26,7 @@
       </parameter>
       <parameter>
         <name>metagrid_jdbc_url</name>
-        <default_value>jdbc:sqlite:/home/patrick/Development_WorkingCopies/dwh_meta/dwh_meta_v2/dwh_meta.sqlite</default_value>
+        <default_value>jdbc:sqlite:/opt/meta_grid/db/dwh_meta.sqlite</default_value>
         <description>JDBC URL of the source system to write in meta#grid database (including IP/DNS, Port, Databasename)</description>
       </parameter>
       <parameter>
@@ -41,7 +41,7 @@
       </parameter>
       <parameter>
         <name>source_jdbc_db_pwd</name>
-        <default_value>Encrypted 2be98afc86ac68681fa40fd26da86a29b</default_value>
+        <default_value>Encrypted xxxxxxxxxxxxxxxxxxx</default_value>
         <description>JDBC Database Password</description>
       </parameter>
       <parameter>
@@ -62,12 +62,12 @@
     </parameters>
     <log>
       <trans-log-table>
-        <connection/>
-        <schema/>
-        <table/>
-        <size_limit_lines/>
-        <interval/>
-        <timeout_days/>
+        <connection />
+        <schema />
+        <table />
+        <size_limit_lines />
+        <interval />
+        <timeout_days />
         <field>
           <id>ID_BATCH</id>
           <enabled>Y</enabled>
@@ -92,37 +92,37 @@
           <id>LINES_READ</id>
           <enabled>Y</enabled>
           <name>LINES_READ</name>
-          <subject/>
+          <subject />
         </field>
         <field>
           <id>LINES_WRITTEN</id>
           <enabled>Y</enabled>
           <name>LINES_WRITTEN</name>
-          <subject/>
+          <subject />
         </field>
         <field>
           <id>LINES_UPDATED</id>
           <enabled>Y</enabled>
           <name>LINES_UPDATED</name>
-          <subject/>
+          <subject />
         </field>
         <field>
           <id>LINES_INPUT</id>
           <enabled>Y</enabled>
           <name>LINES_INPUT</name>
-          <subject/>
+          <subject />
         </field>
         <field>
           <id>LINES_OUTPUT</id>
           <enabled>Y</enabled>
           <name>LINES_OUTPUT</name>
-          <subject/>
+          <subject />
         </field>
         <field>
           <id>LINES_REJECTED</id>
           <enabled>Y</enabled>
           <name>LINES_REJECTED</name>
-          <subject/>
+          <subject />
         </field>
         <field>
           <id>ERRORS</id>
@@ -176,11 +176,11 @@
         </field>
       </trans-log-table>
       <perf-log-table>
-        <connection/>
-        <schema/>
-        <table/>
-        <interval/>
-        <timeout_days/>
+        <connection />
+        <schema />
+        <table />
+        <interval />
+        <timeout_days />
         <field>
           <id>ID_BATCH</id>
           <enabled>Y</enabled>
@@ -258,10 +258,10 @@
         </field>
       </perf-log-table>
       <channel-log-table>
-        <connection/>
-        <schema/>
-        <table/>
-        <timeout_days/>
+        <connection />
+        <schema />
+        <table />
+        <timeout_days />
         <field>
           <id>ID_BATCH</id>
           <enabled>Y</enabled>
@@ -324,10 +324,10 @@
         </field>
       </channel-log-table>
       <step-log-table>
-        <connection/>
-        <schema/>
-        <table/>
-        <timeout_days/>
+        <connection />
+        <schema />
+        <table />
+        <timeout_days />
         <field>
           <id>ID_BATCH</id>
           <enabled>Y</enabled>
@@ -400,10 +400,10 @@
         </field>
       </step-log-table>
       <metrics-log-table>
-        <connection/>
-        <schema/>
-        <table/>
-        <timeout_days/>
+        <connection />
+        <schema />
+        <table />
+        <timeout_days />
         <field>
           <id>ID_BATCH</id>
           <enabled>Y</enabled>
@@ -452,9 +452,9 @@
       </metrics-log-table>
     </log>
     <maxdate>
-      <connection/>
-      <table/>
-      <field/>
+      <connection />
+      <table />
+      <field />
       <offset>0.0</offset>
       <maxdiff>0.0</maxdiff>
     </maxdate>
@@ -465,7 +465,7 @@
     <feedback_shown>Y</feedback_shown>
     <feedback_size>50000</feedback_size>
     <using_thread_priorities>Y</using_thread_priorities>
-    <shared_objects_file/>
+    <shared_objects_file />
     <capture_step_performance>N</capture_step_performance>
     <step_performance_capturing_delay>1000</step_performance_capturing_delay>
     <step_performance_capturing_size_limit>100</step_performance_capturing_size_limit>
@@ -680,16 +680,16 @@ Next step is filling a staging table to check the import...</note>
   </notepads>
   <connection>
     <name>[In memory] MyDatabase (H2)</name>
-    <server/>
+    <server />
     <type>GENERIC</type>
     <access>Native</access>
-    <database/>
+    <database />
     <port>1521</port>
     <username>H2</username>
     <password>Encrypted </password>
-    <servername/>
-    <data_tablespace/>
-    <index_tablespace/>
+    <servername />
+    <data_tablespace />
+    <index_tablespace />
     <attributes>
       <attribute>
         <code>CUSTOM_DRIVER_CLASS</code>
@@ -738,9 +738,9 @@ Next step is filling a staging table to check the import...</note>
     <port>1434</port>
     <username>DEV_EPOST</username>
     <password>Encrypted 2be98afc86aa7f2a08e2f9155eebd9cee</password>
-    <servername/>
-    <data_tablespace/>
-    <index_tablespace/>
+    <servername />
+    <data_tablespace />
+    <index_tablespace />
     <attributes>
       <attribute>
         <code>FORCE_IDENTIFIERS_TO_LOWERCASE</code>
@@ -785,9 +785,9 @@ Next step is filling a staging table to check the import...</note>
     <port>1434</port>
     <username>DEV_EPOST</username>
     <password>Encrypted 2be98afc86aa7f2a08e2f9155eebd9cee</password>
-    <servername/>
-    <data_tablespace/>
-    <index_tablespace/>
+    <servername />
+    <data_tablespace />
+    <index_tablespace />
     <attributes>
       <attribute>
         <code>FORCE_IDENTIFIERS_TO_LOWERCASE</code>
@@ -830,11 +830,11 @@ Next step is filling a staging table to check the import...</note>
     <access>Native</access>
     <database>D:\ownCloud\Documents\dwh_meta_v2_prod\dwh_meta.sqlite</database>
     <port>-1</port>
-    <username/>
+    <username />
     <password>Encrypted </password>
-    <servername/>
-    <data_tablespace/>
-    <index_tablespace/>
+    <servername />
+    <data_tablespace />
+    <index_tablespace />
     <attributes>
       <attribute>
         <code>FORCE_IDENTIFIERS_TO_LOWERCASE</code>
@@ -875,9 +875,9 @@ Next step is filling a staging table to check the import...</note>
     <port>1433</port>
     <username>sa</username>
     <password>Encrypted 2be98afc86aa79390ae48f7238896bbd7</password>
-    <servername/>
-    <data_tablespace/>
-    <index_tablespace/>
+    <servername />
+    <data_tablespace />
+    <index_tablespace />
     <attributes>
       <attribute>
         <code>FORCE_IDENTIFIERS_TO_LOWERCASE</code>
@@ -914,17 +914,17 @@ Next step is filling a staging table to check the import...</note>
     </attributes>
   </connection>
   <connection>
-    <name>[local] mip_fc_p (MSSQL)</name>
+    <name>[local] chinook (MSSQL)</name>
     <server>127.0.0.1</server>
     <type>MSSQL</type>
     <access>Native</access>
-    <database>mip_fc_p</database>
+    <database>chinook</database>
     <port>1433</port>
     <username>sa</username>
     <password>Encrypted 2be98afc86aa79390ae48f7238896bbd7</password>
-    <servername/>
-    <data_tablespace/>
-    <index_tablespace/>
+    <servername />
+    <data_tablespace />
+    <index_tablespace />
     <attributes>
       <attribute>
         <code>FORCE_IDENTIFIERS_TO_LOWERCASE</code>
@@ -969,9 +969,9 @@ Next step is filling a staging table to check the import...</note>
     <port>5432</port>
     <username>postgres</username>
     <password>Encrypted 2be98afc86aa7f2e4bb16bd64d980aac9</password>
-    <servername/>
-    <data_tablespace/>
-    <index_tablespace/>
+    <servername />
+    <data_tablespace />
+    <index_tablespace />
     <attributes>
       <attribute>
         <code>FORCE_IDENTIFIERS_TO_LOWERCASE</code>
@@ -1005,16 +1005,16 @@ Next step is filling a staging table to check the import...</note>
   </connection>
   <connection>
     <name>Meta#Grid_Generic_Database</name>
-    <server/>
+    <server />
     <type>GENERIC</type>
     <access>Native</access>
-    <database/>
+    <database />
     <port>1521</port>
     <username>${metagrid_jdbc_db_user}</username>
     <password>${metagrid_jdbc_db_pwd}</password>
-    <servername/>
-    <data_tablespace/>
-    <index_tablespace/>
+    <servername />
+    <data_tablespace />
+    <index_tablespace />
     <attributes>
       <attribute>
         <code>CUSTOM_DRIVER_CLASS</code>
@@ -1067,17 +1067,17 @@ Next step is filling a staging table to check the import...</note>
     </attributes>
   </connection>
   <connection>
-    <name>mip_t (MSSQL)</name>
+    <name>chinook (MSSQL)</name>
     <server>127.0.0.1</server>
     <type>MSSQL</type>
     <access>Native</access>
-    <database>mip_t</database>
+    <database>chinook</database>
     <port>1433</port>
     <username>sa</username>
     <password>Encrypted 2be98afc86aa79390ae48f7238896bbd7</password>
-    <servername/>
-    <data_tablespace/>
-    <index_tablespace/>
+    <servername />
+    <data_tablespace />
+    <index_tablespace />
     <attributes>
       <attribute>
         <code>FORCE_IDENTIFIERS_TO_LOWERCASE</code>
@@ -1123,16 +1123,16 @@ Next step is filling a staging table to check the import...</note>
   </connection>
   <connection>
     <name>Source_Generic_Database</name>
-    <server/>
+    <server />
     <type>GENERIC</type>
     <access>Native</access>
-    <database/>
+    <database />
     <port>1521</port>
     <username>${source_jdbc_db_user}</username>
     <password>${source_jdbc_db_pwd}</password>
-    <servername/>
-    <data_tablespace/>
-    <index_tablespace/>
+    <servername />
+    <data_tablespace />
+    <index_tablespace />
     <attributes>
       <attribute>
         <code>CUSTOM_DRIVER_CLASS</code>
@@ -1141,10 +1141,6 @@ Next step is filling a staging table to check the import...</note>
       <attribute>
         <code>CUSTOM_URL</code>
         <attribute>${source_jdbc_url}</attribute>
-      </attribute>
-      <attribute>
-        <code>DATABASE_DIALECT_ID</code>
-        <attribute>Generic database</attribute>
       </attribute>
       <attribute>
         <code>FORCE_IDENTIFIERS_TO_LOWERCASE</code>
@@ -1163,19 +1159,11 @@ Next step is filling a staging table to check the import...</note>
         <attribute>1521</attribute>
       </attribute>
       <attribute>
-        <code>PRESERVE_RESERVED_WORD_CASE</code>
-        <attribute>Y</attribute>
-      </attribute>
-      <attribute>
         <code>QUOTE_ALL_FIELDS</code>
         <attribute>N</attribute>
       </attribute>
       <attribute>
         <code>SUPPORTS_BOOLEAN_DATA_TYPE</code>
-        <attribute>N</attribute>
-      </attribute>
-      <attribute>
-        <code>SUPPORTS_TIMESTAMP_DATA_TYPE</code>
         <attribute>N</attribute>
       </attribute>
       <attribute>
@@ -1304,44 +1292,44 @@ Next step is filling a staging table to check the import...</note>
   <step>
     <name>Database lookup - fk_db_table_id 2</name>
     <type>DBLookup</type>
-    <description/>
+    <description />
     <distribute>N</distribute>
-    <custom_distribution/>
+    <custom_distribution />
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name/>
+      <schema_name />
     </partitioning>
     <connection>Meta#Grid_Generic_Database</connection>
     <cache>N</cache>
     <cache_load_all>N</cache_load_all>
     <cache_size>0</cache_size>
     <lookup>
-      <schema/>
+      <schema />
       <table>db_table</table>
-      <orderby/>
+      <orderby />
       <fail_on_multiple>N</fail_on_multiple>
       <eat_row_on_failure>Y</eat_row_on_failure>
       <key>
         <name>FK_location</name>
         <field>location</field>
         <condition>=</condition>
-        <name2/>
+        <name2 />
       </key>
       <key>
         <name>fk_project_id</name>
         <field>fk_project_id</field>
         <condition>=</condition>
-        <name2/>
+        <name2 />
       </key>
       <value>
         <name>id</name>
         <rename>FK_fk_db_table_id</rename>
-        <default/>
+        <default />
         <type>Integer</type>
       </value>
     </lookup>
-    <cluster_schema/>
+    <cluster_schema />
     <remotesteps>
       <input>
       </input>
@@ -1357,44 +1345,44 @@ Next step is filling a staging table to check the import...</note>
   <step>
     <name>Database lookup - fk_db_table_id PK</name>
     <type>DBLookup</type>
-    <description/>
+    <description />
     <distribute>N</distribute>
-    <custom_distribution/>
+    <custom_distribution />
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name/>
+      <schema_name />
     </partitioning>
     <connection>Meta#Grid_Generic_Database</connection>
     <cache>N</cache>
     <cache_load_all>N</cache_load_all>
     <cache_size>0</cache_size>
     <lookup>
-      <schema/>
+      <schema />
       <table>db_table</table>
-      <orderby/>
+      <orderby />
       <fail_on_multiple>N</fail_on_multiple>
       <eat_row_on_failure>Y</eat_row_on_failure>
       <key>
         <name>location</name>
         <field>location</field>
         <condition>=</condition>
-        <name2/>
+        <name2 />
       </key>
       <key>
         <name>fk_project_id</name>
         <field>fk_project_id</field>
         <condition>=</condition>
-        <name2/>
+        <name2 />
       </key>
       <value>
         <name>id</name>
         <rename>fk_db_table_id</rename>
-        <default/>
+        <default />
         <type>Integer</type>
       </value>
     </lookup>
-    <cluster_schema/>
+    <cluster_schema />
     <remotesteps>
       <input>
       </input>
@@ -1410,15 +1398,15 @@ Next step is filling a staging table to check the import...</note>
   <step>
     <name>Dummy (do nothing)</name>
     <type>Dummy</type>
-    <description/>
+    <description />
     <distribute>Y</distribute>
-    <custom_distribution/>
+    <custom_distribution />
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name/>
+      <schema_name />
     </partitioning>
-    <cluster_schema/>
+    <cluster_schema />
     <remotesteps>
       <input>
       </input>
@@ -1434,15 +1422,15 @@ Next step is filling a staging table to check the import...</note>
   <step>
     <name>Dummy (do nothing) 2</name>
     <type>Dummy</type>
-    <description/>
+    <description />
     <distribute>Y</distribute>
-    <custom_distribution/>
+    <custom_distribution />
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name/>
+      <schema_name />
     </partitioning>
-    <cluster_schema/>
+    <cluster_schema />
     <remotesteps>
       <input>
       </input>
@@ -1458,22 +1446,22 @@ Next step is filling a staging table to check the import...</note>
   <step>
     <name>Filter rows: Select specific table</name>
     <type>FilterRows</type>
-    <description/>
+    <description />
     <distribute>Y</distribute>
-    <custom_distribution/>
+    <custom_distribution />
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name/>
+      <schema_name />
     </partitioning>
-    <send_true_to/>
-    <send_false_to/>
+    <send_true_to />
+    <send_false_to />
     <compare>
       <condition>
         <negated>Y</negated>
         <leftvalue>TABLE_NAME</leftvalue>
         <function>CONTAINS</function>
-        <rightvalue/>
+        <rightvalue />
         <value>
           <name>constant</name>
           <type>String</type>
@@ -1481,11 +1469,11 @@ Next step is filling a staging table to check the import...</note>
           <length>-1</length>
           <precision>-1</precision>
           <isnull>N</isnull>
-          <mask/>
+          <mask />
         </value>
       </condition>
     </compare>
-    <cluster_schema/>
+    <cluster_schema />
     <remotesteps>
       <input>
       </input>
@@ -1501,13 +1489,13 @@ Next step is filling a staging table to check the import...</note>
   <step>
     <name>Filter rows: mapping_uuid_found IS NULL</name>
     <type>FilterRows</type>
-    <description/>
+    <description />
     <distribute>Y</distribute>
-    <custom_distribution/>
+    <custom_distribution />
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name/>
+      <schema_name />
     </partitioning>
     <send_true_to>Select values</send_true_to>
     <send_false_to>Dummy (do nothing) 2</send_false_to>
@@ -1516,10 +1504,10 @@ Next step is filling a staging table to check the import...</note>
         <negated>N</negated>
         <leftvalue>mapping_uuid_found</leftvalue>
         <function>IS NULL</function>
-        <rightvalue/>
+        <rightvalue />
       </condition>
     </compare>
-    <cluster_schema/>
+    <cluster_schema />
     <remotesteps>
       <input>
       </input>
@@ -1535,13 +1523,13 @@ Next step is filling a staging table to check the import...</note>
   <step>
     <name>Filter rows: uuid IS NULL</name>
     <type>FilterRows</type>
-    <description/>
+    <description />
     <distribute>Y</distribute>
-    <custom_distribution/>
+    <custom_distribution />
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name/>
+      <schema_name />
     </partitioning>
     <send_true_to>Modified Java Script Value - Set location and description for FK</send_true_to>
     <send_false_to>Dummy (do nothing)</send_false_to>
@@ -1550,10 +1538,10 @@ Next step is filling a staging table to check the import...</note>
         <negated>N</negated>
         <leftvalue>PK_uuid</leftvalue>
         <function>IS NOT NULL</function>
-        <rightvalue/>
+        <rightvalue />
       </condition>
     </compare>
-    <cluster_schema/>
+    <cluster_schema />
     <remotesteps>
       <input>
       </input>
@@ -1569,31 +1557,31 @@ Next step is filling a staging table to check the import...</note>
   <step>
     <name>Get JDBC Metadata - Best row identifier</name>
     <type>jdbcMetaData</type>
-    <description/>
+    <description />
     <distribute>Y</distribute>
-    <custom_distribution/>
+    <custom_distribution />
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name/>
+      <schema_name />
     </partitioning>
     <connectionSource>Connection</connectionSource>
-    <connectionName>[local] mip_fc_p (MSSQL)</connectionName>
-    <connectionField/>
-    <jdbcDriverField/>
-    <jdbcUrlField/>
-    <jdbcUserField/>
-    <jdbcPasswordField/>
+    <connectionName>[local] chinook (MSSQL)</connectionName>
+    <connectionField />
+    <jdbcDriverField />
+    <jdbcUrlField />
+    <jdbcUserField />
+    <jdbcPasswordField />
     <alwaysPassInputRow>N</alwaysPassInputRow>
     <methodName>getBestRowIdentifier</methodName>
     <removeArgumentFields>N</removeArgumentFields>
     <argumentSourceFields>N</argumentSourceFields>
     <arguments>
-      <argument/>
+      <argument />
       <argument>dbo</argument>
       <argument>DATABASECHANGELOG</argument>
-      <argument/>
-      <argument/>
+      <argument />
+      <argument />
     </arguments>
     <outputFields>
       <outputField>
@@ -1629,7 +1617,7 @@ Next step is filling a staging table to check the import...</note>
         <rename>COL_PSEUDO_COLUMN</rename>
       </outputField>
     </outputFields>
-    <cluster_schema/>
+    <cluster_schema />
     <remotesteps>
       <input>
       </input>
@@ -1645,30 +1633,30 @@ Next step is filling a staging table to check the import...</note>
   <step>
     <name>Get JDBC Metadata - Columns</name>
     <type>jdbcMetaData</type>
-    <description/>
+    <description />
     <distribute>N</distribute>
-    <custom_distribution/>
+    <custom_distribution />
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name/>
+      <schema_name />
     </partitioning>
     <connectionSource>Connection</connectionSource>
     <connectionName>Source_Generic_Database</connectionName>
     <connectionField>Kettle_Connection_Name</connectionField>
-    <jdbcDriverField/>
-    <jdbcUrlField/>
-    <jdbcUserField/>
-    <jdbcPasswordField/>
+    <jdbcDriverField />
+    <jdbcUrlField />
+    <jdbcUserField />
+    <jdbcPasswordField />
     <alwaysPassInputRow>N</alwaysPassInputRow>
     <methodName>getColumns</methodName>
     <removeArgumentFields>N</removeArgumentFields>
     <argumentSourceFields>N</argumentSourceFields>
     <arguments>
-      <argument/>
-      <argument/>
-      <argument/>
-      <argument/>
+      <argument />
+      <argument />
+      <argument />
+      <argument />
     </arguments>
     <outputFields>
       <outputField>
@@ -1764,7 +1752,7 @@ Next step is filling a staging table to check the import...</note>
         <rename>IS_GENERATEDCOLUMN</rename>
       </outputField>
     </outputFields>
-    <cluster_schema/>
+    <cluster_schema />
     <remotesteps>
       <input>
       </input>
@@ -1780,21 +1768,21 @@ Next step is filling a staging table to check the import...</note>
   <step>
     <name>Get JDBC Metadata - Exported key columns</name>
     <type>jdbcMetaData</type>
-    <description/>
+    <description />
     <distribute>N</distribute>
-    <custom_distribution/>
+    <custom_distribution />
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name/>
+      <schema_name />
     </partitioning>
     <connectionSource>Connection</connectionSource>
     <connectionName>Source_Generic_Database</connectionName>
     <connectionField>Kettle_Connection_Name</connectionField>
-    <jdbcDriverField/>
-    <jdbcUrlField/>
-    <jdbcUserField/>
-    <jdbcPasswordField/>
+    <jdbcDriverField />
+    <jdbcUrlField />
+    <jdbcUserField />
+    <jdbcPasswordField />
     <alwaysPassInputRow>N</alwaysPassInputRow>
     <methodName>getExportedKeys</methodName>
     <removeArgumentFields>N</removeArgumentFields>
@@ -1862,7 +1850,7 @@ Next step is filling a staging table to check the import...</note>
         <rename>DEFERRABILITY</rename>
       </outputField>
     </outputFields>
-    <cluster_schema/>
+    <cluster_schema />
     <remotesteps>
       <input>
       </input>
@@ -1878,16 +1866,16 @@ Next step is filling a staging table to check the import...</note>
   <step>
     <name>Modified Java Script Value - Set location and description</name>
     <type>ScriptValueMod</type>
-    <description/>
+    <description />
     <distribute>N</distribute>
-    <custom_distribution/>
+    <custom_distribution />
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name/>
+      <schema_name />
     </partitioning>
     <compatible>N</compatible>
-    <optimizationLevel/>
+    <optimizationLevel />
     <jsScripts>
       <jsScript>
         <jsScript_type>0</jsScript_type>
@@ -1943,7 +1931,7 @@ location = vTABLE_CAT + vTABLE_SCHEM + vTABLE_NAME;
         <replace>N</replace>
       </field>
     </fields>
-    <cluster_schema/>
+    <cluster_schema />
     <remotesteps>
       <input>
       </input>
@@ -1959,16 +1947,16 @@ location = vTABLE_CAT + vTABLE_SCHEM + vTABLE_NAME;
   <step>
     <name>Modified Java Script Value - Set location and description for FK</name>
     <type>ScriptValueMod</type>
-    <description/>
+    <description />
     <distribute>N</distribute>
-    <custom_distribution/>
+    <custom_distribution />
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name/>
+      <schema_name />
     </partitioning>
     <compatible>N</compatible>
-    <optimizationLevel/>
+    <optimizationLevel />
     <jsScripts>
       <jsScript>
         <jsScript_type>0</jsScript_type>
@@ -2024,7 +2012,7 @@ FK_location = vTABLE_CAT + vTABLE_SCHEM + vTABLE_NAME;
         <replace>N</replace>
       </field>
     </fields>
-    <cluster_schema/>
+    <cluster_schema />
     <remotesteps>
       <input>
       </input>
@@ -2040,16 +2028,16 @@ FK_location = vTABLE_CAT + vTABLE_SCHEM + vTABLE_NAME;
   <step>
     <name>Modified Java Script Value: Set project_id</name>
     <type>ScriptValueMod</type>
-    <description/>
+    <description />
     <distribute>Y</distribute>
-    <custom_distribution/>
+    <custom_distribution />
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name/>
+      <schema_name />
     </partitioning>
     <compatible>N</compatible>
-    <optimizationLevel/>
+    <optimizationLevel />
     <jsScripts>
       <jsScript>
         <jsScript_type>0</jsScript_type>
@@ -2071,7 +2059,7 @@ fk_project_id=getVariable("project_id","");</jsScript_script>
         <replace>N</replace>
       </field>
     </fields>
-    <cluster_schema/>
+    <cluster_schema />
     <remotesteps>
       <input>
       </input>
@@ -2087,13 +2075,13 @@ fk_project_id=getVariable("project_id","");</jsScript_script>
   <step>
     <name>Select values</name>
     <type>SelectValues</type>
-    <description/>
+    <description />
     <distribute>Y</distribute>
-    <custom_distribution/>
+    <custom_distribution />
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name/>
+      <schema_name />
     </partitioning>
     <fields>
       <field>
@@ -2110,7 +2098,7 @@ fk_project_id=getVariable("project_id","");</jsScript_script>
       </field>
       <select_unspecified>N</select_unspecified>
     </fields>
-    <cluster_schema/>
+    <cluster_schema />
     <remotesteps>
       <input>
       </input>
@@ -2126,20 +2114,20 @@ fk_project_id=getVariable("project_id","");</jsScript_script>
   <step>
     <name>Sort rows</name>
     <type>SortRows</type>
-    <description/>
+    <description />
     <distribute>Y</distribute>
-    <custom_distribution/>
+    <custom_distribution />
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name/>
+      <schema_name />
     </partitioning>
     <directory>%%java.io.tmpdir%%</directory>
     <prefix>out</prefix>
     <sort_size>1000000</sort_size>
-    <free_memory/>
+    <free_memory />
     <compress>N</compress>
-    <compress_variable/>
+    <compress_variable />
     <unique_rows>N</unique_rows>
     <fields>
       <field>
@@ -2175,7 +2163,7 @@ fk_project_id=getVariable("project_id","");</jsScript_script>
         <presorted>N</presorted>
       </field>
     </fields>
-    <cluster_schema/>
+    <cluster_schema />
     <remotesteps>
       <input>
       </input>
@@ -2191,13 +2179,13 @@ fk_project_id=getVariable("project_id","");</jsScript_script>
   <step>
     <name>Stream lookup: db_table_field FK-Field</name>
     <type>StreamLookup</type>
-    <description/>
+    <description />
     <distribute>Y</distribute>
-    <custom_distribution/>
+    <custom_distribution />
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name/>
+      <schema_name />
     </partitioning>
     <from>Table input: db_table_field PK-Field</from>
     <input_sorted>N</input_sorted>
@@ -2220,23 +2208,23 @@ fk_project_id=getVariable("project_id","");</jsScript_script>
       <value>
         <name>uuid</name>
         <rename>FK_uuid</rename>
-        <default/>
+        <default />
         <type>String</type>
       </value>
       <value>
         <name>id</name>
         <rename>FK_fk_db_table_field_id</rename>
-        <default/>
+        <default />
         <type>Integer</type>
       </value>
       <value>
         <name>fk_object_type_id</name>
         <rename>FK_fk_object_type_id</rename>
-        <default/>
+        <default />
         <type>Integer</type>
       </value>
     </lookup>
-    <cluster_schema/>
+    <cluster_schema />
     <remotesteps>
       <input>
       </input>
@@ -2252,13 +2240,13 @@ fk_project_id=getVariable("project_id","");</jsScript_script>
   <step>
     <name>Stream lookup: db_table_field PK-Field</name>
     <type>StreamLookup</type>
-    <description/>
+    <description />
     <distribute>Y</distribute>
-    <custom_distribution/>
+    <custom_distribution />
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name/>
+      <schema_name />
     </partitioning>
     <from>Table input: db_table_field PK-Field</from>
     <input_sorted>N</input_sorted>
@@ -2281,23 +2269,23 @@ fk_project_id=getVariable("project_id","");</jsScript_script>
       <value>
         <name>uuid</name>
         <rename>PK_uuid</rename>
-        <default/>
+        <default />
         <type>String</type>
       </value>
       <value>
         <name>id</name>
         <rename>PK_fk_db_table_field_id</rename>
-        <default/>
+        <default />
         <type>Integer</type>
       </value>
       <value>
         <name>fk_object_type_id</name>
         <rename>PK_fk_object_type_id</rename>
-        <default/>
+        <default />
         <type>Integer</type>
       </value>
     </lookup>
-    <cluster_schema/>
+    <cluster_schema />
     <remotesteps>
       <input>
       </input>
@@ -2313,13 +2301,13 @@ fk_project_id=getVariable("project_id","");</jsScript_script>
   <step>
     <name>Stream lookup: mapping_object_2_object</name>
     <type>StreamLookup</type>
-    <description/>
+    <description />
     <distribute>Y</distribute>
-    <custom_distribution/>
+    <custom_distribution />
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name/>
+      <schema_name />
     </partitioning>
     <from>Table input: map_object_2_object</from>
     <input_sorted>N</input_sorted>
@@ -2346,11 +2334,11 @@ fk_project_id=getVariable("project_id","");</jsScript_script>
       <value>
         <name>uuid</name>
         <rename>mapping_uuid_found</rename>
-        <default/>
+        <default />
         <type>String</type>
       </value>
     </lookup>
-    <cluster_schema/>
+    <cluster_schema />
     <remotesteps>
       <input>
       </input>
@@ -2366,13 +2354,13 @@ fk_project_id=getVariable("project_id","");</jsScript_script>
   <step>
     <name>Table input: db_table_field PK-Field</name>
     <type>TableInput</type>
-    <description/>
+    <description />
     <distribute>N</distribute>
-    <custom_distribution/>
+    <custom_distribution />
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name/>
+      <schema_name />
     </partitioning>
     <connection>Meta#Grid_Generic_Database</connection>
     <sql>SELECT
@@ -2388,11 +2376,11 @@ fk_project_id=getVariable("project_id","");</jsScript_script>
 FROM db_table_field
 WHERE fk_project_id=${project_id}</sql>
     <limit>0</limit>
-    <lookup/>
+    <lookup />
     <execute_each_row>N</execute_each_row>
     <variables_active>Y</variables_active>
     <lazy_conversion_active>N</lazy_conversion_active>
-    <cluster_schema/>
+    <cluster_schema />
     <remotesteps>
       <input>
       </input>
@@ -2408,13 +2396,13 @@ WHERE fk_project_id=${project_id}</sql>
   <step>
     <name>Table input: map_object_2_object</name>
     <type>TableInput</type>
-    <description/>
+    <description />
     <distribute>Y</distribute>
-    <custom_distribution/>
+    <custom_distribution />
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name/>
+      <schema_name />
     </partitioning>
     <connection>Meta#Grid_Generic_Database</connection>
     <sql>SELECT
@@ -2427,11 +2415,11 @@ WHERE fk_project_id=${project_id}</sql>
 FROM map_object_2_object
 </sql>
     <limit>0</limit>
-    <lookup/>
+    <lookup />
     <execute_each_row>N</execute_each_row>
     <variables_active>N</variables_active>
     <lazy_conversion_active>N</lazy_conversion_active>
-    <cluster_schema/>
+    <cluster_schema />
     <remotesteps>
       <input>
       </input>
@@ -2447,16 +2435,16 @@ FROM map_object_2_object
   <step>
     <name>Table output</name>
     <type>TableOutput</type>
-    <description/>
+    <description />
     <distribute>Y</distribute>
-    <custom_distribution/>
+    <custom_distribution />
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name/>
+      <schema_name />
     </partitioning>
     <connection>Meta#Grid_Generic_Database</connection>
-    <schema/>
+    <schema />
     <table>map_object_2_object</table>
     <commit>1000</commit>
     <truncate>N</truncate>
@@ -2464,14 +2452,14 @@ FROM map_object_2_object
     <use_batch>Y</use_batch>
     <specify_fields>Y</specify_fields>
     <partitioning_enabled>N</partitioning_enabled>
-    <partitioning_field/>
+    <partitioning_field />
     <partitioning_daily>N</partitioning_daily>
     <partitioning_monthly>Y</partitioning_monthly>
     <tablename_in_field>N</tablename_in_field>
-    <tablename_field/>
+    <tablename_field />
     <tablename_in_table>Y</tablename_in_table>
     <return_keys>N</return_keys>
-    <return_field/>
+    <return_field />
     <fields>
       <field>
         <column_name>ref_fk_object_id_1</column_name>
@@ -2490,7 +2478,7 @@ FROM map_object_2_object
         <stream_name>FK_fk_object_type_id</stream_name>
       </field>
     </fields>
-    <cluster_schema/>
+    <cluster_schema />
     <remotesteps>
       <input>
       </input>
@@ -2506,18 +2494,18 @@ FROM map_object_2_object
   <step>
     <name>Unique rows</name>
     <type>Unique</type>
-    <description/>
+    <description />
     <distribute>Y</distribute>
-    <custom_distribution/>
+    <custom_distribution />
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name/>
+      <schema_name />
     </partitioning>
     <count_rows>N</count_rows>
-    <count_field/>
+    <count_field />
     <reject_duplicate_row>N</reject_duplicate_row>
-    <error_description/>
+    <error_description />
     <fields>
       <field>
         <name>PK_fk_db_table_field_id</name>
@@ -2536,7 +2524,7 @@ FROM map_object_2_object
         <case_insensitive>N</case_insensitive>
       </field>
     </fields>
-    <cluster_schema/>
+    <cluster_schema />
     <remotesteps>
       <input>
       </input>
@@ -2552,13 +2540,13 @@ FROM map_object_2_object
   <step>
     <name>Write to log</name>
     <type>WriteToLog</type>
-    <description/>
+    <description />
     <distribute>Y</distribute>
-    <custom_distribution/>
+    <custom_distribution />
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name/>
+      <schema_name />
     </partitioning>
     <loglevel>log_level_basic</loglevel>
     <displayHeader>Y</displayHeader>
@@ -2579,7 +2567,7 @@ FROM map_object_2_object
         <name>PK_fk_object_type_id</name>
       </field>
     </fields>
-    <cluster_schema/>
+    <cluster_schema />
     <remotesteps>
       <input>
       </input>
@@ -2595,36 +2583,36 @@ FROM map_object_2_object
   <step>
     <name>get_Database_Name</name>
     <type>SimpleMapping</type>
-    <description/>
+    <description />
     <distribute>Y</distribute>
-    <custom_distribution/>
+    <custom_distribution />
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name/>
+      <schema_name />
     </partitioning>
     <specification_method>filename</specification_method>
-    <trans_object_id/>
-    <trans_name/>
+    <trans_object_id />
+    <trans_name />
     <filename>${Internal.Entry.Current.Directory}/00_get_database_name.ktr</filename>
-    <directory_path/>
+    <directory_path />
     <mappings>
       <input>
         <mapping>
-          <input_step/>
-          <output_step/>
+          <input_step />
+          <output_step />
           <main_path>Y</main_path>
           <rename_on_output>Y</rename_on_output>
-          <description/>
+          <description />
         </mapping>
       </input>
       <output>
         <mapping>
-          <input_step/>
-          <output_step/>
+          <input_step />
+          <output_step />
           <main_path>Y</main_path>
           <rename_on_output>N</rename_on_output>
-          <description/>
+          <description />
           <connector>
             <parent>TABLE_CAT</parent>
             <child>TABLE_CAT</child>
@@ -2635,7 +2623,7 @@ FROM map_object_2_object
         <inherit_all_vars>Y</inherit_all_vars>
       </parameters>
     </mappings>
-    <cluster_schema/>
+    <cluster_schema />
     <remotesteps>
       <input>
       </input>

@@ -22,6 +22,12 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'ref_fk_object_type_id_2')->textInput() ?>
 
+	<?php
+		// autogeneriert ueber gii/CRUD
+		echo $form->field($model, 'fk_mapping_qualifier_id')->dropDownList($mapping_qualifierList, ['id'=>'name']);
+	?>
+ <!--  	// automatisch auskommentiert ueber gii/CRUD    <?= $form->field($model, 'fk_mapping_qualifier_id')->textInput() ?>  -->
+
 
 
     <div class="form-group">

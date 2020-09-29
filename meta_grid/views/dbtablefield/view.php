@@ -26,17 +26,13 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
 	<?= Yii::$app->user->identity->isAdmin || (Yii::$app->User->can('create-dbtablefield'))  ? Html::a(Yii::t('app', 'Update table and fields'), ['dbtablefieldmultipleedit/update', 'id' => $model->fk_db_table_id], ['class' => 'btn btn-primary']) : "" ?>
 
-	<?php
-		$db_table_show_buttons_for_different_object_type_updates_arr = (new yii\db\Query())->from('app_config')->select(['valueINT'])->where(["key" => "db_table_show_buttons_for_different_object_type_updates"])->one();
-
-		$db_table_show_buttons_for_different_object_type_updates = $db_table_show_buttons_for_different_object_type_updates_arr['valueINT'];
-
-		if ($db_table_show_buttons_for_different_object_type_updates == 1) 
-		{
-			echo Yii::$app->user->identity->isAdmin || Yii::$app->User->can('create-dbtablefield')  ? Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) : "";
-        }
-    ?>
-		
+		<?php
+			$db_table_show_buttons_for_different_object_type_updates = \vendor\meta_grid\helper\Utils::get_app_config("db_table_show_buttons_for_different_object_type_updates");
+			if ($db_table_show_buttons_for_different_object_type_updates == 1) 
+			{
+				echo Yii::$app->user->identity->isAdmin || Yii::$app->User->can('create-dbtablefield')  ? Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) : "";
+			}
+		?>
         <?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('delete-dbtablefield')  ? Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
@@ -44,7 +40,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) : "" ?>
-		    </p>
+	
+    </p>
 
     <?= DetailView::widget([
         'model' => $model,

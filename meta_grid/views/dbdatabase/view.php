@@ -25,7 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('create-dbdatabase')  ? Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) : "" ?>
-		
+
         <?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('delete-dbdatabase')  ? Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
@@ -33,7 +33,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) : "" ?>
-		    </p>
+	
+    </p>
 
     <?= DetailView::widget([
         'model' => $model,
@@ -54,6 +55,16 @@ $this->params['breadcrumbs'][] = $this->title;
             [
              'label' => Yii::t('app', 'Tool'),
              'value' =>              	$model->fk_tool_id == "" ? $model->fk_tool_id : $model->fkTool->tool_name
+            ],
+            [
+             'label' => Yii::t('app', 'Deleted Status'),
+             'value' =>              	$model->fk_deleted_status_id == "" ? $model->fk_deleted_status_id : $model->fkDeletedStatus->name
+            ],
+            [
+             'label' => Yii::t('app', 'Bulkloader Execution Script'),
+             'value' => '<button class="btn btn-default" type="button" id="btn_show_code" onclick="document.getElementById(\'bulkloaderExecutionString\').style.display=\'block\'; document.getElementById(\'btn_show_code\').style.display=\'none\';">' . Yii::t('app', 'Show') . '</button><div id="bulkloaderExecutionString" style="display: none;"><pre>' . $bulkloaderExecutionString . "</pre></div>",
+             'format' => 'raw',
+             'visible' => Yii::$app->user->identity->isAdmin || Yii::$app->User->can('show-bulkloader-template-in-dbdatabase')
             ],
         ],
     ]) ?>

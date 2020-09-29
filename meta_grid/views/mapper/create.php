@@ -18,6 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= $this->render('_form', [
         'model' => $model,
 		//'projectList' => $projectList,		// autogeneriert ueber gii/CRUD
-							]) ?>
+		'mapping_qualifierList' => $mapping_qualifierList,		// autogeneriert ueber gii/CRUD
+					]) ?>
 
 </div>

@@ -25,7 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('create-mapper')  ? Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) : "" ?>
-		
+
         <?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('delete-mapper')  ? Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
@@ -33,7 +33,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) : "" ?>
-		    </p>
+	
+    </p>
 
     <?= DetailView::widget([
         'model' => $model,
@@ -44,6 +45,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'ref_fk_object_type_id_1',
             'ref_fk_object_id_2',
             'ref_fk_object_type_id_2',
+            [
+             'label' => Yii::t('app', 'Mapping Qualifier'),
+             'value' =>              	$model->fk_mapping_qualifier_id == "" ? $model->fk_mapping_qualifier_id : $model->fkMappingQualifier->name
+            ],
         ],
     ]) ?>
 

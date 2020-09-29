@@ -13,6 +13,7 @@ use Da\User\Filter\AccessRuleFilter;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
 
+
 /**
  * DatatransfertypeController implements the CRUD actions for DataTransferType model.
  */
@@ -167,7 +168,8 @@ class DatatransfertypeController extends Controller
      */
     public function actionCreate()
     {
-		        $model = new DataTransferType();
+				
+		$model = new DataTransferType();
 
 		if (Yii::$app->request->post())
 		{
@@ -176,13 +178,13 @@ class DatatransfertypeController extends Controller
     	}    
 			
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-				        	return $this->redirect(['view', 'id' => $model->id]);
+        	return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
                             ]);
         }
-		    }
+    }
 
     /**
      * Updates an existing DataTransferType model.
@@ -192,7 +194,8 @@ class DatatransfertypeController extends Controller
      */
     public function actionUpdate($id)
     {
-				$model = $this->findModel($id);
+				
+		$model = $this->findModel($id);
 
 		     
 		

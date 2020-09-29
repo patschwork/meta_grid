@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000080/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000080" context="db_table_field">
+
+		<!-- Those views are automatically generated with a python helper tool: dwh_meta_v2\helper_tools\Python\database\create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_db_table_field_SearchInterface">
+		<![CDATA[
+SELECT
+		 db_table_field.id
+		,IFNULL(db_table_field.uuid, '') AS uuid
+		,db_table_field.fk_object_type_id
+		,db_table_field.fk_project_id
+		,IFNULL(db_table_field.name, '') AS name
+		,IFNULL(db_table_field.description, '') AS description
+		,db_table_field.fk_db_table_id
+		,IFNULL(db_table_field.datatype, '') AS datatype
+		,IFNULL(db_table_field.bulk_load_checksum, '') AS bulk_load_checksum
+		,db_table_field.fk_deleted_status_id
+		,db_table_field.is_PrimaryKey
+		,db_table_field.is_BusinessKey
+		,db_table_field.is_GDPR_relevant
+		,CASE 
+                  WHEN (LENGTH(db_table.location) - LENGTH(REPLACE(db_table.location, '"."', ''))) / LENGTH('"."')>=2 THEN REPLACE(SUBSTR(db_table.location ,1, INSTR(db_table.location,'.')-1),'"','')        
+                  ELSE ''
+		 END AS databaseInfoFromLocation
+		,project.fk_client_id
+FROM db_table_field
+LEFT JOIN db_table ON db_table.id = db_table_field.fk_db_table_id
+LEFT JOIN project ON project.id = db_table_field.fk_project_id
+		]]>
+		</createView>
+
+		<comment>
+		<![CDATA[
+		Used objects:
+			v_db_table_field_SearchInterface
+		Phabricator tasks:
+			T82
+            T83
+		]]>
+		</comment>
+	</changeSet>
+</databaseChangeLog>

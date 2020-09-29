@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000091/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000091" context="import_stage_db_table bulk_load bulk_import">
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE import_stage_db_table ADD COLUMN is_BusinessKey BOOLEAN;
+		]]>
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE import_stage_db_table ADD COLUMN is_GDPR_relevant BOOLEAN;
+		]]>
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE import_stage_db_table ADD COLUMN location TEXT;
+		]]>
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE import_stage_db_table ADD COLUMN database_or_catalog VARCHAR(1000);
+		]]>
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE import_stage_db_table ADD COLUMN schema VARCHAR(4000);
+		]]>
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE import_stage_db_table ADD COLUMN fk_project_id INT;
+		]]>
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE import_stage_db_table ADD COLUMN fk_db_database_id INT;
+		]]>
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE import_stage_db_table ADD COLUMN column_default_value VARCHAR(1000);
+		]]>
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE import_stage_db_table ADD COLUMN column_cant_be_null BOOLEAN;
+		]]>
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE import_stage_db_table ADD COLUMN additional_field_1 VARCHAR(4000);
+		]]>
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE import_stage_db_table ADD COLUMN additional_field_2 VARCHAR(4000);
+		]]>
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE import_stage_db_table ADD COLUMN additional_field_3 VARCHAR(4000);
+		]]>
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE import_stage_db_table ADD COLUMN additional_field_4 VARCHAR(4000);
+		]]>
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE import_stage_db_table ADD COLUMN additional_field_5 VARCHAR(4000);
+		]]>
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE import_stage_db_table ADD COLUMN additional_field_6 VARCHAR(4000);
+		]]>
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE import_stage_db_table ADD COLUMN additional_field_7 VARCHAR(4000);
+		]]>
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE import_stage_db_table ADD COLUMN additional_field_8 VARCHAR(4000);
+		]]>
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE import_stage_db_table ADD COLUMN additional_field_9 VARCHAR(4000);
+		]]>
+		</sql>
+		
+		<comment>
+		<![CDATA[
+		New columns "is_BusinessKey", "is_GDPR_relevant", "location", "database_or_catalog", "schema", "fk_project_id", "fk_db_database_id", "column_default_value", "column_cant_be_null", "additional_field_1", "additional_field_2", "additional_field_3", "additional_field_4", "additional_field_5", "additional_field_6", "additional_field_7", "additional_field_8", "additional_field_9" for table import_stage_db_table.
+		Used objects:
+			import_stage_db_table
+		Phabricator tasks:
+			T119
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

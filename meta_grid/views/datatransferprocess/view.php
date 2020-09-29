@@ -25,7 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('create-datatransferprocess')  ? Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) : "" ?>
-		
+
         <?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('delete-datatransferprocess')  ? Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
@@ -33,7 +33,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) : "" ?>
-		    </p>
+	
+    </p>
 
     <?= DetailView::widget([
         'model' => $model,
@@ -54,6 +55,12 @@ $this->params['breadcrumbs'][] = $this->title;
             [
              'label' => Yii::t('app', 'Data Transfer Type'),
              'value' =>              	$model->fk_data_transfer_type_id == "" ? $model->fk_data_transfer_type_id : $model->fkDataTransferType->name
+            ],
+            'location:ntext',
+            'source_internal_object_id:ntext',
+            [
+             'label' => Yii::t('app', 'Deleted Status'),
+             'value' =>              	$model->fk_deleted_status_id == "" ? $model->fk_deleted_status_id : $model->fkDeletedStatus->name
             ],
         ],
     ]) ?>

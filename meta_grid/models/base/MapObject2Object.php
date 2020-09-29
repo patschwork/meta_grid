@@ -13,7 +13,9 @@ use Yii;
  * @property integer $ref_fk_object_type_id_1
  * @property integer $ref_fk_object_id_2
  * @property integer $ref_fk_object_type_id_2
+ * @property integer $fk_mapping_qualifier_id
  *
+ * @property MappingQualifier $fkMappingQualifier
  * @property ObjectType $refFkObjectTypeId2
  * @property ObjectType $refFkObjectTypeId1
  */
@@ -34,8 +36,11 @@ class MapObject2Object extends \yii\db\ActiveRecord
     {
         return [
             [['uuid'], 'string'],
-            [['ref_fk_object_id_1', 'ref_fk_object_type_id_1', 'ref_fk_object_id_2', 'ref_fk_object_type_id_2'], 'integer'],
-            [['ref_fk_object_id_1', 'ref_fk_object_type_id_1', 'ref_fk_object_id_2', 'ref_fk_object_type_id_2'], 'unique', 'targetAttribute' => ['ref_fk_object_id_1', 'ref_fk_object_type_id_1', 'ref_fk_object_id_2', 'ref_fk_object_type_id_2'], 'message' => 'The combination of Ref Fk Object Id 1, Ref Fk Object Type Id 1, Ref Fk Object Id 2 and Ref Fk Object Type Id 2 has already been taken.']
+            [['ref_fk_object_id_1', 'ref_fk_object_type_id_1', 'ref_fk_object_id_2', 'ref_fk_object_type_id_2', 'fk_mapping_qualifier_id'], 'integer'],
+            [['ref_fk_object_id_1', 'ref_fk_object_type_id_1', 'ref_fk_object_id_2', 'ref_fk_object_type_id_2'], 'unique', 'targetAttribute' => ['ref_fk_object_id_1', 'ref_fk_object_type_id_1', 'ref_fk_object_id_2', 'ref_fk_object_type_id_2'], 'message' => 'The combination of Ref Fk Object Id 1, Ref Fk Object Type Id 1, Ref Fk Object Id 2 and Ref Fk Object Type Id 2 has already been taken.'],
+            [['fk_mapping_qualifier_id'], 'exist', 'skipOnError' => true, 'targetClass' => MappingQualifier::className(), 'targetAttribute' => ['fk_mapping_qualifier_id' => 'id']],
+            [['ref_fk_object_type_id_2'], 'exist', 'skipOnError' => true, 'targetClass' => ObjectType::className(), 'targetAttribute' => ['ref_fk_object_type_id_2' => 'id']],
+            [['ref_fk_object_type_id_1'], 'exist', 'skipOnError' => true, 'targetClass' => ObjectType::className(), 'targetAttribute' => ['ref_fk_object_type_id_1' => 'id']],
         ];
     }
 
@@ -51,7 +56,16 @@ class MapObject2Object extends \yii\db\ActiveRecord
             'ref_fk_object_type_id_1' => Yii::t('app', 'Ref Fk Object Type Id 1'),
             'ref_fk_object_id_2' => Yii::t('app', 'Ref Fk Object Id 2'),
             'ref_fk_object_type_id_2' => Yii::t('app', 'Ref Fk Object Type Id 2'),
+            'fk_mapping_qualifier_id' => Yii::t('app', 'Fk Mapping Qualifier ID'),
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFkMappingQualifier()
+    {
+        return $this->hasOne(MappingQualifier::className(), ['id' => 'fk_mapping_qualifier_id']);
     }
 
     /**

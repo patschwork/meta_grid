@@ -20,6 +20,7 @@ class AttributeSearch extends VAttributeSearchinterface
         return [
             [['id', 'fk_object_type_id', 'fk_project_id'], 'integer'],
             [['uuid', 'name', 'description', 'formula'], 'safe'],
+            [['fk_client_id'], 'integer'],
         ];
     }
 
@@ -70,6 +71,7 @@ class AttributeSearch extends VAttributeSearchinterface
             'id' => $this->id,
             'fk_object_type_id' => $this->fk_object_type_id,
             'fk_project_id' => $this->fk_project_id,
+            'fk_client_id' => $this->fk_client_id,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])

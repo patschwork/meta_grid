@@ -35,6 +35,7 @@ class ComposerStaticInit5c3224428ea877134f6d9d3a4cc8e57d
             'yii\\bootstrap\\' => 14,
             'yii\\authclient\\' => 15,
             'yii\\' => 4,
+            'yii2tech\\csvgrid\\' => 17,
         ),
         'w' => 
         array (
@@ -75,6 +76,10 @@ class ComposerStaticInit5c3224428ea877134f6d9d3a4cc8e57d
             'conquer\\helpers\\' => 16,
             'conquer\\codemirror\\' => 19,
             'cebe\\markdown\\' => 14,
+        ),
+        'b' => 
+        array (
+            'bluezed\\floatThead\\' => 19,
         ),
         'X' => 
         array (
@@ -180,6 +185,10 @@ class ComposerStaticInit5c3224428ea877134f6d9d3a4cc8e57d
         array (
             0 => __DIR__ . '/..' . '/yiisoft/yii2',
         ),
+        'yii2tech\\csvgrid\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/yii2tech/csv-grid',
+        ),
         'wbraganca\\dynamicform\\' => 
         array (
             0 => __DIR__ . '/..' . '/wbraganca/yii2-dynamicform',
@@ -255,6 +264,10 @@ class ComposerStaticInit5c3224428ea877134f6d9d3a4cc8e57d
         'cebe\\markdown\\' => 
         array (
             0 => __DIR__ . '/..' . '/cebe/markdown',
+        ),
+        'bluezed\\floatThead\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/bluezed/yii2-float-thead',
         ),
         'XdgBaseDir\\' => 
         array (

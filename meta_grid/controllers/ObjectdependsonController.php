@@ -13,6 +13,7 @@ use Da\User\Filter\AccessRuleFilter;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
 
+
 /**
  * ObjectdependsonController implements the CRUD actions for ObjectDependsOn model.
  */
@@ -167,7 +168,8 @@ class ObjectdependsonController extends Controller
      */
     public function actionCreate()
     {
-		        $model = new ObjectDependsOn();
+				
+		$model = new ObjectDependsOn();
 
 		if (Yii::$app->request->post())
 		{
@@ -176,13 +178,13 @@ class ObjectdependsonController extends Controller
     	}    
 			
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-				        	return $this->redirect(['view', 'id' => $model->id]);
+        	return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
                             ]);
         }
-		    }
+    }
 
     /**
      * Updates an existing ObjectDependsOn model.
@@ -192,7 +194,8 @@ class ObjectdependsonController extends Controller
      */
     public function actionUpdate($id)
     {
-				$model = $this->findModel($id);
+				
+		$model = $this->findModel($id);
 
 		     
 		

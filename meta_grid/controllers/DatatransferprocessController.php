@@ -12,9 +12,11 @@ use yii\filters\VerbFilter;
 use app\models\ObjectType;
 use app\models\Project;
 use app\models\DataTransferType;
+use app\models\DeletedStatus;
 use Da\User\Filter\AccessRuleFilter;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
+
 
 /**
  * DatatransferprocessController implements the CRUD actions for DataTransferProcess model.
@@ -59,6 +61,20 @@ class DatatransferprocessController extends Controller
 			$data_transfer_typeList[$data_transfer_type->id] = $data_transfer_type->name;
 		}
 		return $data_transfer_typeList;
+	}
+
+	private function getDeletedStatusList()
+	{
+		// autogeneriert ueber gii/CRUD
+		$deleted_statusModel = new DeletedStatus();
+		$deleted_statuss = $deleted_statusModel::find()->all();
+		$deleted_statusList = array();
+		$deleted_statusList[null] = null;
+		foreach($deleted_statuss as $deleted_status)
+		{
+			$deleted_statusList[$deleted_status->id] = $deleted_status->name;
+		}
+		return $deleted_statusList;
 	}
 	
     public function behaviors()
@@ -209,7 +225,8 @@ class DatatransferprocessController extends Controller
      */
     public function actionCreate()
     {
-		        $model = new DataTransferProcess();
+				
+		$model = new DataTransferProcess();
 
 		if (Yii::$app->request->post())
 		{
@@ -219,16 +236,17 @@ class DatatransferprocessController extends Controller
     	}    
 			
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-				        	return $this->redirect(['view', 'id' => $model->id]);
+        	return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
                 'object_typeList' => $this->getObjectTypeList(),		// autogeneriert ueber gii/CRUD
 'projectList' => $this->getProjectList(),		// autogeneriert ueber gii/CRUD
 'data_transfer_typeList' => $this->getDataTransferTypeList(),		// autogeneriert ueber gii/CRUD
+'deleted_statusList' => $this->getDeletedStatusList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
-		    }
+    }
 
     /**
      * Updates an existing DataTransferProcess model.
@@ -238,7 +256,8 @@ class DatatransferprocessController extends Controller
      */
     public function actionUpdate($id)
     {
-				$model = $this->findModel($id);
+				
+		$model = $this->findModel($id);
 
 		 if (!in_array($model->fkProject->id, Yii::$app->User->identity->permProjectsCanEdit)) {throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'You have no permission to edit this data.'));
 	return;	}    
@@ -252,6 +271,7 @@ class DatatransferprocessController extends Controller
                 'object_typeList' => $this->getObjectTypeList(),		// autogeneriert ueber gii/CRUD
 'projectList' => $this->getProjectList(),		// autogeneriert ueber gii/CRUD
 'data_transfer_typeList' => $this->getDataTransferTypeList(),		// autogeneriert ueber gii/CRUD
+'deleted_statusList' => $this->getDeletedStatusList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
 		    }

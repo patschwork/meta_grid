@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "23190b61df1c2adff243a43d5ed6d9ed",
+    "content-hash": "ac3924600244ad1bb9d1bb0a2eac466a",
     "packages": [
         {
             "name": "2amigos/2fa-library",
@@ -327,6 +327,52 @@
             "time": "2017-10-17T09:59:25+00:00"
         },
         {
+            "name": "bluezed/yii2-float-thead",
+            "version": "v1.0.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bluezed/yii2-floatThead.git",
+                "reference": "991a47fd3b0fcfc0b48b7ca4f48691ab84e818ee"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bluezed/yii2-floatThead/zipball/991a47fd3b0fcfc0b48b7ca4f48691ab84e818ee",
+                "reference": "991a47fd3b0fcfc0b48b7ca4f48691ab84e818ee",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/floatthead": "*",
+                "yiisoft/yii2": "*"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "bluezed\\floatThead\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Thomas Geppert",
+                    "email": "bluezed.apps@gmail.com"
+                }
+            ],
+            "description": "This is a Yii 2 wrapper for jquery.floatThead a floating/locked/sticky/fixed table header plugin that requires no special CSS and supports window and overflow scrolling.",
+            "keywords": [
+                "extension",
+                "float",
+                "floatthead",
+                "header",
+                "table",
+                "thead",
+                "yii2"
+            ],
+            "time": "2018-06-28T05:19:24+00:00"
+        },
+        {
             "name": "bower-asset/bootstrap",
             "version": "v3.3.7",
             "source": {
@@ -379,7 +425,7 @@
             "version": "5.25.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/components/codemirror.git",
+                "url": "git@github.com:components/codemirror.git",
                 "reference": "67ff00a46652708425124718a17b8f9c60719c08"
             },
             "dist": {
@@ -409,11 +455,32 @@
             }
         },
         {
+            "name": "bower-asset/floatthead",
+            "version": "2.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mkoryak/floatThead.git",
+                "reference": "93210b4aa939d2fc44ea8bb83201829ca8038845"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mkoryak/floatThead/zipball/93210b4aa939d2fc44ea8bb83201829ca8038845",
+                "reference": "93210b4aa939d2fc44ea8bb83201829ca8038845"
+            },
+            "require": {
+                "bower-asset/jquery": ">=1.8.0"
+            },
+            "type": "bower-asset",
+            "license": [
+                "MIT"
+            ]
+        },
+        {
             "name": "bower-asset/jquery",
             "version": "2.2.4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/jquery/jquery-dist.git",
+                "url": "git@github.com:jquery/jquery-dist.git",
                 "reference": "c0185ab7c75aab88762c5aae780b9d83b80eda72"
             },
             "dist": {
@@ -543,7 +610,7 @@
             "version": "v1.3.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/bestiejs/punycode.js.git",
+                "url": "git@github.com:bestiejs/punycode.js.git",
                 "reference": "38c8d3131a82567bfef18da09f7f4db68c84f8a3"
             },
             "dist": {
@@ -593,7 +660,7 @@
             "version": "v0.5.3",
             "source": {
                 "type": "git",
-                "url": "https://github.com/brianreavis/sifter.js.git",
+                "url": "git@github.com:brianreavis/sifter.js.git",
                 "reference": "2a9c84ec5ac63ceaa4516205e013113626d36a2d"
             },
             "dist": {
@@ -1435,6 +1502,7 @@
                     "homepage": "http://www.acci.cz"
                 }
             ],
+            "abandoned": "php-parallel-lint/php-console-color",
             "time": "2014-04-08T15:00:19+00:00"
         },
         {
@@ -1479,6 +1547,7 @@
                     "homepage": "http://www.acci.cz/"
                 }
             ],
+            "abandoned": "php-parallel-lint/php-console-highlighter",
             "time": "2015-04-20T18:58:01+00:00"
         },
         {
@@ -3318,6 +3387,53 @@
                 "yii2-dynamicform"
             ],
             "time": "2015-02-23T19:20:21+00:00"
+        },
+        {
+            "name": "yii2tech/csv-grid",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yii2tech/csv-grid.git",
+                "reference": "5420327c98bdba3054ea4d5811effa237b6415fe"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yii2tech/csv-grid/zipball/5420327c98bdba3054ea4d5811effa237b6415fe",
+                "reference": "5420327c98bdba3054ea4d5811effa237b6415fe",
+                "shasum": ""
+            },
+            "require": {
+                "yiisoft/yii2": "*"
+            },
+            "type": "yii2-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "yii2tech\\csvgrid\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Paul Klimov",
+                    "email": "klimov.paul@gmail.com"
+                }
+            ],
+            "description": "Yii2 extension data export to CSV file",
+            "keywords": [
+                "csv",
+                "export",
+                "large data",
+                "yii2"
+            ],
+            "time": "2016-06-28T09:26:12+00:00"
         },
         {
             "name": "yiidoc/yii2-redactor",

@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'adminEmail' => 'admin@example.com',
+    'adminEmail' => 'NOREPLY_META_GRID_ADMIN@MYDOMAIN.TLD',
 ];

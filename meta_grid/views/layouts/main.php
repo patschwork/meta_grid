@@ -34,17 +34,17 @@ ShortcutAsset::register($this);
                 if (Yii::$app->user->identity->isAdmin) $isAdmin = TRUE;
             }
 
-			$app_config_web_app_header_bckcolor = (new yii\db\Query())->from('app_config')->select(['valueSTRING'])->where(["key" => "web_app_header_bckcolor"])->one();
-			$app_config_web_app_header_brandlabel_additional_text = (new yii\db\Query())->from('app_config')->select(['valueSTRING'])->where(["key" => "web_app_header_brandlabel_additional_text"])->one();
-			
+            $app_config_web_app_header_bckcolor = \vendor\meta_grid\helper\Utils::get_app_config("web_app_header_bckcolor");
+            $app_config_web_app_header_brandlabel_additional_text = \vendor\meta_grid\helper\Utils::get_app_config("web_app_header_brandlabel_additional_text");
+
             NavBar::begin([
                 // 'brandLabel' => 'Meta#Grid'.(stristr(Yii::$app->homeUrl, 'dev') ? ' DEV' : ''),
-                'brandLabel' => 'Meta#Grid'.' '.$app_config_web_app_header_brandlabel_additional_text['valueSTRING'],
+                'brandLabel' => 'Meta#Grid'.' '.$app_config_web_app_header_brandlabel_additional_text,
                 'brandUrl' => Yii::$app->homeUrl,
                 'options' => [
                     'class' => 'navbar-inverse navbar-fixed-top',
                     // 'style' => (stristr(Yii::$app->homeUrl, 'dev') ? 'background-color: darkblue;' : ''),
-                    'style' => 'background-color: '.$app_config_web_app_header_bckcolor['valueSTRING'].';',
+                    'style' => 'background-color: '.$app_config_web_app_header_bckcolor.';',
                 ],
             ]);
             echo Nav::widget([
@@ -99,7 +99,7 @@ ShortcutAsset::register($this);
 
     <footer class="footer">
         <div class="container">
-            <p class="pull-left">&copy; <?= Yii::$app->name . " " . date('Y') ?></p>
+            <p class="pull-left">&copy; <?= \vendor\meta_grid\helper\ApplicationVersion::getApplicationName() . " " . date('Y') ?></p>
             <p class="pull-right"><?= "v" . \vendor\meta_grid\helper\ApplicationVersion::getVersion() ?></p>
 
         </div>
