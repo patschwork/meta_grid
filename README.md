@@ -1,5 +1,6 @@
 # Meta#Grid
-Meta#Grid is a meta data tooling/framework for BI and data warehousing
+Meta#Grid is a meta data tooling/framework for BI and data warehousing.
+See more details at https://blog.meta-grid.com
 
 ## Installation
 1. Clone the repo or download the zip. 
