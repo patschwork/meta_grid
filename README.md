@@ -16,5 +16,8 @@ for the clean (empty) database (/meta_grid/db/dwh_meta_clean.sqlite)
     OR
 with demo data (/meta_grid/db/demo_dwh_meta.sqlite)
 
+### Step-by-Step for Ubuntu 20.04
+https://blog.meta-grid.com/docs/install-metagrid-on-ubuntu-20-04/
+
 ## Update
 To update the application please use https://github.com/patschwork/meta_grid_install_update/releases/latest
