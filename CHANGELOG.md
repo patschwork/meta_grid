@@ -1,4 +1,4 @@
-# 2.4.1
+# 2.4.1   a
 
 - [T114]                    New elements in config/web.php (Admin-Hint on main-page with instruction!!)
 - [T84 | GitHub Issue #1]   Inline description and comments from database views will be imported with the bulk loader (new bulk loader parameter!!)
