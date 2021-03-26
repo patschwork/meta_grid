@@ -90,7 +90,7 @@ if ($generator->modelClass === 'app\models\DbTableField')
 	$dbtablefieldadditioncode2 = "field";
 }
 ?>
-	<?= "<?= Yii::\$app->user->identity->isAdmin || (Yii::\$app->User->can('create-dbtablefield')) $dbtableadditioncode1 ? Html::a(Yii::t('app', 'Update table and fields'), ['dbtablefieldmultipleedit/update', 'id' => \$model->$dbtablefieldadditioncode1], ['class' => 'btn btn-primary']) : \"\" ?>
+	<?= "<?= Yii::\$app->user->identity->isAdmin || (Yii::\$app->User->can('create-dbtablefield')) $dbtableadditioncode1 ? Html::a(Yii::t('app', 'Update table and fields'), ['dbtablefieldmultipleedit/update', 'id' => \$model->$dbtablefieldadditioncode1, '#' => \$model->id], ['class' => 'btn btn-primary']) : \"\" ?>
 
 		<?php
 			\$db_table_show_buttons_for_different_object_type_updates = \\vendor\\meta_grid\\helper\\Utils::get_app_config(\"db_table_show_buttons_for_different_object_type_updates\");

@@ -12,7 +12,8 @@ wwwsqldesignermodelfile = "../../../database_model/wwwsqldesigner/wwwsqldesigner
 output = "liquibase" # sql or liquibase
 replaceIfExists = True
 folderForYii2ModelClasses = "../../../frontend/yii/basic/models"
-filterOnSpecificDbObject = "map_object_2_object" # Table
+## filterOnSpecificDbObject = "map_object_2_object" # Table
+filterOnSpecificDbObject = "" # Table
 
 isLinuxOrDarwin = False
 if _platform == "linux" or _platform == "linux2":
@@ -79,13 +80,14 @@ for s in itemlist:
             liquibaseReplaceIfExists="true"
         else:
             liquibaseReplaceIfExists="false"
-        print("<!-- Those views are automatically generated with a python helper tool: dwh_meta_v2\helper_tools\Python\database\create_wwwsqldesigner_model_additional_search_views.py -->")
+        print("<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->")
         print("<createView replaceIfExists=\"%s\" viewName=\"%s\">" % (liquibaseReplaceIfExists, newViewName))
         print "<![CDATA["
     print "SELECT"
     rowcounter = 0
     rows=s.getElementsByTagName('row')
     countRows = len(rows)
+    field__fk_project_id__found = False
     for row in rows:
         fieldname = row.attributes['name'].value
         datatypeElement=row.getElementsByTagName('datatype')[0]
@@ -94,13 +96,27 @@ for s in itemlist:
         leadingComma = " "
         if rowcounter>0:
             leadingComma = ","
+        if (fieldname == "fk_project_id"):
+            field__fk_project_id__found = True
+            print("\t%s%s" % (",","project.fk_client_id"))
+            print("\t%s%s" % (",","IFNULL(project.name, '') AS project_name"))
+            print("\t%s%s" % (",","IFNULL(client.name, '') AS client_name"))
         if startPosition>=0:
-            print("\t%sIFNULL(%s, '') AS %s" % (leadingComma,fieldname,fieldname))
+            print("\t%sIFNULL(%s.%s, '') AS %s" % (leadingComma,tablename,fieldname,fieldname))
         else:
-            print("\t%s%s" % (leadingComma,fieldname))
+            print("\t%s%s.%s" % (leadingComma,tablename,fieldname))
         rowcounter = rowcounter +1
         if countRows==rowcounter:
+            if (tablename == "db_table" or tablename == "db_table_field"):
+                print("\t%sCASE WHEN (LENGTH(db_table.location) - LENGTH(REPLACE(db_table.location, '\".\"', ''))) / LENGTH('\".\"')>=2 THEN REPLACE(SUBSTR(db_table.location ,1, INSTR(db_table.location,'.')-1),'\"','') ELSE '' END AS databaseInfoFromLocation" % (leadingComma))
+            #print("\t%s%s_log.log_datetime" % (leadingComma,tablename))
             print("FROM " + tablename)
+            #print("LEFT JOIN %s_log ON %s_log.uuid = %s.uuid" % (tablename,tablename,tablename))
+            if (field__fk_project_id__found):
+                print("LEFT JOIN project ON project.id = %s.fk_project_id" % (tablename))
+                print("LEFT JOIN client ON client.id = project.fk_client_id")
+            if (tablename == "db_table_field"):
+                print("LEFT JOIN db_table ON db_table.id = %s.fk_db_table_id" % (tablename))
             if output=="sql":
                 print(";")
             elif output=="liquibase":
@@ -152,8 +168,18 @@ class {{{modelclassnameFromView}}} extends \\app\\models\\{{{modelclassname}}}
     public static function primaryKey()
     {
         return array('id');
-    }
+    }{{{dbtabledatabaseExceptionPart}}}
 }
+"""
+
+dbtabledatabaseExceptionPart = """\r\n
+    // { ... phabricator-task: T59
+    public function attributeLabels() {
+        
+        $addionalLabels = array('databaseInfoFromLocation' => Yii::t('app', 'Database'));
+        return array_merge(parent::attributeLabels(), $addionalLabels);
+    }
+    // ...}
 """
 
 for s in itemlist:
@@ -168,6 +194,10 @@ for s in itemlist:
     templateclass=templateclass.replace("{{{viewname}}}", newViewName)
     templateclass=templateclass.replace("{{{modelclassname}}}",yii2_id2camel(tablename, "_"))
     templateclass=templateclass.replace("{{{modelclassnameFromView}}}",yii2_id2camel(newViewName, "_"))
+    if (tablename == "db_table" or tablename == "db_table_field"):
+        templateclass=templateclass.replace("{{{dbtabledatabaseExceptionPart}}}",dbtabledatabaseExceptionPart)
+    else:
+        templateclass=templateclass.replace("{{{dbtabledatabaseExceptionPart}}}","")
 #     print templateclass
     filenamePhpClass = os.path.join(folderForYii2ModelClasses, yii2_id2camel(newViewName, "_") + ".php")
     myFile = open(filenamePhpClass,"w")

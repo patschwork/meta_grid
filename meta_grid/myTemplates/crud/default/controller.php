@@ -690,7 +690,7 @@ $modelBracket = $this->findModel($id);
 		try {
 			$model = $this->findModel(<?= $actionParams ?>);
 			$model->delete();
-			return $this->redirect(['index']);
+			return $this->redirect(Url::previous());
 		} catch (\Exception $e) {
 			$model->addError(null, $e->getMessage());
 			$errMsg = $e->getMessage();

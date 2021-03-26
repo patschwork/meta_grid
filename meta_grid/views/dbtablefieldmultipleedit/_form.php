@@ -1,3 +1,12 @@
+<style>
+a.anchor {
+    display: block;
+    position: relative;
+    top: -250px;
+    visibility: hidden;
+}
+</style>
+
 <?php
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -92,13 +101,14 @@ use kartik\depdrop\DepDrop;			// Patrick, 2020-03-21
             <div class="container-items"><!-- widgetBody -->
 
 	            <?php foreach ($modelsDbTableField as $i => $modelDbTableField): ?>
+					<a class="anchor" id="<?= $modelDbTableField->id ?>"></a>
 	                <div class="item panel panel-default"><!-- widgetBody -->
 	                    <?php
 							//     name="panel_heading_name" 
 							// and name="field_details_h3_name" 
 							// are needed for JS @web/js/dbtablefieldmultipleedit.js
 						?>
-						<div class="panel-heading" name="panel_heading_name">
+						<div class="panel-heading" name="panel_heading_name" id="phn_<?= $modelDbTableField->id ?>">
 						<h3 class="panel-title pull-left" name="field_details_h3_name"><?= Yii::t('app', 'Field details') ?></h3>
 
 

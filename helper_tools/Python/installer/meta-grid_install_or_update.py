@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # Instllation or update meta#grid
 # on every OS
-# v1.1
+# v1.2
 
 import base_lib
 import shutil
@@ -79,8 +79,8 @@ logfile = "log_" + DATETIMENOW + ".txt"
 logfilepath = os.path.join(dirPath,"logs")
 ini_user_settings_path = os.path.join(dirPath,"install_settings.ini")
 
-bla("meta#grid Installation/Update", "intro", False)
-bla("--------------------------------", "intro", False)
+bla("meta#grid Installation/Update (v" + base_lib.myVersion() + ")", "intro", False)
+bla("--------------------------------------", "intro", False)
 bla("(currently only Update possible)", "intro", False)
 print("\r\n")
 
@@ -412,13 +412,14 @@ except Exception as e:
     exit()
 
 try:
+    os.environ["JAVA_OPTS"] = "-Duser.language=en"
     returnVal=base_lib.LQB_exec(pythonExe=pythonExe, folderfile_Fresh_LQB_DeploymentTool=folderfile_Fresh_LQB_DeploymentTool, envkey="LQB_" + DATETIMENOW, configpath=base_lib.getFilePathRelativeScriptPath(folder_WorkingDir,''))
     if ("Liquibase Update Successful" in returnVal):
         bla(returnVal, "OK", True)
     elif ("Update has been successful" in returnVal):
         bla(returnVal, "OK", True)
     else:
-        bla("The LiquiBase deployment did not quit with a successfull comment...: " + returnVal, "NOK", True, True)
+        bla("The LiquiBase deployment did not quit with a successful comment...: " + returnVal, "NOK", True, True)
 except Exception as e:
     errMsg="Error occured on database deployment! Please check the logs of the LiquiBase deployment helper (" + os.path.dirname(folderfile_Fresh_LQB_DeploymentTool) + ")."
     bla(str(e), "error", True)

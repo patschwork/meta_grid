@@ -1,3 +1,22 @@
+# 2.4.2
+
+- [T146]                    Bugfix -> Out-of-memory exception (mapping dialog / new app_config parameter)
+- [T145]                    Show available meta#grid update on start page
+- [T143]                    Typo correction
+- [T142]                    Bugfix -> LiquiBase output only in English language (German Windows leads to localized text outputs) (meta#grid update tool)
+- [T141]                    Bugfix -> Out-of-memory exception (copy & paste import / new app_config parameter)
+- [T139]                    Bugfix -> Out-of-memory and timeout exception (copy & paste import / new app_config parameter)
+- [T138]                    Optimizing performance to display of views (e.g. db_table)
+- [T137]                    Changed search to be emtpy on entry (faster page building)
+- [T136]                    Clickable links to db_table objects in bracket list
+- [T135]                    Keep filter in index view after deleting of elements
+- [T133]                    Bugfix -> Timeout exception (copy & paste import)
+- [T132]                    Options to import and delete in one action (copy & paste import)
+- [T129]                    Bugfix -> Perpective didn't filter all elements
+- [T127]                    Show more information in mapping list of objects
+- [T91]                     Jump to choosen db_table_field (in detail view) from index view
+----------------------------------------------------------------------------------------------------
+
 # 2.4.1
 
 - [T114]                    New elements in config/web.php (Admin-Hint on main-page with instruction!!)

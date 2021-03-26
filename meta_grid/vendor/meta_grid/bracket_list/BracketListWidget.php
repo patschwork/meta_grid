@@ -54,7 +54,7 @@ class BracketListWidget extends Widget
     		{
     			if ($item['fk_bracket_id'] == $fk_bracket_id)
     			{
-    				$itemList[$item->db_table_field_fk_object_type_id][$item->db_table_field_id]=$item->db_table_name.";".$item->db_table_field_name;
+    				$itemList[$item->db_table_field_fk_object_type_id][$item->db_table_field_id]=$item->db_table_name.";".$item->db_table_field_name.";".$item->db_table_id;
     			}
     		}
     	}
@@ -125,7 +125,12 @@ class BracketListWidget extends Widget
      				foreach ($items as $fk_object_id => $item)
      				{
      					$url_title = explode(";",$item)[0]." / ".explode(";",$item)[1];
-    					
+
+						 if ($fk_object_type_id == 5)
+						{
+							$url_title = '<a href="?r=dbtable/view&id='.explode(";",$item)[2].'">' .explode(";",$item)[0].'</a>'." / ".explode(";",$item)[1];
+						}
+								 
      					$bracket_matches_arr[$fk_object_id.$fk_object_type_id]
  							= [
  									'object_type_name' => $object_type_name,
@@ -167,7 +172,7 @@ class BracketListWidget extends Widget
 	     							}
      							],
      							'object_type_name', 
-     							'item',
+     							'item:raw',
      					]
      			]);
      		}

@@ -286,13 +286,17 @@ class ImportstagedbtableController extends Controller
 	}
 	
 	// https://stackoverflow.com/questions/37473895/how-i-can-process-a-checkbox-column-from-yii2-gridview
-	public function actionProcessselected(){
-
+	public function actionProcessselected()
+	{
+		$app_config_importstage_dbtable_processing_time_limit = \vendor\meta_grid\helper\Utils::get_app_config("importstage_dbtable_processing_time_limit");
+		$app_config_importstage_dbtable_processing_memory_limit = \vendor\meta_grid\helper\Utils::get_app_config("importstage_dbtable_processing_memory_limit");
+		set_time_limit($app_config_importstage_dbtable_processing_time_limit);
+		ini_set('memory_limit', $app_config_importstage_dbtable_processing_memory_limit."M");
 		$checkWithExists = true; // location same?!
 		$action = Yii::$app->request->post('action'); // dropDown (array)
 		$select = Yii::$app->request->post('selection'); //checkbox (array)
 	
-		if ($select === NULL)
+		if ($select === NULL && $action <= 1)
 		{
 			return $this->redirect(['index']);
 		}
@@ -300,12 +304,23 @@ class ImportstagedbtableController extends Controller
 		if ($action == 1)
 		{
 			$model=ImportStageDbTable::deleteAll(['in', "id", $select]);
+		}		
+		if ($action == 3)
+		{
+			$model=ImportStageDbTable::deleteAll();
 		}
-		if ($action == 0)
+		if ($action == 0 || $action == 2)
 		{
 			$DbTableObjectTypeId = NULL;
 			$createdOrExistingTableId = array();
-			$loadModelResult = ImportStageDbTable::find()->where(['in', "id", $select])->andWhere(["<=","_import_state",0])->all();
+			if ($action == 0)
+			{
+				$loadModelResult = ImportStageDbTable::find()->where(['in', "id", $select])->andWhere(["<=","_import_state",0])->all();
+			}
+			if ($action == 2)
+			{
+				$loadModelResult = ImportStageDbTable::find()->where(["<=","_import_state",0])->all();
+			}
 			
 			// process db_table
 			foreach($loadModelResult as $loadModel)
@@ -338,7 +353,14 @@ class ImportstagedbtableController extends Controller
 				}
 			}
 
-			$loadModelResult = ImportStageDbTable::find()->where(['in', "id", $select])->all();
+			if ($action == 2)
+			{
+				$loadModelResult = ImportStageDbTable::find()->where(["<=","_import_state",0])->all();
+			}
+			else
+			{
+				$loadModelResult = ImportStageDbTable::find()->where(['in', "id", $select])->all();
+			}
 			// process db_table_field
 			foreach($loadModelResult as $loadModel)
 			{
@@ -381,7 +403,14 @@ class ImportstagedbtableController extends Controller
 				}
 			}
 
-			$loadModelResult = ImportStageDbTable::find()->where(['in', "id", $select])->all();
+			if ($action == 2)
+			{
+				$loadModelResult = ImportStageDbTable::find()->where(["<=","_import_state",0])->all();
+			}
+			else
+			{
+				$loadModelResult = ImportStageDbTable::find()->where(['in', "id", $select])->all();
+			}
 			// process mappings
 			foreach($loadModelResult as $loadModel)
 			{

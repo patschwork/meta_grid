@@ -200,7 +200,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', $this->title);
 						],
 						\'urlCreator\' => function ($action, $model, $key, $index) {
 							if ($action === \'update\') {
-								$url = "?r=dbtablefieldmultipleedit/update&id=".$model->fk_db_table_id; // your own url generation logic
+								$url = "?r=dbtablefieldmultipleedit/update&id=".$model->fk_db_table_id."#".$model->id; // your own url generation logic
 								return $url;
 							}
 							if ($action === \'update-dbtablefield-individual\') {

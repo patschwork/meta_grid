@@ -115,4 +115,9 @@
   <include relativeToChangelogFile="true" file="changesets/0000090/changelog.xml"/>  <!-- SQL DROP and CREATE trigger | TRIG_cleanup_queue_process_INSERT -->
   <include relativeToChangelogFile="true" file="changesets/0000091/changelog.xml"/>  <!-- SQL ALTER TABLE | import_stage_db_table -->
   <include relativeToChangelogFile="true" file="changesets/0000092/changelog.xml"/>  <!-- SQL INSERT | app_config -->
+  <include relativeToChangelogFile="true" file="changesets/0000093/changelog.xml"/>  <!-- SQL INSERT | app_config -->
+  <include relativeToChangelogFile="true" file="changesets/0000094/changelog.xml"/>  <!-- SQL INSERT | app_config -->
+  <include relativeToChangelogFile="true" file="changesets/0000095/changelog.xml"/>  <!-- SQL INSERT | app_config -->
+  <include relativeToChangelogFile="true" file="changesets/0000096/changelog.xml"/>  <!-- SQL INSERT | app_config -->
+  <include relativeToChangelogFile="true" file="changesets/0000097/changelog.xml"/>  <!-- SQL INSERT | app_config -->
 </databaseChangeLog> 

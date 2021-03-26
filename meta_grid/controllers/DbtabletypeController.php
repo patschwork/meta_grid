@@ -222,7 +222,7 @@ class DbtabletypeController extends Controller
 		try {
 			$model = $this->findModel($id);
 			$model->delete();
-			return $this->redirect(['index']);
+			return $this->redirect(Url::previous());
 		} catch (\Exception $e) {
 			$model->addError(null, $e->getMessage());
 			$errMsg = $e->getMessage();

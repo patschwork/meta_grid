@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <job>
   <name>get_liquibase_comment</name>
-  <description />
-  <extended_description />
-  <job_version />
+  <description/>
+  <extended_description/>
+  <job_version/>
   <job_status>0</job_status>
   <directory>/</directory>
   <created_user>-</created_user>
@@ -13,27 +13,27 @@
   <parameters>
     <parameter>
       <name>changeset_path</name>
-      <default_value>D:\changesets\</default_value>
-      <description />
+      <default_value>D:\Dokumente\Projekte\0041_Postbank Systems, MiP-Betrieb\100 Datenmodelle, Datenaustausch\002 Liquibase Changesets\mappingwebrc_p\2017-12-05 LiquiBase mappingwebrc_p V.5.10.0_V.5.10.1\V.5.10.0_V.5.10.1\changesets\</default_value>
+      <description/>
     </parameter>
     <parameter>
       <name>html_template</name>
       <default_value>&lt;pre id="liquibase_reference" class="liquibase_reference">[[liquibase_comment]]&lt;/pre></default_value>
-      <description />
+      <description/>
     </parameter>
     <parameter>
       <name>location_lookup_database</name>
-      <default_value>chinook</default_value>
-      <description />
+      <default_value>mappingwebrc_p</default_value>
+      <description/>
     </parameter>
     <parameter>
       <name>metagrid_jdbc_db_pwd</name>
-      <default_value />
+      <default_value/>
       <description>JDBC Database Password for meta#grid</description>
     </parameter>
     <parameter>
       <name>metagrid_jdbc_db_user</name>
-      <default_value />
+      <default_value/>
       <description>JDBC Database User for meta#grid</description>
     </parameter>
     <parameter>
@@ -43,7 +43,7 @@
     </parameter>
     <parameter>
       <name>metagrid_jdbc_url</name>
-      <default_value>jdbc:sqlite:/opt/meta_grid/db/dwh_meta.sqlite</default_value>
+      <default_value>jdbc:sqlite:D:\ownCloud\Documents\dwh_meta_v2_prod\dwh_meta.sqlite</default_value>
       <description>JDBC URL of the source system to write in meta#grid database (including IP/DNS, Port, Databasename)</description>
     </parameter>
     <parameter>
@@ -54,16 +54,16 @@
   </parameters>
   <connection>
     <name>Meta#Grid_Generic_Database</name>
-    <server />
+    <server/>
     <type>GENERIC</type>
     <access>Native</access>
-    <database />
+    <database/>
     <port>1521</port>
     <username>${metagrid_jdbc_db_user}</username>
     <password>${metagrid_jdbc_db_pwd}</password>
-    <servername />
-    <data_tablespace />
-    <index_tablespace />
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
     <attributes>
       <attribute>
         <code>CUSTOM_DRIVER_CLASS</code>
@@ -105,16 +105,16 @@
   </connection>
   <connection>
     <name>Source_Generic_Database</name>
-    <server />
+    <server/>
     <type>GENERIC</type>
     <access>Native</access>
-    <database />
+    <database/>
     <port>1521</port>
     <username>${source_jdbc_db_user}</username>
     <password>${source_jdbc_db_pwd}</password>
-    <servername />
-    <data_tablespace />
-    <index_tablespace />
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
     <attributes>
       <attribute>
         <code>CUSTOM_DRIVER_CLASS</code>
@@ -157,12 +157,12 @@
   <slaveservers>
     </slaveservers>
   <job-log-table>
-    <connection />
-    <schema />
-    <table />
-    <size_limit_lines />
-    <interval />
-    <timeout_days />
+    <connection/>
+    <schema/>
+    <table/>
+    <size_limit_lines/>
+    <interval/>
+    <timeout_days/>
     <field>
       <id>ID_JOB</id>
       <enabled>Y</enabled>
@@ -270,10 +270,10 @@
     </field>
   </job-log-table>
   <jobentry-log-table>
-    <connection />
-    <schema />
-    <table />
-    <timeout_days />
+    <connection/>
+    <schema/>
+    <table/>
+    <timeout_days/>
     <field>
       <id>ID_BATCH</id>
       <enabled>Y</enabled>
@@ -361,10 +361,10 @@
     </field>
   </jobentry-log-table>
   <channel-log-table>
-    <connection />
-    <schema />
-    <table />
-    <timeout_days />
+    <connection/>
+    <schema/>
+    <table/>
+    <timeout_days/>
     <field>
       <id>ID_BATCH</id>
       <enabled>Y</enabled>
@@ -427,7 +427,7 @@
     </field>
   </channel-log-table>
   <pass_batchid>N</pass_batchid>
-  <shared_objects_file />
+  <shared_objects_file/>
   <entries>
     <entry>
       <name>Set split character</name>
@@ -468,73 +468,73 @@ true</script>
       <description>Transformation</description>
       <type>TRANS</type>
       <specification_method>filename</specification_method>
-      <trans_object_id />
+      <trans_object_id/>
       <filename>${Internal.Job.Filename.Directory}/05 bulk import from datasource 07 get_liquibase_comment.ktr</filename>
-      <transname />
+      <transname/>
       <arg_from_previous>N</arg_from_previous>
       <params_from_previous>N</params_from_previous>
       <exec_per_row>N</exec_per_row>
       <clear_rows>N</clear_rows>
       <clear_files>N</clear_files>
       <set_logfile>N</set_logfile>
-      <logfile />
-      <logext />
+      <logfile/>
+      <logext/>
       <add_date>N</add_date>
       <add_time>N</add_time>
       <loglevel>Nothing</loglevel>
       <cluster>N</cluster>
-      <slave_server_name />
+      <slave_server_name/>
       <set_append_logfile>N</set_append_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <follow_abort_remote>N</follow_abort_remote>
       <create_parent_folder>N</create_parent_folder>
       <logging_remote_work>N</logging_remote_work>
-      <run_configuration />
+      <run_configuration/>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
         <parameter>
           <name>split.character</name>
-          <stream_name />
+          <stream_name/>
           <value>${split.character}</value>
         </parameter>
         <parameter>
           <name>location_lookup_database</name>
-          <stream_name />
+          <stream_name/>
           <value>${location_lookup_database}</value>
         </parameter>
         <parameter>
           <name>changeset_path</name>
-          <stream_name />
+          <stream_name/>
           <value>${changeset_path}</value>
         </parameter>
         <parameter>
           <name>metagrid_jdbc_db_pwd</name>
-          <stream_name />
+          <stream_name/>
           <value>${metagrid_jdbc_db_pwd}</value>
         </parameter>
         <parameter>
           <name>metagrid_jdbc_db_user</name>
-          <stream_name />
+          <stream_name/>
           <value>${metagrid_jdbc_db_user}</value>
         </parameter>
         <parameter>
           <name>metagrid_jdbc_driver_class</name>
-          <stream_name />
+          <stream_name/>
           <value>${metagrid_jdbc_driver_class}</value>
         </parameter>
         <parameter>
           <name>metagrid_jdbc_url</name>
-          <stream_name />
+          <stream_name/>
           <value>${metagrid_jdbc_url}</value>
         </parameter>
         <parameter>
           <name>project_id</name>
-          <stream_name />
+          <stream_name/>
           <value>${project_id}</value>
         </parameter>
         <parameter>
           <name>html_template</name>
-          <stream_name />
+          <stream_name/>
           <value>${html_template}</value>
         </parameter>
       </parameters>
@@ -560,13 +560,13 @@ true</script>
 If so, then do nothing</description>
       <type>SIMPLE_EVAL</type>
       <valuetype>variable</valuetype>
-      <fieldname />
+      <fieldname/>
       <variablename>${changeset_path}</variablename>
       <fieldtype>string</fieldtype>
-      <mask />
-      <comparevalue />
-      <minvalue />
-      <maxvalue />
+      <mask/>
+      <comparevalue/>
+      <minvalue/>
+      <maxvalue/>
       <successcondition>different</successcondition>
       <successnumbercondition>equal</successnumbercondition>
       <successbooleancondition>false</successbooleancondition>
@@ -579,7 +579,7 @@ If so, then do nothing</description>
     </entry>
     <entry>
       <name>Write To Log</name>
-      <description />
+      <description/>
       <type>WRITE_TO_LOG</type>
       <logmessage>&gt; PARAMETER (= ${changeset_path}) IS EMPTY OR -. IGNORING FURTHER STEPS. OK.</logmessage>
       <loglevel>Basic</loglevel>
@@ -596,13 +596,13 @@ If so, then do nothing</description>
 If so, then do nothing</description>
       <type>SIMPLE_EVAL</type>
       <valuetype>variable</valuetype>
-      <fieldname />
+      <fieldname/>
       <variablename>${changeset_path}</variablename>
       <fieldtype>string</fieldtype>
-      <mask />
+      <mask/>
       <comparevalue>-</comparevalue>
-      <minvalue />
-      <maxvalue />
+      <minvalue/>
+      <maxvalue/>
       <successcondition>different</successcondition>
       <successnumbercondition>equal</successnumbercondition>
       <successbooleancondition>false</successbooleancondition>

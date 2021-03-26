@@ -320,7 +320,7 @@ class DbtableController extends Controller
 		try {
 			$model = $this->findModel($id);
 			$model->delete();
-			return $this->redirect(['index']);
+			return $this->redirect(Url::previous());
 		} catch (\Exception $e) {
 			$model->addError(null, $e->getMessage());
 			$errMsg = $e->getMessage();
@@ -509,45 +509,9 @@ class DbtableController extends Controller
 		return $this->folder_exist($path);
 	}
 	
-	/**
-	 * Deletes old files after a time period. 
-	 * Hits also exported files from other controllers
-	 * @ToDo: Could be moved to a central function/class
-	 */
-	protected function cleanupOldResultFiles($exportPath, $sessionPrepKey)
+	protected function cleanupResultFile($exportFilePath)
 	{
-		$debug = 0;
-		$files = array_diff(scandir($exportPath), array('.', '..'));
-		foreach($files as $key=>$file)
-		{
-			try
-			{
-				// example: dbtable_export_2020-10-03_08-10-25.csv
-				$dt_from_filename = explode(".", explode("_export_", $file)[1])[0]; // 2020-10-03_08-10-25
-				$date_from_filename = explode("_", $dt_from_filename)[0]; // 2020-10-03
-				$time_from_filename = str_replace("-", ":", explode("_", $dt_from_filename)[1]); // 08:10:25
-				$date1 = new \DateTime($date_from_filename . " " . $time_from_filename);
-				$date2 = new \DateTime("now");
-				$diffInSeconds = $date2->getTimestamp() - $date1->getTimestamp();
-				if ($debug > 0)
-				{
-					Yii::trace($sessionPrepKey, "Checking for clean up old file = $file / diffInSeconds=". $diffInSeconds);
-				}
-				if ($diffInSeconds >= 60*10) // older than minutes (10 minutes)
-				{
-					$pathfile = join(DIRECTORY_SEPARATOR, array($exportPath, $file));
-					@unlink($pathfile);
-					if (file_exists($pathfile))
-					{
-						Yii::trace($sessionPrepKey, "Could not clean up old file = $file");
-					}
-				}
-			}
-			catch (\Throwable $th) {
-				Yii::trace($sessionPrepKey, 'Error on removing older files');
-			}
-		}
-		
+		unlink($exportFilePath);
 	}
 
 	public function actionExport_csv($export_fk_ids = "0", $no_cleanup = "0")
@@ -561,13 +525,13 @@ class DbtableController extends Controller
 		}
 		$sessionPrepKey = Yii::$app->controller->id . "|" . $dt . "|" . Yii::$app->session->id . "|" . Yii::$app->user->id;
 		$this->prepareExportData($sessionPrepKey);
-		$exportFilePath = $path . DIRECTORY_SEPARATOR . Yii::$app->controller->id . '_export_' . date("Y-m-d_H-i-s") . '.csv';
+		$exportFilePath = $path . '/'. Yii::$app->controller->id . '_export_' . date("Y-m-d_H-m-s") . '.csv';
 		$this->CreateCSV($export_fk_ids, $sessionPrepKey, $exportFilePath);
 		$this->initDownload($exportFilePath);
 		if ($no_cleanup !== "1")
 		{
 			$this->cleanupResultTable($sessionPrepKey);
-			$this->cleanupOldResultFiles($path, $sessionPrepKey);
+			$this->cleanupResultFile($exportFilePath);
 		}
 		return;
 	}

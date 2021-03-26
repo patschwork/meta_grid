@@ -243,7 +243,7 @@ class MapperController extends Controller
 		try {
 			$model = $this->findModel($id);
 			$model->delete();
-			return $this->redirect(['index']);
+			return $this->redirect(Url::previous());
 		} catch (\Exception $e) {
 			$model->addError(null, $e->getMessage());
 			$errMsg = $e->getMessage();
@@ -359,6 +359,11 @@ class MapperController extends Controller
 	
 	public function actionCreateexternal($ref_fk_object_id, $ref_fk_object_type_id) {
 	
+		$app_config_mapper_createext_time_limit = \vendor\meta_grid\helper\Utils::get_app_config("mapper_createext_time_limit");
+		set_time_limit($app_config_mapper_createext_time_limit);
+		$app_config_mapper_createext_memory_limit = \vendor\meta_grid\helper\Utils::get_app_config("mapper_createext_memory_limit");
+		ini_set('memory_limit', $app_config_mapper_createext_memory_limit."M");
+
 		// Controller fuer die View, wenn ein Mapping ueber ein Objekt aufgerufen wird.		
 		$objectTypeModel = new \app\models\ObjectType ();
 		$objectTypes = $objectTypeModel::find ()->all ();

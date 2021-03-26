@@ -32,3 +32,26 @@ $(".dynamicform_wrapper").on("afterInsert", function(e, item) {
 	item.checked=false;
 	// ({T60}) ...}
 });
+
+$(window).on('hashchange load', function() {
+
+	// Get Anchor# id
+	if($(location.href.split("#")[1])) {
+		var target = location.href.split("#")[1];
+		if (target.length) {
+			// fade background color to green and back to highlight for the user
+			item=document.getElementById("phn_" + target);
+			save=item.style.backgroundColor;
+			item.style="transition: background-color 2000ms linear;";
+			item.style.backgroundColor="#A5FF7F";
+
+			var colors = ['#A5FF7F', save];
+			var active = 0;
+			setInterval(function(){
+				item.style.backgroundColor=colors[active];
+				active++;
+				//if (active == colors.length) active = 0; // current, no loop ;-)
+			}, 2000);
+		}
+	}
+});

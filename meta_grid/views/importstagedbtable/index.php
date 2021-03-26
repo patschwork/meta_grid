@@ -90,7 +90,7 @@ else
 	?>
 
 		<?=Html::beginForm(['processselected'],'post');?>
-		<?=Html::dropDownList('action','',['0'=>'Import','1'=>'Delete from list'],['class'=>'dropdown',])?>
+		<?=Html::dropDownList('action','',['0'=>'Import','1'=>'Delete from list','2'=>'Import all','3'=>'Delete all'],['class'=>'dropdown',])?>
 		<?=Html::submitButton(Yii::t('app','Process'), ['class' => 'btn btn-primary']);?>
 
 	    <?= GridView::widget([

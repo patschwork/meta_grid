@@ -52,6 +52,14 @@ class GlobalSearch extends VAllObjectsUnion
 
         $this->load($params);
 
+        if (count($params)<=1)
+        {
+            if (\vendor\meta_grid\helper\Utils::get_app_config("globalsearch_init_empty") === 1)
+            {
+                $query->where('0=1');
+            }
+        }
+
         if (!$this->validate()) {
             // uncomment the following line if you do not want to any records when validation fails
             // $query->where('0=1');

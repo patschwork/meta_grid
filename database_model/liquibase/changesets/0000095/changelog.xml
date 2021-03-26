@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000095/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000095" context="app_config">
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO app_config (key,valueINT,description) 
+VALUES ('importstage_dbtable_processing_time_limit',2000,'Timeout for processing (seconds)');
+        ]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO app_config (key,valueINT,description) 
+VALUES ('importstage_dbtable_processing_memory_limit',1024,'Memory limit for processing (MB)');
+        ]]>		
+		</sql>
+
+		<comment>
+		<![CDATA[
+		Insert new parameter into app_config.
+		Used objects:
+			app_config
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

@@ -3,15 +3,15 @@
   <info>
     <name>Get_RDBMS_VIEW_DEFINITION</name>
     <description>05 bulk import from datasource 09 get_rdbms_view_definition</description>
-    <extended_description />
-    <trans_version />
+    <extended_description/>
+    <trans_version/>
     <trans_type>Normal</trans_type>
     <trans_status>0</trans_status>
     <directory>/</directory>
     <parameters>
       <parameter>
         <name>filter_view_names</name>
-        <default_value />
+        <default_value/>
         <description>Filter view names based on parameter value (like operation without wildcards). Attention: Case sensitive</description>
       </parameter>
       <parameter>
@@ -46,12 +46,12 @@
       </parameter>
       <parameter>
         <name>metagrid_jdbc_db_pwd</name>
-        <default_value />
+        <default_value/>
         <description>JDBC Database Password for meta#grid</description>
       </parameter>
       <parameter>
         <name>metagrid_jdbc_db_user</name>
-        <default_value />
+        <default_value/>
         <description>JDBC Database User for meta#grid</description>
       </parameter>
       <parameter>
@@ -61,7 +61,7 @@
       </parameter>
       <parameter>
         <name>metagrid_jdbc_url</name>
-        <default_value>jdbc:sqlite:/opt/meta_grid/db/dwh_meta.sqlite</default_value>
+        <default_value>jdbc:sqlite:/home/patrick/Development_WorkingCopies/dwh_meta/dwh_meta_v2/dwh_meta.sqlite</default_value>
         <description>JDBC URL of the source system to write in meta#grid database (including IP/DNS, Port, Databasename)</description>
       </parameter>
       <parameter>
@@ -85,8 +85,18 @@
         <description>JDBC Database Password</description>
       </parameter>
       <parameter>
+        <name>source_jdbc_db_pwd_Y</name>
+        <default_value>Encrypted 2be98afc86ac68681fa40fd26da86a29b</default_value>
+        <description>JDBC Database Password</description>
+      </parameter>
+      <parameter>
         <name>source_jdbc_db_user</name>
-        <default_value>xxxxxxx</default_value>
+        <default_value>postgres</default_value>
+        <description>JDBC Database User for source</description>
+      </parameter>
+      <parameter>
+        <name>source_jdbc_db_user_Y</name>
+        <default_value>SA</default_value>
         <description>JDBC Database User for source</description>
       </parameter>
       <parameter>
@@ -95,19 +105,29 @@
         <description>JDBC Java Driver Class to use to read from source</description>
       </parameter>
       <parameter>
+        <name>source_jdbc_driver_class_Y</name>
+        <default_value>net.sourceforge.jtds.jdbc.Driver</default_value>
+        <description>JDBC Java Driver Class to use to read from source</description>
+      </parameter>
+      <parameter>
         <name>source_jdbc_url</name>
         <default_value>jdbc:postgresql://127.0.0.1:5432/chinook</default_value>
         <description>JDBC Database Password</description>
       </parameter>
+      <parameter>
+        <name>source_jdbc_url_Y</name>
+        <default_value>jdbc:jtds:sqlserver://127.0.0.1:1433/Chinook</default_value>
+        <description>JDBC URL of the source system to read from (including IP/DNS, Port, Databasename)</description>
+      </parameter>
     </parameters>
     <log>
       <trans-log-table>
-        <connection />
-        <schema />
-        <table />
-        <size_limit_lines />
-        <interval />
-        <timeout_days />
+        <connection/>
+        <schema/>
+        <table/>
+        <size_limit_lines/>
+        <interval/>
+        <timeout_days/>
         <field>
           <id>ID_BATCH</id>
           <enabled>Y</enabled>
@@ -132,37 +152,37 @@
           <id>LINES_READ</id>
           <enabled>Y</enabled>
           <name>LINES_READ</name>
-          <subject />
+          <subject/>
         </field>
         <field>
           <id>LINES_WRITTEN</id>
           <enabled>Y</enabled>
           <name>LINES_WRITTEN</name>
-          <subject />
+          <subject/>
         </field>
         <field>
           <id>LINES_UPDATED</id>
           <enabled>Y</enabled>
           <name>LINES_UPDATED</name>
-          <subject />
+          <subject/>
         </field>
         <field>
           <id>LINES_INPUT</id>
           <enabled>Y</enabled>
           <name>LINES_INPUT</name>
-          <subject />
+          <subject/>
         </field>
         <field>
           <id>LINES_OUTPUT</id>
           <enabled>Y</enabled>
           <name>LINES_OUTPUT</name>
-          <subject />
+          <subject/>
         </field>
         <field>
           <id>LINES_REJECTED</id>
           <enabled>Y</enabled>
           <name>LINES_REJECTED</name>
-          <subject />
+          <subject/>
         </field>
         <field>
           <id>ERRORS</id>
@@ -216,11 +236,11 @@
         </field>
       </trans-log-table>
       <perf-log-table>
-        <connection />
-        <schema />
-        <table />
-        <interval />
-        <timeout_days />
+        <connection/>
+        <schema/>
+        <table/>
+        <interval/>
+        <timeout_days/>
         <field>
           <id>ID_BATCH</id>
           <enabled>Y</enabled>
@@ -298,10 +318,10 @@
         </field>
       </perf-log-table>
       <channel-log-table>
-        <connection />
-        <schema />
-        <table />
-        <timeout_days />
+        <connection/>
+        <schema/>
+        <table/>
+        <timeout_days/>
         <field>
           <id>ID_BATCH</id>
           <enabled>Y</enabled>
@@ -364,10 +384,10 @@
         </field>
       </channel-log-table>
       <step-log-table>
-        <connection />
-        <schema />
-        <table />
-        <timeout_days />
+        <connection/>
+        <schema/>
+        <table/>
+        <timeout_days/>
         <field>
           <id>ID_BATCH</id>
           <enabled>Y</enabled>
@@ -440,10 +460,10 @@
         </field>
       </step-log-table>
       <metrics-log-table>
-        <connection />
-        <schema />
-        <table />
-        <timeout_days />
+        <connection/>
+        <schema/>
+        <table/>
+        <timeout_days/>
         <field>
           <id>ID_BATCH</id>
           <enabled>Y</enabled>
@@ -492,9 +512,9 @@
       </metrics-log-table>
     </log>
     <maxdate>
-      <connection />
-      <table />
-      <field />
+      <connection/>
+      <table/>
+      <field/>
       <offset>0.0</offset>
       <maxdiff>0.0</maxdiff>
     </maxdate>
@@ -505,7 +525,7 @@
     <feedback_shown>Y</feedback_shown>
     <feedback_size>50000</feedback_size>
     <using_thread_priorities>Y</using_thread_priorities>
-    <shared_objects_file />
+    <shared_objects_file/>
     <capture_step_performance>N</capture_step_performance>
     <step_performance_capturing_delay>1000</step_performance_capturing_delay>
     <step_performance_capturing_size_limit>100</step_performance_capturing_size_limit>
@@ -596,16 +616,16 @@ If there is a mismatch, there will be no result (0 rows) without error!!
   </notepads>
   <connection>
     <name>Meta#Grid_Generic_Database</name>
-    <server />
+    <server/>
     <type>GENERIC</type>
     <access>Native</access>
-    <database />
+    <database/>
     <port>1521</port>
     <username>${metagrid_jdbc_db_user}</username>
     <password>${metagrid_jdbc_db_pwd}</password>
-    <servername />
-    <data_tablespace />
-    <index_tablespace />
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
     <attributes>
       <attribute>
         <code>CUSTOM_DRIVER_CLASS</code>
@@ -647,16 +667,16 @@ If there is a mismatch, there will be no result (0 rows) without error!!
   </connection>
   <connection>
     <name>Source_Generic_Database</name>
-    <server />
+    <server/>
     <type>GENERIC</type>
     <access>Native</access>
-    <database />
+    <database/>
     <port>1521</port>
     <username>${source_jdbc_db_user}</username>
     <password>${source_jdbc_db_pwd}</password>
-    <servername />
-    <data_tablespace />
-    <index_tablespace />
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
     <attributes>
       <attribute>
         <code>CUSTOM_DRIVER_CLASS</code>
@@ -801,22 +821,22 @@ If there is a mismatch, there will be no result (0 rows) without error!!
   <step>
     <name>Data Grid: Queries for each RDBMS</name>
     <type>DataGrid</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <fields>
       <field>
         <name>sql_query</name>
         <type>string</type>
-        <format />
-        <currency />
-        <decimal />
-        <group />
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
         <length>1500</length>
         <precision>-1</precision>
         <set_empty_string>N</set_empty_string>
@@ -824,10 +844,10 @@ If there is a mismatch, there will be no result (0 rows) without error!!
       <field>
         <name>rdbms</name>
         <type>string</type>
-        <format />
-        <currency />
-        <decimal />
-        <group />
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
         <length>100</length>
         <precision>-1</precision>
         <set_empty_string>N</set_empty_string>
@@ -886,7 +906,7 @@ ORDER BY
         <item>MSSQL</item>
       </line>
     </data>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -902,15 +922,15 @@ ORDER BY
   <step>
     <name>Dummy (Dynamic SQL row)</name>
     <type>Dummy</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -926,15 +946,15 @@ ORDER BY
   <step>
     <name>Dummy (Filter rows: Exclude Table Schema)</name>
     <type>Dummy</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -950,15 +970,15 @@ ORDER BY
   <step>
     <name>Dummy (Java Filter - Filter on Viewnames)</name>
     <type>Dummy</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -974,15 +994,15 @@ ORDER BY
   <step>
     <name>Dummy (db_table not found)</name>
     <type>Dummy</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -998,15 +1018,15 @@ ORDER BY
   <step>
     <name>Dummy (do not overwrite existing if differs and is not empty)</name>
     <type>Dummy</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1022,13 +1042,13 @@ ORDER BY
   <step>
     <name>Dynamic SQL row</name>
     <type>DynamicSQLRow</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <connection>Source_Generic_Database</connection>
     <rowlimit>0</rowlimit>
@@ -1046,7 +1066,7 @@ ORDER BY
     <replace_vars>N</replace_vars>
     <sql_fieldname>sql_query</sql_fieldname>
     <query_only_on_change>N</query_only_on_change>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1060,16 +1080,84 @@ ORDER BY
     </GUI>
   </step>
   <step>
+    <name>Filter rows: Exclude Table Schema</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <send_true_to>Java Filter - Filter on Viewnames</send_true_to>
+    <send_false_to>Dummy (Filter rows: Exclude Table Schema)</send_false_to>
+    <compare>
+      <condition>
+        <negated>Y</negated>
+        <leftvalue>db_schema_exclude</leftvalue>
+        <function>CONTAINS</function>
+        <rightvalue>SCHEMA</rightvalue>
+      </condition>
+    </compare>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>483</xloc>
+      <yloc>415</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Filter rows: uuid IS NULL (db_table not found)</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <send_true_to>Filter rows: Description Check</send_true_to>
+    <send_false_to>Dummy (db_table not found)</send_false_to>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>db_table_id</leftvalue>
+        <function>IS NOT NULL</function>
+        <rightvalue/>
+      </condition>
+    </compare>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1184</xloc>
+      <yloc>1225</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
     <name>Filter rows: Description Check</name>
     <type>FilterRows</type>
     <description>Existing description differs and Param overwriting=Y
 or existing description is empty</description>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <send_true_to>Update</send_true_to>
     <send_false_to>Dummy (do not overwrite existing if differs and is not empty)</send_false_to>
@@ -1088,7 +1176,7 @@ or existing description is empty</description>
             <operator>AND</operator>
             <leftvalue>overwrite_description_if_existing_differs</leftvalue>
             <function>=</function>
-            <rightvalue />
+            <rightvalue/>
             <value>
               <name>constant</name>
               <type>String</type>
@@ -1096,7 +1184,7 @@ or existing description is empty</description>
               <length>-1</length>
               <precision>-1</precision>
               <isnull>N</isnull>
-              <mask />
+              <mask/>
             </value>
           </condition>
           <condition>
@@ -1107,22 +1195,22 @@ or existing description is empty</description>
                 <negated>N</negated>
                 <leftvalue>db_table_description</leftvalue>
                 <function>IS NULL</function>
-                <rightvalue />
+                <rightvalue/>
               </condition>
               <condition>
                 <negated>N</negated>
                 <operator>OR</operator>
                 <leftvalue>db_table_description</leftvalue>
                 <function>=</function>
-                <rightvalue />
+                <rightvalue/>
                 <value>
                   <name>constant</name>
                   <type>String</type>
-                  <text />
+                  <text/>
                   <length>-1</length>
                   <precision>-1</precision>
-                  <isnull>Y</isnull>
-                  <mask />
+                  <isnull>N</isnull>
+                  <mask/>
                 </value>
               </condition>
             </conditions>
@@ -1130,7 +1218,7 @@ or existing description is empty</description>
         </conditions>
       </condition>
     </compare>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1144,88 +1232,20 @@ or existing description is empty</description>
     </GUI>
   </step>
   <step>
-    <name>Filter rows: Exclude Table Schema</name>
-    <type>FilterRows</type>
-    <description />
-    <distribute>Y</distribute>
-    <custom_distribution />
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name />
-    </partitioning>
-    <send_true_to>Java Filter - Filter on Viewnames</send_true_to>
-    <send_false_to>Dummy (Filter rows: Exclude Table Schema)</send_false_to>
-    <compare>
-      <condition>
-        <negated>Y</negated>
-        <leftvalue>db_schema_exclude</leftvalue>
-        <function>CONTAINS</function>
-        <rightvalue>SCHEMA</rightvalue>
-      </condition>
-    </compare>
-    <cluster_schema />
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>483</xloc>
-      <yloc>415</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Filter rows: uuid IS NULL (db_table not found)</name>
-    <type>FilterRows</type>
-    <description />
-    <distribute>Y</distribute>
-    <custom_distribution />
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name />
-    </partitioning>
-    <send_true_to>Filter rows: Description Check</send_true_to>
-    <send_false_to>Dummy (db_table not found)</send_false_to>
-    <compare>
-      <condition>
-        <negated>N</negated>
-        <leftvalue>db_table_id</leftvalue>
-        <function>IS NOT NULL</function>
-        <rightvalue />
-      </condition>
-    </compare>
-    <cluster_schema />
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>1184</xloc>
-      <yloc>1225</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
     <name>Java Filter - Filter on Viewnames</name>
     <type>JavaFilter</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <send_true_to>Select values</send_true_to>
     <send_false_to>Dummy (Java Filter - Filter on Viewnames)</send_false_to>
     <condition>NAME.indexOf("${filter_view_names}")>-1 ? Boolean.TRUE : Boolean.FALSE</condition>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1241,13 +1261,13 @@ or existing description is empty</description>
   <step>
     <name>Modified Java Script Value - Handle Description</name>
     <type>ScriptValueMod</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <compatible>N</compatible>
     <optimizationLevel>9</optimizationLevel>
@@ -1314,7 +1334,7 @@ Alert(getVariable(strVarName, ""));</jsScript_script>
         <replace>N</replace>
       </field>
     </fields>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1330,13 +1350,13 @@ Alert(getVariable(strVarName, ""));</jsScript_script>
   <step>
     <name>Modified Java Script Value - get Description View_DEFINITION</name>
     <type>ScriptValueMod</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <compatible>Y</compatible>
     <optimizationLevel>9</optimizationLevel>
@@ -1401,7 +1421,7 @@ Alert(getVariable(strVarName, ""));</jsScript_script>
         <replace>N</replace>
       </field>
     </fields>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1417,13 +1437,13 @@ Alert(getVariable(strVarName, ""));</jsScript_script>
   <step>
     <name>Modified Java Script Value: Variable to fields...</name>
     <type>ScriptValueMod</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <compatible>N</compatible>
     <optimizationLevel>9</optimizationLevel>
@@ -1473,7 +1493,7 @@ writeToLog("Exclude follwing db_schemes: " + db_schema_exclude)</jsScript_script
         <replace>N</replace>
       </field>
     </fields>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1489,13 +1509,13 @@ writeToLog("Exclude follwing db_schemes: " + db_schema_exclude)</jsScript_script
   <step>
     <name>Select values</name>
     <type>SelectValues</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <fields>
       <select_unspecified>N</select_unspecified>
@@ -1509,7 +1529,7 @@ writeToLog("Exclude follwing db_schemes: " + db_schema_exclude)</jsScript_script
         <name>rdbms</name>
       </remove>
     </fields>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1525,13 +1545,13 @@ writeToLog("Exclude follwing db_schemes: " + db_schema_exclude)</jsScript_script
   <step>
     <name>Select values 2</name>
     <type>SelectValues</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <fields>
       <select_unspecified>N</select_unspecified>
@@ -1539,7 +1559,7 @@ writeToLog("Exclude follwing db_schemes: " + db_schema_exclude)</jsScript_script
         <name>descriptionFromRoutineDefinition</name>
       </remove>
     </fields>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1555,13 +1575,13 @@ writeToLog("Exclude follwing db_schemes: " + db_schema_exclude)</jsScript_script
   <step>
     <name>Stream lookup</name>
     <type>StreamLookup</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <from>String operations: location_UPPER_existing</from>
     <input_sorted>N</input_sorted>
@@ -1576,17 +1596,17 @@ writeToLog("Exclude follwing db_schemes: " + db_schema_exclude)</jsScript_script
       <value>
         <name>id</name>
         <rename>db_table_id</rename>
-        <default />
+        <default/>
         <type>Integer</type>
       </value>
       <value>
         <name>description</name>
         <rename>db_table_description</rename>
-        <default />
+        <default/>
         <type>String</type>
       </value>
     </lookup>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1602,13 +1622,13 @@ writeToLog("Exclude follwing db_schemes: " + db_schema_exclude)</jsScript_script
   <step>
     <name>String operations: location_UPPER_existing</name>
     <type>StringOperations</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <fields>
       <field>
@@ -1617,15 +1637,15 @@ writeToLog("Exclude follwing db_schemes: " + db_schema_exclude)</jsScript_script
         <trim_type>none</trim_type>
         <lower_upper>upper</lower_upper>
         <padding_type>none</padding_type>
-        <pad_char />
-        <pad_len />
+        <pad_char/>
+        <pad_len/>
         <init_cap>no</init_cap>
         <mask_xml>none</mask_xml>
         <digits>none</digits>
         <remove_special_characters>none</remove_special_characters>
       </field>
     </fields>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1641,13 +1661,13 @@ writeToLog("Exclude follwing db_schemes: " + db_schema_exclude)</jsScript_script
   <step>
     <name>Table input: db_table</name>
     <type>TableInput</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <connection>Meta#Grid_Generic_Database</connection>
     <sql>SELECT
@@ -1662,12 +1682,12 @@ INNER JOIN db_table_type dbtt ON 1=1
    AND dbtt.name = 'VIEW'
 WHERE fk_project_id = ${project_id}
 </sql>
-    <limit />
-    <lookup />
+    <limit/>
+    <lookup/>
     <execute_each_row>N</execute_each_row>
     <variables_active>Y</variables_active>
     <lazy_conversion_active>N</lazy_conversion_active>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1683,35 +1703,35 @@ WHERE fk_project_id = ${project_id}
   <step>
     <name>Update</name>
     <type>Update</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <connection>Meta#Grid_Generic_Database</connection>
     <skip_lookup>N</skip_lookup>
     <commit>100</commit>
     <use_batch>N</use_batch>
     <error_ignored>N</error_ignored>
-    <ignore_flag_field />
+    <ignore_flag_field/>
     <lookup>
-      <schema />
+      <schema/>
       <table>db_table</table>
       <key>
         <name>db_table_id</name>
         <field>id</field>
         <condition>=</condition>
-        <name2 />
+        <name2/>
       </key>
       <value>
         <name>description</name>
         <rename>DescriptionForInsertIntoMetaGrid</rename>
       </value>
     </lookup>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1727,13 +1747,13 @@ WHERE fk_project_id = ${project_id}
   <step>
     <name>Write to log</name>
     <type>WriteToLog</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <loglevel>log_level_basic</loglevel>
     <displayHeader>Y</displayHeader>
@@ -1745,7 +1765,7 @@ WHERE fk_project_id = ${project_id}
         <name>location</name>
       </field>
     </fields>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1763,13 +1783,13 @@ WHERE fk_project_id = ${project_id}
       <source_step>Dynamic SQL row</source_step>
       <target_step>Dummy (Dynamic SQL row)</target_step>
       <is_enabled>Y</is_enabled>
-      <nr_valuename />
-      <descriptions_valuename />
-      <fields_valuename />
-      <codes_valuename />
-      <max_errors />
-      <max_pct_errors />
-      <min_pct_rows />
+      <nr_valuename/>
+      <descriptions_valuename/>
+      <fields_valuename/>
+      <codes_valuename/>
+      <max_errors/>
+      <max_pct_errors/>
+      <min_pct_rows/>
     </error>
   </step_error_handling>
   <slave-step-copy-partition-distribution>

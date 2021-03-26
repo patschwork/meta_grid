@@ -3,7 +3,7 @@
 # Instllation or update meta#grid
 # on every OS
 # Base helper library
-# v1.1
+# v1.2
 
 import os
 import subprocess
@@ -25,6 +25,9 @@ import re
 import sys
 import time
 from xml.dom import minidom
+
+def myVersion():
+    return "1.2"
 
 def bla(msg, action=None, withLooging=True, logfilepath="", logfile=""):
     colorama.init()
@@ -329,14 +332,14 @@ def is_windows():
 
 def check_if_a_newer_version_is_available():
     # lastversion has to many dependencies :-(
-    # latest_version = lastversion.has_update(repo="https://github.com/patschwork/meta_grid_install_update", current_version='1.1')
+    # latest_version = lastversion.has_update(repo="https://github.com/patschwork/meta_grid_install_update", current_version='1.2')
     # return latest_version
     url = "http://httpbin.org/get"
     response = urllib2.urlopen("https://api.github.com/repos/patschwork/meta_grid_install_update/releases/latest")
     data = response.read()
     values = json.loads(data)
     aval_version = values.get("tag_name")
-    current_version = "1.1"
+    current_version = myVersion()
     if (version.parse(aval_version) > version.parse(current_version)):
         return aval_version
     else:

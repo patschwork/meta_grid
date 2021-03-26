@@ -138,7 +138,8 @@ class PerspectiveHelper
 						->where(
 								[
 									'ref_fk_object_type_id' => $fk_object_type_id,
-									'filter_attribute_name' => $distinct_filter_attribute_name->filter_attribute_name
+									'filter_attribute_name' => $distinct_filter_attribute_name->filter_attribute_name,
+									'fk_language_id' => Yii::$app->language
 								]
 							)
 						->all();

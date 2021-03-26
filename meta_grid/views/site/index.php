@@ -41,11 +41,57 @@
 
 </style>
 
+<script>
+function setCookie(c_name, value, exdays) {
+    var exdate = new Date();
+    exdate.setDate(exdate.getDate() + exdays);
+    var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
+    document.cookie = c_name + "=" + c_value;
+}
+function getCookie(c_name) {
+    var i, x, y, thisCookies = document.cookie.split(";");
+    for (i = 0; i < thisCookies.length; i++) {
+        x = thisCookies[i].substr(0, thisCookies[i].indexOf("="));
+        y = thisCookies[i].substr(thisCookies[i].indexOf("=") + 1);
+        x = x.replace(/^\s+|\s+$/g, "");
+        if (x == c_name) {
+            return unescape(y);
+        }
+    }
+}
+function hideMeSomeDays()
+{
+    setCookie('hideNewVersionForDays', '3', 3);
+    var htmlElement = document.getElementsByName("new-version-info-start")[0];
+    htmlElement.hidden = true;
+
+}
+</script>
+
 <?php
 use lajax\translatemanager\helpers\Language as Lx;
 
 /* @var $this yii\web\View */
 $this->title = 'Meta#Grid'.(stristr(Yii::$app->homeUrl, 'dev') ? ' DEV' : '');
+
+if (!Yii::$app->user->isGuest)
+{
+    $newVersionAvaiable = \vendor\meta_grid\helper\ApplicationVersion::isNewApplicationAvailable();
+    
+    if ($newVersionAvaiable)
+    {
+        $msg = Yii::t('', 'A new Version {newVersion} of {appName} is available. Your current version is {currentVersion}.<br><br>Read the <a class="btn btn-primary" href="{linkToDoc}" target="_blank">documentation</a> how to update the application.<br><br><button class="btn btn-warning" onclick="hideMeSomeDays()">Hide this message for 3 days</button>'
+                ,['newVersion' => \vendor\meta_grid\helper\ApplicationVersion::getCookieNewerVersion(), 'currentVersion' => \vendor\meta_grid\helper\ApplicationVersion::$applicationVersion, 'linkToDoc' => 'https://blog.meta-grid.com/category/docs/update', 'appName' => \vendor\meta_grid\helper\ApplicationVersion::getApplicationName()]);
+        echo yii\bootstrap\Alert::widget([
+            'options' => [
+                    'class' => 'alert-info',
+                    'name' => 'new-version-info-start',
+            ],
+            'body' => $msg,
+        ]);
+    }
+}
+
 
 $wa_gui_url = Yii::$app->urlManager->baseUrl . "/../../../../../dwh_meta_v2_wa_gui/";
 
@@ -129,12 +175,15 @@ catch (Exception $e) {
     {
         if (Yii::$app->user->identity->isAdmin) 
         {
-            echo yii\bootstrap\Alert::widget([
-                'options' => [
-                        'class' => 'alert-danger',
-                ],
-                'body' => "<b>Admin-only-hint</b>: LiquiBase changelog file not found</br>" . "<pre>" . $e->getMessage() . "</pre>",
-            ]);           
+            if ($app_config_liquibase_changelog_master_filepath != "")
+            {
+                echo yii\bootstrap\Alert::widget([
+                    'options' => [
+                            'class' => 'alert-danger',
+                    ],
+                    'body' => "<b>Admin-only-hint</b>: LiquiBase changelog file not found</br>" . "<pre>" . $e->getMessage() . "</pre>",
+                ]);              
+            }
         };
     }
 
@@ -540,4 +589,15 @@ function printHeader($csvObjecttypes, $title) {
 		// location.href=\"$url_CTRL_SHIFT_F\";
     // }); 
 	// ", $this::POS_END, 'shortcut'); 
+?>
+<?php 
+	$this->registerJs("
+    cookievalue=getCookie(\"hideNewVersionForDays\");
+    if (cookievalue == 3)
+    {
+        var htmlElement = document.getElementsByName(\"new-version-info-start\")[0];
+        htmlElement.hidden = true;
+    }
+    ; 
+	", $this::POS_READY, 'hide-new-version-info'); 
 ?>

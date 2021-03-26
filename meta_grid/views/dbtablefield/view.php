@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-	<?= Yii::$app->user->identity->isAdmin || (Yii::$app->User->can('create-dbtablefield'))  ? Html::a(Yii::t('app', 'Update table and fields'), ['dbtablefieldmultipleedit/update', 'id' => $model->fk_db_table_id], ['class' => 'btn btn-primary']) : "" ?>
+	<?= Yii::$app->user->identity->isAdmin || (Yii::$app->User->can('create-dbtablefield'))  ? Html::a(Yii::t('app', 'Update table and fields'), ['dbtablefieldmultipleedit/update', 'id' => $model->fk_db_table_id, '#' => $model->id], ['class' => 'btn btn-primary']) : "" ?>
 
 		<?php
 			$db_table_show_buttons_for_different_object_type_updates = \vendor\meta_grid\helper\Utils::get_app_config("db_table_show_buttons_for_different_object_type_updates");

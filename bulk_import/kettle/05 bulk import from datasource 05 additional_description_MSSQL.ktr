@@ -2,21 +2,21 @@
 <transformation>
   <info>
     <name>05 bulk import from datasource 05 additional_description_MSSQL</name>
-    <description />
-    <extended_description />
-    <trans_version />
+    <description/>
+    <extended_description/>
+    <trans_version/>
     <trans_type>Normal</trans_type>
     <trans_status>0</trans_status>
     <directory>/</directory>
     <parameters>
       <parameter>
         <name>metagrid_jdbc_db_pwd</name>
-        <default_value />
+        <default_value/>
         <description>JDBC Database Password for meta#grid</description>
       </parameter>
       <parameter>
         <name>metagrid_jdbc_db_user</name>
-        <default_value />
+        <default_value/>
         <description>JDBC Database User for meta#grid</description>
       </parameter>
       <parameter>
@@ -26,7 +26,7 @@
       </parameter>
       <parameter>
         <name>metagrid_jdbc_url</name>
-        <default_value>jdbc:sqlite:/opt/meta_grid/db/dwh_meta.sqlite</default_value>
+        <default_value>jdbc:sqlite:D:\ownCloud\Documents\dwh_meta_v2_prod\dwh_meta.sqlite</default_value>
         <description>JDBC URL of the source system to write in meta#grid database (including IP/DNS, Port, Databasename)</description>
       </parameter>
       <parameter>
@@ -36,7 +36,7 @@
       </parameter>
       <parameter>
         <name>source_jdbc_db_pwd</name>
-        <default_value>Encrypted xxxxxxxxxxxxxxxxx</default_value>
+        <default_value>Encrypted 2be98afc86aa79390ae48f7238896bbd7</default_value>
         <description>JDBC Database Password</description>
       </parameter>
       <parameter>
@@ -51,18 +51,18 @@
       </parameter>
       <parameter>
         <name>source_jdbc_url</name>
-        <default_value>jdbc:sqlserver://127.0.0.1:1433;databaseName=chinook</default_value>
+        <default_value>jdbc:sqlserver://127.0.0.1:1433;databaseName=mappingwebrc_p</default_value>
         <description>JDBC URL of the source system to read from (including IP/DNS, Port, Databasename)</description>
       </parameter>
     </parameters>
     <log>
       <trans-log-table>
-        <connection />
-        <schema />
-        <table />
-        <size_limit_lines />
-        <interval />
-        <timeout_days />
+        <connection/>
+        <schema/>
+        <table/>
+        <size_limit_lines/>
+        <interval/>
+        <timeout_days/>
         <field>
           <id>ID_BATCH</id>
           <enabled>Y</enabled>
@@ -87,37 +87,37 @@
           <id>LINES_READ</id>
           <enabled>Y</enabled>
           <name>LINES_READ</name>
-          <subject />
+          <subject/>
         </field>
         <field>
           <id>LINES_WRITTEN</id>
           <enabled>Y</enabled>
           <name>LINES_WRITTEN</name>
-          <subject />
+          <subject/>
         </field>
         <field>
           <id>LINES_UPDATED</id>
           <enabled>Y</enabled>
           <name>LINES_UPDATED</name>
-          <subject />
+          <subject/>
         </field>
         <field>
           <id>LINES_INPUT</id>
           <enabled>Y</enabled>
           <name>LINES_INPUT</name>
-          <subject />
+          <subject/>
         </field>
         <field>
           <id>LINES_OUTPUT</id>
           <enabled>Y</enabled>
           <name>LINES_OUTPUT</name>
-          <subject />
+          <subject/>
         </field>
         <field>
           <id>LINES_REJECTED</id>
           <enabled>Y</enabled>
           <name>LINES_REJECTED</name>
-          <subject />
+          <subject/>
         </field>
         <field>
           <id>ERRORS</id>
@@ -171,11 +171,11 @@
         </field>
       </trans-log-table>
       <perf-log-table>
-        <connection />
-        <schema />
-        <table />
-        <interval />
-        <timeout_days />
+        <connection/>
+        <schema/>
+        <table/>
+        <interval/>
+        <timeout_days/>
         <field>
           <id>ID_BATCH</id>
           <enabled>Y</enabled>
@@ -253,10 +253,10 @@
         </field>
       </perf-log-table>
       <channel-log-table>
-        <connection />
-        <schema />
-        <table />
-        <timeout_days />
+        <connection/>
+        <schema/>
+        <table/>
+        <timeout_days/>
         <field>
           <id>ID_BATCH</id>
           <enabled>Y</enabled>
@@ -319,10 +319,10 @@
         </field>
       </channel-log-table>
       <step-log-table>
-        <connection />
-        <schema />
-        <table />
-        <timeout_days />
+        <connection/>
+        <schema/>
+        <table/>
+        <timeout_days/>
         <field>
           <id>ID_BATCH</id>
           <enabled>Y</enabled>
@@ -395,10 +395,10 @@
         </field>
       </step-log-table>
       <metrics-log-table>
-        <connection />
-        <schema />
-        <table />
-        <timeout_days />
+        <connection/>
+        <schema/>
+        <table/>
+        <timeout_days/>
         <field>
           <id>ID_BATCH</id>
           <enabled>Y</enabled>
@@ -447,9 +447,9 @@
       </metrics-log-table>
     </log>
     <maxdate>
-      <connection />
-      <table />
-      <field />
+      <connection/>
+      <table/>
+      <field/>
       <offset>0.0</offset>
       <maxdiff>0.0</maxdiff>
     </maxdate>
@@ -460,7 +460,7 @@
     <feedback_shown>Y</feedback_shown>
     <feedback_size>50000</feedback_size>
     <using_thread_priorities>Y</using_thread_priorities>
-    <shared_objects_file />
+    <shared_objects_file/>
     <capture_step_performance>N</capture_step_performance>
     <step_performance_capturing_delay>1000</step_performance_capturing_delay>
     <step_performance_capturing_size_limit>100</step_performance_capturing_size_limit>
@@ -610,16 +610,16 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
   </notepads>
   <connection>
     <name>Meta#Grid_Generic_Database</name>
-    <server />
+    <server/>
     <type>GENERIC</type>
     <access>Native</access>
-    <database />
+    <database/>
     <port>1521</port>
     <username>${metagrid_jdbc_db_user}</username>
     <password>${metagrid_jdbc_db_pwd}</password>
-    <servername />
-    <data_tablespace />
-    <index_tablespace />
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
     <attributes>
       <attribute>
         <code>CUSTOM_DRIVER_CLASS</code>
@@ -661,16 +661,16 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
   </connection>
   <connection>
     <name>Source_Generic_Database</name>
-    <server />
+    <server/>
     <type>GENERIC</type>
     <access>Native</access>
-    <database />
+    <database/>
     <port>1521</port>
     <username>${source_jdbc_db_user}</username>
     <password>${source_jdbc_db_pwd}</password>
-    <servername />
-    <data_tablespace />
-    <index_tablespace />
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
     <attributes>
       <attribute>
         <code>CUSTOM_DRIVER_CLASS</code>
@@ -845,15 +845,15 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
   <step>
     <name>Dummy (do nothing) 2</name>
     <type>Dummy</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -869,15 +869,15 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
   <step>
     <name>Dummy (do nothing) TABLE description exists (no further todo)</name>
     <type>Dummy</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -893,15 +893,15 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
   <step>
     <name>Dummy (do nothing): COLUMN description exists (no further todo)</name>
     <type>Dummy</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -917,15 +917,15 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
   <step>
     <name>Dummy (do nothing): Other Ext_Props</name>
     <type>Dummy</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -941,15 +941,15 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
   <step>
     <name>Dummy (do nothing): Other objects (currently unsupported)</name>
     <type>Dummy</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -965,15 +965,15 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
   <step>
     <name>Dummy (do nothing): id_COLUMN NULL</name>
     <type>Dummy</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -989,15 +989,15 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
   <step>
     <name>Dummy: id_TABLE NULL</name>
     <type>Dummy</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1013,13 +1013,13 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
   <step>
     <name>Filter rows: MS_Description only</name>
     <type>FilterRows</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <send_true_to>Filter rows: TABLE and VIEWS</send_true_to>
     <send_false_to>Dummy (do nothing): Other Ext_Props</send_false_to>
@@ -1028,7 +1028,7 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
         <negated>N</negated>
         <leftvalue>Ext_prop</leftvalue>
         <function>=</function>
-        <rightvalue />
+        <rightvalue/>
         <value>
           <name>constant</name>
           <type>String</type>
@@ -1036,11 +1036,11 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
           <length>-1</length>
           <precision>-1</precision>
           <isnull>N</isnull>
-          <mask />
+          <mask/>
         </value>
       </condition>
     </compare>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1056,13 +1056,13 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
   <step>
     <name>Filter rows: No COLUMN description</name>
     <type>FilterRows</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <send_true_to>Modified Java Script Value: Concat COLUMN description</send_true_to>
     <send_false_to>Dummy (do nothing): COLUMN description exists (no further todo)</send_false_to>
@@ -1071,19 +1071,19 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
         <negated>N</negated>
         <leftvalue>description_COLUMN_Replaced</leftvalue>
         <function>=</function>
-        <rightvalue />
+        <rightvalue/>
         <value>
           <name>constant</name>
           <type>String</type>
-          <text />
+          <text/>
           <length>-1</length>
           <precision>-1</precision>
           <isnull>Y</isnull>
-          <mask />
+          <mask/>
         </value>
       </condition>
     </compare>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1099,13 +1099,13 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
   <step>
     <name>Filter rows: No TABLE description</name>
     <type>FilterRows</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <send_true_to>Modified Java Script Value: Concat TABLE description 2</send_true_to>
     <send_false_to>Dummy (do nothing) TABLE description exists (no further todo)</send_false_to>
@@ -1117,21 +1117,21 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
             <negated>N</negated>
             <leftvalue>description_TABLE_Replaced</leftvalue>
             <function>=</function>
-            <rightvalue />
+            <rightvalue/>
             <value>
               <name>constant</name>
               <type>String</type>
-              <text />
+              <text/>
               <length>-1</length>
               <precision>-1</precision>
               <isnull>Y</isnull>
-              <mask />
+              <mask/>
             </value>
           </condition>
         </conditions>
       </condition>
     </compare>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1147,13 +1147,13 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
   <step>
     <name>Filter rows: Split COLUMN</name>
     <type>FilterRows</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <send_true_to>Dummy (do nothing) 2</send_true_to>
     <send_false_to>Replace in string: Bulk Import TABLE</send_false_to>
@@ -1162,7 +1162,7 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
         <negated>N</negated>
         <leftvalue>Obj_Type</leftvalue>
         <function>=</function>
-        <rightvalue />
+        <rightvalue/>
         <value>
           <name>constant</name>
           <type>String</type>
@@ -1170,11 +1170,11 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
           <length>-1</length>
           <precision>-1</precision>
           <isnull>N</isnull>
-          <mask />
+          <mask/>
         </value>
       </condition>
     </compare>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1190,13 +1190,13 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
   <step>
     <name>Filter rows: TABLE and VIEWS</name>
     <type>FilterRows</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <send_true_to>Modified Java Script Value - Set location and description</send_true_to>
     <send_false_to>Dummy (do nothing): Other objects (currently unsupported)</send_false_to>
@@ -1208,7 +1208,7 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
             <negated>N</negated>
             <leftvalue>Parent_Type</leftvalue>
             <function>=</function>
-            <rightvalue />
+            <rightvalue/>
             <value>
               <name>constant</name>
               <type>String</type>
@@ -1216,7 +1216,7 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
               <length>-1</length>
               <precision>-1</precision>
               <isnull>N</isnull>
-              <mask />
+              <mask/>
             </value>
           </condition>
           <condition>
@@ -1224,7 +1224,7 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
             <operator>OR</operator>
             <leftvalue>Parent_Type</leftvalue>
             <function>=</function>
-            <rightvalue />
+            <rightvalue/>
             <value>
               <name>constant</name>
               <type>String</type>
@@ -1232,13 +1232,13 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
               <length>-1</length>
               <precision>-1</precision>
               <isnull>N</isnull>
-              <mask />
+              <mask/>
             </value>
           </condition>
         </conditions>
       </condition>
     </compare>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1254,13 +1254,13 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
   <step>
     <name>Filter rows: id_COLUMN not null</name>
     <type>FilterRows</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <send_true_to>Replace in string: Bulk Import COLUMN</send_true_to>
     <send_false_to>Dummy (do nothing): id_COLUMN NULL</send_false_to>
@@ -1269,10 +1269,10 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
         <negated>N</negated>
         <leftvalue>id_COLUMN</leftvalue>
         <function>IS NOT NULL</function>
-        <rightvalue />
+        <rightvalue/>
       </condition>
     </compare>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1288,13 +1288,13 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
   <step>
     <name>Filter rows: id_TABLE NOT NULL</name>
     <type>FilterRows</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <send_true_to>Filter rows: Split COLUMN</send_true_to>
     <send_false_to>Dummy: id_TABLE NULL</send_false_to>
@@ -1303,10 +1303,10 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
         <negated>N</negated>
         <leftvalue>id_TABLE</leftvalue>
         <function>IS NOT NULL</function>
-        <rightvalue />
+        <rightvalue/>
       </condition>
     </compare>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1322,31 +1322,31 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
   <step>
     <name>Get JDBC Metadata - Best row identifier</name>
     <type>jdbcMetaData</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <connectionSource>Connection</connectionSource>
-    <connectionName>[local] chinook (MSSQL)</connectionName>
-    <connectionField />
-    <jdbcDriverField />
-    <jdbcUrlField />
-    <jdbcUserField />
-    <jdbcPasswordField />
+    <connectionName>[local] mip_fc_p (MSSQL)</connectionName>
+    <connectionField/>
+    <jdbcDriverField/>
+    <jdbcUrlField/>
+    <jdbcUserField/>
+    <jdbcPasswordField/>
     <alwaysPassInputRow>N</alwaysPassInputRow>
     <methodName>getBestRowIdentifier</methodName>
     <removeArgumentFields>N</removeArgumentFields>
     <argumentSourceFields>N</argumentSourceFields>
     <arguments>
-      <argument />
+      <argument/>
       <argument>dbo</argument>
       <argument>DATABASECHANGELOG</argument>
-      <argument />
-      <argument />
+      <argument/>
+      <argument/>
     </arguments>
     <outputFields>
       <outputField>
@@ -1382,7 +1382,7 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
         <rename>COL_PSEUDO_COLUMN</rename>
       </outputField>
     </outputFields>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1398,16 +1398,16 @@ harvested in Transformation 05 bulk import from datasource 08 get_rdbms_routines
   <step>
     <name>Modified Java Script Value - Set location and description</name>
     <type>ScriptValueMod</type>
-    <description />
+    <description/>
     <distribute>N</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <compatible>N</compatible>
-    <optimizationLevel />
+    <optimizationLevel/>
     <jsScripts>
       <jsScript>
         <jsScript_type>0</jsScript_type>
@@ -1447,7 +1447,7 @@ location_TABLE = vTABLE_CAT + vTABLE_SCHEM + vTABLE_NAME;
         <replace>N</replace>
       </field>
     </fields>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1463,16 +1463,16 @@ location_TABLE = vTABLE_CAT + vTABLE_SCHEM + vTABLE_NAME;
   <step>
     <name>Modified Java Script Value: Concat COLUMN description</name>
     <type>ScriptValueMod</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <compatible>N</compatible>
-    <optimizationLevel />
+    <optimizationLevel/>
     <jsScripts>
       <jsScript>
         <jsScript_type>0</jsScript_type>
@@ -1503,7 +1503,7 @@ writeToLog("r","*** " + location_TABLE + " / " + name_COLUMN + " / " + descripti
         <replace>N</replace>
       </field>
     </fields>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1519,16 +1519,16 @@ writeToLog("r","*** " + location_TABLE + " / " + name_COLUMN + " / " + descripti
   <step>
     <name>Modified Java Script Value: Concat TABLE description 2</name>
     <type>ScriptValueMod</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <compatible>N</compatible>
-    <optimizationLevel />
+    <optimizationLevel/>
     <jsScripts>
       <jsScript>
         <jsScript_type>0</jsScript_type>
@@ -1559,7 +1559,7 @@ newDescription = description_TABLE + tempCRLF + Description
         <replace>N</replace>
       </field>
     </fields>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1575,13 +1575,13 @@ newDescription = description_TABLE + tempCRLF + Description
   <step>
     <name>Replace in string: Bulk Import COLUMN</name>
     <type>ReplaceString</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <fields>
       <field>
@@ -1589,14 +1589,15 @@ newDescription = description_TABLE + tempCRLF + Description
         <out_stream_name>description_COLUMN_Replaced</out_stream_name>
         <use_regex>no</use_regex>
         <replace_string>(Added via Bulk Import)</replace_string>
-        <replace_by_string />
+        <replace_by_string/>
         <set_empty_string>N</set_empty_string>
-        <replace_field_by_string />
+        <replace_field_by_string/>
         <whole_word>no</whole_word>
         <case_sensitive>no</case_sensitive>
+        <is_unicode>no</is_unicode>
       </field>
     </fields>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1612,13 +1613,13 @@ newDescription = description_TABLE + tempCRLF + Description
   <step>
     <name>Replace in string: Bulk Import TABLE</name>
     <type>ReplaceString</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <fields>
       <field>
@@ -1626,14 +1627,15 @@ newDescription = description_TABLE + tempCRLF + Description
         <out_stream_name>description_TABLE_Replaced</out_stream_name>
         <use_regex>no</use_regex>
         <replace_string>(Added via Bulk Import)</replace_string>
-        <replace_by_string />
+        <replace_by_string/>
         <set_empty_string>N</set_empty_string>
-        <replace_field_by_string />
+        <replace_field_by_string/>
         <whole_word>no</whole_word>
         <case_sensitive>no</case_sensitive>
+        <is_unicode>no</is_unicode>
       </field>
     </fields>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1649,13 +1651,13 @@ newDescription = description_TABLE + tempCRLF + Description
   <step>
     <name>Stream lookup</name>
     <type>StreamLookup</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <from>Table input: db_table_field</from>
     <input_sorted>N</input_sorted>
@@ -1674,23 +1676,23 @@ newDescription = description_TABLE + tempCRLF + Description
       <value>
         <name>id</name>
         <rename>id_COLUMN</rename>
-        <default />
+        <default/>
         <type>Integer</type>
       </value>
       <value>
         <name>description</name>
         <rename>description_COLUMN</rename>
-        <default />
+        <default/>
         <type>String</type>
       </value>
       <value>
         <name>name</name>
         <rename>name_COLUMN</rename>
-        <default />
+        <default/>
         <type>String</type>
       </value>
     </lookup>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1706,13 +1708,13 @@ newDescription = description_TABLE + tempCRLF + Description
   <step>
     <name>Stream lookup: db_table</name>
     <type>StreamLookup</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <from>Table input: db_table</from>
     <input_sorted>N</input_sorted>
@@ -1727,17 +1729,17 @@ newDescription = description_TABLE + tempCRLF + Description
       <value>
         <name>id</name>
         <rename>id_TABLE</rename>
-        <default />
+        <default/>
         <type>Integer</type>
       </value>
       <value>
         <name>description</name>
         <rename>description_TABLE</rename>
-        <default />
+        <default/>
         <type>String</type>
       </value>
     </lookup>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1753,13 +1755,13 @@ newDescription = description_TABLE + tempCRLF + Description
   <step>
     <name>Table input: db_table</name>
     <type>TableInput</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <connection>Meta#Grid_Generic_Database</connection>
     <sql>SELECT
@@ -1775,11 +1777,11 @@ newDescription = description_TABLE + tempCRLF + Description
 FROM db_table
 WHERE fk_project_id=${project_id}</sql>
     <limit>0</limit>
-    <lookup />
+    <lookup/>
     <execute_each_row>N</execute_each_row>
     <variables_active>Y</variables_active>
     <lazy_conversion_active>N</lazy_conversion_active>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1795,13 +1797,13 @@ WHERE fk_project_id=${project_id}</sql>
   <step>
     <name>Table input: db_table_field</name>
     <type>TableInput</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <connection>Meta#Grid_Generic_Database</connection>
     <sql>SELECT
@@ -1817,11 +1819,11 @@ WHERE fk_project_id=${project_id}</sql>
 FROM db_table_field
 WHERE fk_project_id=${project_id}</sql>
     <limit>0</limit>
-    <lookup />
+    <lookup/>
     <execute_each_row>N</execute_each_row>
     <variables_active>Y</variables_active>
     <lazy_conversion_active>N</lazy_conversion_active>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1837,13 +1839,13 @@ WHERE fk_project_id=${project_id}</sql>
   <step>
     <name>Table input: extended_properties</name>
     <type>TableInput</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <connection>Source_Generic_Database</connection>
     <sql>SELECT
@@ -1863,11 +1865,11 @@ LEFT JOIN sys.columns col ON col.object_id = ext.major_id
 LEFT JOIN sys.parameters par ON par.object_id = ext.major_id
 	AND par.parameter_id = ext.minor_id</sql>
     <limit>0</limit>
-    <lookup />
+    <lookup/>
     <execute_each_row>N</execute_each_row>
     <variables_active>N</variables_active>
     <lazy_conversion_active>N</lazy_conversion_active>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1883,35 +1885,35 @@ LEFT JOIN sys.parameters par ON par.object_id = ext.major_id
   <step>
     <name>Update: db_table</name>
     <type>Update</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <connection>Meta#Grid_Generic_Database</connection>
     <skip_lookup>N</skip_lookup>
     <commit>100</commit>
     <use_batch>N</use_batch>
     <error_ignored>N</error_ignored>
-    <ignore_flag_field />
+    <ignore_flag_field/>
     <lookup>
-      <schema />
+      <schema/>
       <table>db_table</table>
       <key>
         <name>id_TABLE</name>
         <field>id</field>
         <condition>=</condition>
-        <name2 />
+        <name2/>
       </key>
       <value>
         <name>description</name>
         <rename>newDescription_TABLE</rename>
       </value>
     </lookup>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1927,35 +1929,35 @@ LEFT JOIN sys.parameters par ON par.object_id = ext.major_id
   <step>
     <name>Update: db_table_field (COLUMN)</name>
     <type>Update</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <connection>Meta#Grid_Generic_Database</connection>
     <skip_lookup>N</skip_lookup>
     <commit>100</commit>
     <use_batch>N</use_batch>
     <error_ignored>N</error_ignored>
-    <ignore_flag_field />
+    <ignore_flag_field/>
     <lookup>
-      <schema />
+      <schema/>
       <table>db_table_field</table>
       <key>
         <name>id_COLUMN</name>
         <field>id</field>
         <condition>=</condition>
-        <name2 />
+        <name2/>
       </key>
       <value>
         <name>description</name>
         <rename>newDescription_COLUMN</rename>
       </value>
     </lookup>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -1971,13 +1973,13 @@ LEFT JOIN sys.parameters par ON par.object_id = ext.major_id
   <step>
     <name>Write to log: Error on Update Column Description</name>
     <type>WriteToLog</type>
-    <description />
+    <description/>
     <distribute>Y</distribute>
-    <custom_distribution />
+    <custom_distribution/>
     <copies>1</copies>
     <partitioning>
       <method>none</method>
-      <schema_name />
+      <schema_name/>
     </partitioning>
     <loglevel>log_level_basic</loglevel>
     <displayHeader>Y</displayHeader>
@@ -2049,7 +2051,7 @@ LEFT JOIN sys.parameters par ON par.object_id = ext.major_id
         <name>ErrorCodes</name>
       </field>
     </fields>
-    <cluster_schema />
+    <cluster_schema/>
     <remotesteps>
       <input>
       </input>
@@ -2071,9 +2073,9 @@ LEFT JOIN sys.parameters par ON par.object_id = ext.major_id
       <descriptions_valuename>ErrorDescription</descriptions_valuename>
       <fields_valuename>ErrorFields</fields_valuename>
       <codes_valuename>ErrorCodes</codes_valuename>
-      <max_errors />
-      <max_pct_errors />
-      <min_pct_rows />
+      <max_errors/>
+      <max_pct_errors/>
+      <min_pct_rows/>
     </error>
   </step_error_handling>
   <slave-step-copy-partition-distribution>
