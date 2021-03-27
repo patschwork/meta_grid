@@ -20,4 +20,7 @@ with demo data (/meta_grid/db/demo_dwh_meta.sqlite)
 https://blog.meta-grid.com/docs/install-metagrid-on-ubuntu-20-04/
 
 ## Update
-To update the application please use https://github.com/patschwork/meta_grid_install_update/releases/latest
+
+Here is a guide: https://blog.meta-grid.com/category/docs/update/
+
+To update the application please use the latest release of https://github.com/patschwork/meta_grid_install_update/releases/latest
