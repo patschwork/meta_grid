@@ -63,12 +63,17 @@ class ImportController extends \yii\web\Controller
     protected function import_templates()
     {
         $array_templates = array();
+        $array_templates_head = array();
+        $array_templates_map_incoming = array();
+        $array_templates_map_importtable = array();
+
+
+
         $array_templates_head[1]["name"] = "INFORMATION_SCHEMA.COLUMNS";
         $array_templates_head[1]["header"] = true;
         $array_templates_head[1]["seperator"] = "\t";
         $array_templates_head[1]["staging_table_meta_grid"] = "ImportStageDbTable";
         
-        $array_templates_map_incoming = array();
         $array_templates_map_incoming[1][0]  = "db_table_name";
         $array_templates_map_incoming[1][1]  = "db_table_description";
         $array_templates_map_incoming[1][2]  = "db_table_field_name";
@@ -101,7 +106,6 @@ class ImportController extends \yii\web\Controller
 		$array_templates_map_incoming[1][29] = "additional_field_9";
 
         // INFORMATION_SCHEMA.COLUMNS
-        $array_templates_map_importtable = array();
         $array_templates_map_importtable[1][0] = "table_name";
         $array_templates_map_importtable[1][2] = "column_name";
         $array_templates_map_importtable[1][3] = "data_type";
@@ -112,6 +116,113 @@ class ImportController extends \yii\web\Controller
         $array_templates_map_importtable[1][23] = "numeric_scale";
         $array_templates_map_importtable[1][24] = "datetime_precision";
         $array_templates_map_importtable[1][25] = "character_maximum_length";
+
+
+        // ---------------------------------------------------------------------------------------------
+        $array_templates_head[2]["name"] = "SQuirreL Query Result Metadata - Copy with header";
+        $array_templates_head[2]["header"] = true;
+        $array_templates_head[2]["seperator"] = "\t";
+        $array_templates_head[2]["staging_table_meta_grid"] = "ImportStageDbTable";
+        
+        $array_templates_map_incoming[2][0]  = "db_table_name";
+        $array_templates_map_incoming[2][1]  = "db_table_description";
+        $array_templates_map_incoming[2][2]  = "db_table_field_name";
+        $array_templates_map_incoming[2][3]  = "db_table_field_datatype";
+        $array_templates_map_incoming[2][4]  = "db_table_field_description";
+        $array_templates_map_incoming[2][5]  = "db_table_type_name";
+        $array_templates_map_incoming[2][6]  = "db_table_context_name";
+        $array_templates_map_incoming[2][7]  = "db_table_context_prefix";
+        $array_templates_map_incoming[2][8]  = "isPrimaryKeyField";
+        $array_templates_map_incoming[2][9]  = "isForeignKeyField";
+        $array_templates_map_incoming[2][10] = "foreignKey_table_name";
+        $array_templates_map_incoming[2][11] = "foreignKey_table_field_name";
+		$array_templates_map_incoming[2][12] = "is_BusinessKey";
+		$array_templates_map_incoming[2][13] = "is_GDPR_relevant";
+		$array_templates_map_incoming[2][14] = "location";
+		$array_templates_map_incoming[2][15] = "database_or_catalog";
+		$array_templates_map_incoming[2][16] = "schema";
+		$array_templates_map_incoming[2][17] = "fk_project_id";
+		$array_templates_map_incoming[2][18] = "fk_db_database_id";
+		$array_templates_map_incoming[2][19] = "column_default_value";
+		$array_templates_map_incoming[2][20] = "column_cant_be_null";
+		$array_templates_map_incoming[2][21] = "additional_field_1";
+		$array_templates_map_incoming[2][22] = "additional_field_2";
+		$array_templates_map_incoming[2][23] = "additional_field_3";
+		$array_templates_map_incoming[2][24] = "additional_field_4";
+		$array_templates_map_incoming[2][25] = "additional_field_5";
+		$array_templates_map_incoming[2][26] = "additional_field_6";
+		$array_templates_map_incoming[2][27] = "additional_field_7";
+		$array_templates_map_incoming[2][28] = "additional_field_8";
+		$array_templates_map_incoming[2][29] = "additional_field_9";
+
+        // SQuirreL Query Result Metadata
+        $array_templates_map_importtable[2][0] = "getTableName";
+        $array_templates_map_importtable[2][2] = "getColumnName";
+        $array_templates_map_importtable[2][3] = "getColumnTypeName";
+        $array_templates_map_importtable[2][15] = "getCatalogName";
+        $array_templates_map_importtable[2][16] = "getSchemaName";
+        $array_templates_map_importtable[2][21] = "isNullable";
+        $array_templates_map_importtable[2][22] = "getPrecision";
+        $array_templates_map_importtable[2][23] = "getScale";
+        $array_templates_map_importtable[2][25] = "character_maximum_length";
+        $array_templates_map_importtable[2][26] = "isAutoIncrement";
+        $array_templates_map_importtable[2][27] = "isCaseSensitive";
+        $array_templates_map_importtable[2][28] = "isReadOnly";
+        $array_templates_map_importtable[2][29] = "isSigned";
+
+
+        // ---------------------------------------------------------------------------------------------
+        $array_templates_head[3]["name"] = "SQuirreL Query Result Metadata - Copy as WIKI table: Jira/Confluence";
+        $array_templates_head[3]["header"] = true;
+        $array_templates_head[3]["seperator"] = "|";
+        $array_templates_head[3]["staging_table_meta_grid"] = "ImportStageDbTable";
+        
+        $array_templates_map_incoming[3][0]  = "db_table_name";
+        $array_templates_map_incoming[3][1]  = "db_table_description";
+        $array_templates_map_incoming[3][2]  = "db_table_field_name";
+        $array_templates_map_incoming[3][3]  = "db_table_field_datatype";
+        $array_templates_map_incoming[3][4]  = "db_table_field_description";
+        $array_templates_map_incoming[3][5]  = "db_table_type_name";
+        $array_templates_map_incoming[3][6]  = "db_table_context_name";
+        $array_templates_map_incoming[3][7]  = "db_table_context_prefix";
+        $array_templates_map_incoming[3][8]  = "isPrimaryKeyField";
+        $array_templates_map_incoming[3][9]  = "isForeignKeyField";
+        $array_templates_map_incoming[3][10] = "foreignKey_table_name";
+        $array_templates_map_incoming[3][11] = "foreignKey_table_field_name";
+		$array_templates_map_incoming[3][12] = "is_BusinessKey";
+		$array_templates_map_incoming[3][13] = "is_GDPR_relevant";
+		$array_templates_map_incoming[3][14] = "location";
+		$array_templates_map_incoming[3][15] = "database_or_catalog";
+		$array_templates_map_incoming[3][16] = "schema";
+		$array_templates_map_incoming[3][17] = "fk_project_id";
+		$array_templates_map_incoming[3][18] = "fk_db_database_id";
+		$array_templates_map_incoming[3][19] = "column_default_value";
+		$array_templates_map_incoming[3][20] = "column_cant_be_null";
+		$array_templates_map_incoming[3][21] = "additional_field_1";
+		$array_templates_map_incoming[3][22] = "additional_field_2";
+		$array_templates_map_incoming[3][23] = "additional_field_3";
+		$array_templates_map_incoming[3][24] = "additional_field_4";
+		$array_templates_map_incoming[3][25] = "additional_field_5";
+		$array_templates_map_incoming[3][26] = "additional_field_6";
+		$array_templates_map_incoming[3][27] = "additional_field_7";
+		$array_templates_map_incoming[3][28] = "additional_field_8";
+		$array_templates_map_incoming[3][29] = "additional_field_9";
+
+        // SQuirreL Query Result Metadata - Copy as WIKI table: Jira/Confluence
+        $array_templates_map_importtable[3][0] = "getTableName";
+        $array_templates_map_importtable[3][2] = "getColumnName";
+        $array_templates_map_importtable[3][3] = "getColumnTypeName";
+        $array_templates_map_importtable[3][15] = "getCatalogName";
+        $array_templates_map_importtable[3][16] = "getSchemaName";
+        $array_templates_map_importtable[3][21] = "isNullable";
+        $array_templates_map_importtable[3][22] = "getPrecision";
+        $array_templates_map_importtable[3][23] = "getScale";
+        $array_templates_map_importtable[3][25] = "character_maximum_length";
+        $array_templates_map_importtable[3][26] = "isAutoIncrement";
+        $array_templates_map_importtable[3][27] = "isCaseSensitive";
+        $array_templates_map_importtable[3][28] = "isReadOnly";
+        $array_templates_map_importtable[3][29] = "isSigned";
+
 
         $array_templates_return = array();
         $array_templates_return['head'] = $array_templates_head;
@@ -131,13 +242,28 @@ class ImportController extends \yii\web\Controller
                 $array_csv = array();
                 $lines = explode("\n", $model->pastedValues);
                 $i = 0;
+                $template_id = $model->import_template_id;
+                $sep = $this->import_templates()["head"][$template_id]["seperator"];
+                if ($model->seperator !== null && $model->seperator !== "")
+                {
+                    $sep = $model->seperator;
+                    Yii::trace("Set seperator to '$sep' because user set field", "actionIndex");
+                }
+
                 foreach ($lines as $line)
                 {
+                    if (($template_id == 3) && ($i == 0))
+                    {
+                        $line = str_replace($sep.$sep, $sep, $line); // headerline has "||" as seperator to this template
+                    }
+                    if ($template_id == 3)
+                    {
+                        $line = substr($line, 1, strlen($line)-2); // each line starts and ends with an "|" seperator
+                    }
                     $i++;
-                    $array_csv[] = str_getcsv($line, "\t");
+                    $array_csv[] = str_getcsv($line, $sep);
                 }
                 Yii::trace("$i lines to process", "actionIndex");
-                $template_id = $model->import_template_id;
                 $fk_project_id = $model->fk_project_id;
                 $replace_string_to_null = $model->replace_string_to_null;
                 $use_header = true;
@@ -187,6 +313,9 @@ class ImportController extends \yii\web\Controller
         $loadData = array();
         $attrData = array();
         $importColumnIdMap = array();
+
+        // Yii::trace($import_templates, "mapValues:316");
+
         foreach($import_templates["map_incoming"][$template_id] as $key=>$value)
         {
             if (array_key_exists($key, $import_templates["map_importtable"][$template_id])) { 
@@ -263,7 +392,7 @@ class ImportController extends \yii\web\Controller
 
     protected function import_templates_transformations($template_id, $row_array, $staging_table_meta_grid, $fk_project_id)
     {
-        if ($template_id == 1)
+        if (($template_id == 1) || ($template_id == 2) || ($template_id == 3))
         {
             if (array_key_exists("database_or_catalog", $row_array[$staging_table_meta_grid]))
             {

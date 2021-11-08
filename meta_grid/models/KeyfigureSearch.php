@@ -18,8 +18,8 @@ class KeyfigureSearch extends VKeyfigureSearchinterface
     public function rules()
     {
         return [
-            [['id', 'fk_object_type_id', 'fk_project_id', 'fk_deleted_status_id'], 'integer'],
-            [['uuid', 'name', 'description', 'formula', 'aggregation', 'character', 'type', 'unit', 'value_range'], 'safe'],
+            [['id', 'fk_object_type_id', 'fk_project_id', 'fk_deleted_status_id', 'fk_object_persistence_method_id', 'fk_datamanagement_process_id'], 'integer'],
+            [['uuid', 'name', 'description', 'formula', 'aggregation', 'character', 'type', 'unit', 'value_range', 'source_definition', 'source_definition_language', 'source_comment'], 'safe'],
             [['cumulation_possible'], 'boolean'],
             [['fk_client_id'], 'integer'],
         ];
@@ -75,6 +75,8 @@ class KeyfigureSearch extends VKeyfigureSearchinterface
             'fk_client_id' => $this->fk_client_id,
             'cumulation_possible' => $this->cumulation_possible,
             'fk_deleted_status_id' => $this->fk_deleted_status_id,
+            'fk_object_persistence_method_id' => $this->fk_object_persistence_method_id,
+            'fk_datamanagement_process_id' => $this->fk_datamanagement_process_id,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
@@ -85,7 +87,10 @@ class KeyfigureSearch extends VKeyfigureSearchinterface
             ->andFilterWhere(['like', 'character', $this->character])
             ->andFilterWhere(['like', 'type', $this->type])
             ->andFilterWhere(['like', 'unit', $this->unit])
-            ->andFilterWhere(['like', 'value_range', $this->value_range]);
+            ->andFilterWhere(['like', 'value_range', $this->value_range])
+            ->andFilterWhere(['like', 'source_definition', $this->source_definition])
+            ->andFilterWhere(['like', 'source_definition_language', $this->source_definition_language])
+            ->andFilterWhere(['like', 'source_comment', $this->source_comment]);
 
         return $dataProvider;
     }

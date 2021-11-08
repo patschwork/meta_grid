@@ -49,6 +49,7 @@ ShortcutAsset::register($this);
             ]);
             echo Nav::widget([
                 'options' => ['class' => 'navbar-nav navbar-right'],
+                'encodeLabels' => false,
                 'items' => [
                     ['label' => 'Home', 'url' => ['/site/index']],                    
                 		

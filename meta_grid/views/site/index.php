@@ -226,6 +226,17 @@ if (!Yii::$app->user->isGuest)
             }
         }   
     }
+   
+    $db_path = str_replace("sqlite:", "", Yii::$app->db->dsn);
+    if (\vendor\meta_grid\helper\Utils::DBisReadOnly(Yii::$app->db->getDriverName(), $db_path))
+    {
+        echo yii\bootstrap\Alert::widget([
+            'options' => [
+                'class' => 'alert-warning',
+            ],
+            'body' =>Yii::t('app','The database is read-only. Try to insert or update objects will cause to an error message'),
+            ]);
+    }
 
     $configfile = Yii::$app->getBasePath()."/config/web.php";
     if (file_exists($configfile))

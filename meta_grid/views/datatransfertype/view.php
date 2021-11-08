@@ -10,6 +10,8 @@ use yii\bootstrap\Tabs;
 use yii\data\ActiveDataProvider;
 // Kommentierung pro Object ...}
 
+use dmstr\web\MermaidAsset;
+MermaidAsset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $model app\models\DataTransferType */
@@ -43,6 +45,15 @@ $this->params['breadcrumbs'][] = $this->title;
             'uuid:ntext',
             'name:ntext',
             'description:html',
+            [
+             'label' => Yii::t('app', 'Object Persistence Method'),
+             'value' =>              	$model->fk_object_persistence_method_id == "" ? $model->fk_object_persistence_method_id : $model->fkObjectPersistenceMethod->name
+            ],
+            [
+             'label' => Yii::t('app', 'Datamanagement Process'),
+             'value' =>              	$model->fk_datamanagement_process_id == "" ? $model->fk_datamanagement_process_id : $model->fkDatamanagementProcess->name
+            ],
+            'source_definition_language:ntext',
         ],
     ]) ?>
 

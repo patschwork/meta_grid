@@ -29,6 +29,10 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'url') ?>
 
+    <?= $form->field($model, 'fk_object_persistence_method_id') ?>
+
+    <?= $form->field($model, 'fk_datamanagement_process_id') ?>
+
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
         <?= Html::resetButton(Yii::t('app', 'Reset'), ['class' => 'btn btn-default']) ?>

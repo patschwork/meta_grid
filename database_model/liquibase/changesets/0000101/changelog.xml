@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000101/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000101" context="object_type">
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO object_type (id,name) VALUES (26,'object_persistence_method');
+		]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO object_type (id,name) VALUES (27,'datamanagement_process');
+		]]>		
+		</sql>
+
+		<comment>
+		<![CDATA[
+		Register new object_type for object_persistence_method and datamanagement_process.
+		Used objects:
+			object_type
+		Phabricator tasks:
+			T159
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

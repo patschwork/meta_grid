@@ -180,6 +180,38 @@ else
             		],
 			]),
             ],
+*/            // 'source_definition:ntext',
+            // 'source_comment:ntext',
+/*            [
+             'label' => Yii::t('app', 'Object Persistence Method'),
+             'value' => function($model) {
+             		return $model->fk_object_persistence_method_id == "" ? $model->fk_object_persistence_method_id : (isset($_GET["searchShow"]) ? $model->fkObjectPersistenceMethod->name . ' [' . $model->fk_object_persistence_method_id . ']' : $model->fkObjectPersistenceMethod->name);
+             		},
+            'filter' => Select2::widget([
+            		'model' => $searchModel,
+            		'attribute' => 'fk_object_persistence_method_id',
+            		'data' => ArrayHelper::map(app\models\ObjectPersistenceMethod::find()->asArray()->all(), 'id', 'name'),
+            		'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_fkObjectPersistenceMethod', 'multiple' => true],
+            		'pluginOptions' => [
+            				'allowClear' => true
+            		],
+			]),
+            ],
+*//*            [
+             'label' => Yii::t('app', 'Datamanagement Process'),
+             'value' => function($model) {
+             		return $model->fk_datamanagement_process_id == "" ? $model->fk_datamanagement_process_id : (isset($_GET["searchShow"]) ? $model->fkDatamanagementProcess->name . ' [' . $model->fk_datamanagement_process_id . ']' : $model->fkDatamanagementProcess->name);
+             		},
+            'filter' => Select2::widget([
+            		'model' => $searchModel,
+            		'attribute' => 'fk_datamanagement_process_id',
+            		'data' => ArrayHelper::map(app\models\DatamanagementProcess::find()->asArray()->all(), 'id', 'name'),
+            		'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_fkDatamanagementProcess', 'multiple' => true],
+            		'pluginOptions' => [
+            				'allowClear' => true
+            		],
+			]),
+            ],
 */        ],
     ]); ?>
 

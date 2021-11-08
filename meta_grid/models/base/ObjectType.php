@@ -5,25 +5,42 @@ namespace app\models\base;
 use Yii;
 
 /**
- * This is the model class for table "object_type".
+ * This is the base-model class for table "object_type".
  *
  * @property integer $id
  * @property string $uuid
  * @property string $name
  *
- * @property Keyfigure[] $keyfigures
- * @property Sourcesystem[] $sourcesystems
- * @property Report[] $reports
- * @property MapObject2Object[] $mapObject2Objects
  * @property Attribute[] $attributes
- * @property DbTable[] $dbTables
- * @property DbTableField[] $dbTableFields
- * @property DbTableContext[] $dbTableContexts
+ * @property Bracket[] $brackets
+ * @property Bracket[] $brackets0
+ * @property BracketSearchPattern[] $bracketSearchPatterns
+ * @property CleanupQueue[] $cleanupQueues
+ * @property Contact[] $contacts
+ * @property ContactGroup[] $contactGroups
+ * @property DataDeliveryObject[] $dataDeliveryObjects
+ * @property DataDeliveryObjectOLD[] $dataDeliveryObjectOLDs
+ * @property DataTransferProcess[] $dataTransferProcesses
+ * @property DatamanagementProcess[] $datamanagementProcesses
  * @property DbDatabase[] $dbDatabases
- * @property Scheduling[] $schedulings
- * @property Parameter[] $parameters
- * @property ObjectComment[] $objectComments
+ * @property DbTable[] $dbTables
+ * @property DbTableContext[] $dbTableContexts
+ * @property DbTableField[] $dbTableFields
+ * @property DeletedStatus[] $deletedStatuses
  * @property Glossary[] $glossaries
+ * @property Keyfigure[] $keyfigures
+ * @property MapObject2Object[] $mapObject2Objects
+ * @property MapObject2Object[] $mapObject2Objects0
+ * @property MappingQualifier[] $mappingQualifiers
+ * @property ObjectComment[] $objectComments
+ * @property ObjectComment[] $objectComments0
+ * @property ObjectPersistenceMethod[] $objectPersistenceMethods
+ * @property Parameter[] $parameters
+ * @property PerspectiveFilter[] $perspectiveFilters
+ * @property PerspectiveFilter[] $perspectiveFilters0
+ * @property Scheduling[] $schedulings
+ * @property Sourcesystem[] $sourcesystems
+ * @property Url[] $urls
  */
 class ObjectType extends \yii\db\ActiveRecord
 {
@@ -42,7 +59,7 @@ class ObjectType extends \yii\db\ActiveRecord
     {
         return [
             [['uuid'], 'string'],
-            [['name'], 'string', 'max' => 250]
+            [['name'], 'string', 'max' => 250],
         ];
     }
 
@@ -61,67 +78,89 @@ class ObjectType extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getKeyfigures()
+    public function getAttributes_meta_grid_table()
     {
-        return $this->hasMany(Keyfigure::className(), ['fk_object_type_id' => 'id']);
+        return $this->hasMany(\app\models\Attribute::className(), ['fk_object_type_id' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getSourcesystems()
+    public function getBrackets()
     {
-        return $this->hasMany(Sourcesystem::className(), ['fk_object_type_id' => 'id']);
+        return $this->hasMany(\app\models\Bracket::className(), ['fk_object_type_id_as_searchFilter' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getReports()
+    public function getBrackets0()
     {
-        return $this->hasMany(Report::className(), ['fk_object_type_id' => 'id']);
+        return $this->hasMany(\app\models\Bracket::className(), ['fk_object_type_id' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getMapObject2Objects()
+    public function getBracketSearchPatterns()
     {
-        return $this->hasMany(MapObject2Object::className(), ['ref_fk_object_type_id_1' => 'id']);
+        return $this->hasMany(\app\models\BracketSearchPattern::className(), ['fk_object_type_id' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    /*
-    public function getAttributes()
+    public function getCleanupQueues()
     {
-        return $this->hasMany(Attribute::className(), ['fk_object_type_id' => 'id']);
-    }
-    */
-    
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getDbTables()
-    {
-        return $this->hasMany(DbTable::className(), ['fk_object_type_id' => 'id']);
+        return $this->hasMany(\app\models\CleanupQueue::className(), ['ref_fk_object_type_id' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDbTableFields()
+    public function getContacts()
     {
-        return $this->hasMany(DbTableField::className(), ['fk_object_type_id' => 'id']);
+        return $this->hasMany(\app\models\Contact::className(), ['fk_object_type_id' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDbTableContexts()
+    public function getContactGroups()
     {
-        return $this->hasMany(DbTableContext::className(), ['fk_object_type_id' => 'id']);
+        return $this->hasMany(\app\models\ContactGroup::className(), ['fk_object_type_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDataDeliveryObjects()
+    {
+        return $this->hasMany(\app\models\DataDeliveryObject::className(), ['fk_object_type_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDataDeliveryObjectOLDs()
+    {
+        return $this->hasMany(\app\models\DataDeliveryObjectOLD::className(), ['fk_object_type_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDataTransferProcesses()
+    {
+        return $this->hasMany(\app\models\DataTransferProcess::className(), ['fk_object_type_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDatamanagementProcesses()
+    {
+        return $this->hasMany(\app\models\DatamanagementProcess::className(), ['fk_object_type_id' => 'id']);
     }
 
     /**
@@ -129,31 +168,39 @@ class ObjectType extends \yii\db\ActiveRecord
      */
     public function getDbDatabases()
     {
-        return $this->hasMany(DbDatabase::className(), ['fk_object_type_id' => 'id']);
+        return $this->hasMany(\app\models\DbDatabase::className(), ['fk_object_type_id' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getSchedulings()
+    public function getDbTables()
     {
-        return $this->hasMany(Scheduling::className(), ['fk_object_type_id' => 'id']);
+        return $this->hasMany(\app\models\DbTable::className(), ['fk_object_type_id' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getParameters()
+    public function getDbTableContexts()
     {
-        return $this->hasMany(Parameter::className(), ['fk_object_type_id' => 'id']);
+        return $this->hasMany(\app\models\DbTableContext::className(), ['fk_object_type_id' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getObjectComments()
+    public function getDbTableFields()
     {
-        return $this->hasMany(ObjectComment::className(), ['fk_object_type_id' => 'id']);
+        return $this->hasMany(\app\models\DbTableField::className(), ['fk_object_type_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDeletedStatuses()
+    {
+        return $this->hasMany(\app\models\DeletedStatus::className(), ['fk_object_type_id' => 'id']);
     }
 
     /**
@@ -161,6 +208,110 @@ class ObjectType extends \yii\db\ActiveRecord
      */
     public function getGlossaries()
     {
-        return $this->hasMany(Glossary::className(), ['fk_object_type_id' => 'id']);
+        return $this->hasMany(\app\models\Glossary::className(), ['fk_object_type_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getKeyfigures()
+    {
+        return $this->hasMany(\app\models\Keyfigure::className(), ['fk_object_type_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMapObject2Objects()
+    {
+        return $this->hasMany(\app\models\MapObject2Object::className(), ['ref_fk_object_type_id_2' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMapObject2Objects0()
+    {
+        return $this->hasMany(\app\models\MapObject2Object::className(), ['ref_fk_object_type_id_1' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMappingQualifiers()
+    {
+        return $this->hasMany(\app\models\MappingQualifier::className(), ['fk_object_type_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getObjectComments()
+    {
+        return $this->hasMany(\app\models\ObjectComment::className(), ['ref_fk_object_type_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getObjectComments0()
+    {
+        return $this->hasMany(\app\models\ObjectComment::className(), ['fk_object_type_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getObjectPersistenceMethods()
+    {
+        return $this->hasMany(\app\models\ObjectPersistenceMethod::className(), ['fk_object_type_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getParameters()
+    {
+        return $this->hasMany(\app\models\Parameter::className(), ['fk_object_type_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPerspectiveFilters()
+    {
+        return $this->hasMany(\app\models\PerspectiveFilter::className(), ['ref_fk_object_type_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPerspectiveFilters0()
+    {
+        return $this->hasMany(\app\models\PerspectiveFilter::className(), ['fk_object_type_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSchedulings()
+    {
+        return $this->hasMany(\app\models\Scheduling::className(), ['fk_object_type_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSourcesystems()
+    {
+        return $this->hasMany(\app\models\Sourcesystem::className(), ['fk_object_type_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUrls()
+    {
+        return $this->hasMany(\app\models\Url::className(), ['fk_object_type_id' => 'id']);
     }
 }

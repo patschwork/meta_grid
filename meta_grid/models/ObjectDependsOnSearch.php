@@ -18,7 +18,7 @@ class ObjectDependsOnSearch extends VObjectDependsOnSearchinterface
     public function rules()
     {
         return [
-            [['id', 'ref_fk_object_id_parent', 'ref_fk_object_type_id_parent', 'ref_fk_object_id_child', 'ref_fk_object_type_id_child'], 'integer'],
+            [['id', 'ref_fk_object_id_parent', 'ref_fk_object_type_id_parent', 'ref_fk_object_id_child', 'ref_fk_object_type_id_child', 'fk_object_persistence_method_id', 'fk_datamanagement_process_id'], 'integer'],
             [['uuid'], 'safe'],
         ];
     }
@@ -72,6 +72,8 @@ class ObjectDependsOnSearch extends VObjectDependsOnSearchinterface
             'ref_fk_object_type_id_parent' => $this->ref_fk_object_type_id_parent,
             'ref_fk_object_id_child' => $this->ref_fk_object_id_child,
             'ref_fk_object_type_id_child' => $this->ref_fk_object_type_id_child,
+            'fk_object_persistence_method_id' => $this->fk_object_persistence_method_id,
+            'fk_datamanagement_process_id' => $this->fk_datamanagement_process_id,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid]);

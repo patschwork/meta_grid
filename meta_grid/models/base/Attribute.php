@@ -14,10 +14,14 @@ use Yii;
  * @property string $name
  * @property string $description
  * @property string $formula
+ * @property integer $fk_object_persistence_method_id
+ * @property integer $fk_datamanagement_process_id
  *
- * @property Bracket[] $brackets
+ * @property DatamanagementProcess $fkDatamanagementProcess
+ * @property ObjectPersistenceMethod $fkObjectPersistenceMethod
  * @property Project $fkProject
  * @property ObjectType $fkObjectType
+ * @property Bracket[] $brackets
  */
 class Attribute extends \yii\db\ActiveRecord
 {
@@ -36,10 +40,13 @@ class Attribute extends \yii\db\ActiveRecord
     {
         return [
             [['uuid'], 'string'],
-            [['fk_object_type_id', 'fk_project_id'], 'integer'],
+            [['fk_object_type_id', 'fk_project_id', 'fk_object_persistence_method_id', 'fk_datamanagement_process_id'], 'integer'],
             [['name'], 'string', 'max' => 250],
-            [['description'], 'string', 'max' => 4000],
-            [['formula'], 'string', 'max' => 4000]
+            [['description', 'formula'], 'string', 'max' => 4000],
+            [['fk_datamanagement_process_id'], 'exist', 'skipOnError' => true, 'targetClass' => DatamanagementProcess::className(), 'targetAttribute' => ['fk_datamanagement_process_id' => 'id']],
+            [['fk_object_persistence_method_id'], 'exist', 'skipOnError' => true, 'targetClass' => ObjectPersistenceMethod::className(), 'targetAttribute' => ['fk_object_persistence_method_id' => 'id']],
+            [['fk_project_id'], 'exist', 'skipOnError' => true, 'targetClass' => Project::className(), 'targetAttribute' => ['fk_project_id' => 'id']],
+            [['fk_object_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => ObjectType::className(), 'targetAttribute' => ['fk_object_type_id' => 'id']],
         ];
     }
 
@@ -56,15 +63,25 @@ class Attribute extends \yii\db\ActiveRecord
             'name' => Yii::t('app', 'Name'),
             'description' => Yii::t('app', 'Description'),
             'formula' => Yii::t('app', 'Formula'),
+            'fk_object_persistence_method_id' => Yii::t('app', 'Fk Object Persistence Method ID'),
+            'fk_datamanagement_process_id' => Yii::t('app', 'Fk Datamanagement Process ID'),
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getBrackets()
+    public function getFkDatamanagementProcess()
     {
-        return $this->hasMany(\app\models\Bracket::className(), ['fk_attribute_id' => 'id']);
+        return $this->hasOne(\app\models\DatamanagementProcess::className(), ['id' => 'fk_datamanagement_process_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFkObjectPersistenceMethod()
+    {
+        return $this->hasOne(\app\models\ObjectPersistenceMethod::className(), ['id' => 'fk_object_persistence_method_id']);
     }
 
     /**
@@ -82,5 +99,12 @@ class Attribute extends \yii\db\ActiveRecord
     {
         return $this->hasOne(\app\models\ObjectType::className(), ['id' => 'fk_object_type_id']);
     }
-    
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getBrackets()
+    {
+        return $this->hasMany(\app\models\Bracket::className(), ['fk_attribute_id' => 'id']);
+    }
 }

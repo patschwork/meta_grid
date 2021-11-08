@@ -104,7 +104,7 @@ class PerspectiveHelper
 		{
 			array_push($navBarItems, [
 				'url' => ['/site/language', 'language' => $languageItem->language_id,],
-				'label' => $languageItem->name . (Yii::$app->language == $languageItem->language_id ? " [X]" : "") , 
+				'label' => $languageItem->name . (Yii::$app->language == $languageItem->language_id ? ' <span style="color: #80ced6;" class="glyphicon glyphicon-ok-sign"></span>' : "") , 
 				'visible' => True
 				]);
 		}

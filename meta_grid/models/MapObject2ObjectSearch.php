@@ -18,7 +18,7 @@ class MapObject2ObjectSearch extends VMapObject2ObjectSearchinterface
     public function rules()
     {
         return [
-            [['id', 'ref_fk_object_id_1', 'ref_fk_object_type_id_1', 'ref_fk_object_id_2', 'ref_fk_object_type_id_2', 'fk_mapping_qualifier_id'], 'integer'],
+            [['id', 'ref_fk_object_id_1', 'ref_fk_object_type_id_1', 'ref_fk_object_id_2', 'ref_fk_object_type_id_2', 'fk_mapping_qualifier_id', 'fk_object_persistence_method_id', 'fk_datamanagement_process_id'], 'integer'],
             [['uuid'], 'safe'],
         ];
     }
@@ -73,6 +73,8 @@ class MapObject2ObjectSearch extends VMapObject2ObjectSearchinterface
             'ref_fk_object_id_2' => $this->ref_fk_object_id_2,
             'ref_fk_object_type_id_2' => $this->ref_fk_object_type_id_2,
             'fk_mapping_qualifier_id' => $this->fk_mapping_qualifier_id,
+            'fk_object_persistence_method_id' => $this->fk_object_persistence_method_id,
+            'fk_datamanagement_process_id' => $this->fk_datamanagement_process_id,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid]);

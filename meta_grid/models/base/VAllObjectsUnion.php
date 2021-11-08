@@ -5,7 +5,7 @@ namespace app\models\base;
 use Yii;
 
 /**
- * This is the model class for table "v_All_Objects_Union".
+ * This is the base-model class for table "v_All_Objects_Union".
  *
  * @property integer $id
  * @property integer $fk_object_type_id

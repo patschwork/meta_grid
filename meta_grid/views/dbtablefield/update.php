@@ -21,6 +21,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 'projectList' => $projectList,		// autogeneriert ueber gii/CRUD
 'db_tableList' => $db_tableList,		// autogeneriert ueber gii/CRUD
 'deleted_statusList' => $deleted_statusList,		// autogeneriert ueber gii/CRUD
+'object_persistence_methodList' => $object_persistence_methodList,		// autogeneriert ueber gii/CRUD
+'datamanagement_processList' => $datamanagement_processList,		// autogeneriert ueber gii/CRUD
         
 			'fk_db_table_id' => isset($fk_db_table_id) ? $fk_db_table_id : null,
 				    ]) ?>

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # Instllation or update meta#grid
 # on every OS
-# v1.2
+# v1.3
 
 import base_lib
 import shutil
@@ -22,6 +22,8 @@ const_inst_mode_update = "upd"
 behaviour = const_inst_mode_update
 git_repo_url = "https://github.com/patschwork/meta_grid.git"
 git_repo_zip_url = "https://github.com/patschwork/meta_grid/archive/master.zip"
+min_php_version = "7.0"
+max_php_version = "7.1" # Upper version limit for PHP (depends on the used Yii2 framework)
 used_rdbms = const_sqlite
 folderfile_Database = "../../../dwh_meta.sqlite"
 folder_Frontend = "../../../frontend/yii/basic"
@@ -29,12 +31,14 @@ folder_Bulkimport = "../../../bulk_import/kettle"
 liquibasePathExe = "/opt/meta_grid/tools/liquibase/liquibase"
 kitchenPathExe = "/opt/meta_grid/tools/pdi/kitchen.sh"
 pythonExe = "python"
+phpExe = "php"
 kettleMajorJobFilename = "run_import.kjb"
 metagridMajorFrontendFilename = "gii_crud.sh"
 if (base_lib.is_windows()):
     liquibasePathExe = os.path.join("C:\\", "meta_grid", "tools", "liquibase", "liquibase.bat")
     kitchenPathExe = os.path.join("C:\\", "meta_grid", "tools", "pdi", "kitchen.bat")
     pythonExe = os.path.join("C:\\", "python27", "python.exe")
+    phpExe = os.path.join("C:\\", "xampp", "php", "php.exe")
     metagridMajorFrontendFilename = "gii_crud.bat" # yii.bat finds to many entries
 
 ## ###################################################
@@ -144,6 +148,11 @@ pythonExe=base_lib.get_input_color("Path to Python executable", actual_value, py
 base_lib.set_user_settings(ini_user_settings_path, section, 'pythonExe', pythonExe)
 
 section="tools"
+actual_value=base_lib.get_user_settings(ini_user_settings_path, section, 'phpExe', phpExe)
+liquibasePathExe=base_lib.get_input_color("Path to PHP executable", actual_value, phpExe, user_option_search_file=os.path.basename(phpExe))
+base_lib.set_user_settings(ini_user_settings_path, section, 'phpExe', phpExe)
+
+section="tools"
 actual_value=base_lib.get_user_settings(ini_user_settings_path, section, 'kitchenPathExe', kitchenPathExe)
 kitchenPathExe=base_lib.get_input_color("Path to Pentaho Data Integration (kitchen.sh) executable", actual_value, user_option_search_file=os.path.basename(kitchenPathExe))
 base_lib.set_user_settings(ini_user_settings_path, section, 'kitchenPathExe', kitchenPathExe)
@@ -157,6 +166,40 @@ bla("- Create folder for log messages if not exits", "header", False)
 returnVal = base_lib.createDirIfNotExists(logfilepath)
 if (returnVal != None):
     bla(returnVal.split("||")[1], returnVal.split("||")[0], True)
+
+# Check if PHP is found
+try:
+    if (not os.path.exists(phpExe)):
+        if (not base_lib.is_windows()):
+            # on Linux or MAC OS we can try "which php"...
+            which_result = base_lib.which_executable(phpExe)
+            if not which_result:
+                raise Exception("PHP executable (" + phpExe + ") not found! Installatation/Update not completed!")
+            else:
+                phpExe = which_result[0] # OK, replace the value
+                if (not os.path.exists(phpExe)):
+                    raise Exception("PHP executable (" + phpExe + ") not found! Installatation/Update not completed!")
+                else:
+                    base_lib.set_user_settings(ini_user_settings_path, section, 'phpExe', phpExe) # overwrite for the next start
+                    pass
+        else:
+            raise Exception("PHP executable (" + phpExe + ") not found! Installatation/Update not completed!")
+except Exception as e:
+    bla(str(e), "error", True, True)
+    exit()
+
+# Check PHP version
+phpVersionInstalled = base_lib.get_php_version(phpExe)
+phpVerOkMin = base_lib.check_if_php_version_is_ok(phpVersionInstalled, min_php_version)
+phpVerOkMax = base_lib.check_if_php_version_is_ok(max_php_version, phpVersionInstalled)
+try:
+    if (not phpVerOkMin):
+        raise Exception("The installed PHP version is not compatible with meta#grid (Installed: " + phpVersionInstalled + ", Required min. Version: " + min_php_version + ")! Installatation/Update not completed!")
+    if (not phpVerOkMax):
+        raise Exception("The installed PHP version is not compatible with meta#grid (Installed: " + phpVersionInstalled + ", Required below max. Version: " + max_php_version + ")! Installatation/Update not completed!")
+except Exception as e:
+    bla(str(e), "error", True, True)
+    exit()
 
 # Check if kitchen is found
 try:
@@ -210,6 +253,13 @@ if (param_checkGitInstalled):
 else:
     bla("- param_checkGitInstalled=False", "noExecutionBecauseParamFalse", True)
 
+
+## TEST/DEV (Don't want to download the zip file from GitHub again and again... ) {...
+# param_remove_folder_WorkingDir=False
+# param_remove_folder_FreshRepo=False
+# param_download_repo_zip=False
+## ..}
+
 if (param_remove_folder_WorkingDir):
     bla("- Removing working dir", "header", False)
     shutil.rmtree(folder_WorkingDir, ignore_errors=True)
@@ -221,6 +271,7 @@ bla("- Create folder for working items if not exits", "header", False)
 returnVal = base_lib.createDirIfNotExists(folder_WorkingDir)
 if (returnVal != None):
     bla(returnVal.split("||")[1], returnVal.split("||")[0], True)
+
 
 # Check delete folder <mg_Inst_Dir>/updating/<folder_WorkingDir>/fresh_repo
 if (param_remove_folder_FreshRepo):
@@ -237,6 +288,7 @@ if (param_makeClone):
     #base_lib.writeOutputLog(logfilepath, logfile, res)
 else:
     bla("- param_makeClone=False", "noExecutionBecauseParamFalse", True)
+
 
 # Download zip from GitHub
 if (param_download_repo_zip):
@@ -263,6 +315,38 @@ if (param_extract_repo_zip):
 else:
     bla("- param_extract_repo_zip=False", "noExecutionBecauseParamFalse", True)
 
+# simulate to an alternate folder
+if (simulate_alternate_folder):
+    folder_Frontend = "new_frontend"
+
+abspath_frontend = base_lib.getFilePathRelativeScriptPath(os.path.dirname(folder_Frontend), os.path.basename(folder_Frontend))
+
+# Yii2 Check requirements (we have to use the folder downloaded from the repository... We want to check the to be installed version)
+# Note: Still in Yii2 2.0.33 Requirement for PHP is minimum 5.4.0. That's not true in fact... :-(
+res = base_lib.yii_check_requirements(phpExe, abspath_frontend)
+for i in range(len(res)-4,len(res)-1):
+    if (res[i].find("Errors:") >= 0):
+        yii2reqsummaryline = res[i]
+        # yii2reqsummaryline = "Errors: 2   Warnings: 9   Total checks: 24" # Test error condition
+        if (yii2reqsummaryline.find("Errors: 0") < 0):
+            errMsg="The Yii2 requirements checker indicates errors"
+            bla(errMsg + ":", "error", True)
+            base_lib.writeOutputLog(logfilepath, logfile, "Yii2 PHP requirements check output:")
+            base_lib.writeOutputLog(logfilepath, logfile, "\r\n" + base_lib.listToString(res) + "---------------------------------------------")
+            bla(base_lib.listToString(res), "error", True)
+            bla(msg="\r\nSee the requirements for meta#grid and the Yii2 framework here: https://blog.meta-grid.com/docs", action=None, withLooging=True, wait=False)
+            ignoreYii2CheckerErrors=base_lib.get_input_color("Ignore the errors and proceed (this is not recommended) [Y/N]", "N", "N")
+            if (ignoreYii2CheckerErrors[0].upper() != "Y"):
+                bla("Installation/Update was interrupted because of '" + errMsg + "'", "error", True)
+                exit()
+        else:
+            if (yii2reqsummaryline.find("Warnings: 0") < 0):
+                bla("The Yii2 requirements checker indicates a warning hint:", "warning", True)
+                bla(yii2reqsummaryline, "warning", True)
+                bla("For details look into the logfile (" + os.path.join(logfilepath,logfile) + ")", "warning", True)
+                base_lib.writeOutputLog(logfilepath, logfile, "Yii2 PHP requirements check output:")
+                base_lib.writeOutputLog(logfilepath, logfile, "\r\n" + base_lib.listToString(res) + "---------------------------------------------")
+
 # Create backup folder
 bla("- Create folder for backups if not exits", "header", False)
 returnVal = base_lib.createDirIfNotExists(folder_Backup)
@@ -287,15 +371,10 @@ if (used_rdbms == const_sqlite):
     else:
         bla("- param_create_db_backup=False", "noExecutionBecauseParamFalse", True)   
 
-# simulate to an alternate folder
-if (simulate_alternate_folder):
-    folder_Frontend = "new_frontend"
-
 # Make a backup of the current frontend files (Yii2)
 if (param_create_frontend_backup):
     try:
         bla("- Create backup of frontend files", "header", False)
-        abspath_frontend = base_lib.getFilePathRelativeScriptPath(os.path.dirname(folder_Frontend), os.path.basename(folder_Frontend))
         zipfilename_frontend = os.path.join(folder_Backup, DATETIMENOW + "_frontend.zip")
         base_lib.makeZipFromFolder(abspath_frontend, zipfilename_frontend)
         bla("Successful: Created a zip file (" + base_lib.getFilePathRelativeScriptPath(folder_Backup, os.path.basename(zipfilename_frontend)) + ") from frontend folder (" + abspath_frontend + ")", "OK", True)

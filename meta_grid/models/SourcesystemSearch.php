@@ -18,7 +18,7 @@ class SourcesystemSearch extends VSourcesystemSearchinterface
     public function rules()
     {
         return [
-            [['id', 'fk_object_type_id', 'fk_project_id', 'fk_contact_group_id_as_supporter', 'fk_deleted_status_id'], 'integer'],
+            [['id', 'fk_object_type_id', 'fk_project_id', 'fk_contact_group_id_as_supporter', 'fk_deleted_status_id', 'fk_object_persistence_method_id', 'fk_datamanagement_process_id'], 'integer'],
             [['uuid', 'name', 'description'], 'safe'],
             [['fk_client_id'], 'integer'],
         ];
@@ -74,6 +74,8 @@ class SourcesystemSearch extends VSourcesystemSearchinterface
             'fk_client_id' => $this->fk_client_id,
             'fk_contact_group_id_as_supporter' => $this->fk_contact_group_id_as_supporter,
             'fk_deleted_status_id' => $this->fk_deleted_status_id,
+            'fk_object_persistence_method_id' => $this->fk_object_persistence_method_id,
+            'fk_datamanagement_process_id' => $this->fk_datamanagement_process_id,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])

@@ -5,7 +5,7 @@ namespace app\models\base;
 use Yii;
 
 /**
- * This is the model class for table "bracket".
+ * This is the base-model class for table "bracket".
  *
  * @property integer $id
  * @property string $uuid
@@ -15,7 +15,11 @@ use Yii;
  * @property string $description
  * @property integer $fk_attribute_id
  * @property integer $fk_object_type_id_as_searchFilter
+ * @property integer $fk_object_persistence_method_id
+ * @property integer $fk_datamanagement_process_id
  *
+ * @property DatamanagementProcess $fkDatamanagementProcess
+ * @property ObjectPersistenceMethod $fkObjectPersistenceMethod
  * @property ObjectType $fkObjectTypeIdAsSearchFilter
  * @property Attribute $fkAttribute
  * @property Project $fkProject
@@ -39,9 +43,11 @@ class Bracket extends \yii\db\ActiveRecord
     {
         return [
             [['uuid'], 'string'],
-            [['fk_object_type_id', 'fk_project_id', 'fk_attribute_id', 'fk_object_type_id_as_searchFilter'], 'integer'],
+            [['fk_object_type_id', 'fk_project_id', 'fk_attribute_id', 'fk_object_type_id_as_searchFilter', 'fk_object_persistence_method_id', 'fk_datamanagement_process_id'], 'integer'],
             [['name'], 'string', 'max' => 250],
             [['description'], 'string', 'max' => 4000],
+            [['fk_datamanagement_process_id'], 'exist', 'skipOnError' => true, 'targetClass' => DatamanagementProcess::className(), 'targetAttribute' => ['fk_datamanagement_process_id' => 'id']],
+            [['fk_object_persistence_method_id'], 'exist', 'skipOnError' => true, 'targetClass' => ObjectPersistenceMethod::className(), 'targetAttribute' => ['fk_object_persistence_method_id' => 'id']],
             [['fk_object_type_id_as_searchFilter'], 'exist', 'skipOnError' => true, 'targetClass' => ObjectType::className(), 'targetAttribute' => ['fk_object_type_id_as_searchFilter' => 'id']],
             [['fk_attribute_id'], 'exist', 'skipOnError' => true, 'targetClass' => Attribute::className(), 'targetAttribute' => ['fk_attribute_id' => 'id']],
             [['fk_project_id'], 'exist', 'skipOnError' => true, 'targetClass' => Project::className(), 'targetAttribute' => ['fk_project_id' => 'id']],
@@ -63,7 +69,25 @@ class Bracket extends \yii\db\ActiveRecord
             'description' => Yii::t('app', 'Description'),
             'fk_attribute_id' => Yii::t('app', 'Fk Attribute ID'),
             'fk_object_type_id_as_searchFilter' => Yii::t('app', 'Fk Object Type Id As Search Filter'),
+            'fk_object_persistence_method_id' => Yii::t('app', 'Fk Object Persistence Method ID'),
+            'fk_datamanagement_process_id' => Yii::t('app', 'Fk Datamanagement Process ID'),
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFkDatamanagementProcess()
+    {
+        return $this->hasOne(\app\models\DatamanagementProcess::className(), ['id' => 'fk_datamanagement_process_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFkObjectPersistenceMethod()
+    {
+        return $this->hasOne(\app\models\ObjectPersistenceMethod::className(), ['id' => 'fk_object_persistence_method_id']);
     }
 
     /**
@@ -71,7 +95,7 @@ class Bracket extends \yii\db\ActiveRecord
      */
     public function getFkObjectTypeIdAsSearchFilter()
     {
-        return $this->hasOne(ObjectType::className(), ['id' => 'fk_object_type_id_as_searchFilter']);
+        return $this->hasOne(\app\models\ObjectType::className(), ['id' => 'fk_object_type_id_as_searchFilter']);
     }
 
     /**
@@ -79,7 +103,7 @@ class Bracket extends \yii\db\ActiveRecord
      */
     public function getFkAttribute()
     {
-        return $this->hasOne(Attribute::className(), ['id' => 'fk_attribute_id']);
+        return $this->hasOne(\app\models\Attribute::className(), ['id' => 'fk_attribute_id']);
     }
 
     /**
@@ -87,7 +111,7 @@ class Bracket extends \yii\db\ActiveRecord
      */
     public function getFkProject()
     {
-        return $this->hasOne(Project::className(), ['id' => 'fk_project_id']);
+        return $this->hasOne(\app\models\Project::className(), ['id' => 'fk_project_id']);
     }
 
     /**
@@ -95,7 +119,7 @@ class Bracket extends \yii\db\ActiveRecord
      */
     public function getFkObjectType()
     {
-        return $this->hasOne(ObjectType::className(), ['id' => 'fk_object_type_id']);
+        return $this->hasOne(\app\models\ObjectType::className(), ['id' => 'fk_object_type_id']);
     }
 
     /**
@@ -103,15 +127,6 @@ class Bracket extends \yii\db\ActiveRecord
      */
     public function getBracketSearchPatterns()
     {
-        return $this->hasMany(BracketSearchPattern::className(), ['fk_bracket_id' => 'id']);
-    }
-
-    /**
-     * @inheritdoc
-     * @return BracketQuery the active query used by this AR class.
-     */
-    public static function find()
-    {
-        return new BracketQuery(get_called_class());
+        return $this->hasMany(\app\models\BracketSearchPattern::className(), ['fk_bracket_id' => 'id']);
     }
 }

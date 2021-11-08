@@ -1,0 +1,591 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000100/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000100" context="">
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE keyfigure ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE keyfigure ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE keyfigure ADD COLUMN "source_definition" TEXT DEFAULT NULL;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE keyfigure ADD COLUMN "source_definition_language" TEXT(250) DEFAULT NULL;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE keyfigure ADD COLUMN "source_comment" TEXT DEFAULT NULL;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE client ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE client ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE project ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE project ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE sourcesystem ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE sourcesystem ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE data_delivery_object ADD COLUMN "source_definition" TEXT DEFAULT NULL;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE data_delivery_object ADD COLUMN "source_comment" TEXT DEFAULT NULL;
+		]]>		
+		</sql>		
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE data_delivery_object ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE data_delivery_object ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE map_object_2_object ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE map_object_2_object ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE tool ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE tool ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE object_depends_on ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE object_depends_on ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE attribute ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE attribute ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE tool_type ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE tool_type ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_table ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_table ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_table ADD COLUMN "source_definition" TEXT DEFAULT NULL;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_table ADD COLUMN "source_comment" TEXT DEFAULT NULL;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_table_field ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_table_field ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_table_field ADD COLUMN "source_definition" TEXT DEFAULT NULL;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_table_field ADD COLUMN "source_comment" TEXT DEFAULT NULL;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_table_context ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_table_context ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_database ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_database ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_database ADD COLUMN "source_definition" TEXT DEFAULT NULL;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_database ADD COLUMN "source_definition_language" TEXT(250) DEFAULT NULL;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_database ADD COLUMN "source_comment" TEXT DEFAULT NULL;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE scheduling ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE scheduling ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE scheduling ADD COLUMN "source_definition" TEXT DEFAULT NULL;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE scheduling ADD COLUMN "source_definition_language" TEXT(250) DEFAULT NULL;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE scheduling ADD COLUMN "source_comment" TEXT DEFAULT NULL;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE parameter ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE parameter ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE parameter ADD COLUMN "source_definition" TEXT DEFAULT NULL;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE parameter ADD COLUMN "source_definition_language" TEXT(250) DEFAULT NULL;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE parameter ADD COLUMN "source_comment" TEXT DEFAULT NULL;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_table_type ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_table_type ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_table_type ADD COLUMN "source_definition_language" TEXT(250) DEFAULT NULL;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE object_comment ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE object_comment ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE glossary ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE glossary ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE data_delivery_type ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE data_delivery_type ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE data_delivery_type ADD COLUMN "source_definition_language" TEXT(250) DEFAULT NULL;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE data_transfer_process ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE data_transfer_process ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE data_transfer_process ADD COLUMN "source_definition" TEXT DEFAULT NULL;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE data_transfer_process ADD COLUMN "source_comment" TEXT DEFAULT NULL;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE data_transfer_type ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE data_transfer_type ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE data_transfer_type ADD COLUMN "source_definition_language" TEXT(250) DEFAULT NULL;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE contact_group ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE contact_group ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE contact ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE contact ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE bracket ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE bracket ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE bracket_searchPattern ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE bracket_searchPattern ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE perspective_filter ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE perspective_filter ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE mapping_qualifier ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE mapping_qualifier ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE url ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE url ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE deleted_status ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE deleted_status ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE export_file_db_table_queue ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE export_file_db_table_queue ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE export_file_db_table_params ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE export_file_db_table_params ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE export_file_db_table_result ADD COLUMN "fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id");
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE export_file_db_table_result ADD COLUMN "fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id");       
+        ]]>		
+		</sql>
+
+		<comment>
+		<![CDATA[
+		New fields "fk_datamanagement_process_id", "source_definition", "source_definition_language", "source_comment" for several tables.
+		Used objects:
+			keyfigure
+            client
+            project
+            sourcesystem
+            data_delivery_object
+            map_object_2_object
+            tool
+            object_depends_on
+            attribute
+            tool_type
+            db_table
+            db_table_field
+            db_table_context
+            db_database
+            scheduling
+            parameter
+            db_table_type
+            object_comment
+            glossary
+            data_delivery_type
+            data_transfer_process
+            data_transfer_type
+            contact_group
+            contact
+            bracket
+            bracket_searchPattern
+            perspective_filter
+            mapping_qualifier
+            url
+            deleted_status
+            export_file_db_table_queue
+            export_file_db_table_params
+            export_file_db_table_result
+		Phabricator tasks:
+			T159
+			T161
+			T162
+        ]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000105/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000105" context="">
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE keyfigure_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE keyfigure_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE client_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE client_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE project_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE project_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE sourcesystem_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE sourcesystem_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>	
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE map_object_2_object_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE map_object_2_object_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE tool_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE tool_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE object_depends_on_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE object_depends_on_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE attribute_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE attribute_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE tool_type_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE tool_type_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_table_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_table_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>	
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_table_field_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_table_field_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>	
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_table_context_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_table_context_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_database_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_database_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>	
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE scheduling_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE scheduling_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE parameter_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE parameter_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_table_type_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE db_table_type_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE object_comment_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE object_comment_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE glossary_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE glossary_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE data_delivery_type_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE data_delivery_type_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE data_transfer_process_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE data_transfer_process_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE data_transfer_type_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE data_transfer_type_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE contact_group_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE contact_group_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE contact_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE contact_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE bracket_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE bracket_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE bracket_searchPattern_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE bracket_searchPattern_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE perspective_filter_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE perspective_filter_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE mapping_qualifier_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE mapping_qualifier_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE url_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE url_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE deleted_status_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE deleted_status_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>
+
+		<comment>
+		<![CDATA[
+		New fields "fk_datamanagement_process_uuid", "fk_object_persistence_method_uuid" for several tables.
+		Used objects:
+			keyfigure_log
+            client_log
+            project_log
+            sourcesystem_log
+            data_delivery_object_log
+            map_object_2_object_log
+            tool_log
+            object_depends_on_log
+            attribute_log
+            tool_type_log
+            db_table_log
+            db_table_field_log
+            db_table_context_log
+            db_database_log
+            scheduling_log
+            parameter_log
+            db_table_type_log
+            object_comment_log
+            glossary_log
+            data_delivery_type_log
+            data_transfer_process_log
+            data_transfer_type_log
+            contact_group_log
+            contact_log
+            bracket_log
+            bracket_searchPattern_log
+            perspective_filter_log
+            mapping_qualifier_log
+            url_log
+            deleted_status_log
+		Phabricator tasks:
+			T159
+			T161
+			T162
+        ]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

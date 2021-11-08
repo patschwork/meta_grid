@@ -18,6 +18,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= $this->render('_form', [
         'model' => $model,
 		//'projectList' => $projectList,		// autogeneriert ueber gii/CRUD
-							]) ?>
+		'object_persistence_methodList' => $object_persistence_methodList,		// autogeneriert ueber gii/CRUD
+'datamanagement_processList' => $datamanagement_processList,		// autogeneriert ueber gii/CRUD
+					]) ?>
 
 </div>

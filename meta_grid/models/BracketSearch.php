@@ -18,7 +18,7 @@ class BracketSearch extends VBracketSearchinterface
     public function rules()
     {
         return [
-            [['id', 'fk_object_type_id', 'fk_project_id', 'fk_attribute_id', 'fk_object_type_id_as_searchFilter'], 'integer'],
+            [['id', 'fk_object_type_id', 'fk_project_id', 'fk_attribute_id', 'fk_object_type_id_as_searchFilter', 'fk_object_persistence_method_id', 'fk_datamanagement_process_id'], 'integer'],
             [['uuid', 'name', 'description'], 'safe'],
             [['fk_client_id'], 'integer'],
         ];
@@ -74,6 +74,8 @@ class BracketSearch extends VBracketSearchinterface
             'fk_client_id' => $this->fk_client_id,
             'fk_attribute_id' => $this->fk_attribute_id,
             'fk_object_type_id_as_searchFilter' => $this->fk_object_type_id_as_searchFilter,
+            'fk_object_persistence_method_id' => $this->fk_object_persistence_method_id,
+            'fk_datamanagement_process_id' => $this->fk_datamanagement_process_id,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])

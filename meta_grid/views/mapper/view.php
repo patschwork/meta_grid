@@ -10,6 +10,8 @@ use yii\bootstrap\Tabs;
 use yii\data\ActiveDataProvider;
 // Kommentierung pro Object ...}
 
+use dmstr\web\MermaidAsset;
+MermaidAsset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $model app\models\MapObject2Object */
@@ -48,6 +50,14 @@ $this->params['breadcrumbs'][] = $this->title;
             [
              'label' => Yii::t('app', 'Mapping Qualifier'),
              'value' =>              	$model->fk_mapping_qualifier_id == "" ? $model->fk_mapping_qualifier_id : $model->fkMappingQualifier->name
+            ],
+            [
+             'label' => Yii::t('app', 'Object Persistence Method'),
+             'value' =>              	$model->fk_object_persistence_method_id == "" ? $model->fk_object_persistence_method_id : $model->fkObjectPersistenceMethod->name
+            ],
+            [
+             'label' => Yii::t('app', 'Datamanagement Process'),
+             'value' =>              	$model->fk_datamanagement_process_id == "" ? $model->fk_datamanagement_process_id : $model->fkDatamanagementProcess->name
             ],
         ],
     ]) ?>

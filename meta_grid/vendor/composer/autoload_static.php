@@ -65,6 +65,7 @@ class ComposerStaticInit5c3224428ea877134f6d9d3a4cc8e57d
         'd' => 
         array (
             'dosamigos\\selectize\\' => 20,
+            'dmstr\\web\\' => 10,
             'dmstr\\helpers\\' => 14,
             'dmstr\\db\\tests\\' => 15,
             'dmstr\\db\\' => 9,
@@ -232,6 +233,10 @@ class ComposerStaticInit5c3224428ea877134f6d9d3a4cc8e57d
         'dosamigos\\selectize\\' => 
         array (
             0 => __DIR__ . '/..' . '/2amigos/yii2-selectize-widget/src',
+        ),
+        'dmstr\\web\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/dmstr/yii2-mermaid-asset/src',
         ),
         'dmstr\\helpers\\' => 
         array (

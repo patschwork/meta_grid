@@ -18,8 +18,8 @@ class DataDeliveryObjectSearch extends VDataDeliveryObjectSearchinterface
     public function rules()
     {
         return [
-            [['id', 'fk_object_type_id', 'fk_project_id', 'fk_tool_id', 'fk_data_delivery_type_id', 'fk_contact_group_id_as_data_owner', 'fk_deleted_status_id'], 'integer'],
-            [['uuid', 'name', 'description'], 'safe'],
+            [['id', 'fk_object_type_id', 'fk_project_id', 'fk_tool_id', 'fk_data_delivery_type_id', 'fk_contact_group_id_as_data_owner', 'fk_deleted_status_id', 'fk_object_persistence_method_id', 'fk_datamanagement_process_id'], 'integer'],
+            [['uuid', 'name', 'description', 'source_definition', 'source_comment'], 'safe'],
             [['fk_client_id'], 'integer'],
         ];
     }
@@ -76,11 +76,15 @@ class DataDeliveryObjectSearch extends VDataDeliveryObjectSearchinterface
             'fk_data_delivery_type_id' => $this->fk_data_delivery_type_id,
             'fk_contact_group_id_as_data_owner' => $this->fk_contact_group_id_as_data_owner,
             'fk_deleted_status_id' => $this->fk_deleted_status_id,
+            'fk_object_persistence_method_id' => $this->fk_object_persistence_method_id,
+            'fk_datamanagement_process_id' => $this->fk_datamanagement_process_id,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
             ->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'description', $this->description]);
+            ->andFilterWhere(['like', 'description', $this->description])
+            ->andFilterWhere(['like', 'source_definition', $this->source_definition])
+            ->andFilterWhere(['like', 'source_comment', $this->source_comment]);
 
         return $dataProvider;
     }

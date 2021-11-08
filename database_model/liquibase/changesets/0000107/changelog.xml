@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000107/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000107" context="app_config">
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO app_config (key,valueSTRING,description) 
+VALUES ('bulk_loader_java_home',NULL,'Set JAVA_HOME variable before executing the bulk_loader execution');
+        ]]>		
+		</sql>
+		<rollback>
+			<sql stripComments="false" splitStatements="false">
+			<![CDATA[
+	DELETE FROM app_config 
+	WHERE app_config='bulk_loader_java_home';
+			]]>		
+			</sql>
+		</rollback>
+		<comment>
+		<![CDATA[
+		Insert new parameter into app_config.
+		Used objects:
+			app_config
+		Phabricator tasks:
+			T154
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

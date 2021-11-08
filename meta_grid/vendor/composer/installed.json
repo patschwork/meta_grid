@@ -605,6 +605,26 @@
         ]
     },
     {
+        "name": "bower-asset/mermaid",
+        "version": "7.0.3",
+        "version_normalized": "7.0.3.0",
+        "source": {
+            "type": "git",
+            "url": "git@github.com:knsv/mermaid.git",
+            "reference": "1076d671374898a1e75b778911832da01f57b88f"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/knsv/mermaid/zipball/1076d671374898a1e75b778911832da01f57b88f",
+            "reference": "1076d671374898a1e75b778911832da01f57b88f"
+        },
+        "type": "bower-asset",
+        "installation-source": "dist",
+        "license": [
+            "MIT"
+        ]
+    },
+    {
         "name": "bower-asset/microplugin",
         "version": "v0.0.3",
         "version_normalized": "0.0.3.0",
@@ -630,7 +650,7 @@
         "version_normalized": "1.3.2.0",
         "source": {
             "type": "git",
-            "url": "git@github.com:bestiejs/punycode.js.git",
+            "url": "https://github.com/bestiejs/punycode.js.git",
             "reference": "38c8d3131a82567bfef18da09f7f4db68c84f8a3"
         },
         "dist": {
@@ -659,7 +679,7 @@
         "version_normalized": "0.12.4.0",
         "source": {
             "type": "git",
-            "url": "git@github.com:selectize/selectize.js.git",
+            "url": "https://github.com/selectize/selectize.js.git",
             "reference": "47e048662d865c4f1ea3b2337de5e06e92fd9530"
         },
         "dist": {
@@ -1218,6 +1238,45 @@
         ]
     },
     {
+        "name": "dmstr/yii2-mermaid-asset",
+        "version": "0.0.2",
+        "version_normalized": "0.0.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/dmstr/yii2-mermaid-asset.git",
+            "reference": "ee7dee5f9795149d85d497d49eec1da2110cd1f0"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/dmstr/yii2-mermaid-asset/zipball/ee7dee5f9795149d85d497d49eec1da2110cd1f0",
+            "reference": "ee7dee5f9795149d85d497d49eec1da2110cd1f0",
+            "shasum": ""
+        },
+        "require": {
+            "bower-asset/mermaid": "^7.0.3",
+            "yiisoft/yii2": "2.0.*"
+        },
+        "time": "2017-07-10T10:16:54+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "dmstr\\web\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Tobias Munk",
+                "email": "tobias@diemeisterei.de"
+            }
+        ],
+        "description": "Mermaid asset bundle for Yii 2.0 Framework"
+    },
+    {
         "name": "dnoegel/php-xdg-base-dir",
         "version": "0.1",
         "version_normalized": "0.1.0.0",
@@ -1568,7 +1627,8 @@
             "data",
             "faker",
             "fixtures"
-        ]
+        ],
+        "abandoned": true
     },
     {
         "name": "gecko-packages/gecko-php-unit",

@@ -35,10 +35,10 @@ use conquer\codemirror\CodemirrorAsset;
         <?php 
             echo $form->field($model, 'fk_project_id')->dropDownList($projectList, ['id'=>'name']);
         ?>
-        <?= $form->field($model, 'seperator') ?>
         <?php
             echo $form->field($model, 'import_template_id')->dropDownList($templateList, ['id'=>'name']);
         ?>
+        <?= $form->field($model, 'seperator') ?>
         <?= $form->field($model, 'replace_string_to_null') ?>
         <?php
             // echo $form->field($model, 'pastedValues')->textarea();

@@ -13,6 +13,8 @@ use app\models\ObjectType;
 use app\models\Project;
 use app\models\Tool;
 use app\models\DeletedStatus;
+use app\models\ObjectPersistenceMethod;
+use app\models\DatamanagementProcess;
 use Da\User\Filter\AccessRuleFilter;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
@@ -75,6 +77,32 @@ class DbdatabaseController extends Controller
 			$deleted_statusList[$deleted_status->id] = $deleted_status->name;
 		}
 		return $deleted_statusList;
+	}
+
+	private function getObjectPersistenceMethodList()
+	{
+		// autogeneriert ueber gii/CRUD
+		$object_persistence_methodModel = new ObjectPersistenceMethod();
+		$object_persistence_methods = $object_persistence_methodModel::find()->all();
+		$object_persistence_methodList = array();
+		foreach($object_persistence_methods as $object_persistence_method)
+		{
+			$object_persistence_methodList[$object_persistence_method->id] = $object_persistence_method->name;
+		}
+		return $object_persistence_methodList;
+	}
+
+	private function getDatamanagementProcessList()
+	{
+		// autogeneriert ueber gii/CRUD
+		$datamanagement_processModel = new DatamanagementProcess();
+		$datamanagement_processs = $datamanagement_processModel::find()->all();
+		$datamanagement_processList = array();
+		foreach($datamanagement_processs as $datamanagement_process)
+		{
+			$datamanagement_processList[$datamanagement_process->id] = $datamanagement_process->name;
+		}
+		return $datamanagement_processList;
 	}
 	
     public function behaviors()
@@ -245,6 +273,8 @@ class DbdatabaseController extends Controller
 'projectList' => $this->getProjectList(),		// autogeneriert ueber gii/CRUD
 'toolList' => $this->getToolList(),		// autogeneriert ueber gii/CRUD
 'deleted_statusList' => $this->getDeletedStatusList(),		// autogeneriert ueber gii/CRUD
+'object_persistence_methodList' => $this->getObjectPersistenceMethodList(),		// autogeneriert ueber gii/CRUD
+'datamanagement_processList' => $this->getDatamanagementProcessList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
     }
@@ -273,6 +303,8 @@ class DbdatabaseController extends Controller
 'projectList' => $this->getProjectList(),		// autogeneriert ueber gii/CRUD
 'toolList' => $this->getToolList(),		// autogeneriert ueber gii/CRUD
 'deleted_statusList' => $this->getDeletedStatusList(),		// autogeneriert ueber gii/CRUD
+'object_persistence_methodList' => $this->getObjectPersistenceMethodList(),		// autogeneriert ueber gii/CRUD
+'datamanagement_processList' => $this->getDatamanagementProcessList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
 		    }
@@ -382,6 +414,7 @@ Parameter: overwrite_description_if_existing_differs=, default=Y : If there desc
 
 		$bulk_loader_executable = \vendor\meta_grid\helper\Utils::get_app_config("bulk_loader_executable");
 		$bulk_loader_metagrid_jdbc_url = \vendor\meta_grid\helper\Utils::get_app_config("bulk_loader_metagrid_jdbc_url");
+		$bulk_loader_java_home = \vendor\meta_grid\helper\Utils::get_app_config("bulk_loader_java_home");
 
 		$model = $this->findModel($id);
 		$bulkLoaderParameterArr = $this->bulkloadertemplate();
@@ -420,25 +453,74 @@ Parameter: overwrite_description_if_existing_differs=, default=Y : If there desc
 				$bulkLoaderParameterArr["source_jdbc_driver_class"] = "org.postgresql.Driver";
 				$bulkLoaderParameterArr["source_jdbc_url"] = "jdbc:postgresql://127.0.0.1:5432/$model->name";
 			}
+		}		
+		if (stripos($model->fkTool->vendor, "ORACLE") !== false)
+		{
+			if (stripos($model->fkTool->tool_name, "MySQL") !== false)
+			{
+				$bulkLoaderParameterArr["source_jdbc_driver_class"] = "com.mysql.jdbc.Driver";
+				$bulkLoaderParameterArr["source_jdbc_url"] = "jdbc:mysql://127.0.0.1:3306/$model->name";
+			}
+		}		
+		if (stripos($model->fkTool->vendor, "SQLite") !== false)
+		{
+			if (stripos($model->fkTool->tool_name, "SQLite") !== false)
+			{
+				$bulkLoaderParameterArr["source_jdbc_driver_class"] = "org.sqlite.JDBC";
+				$bulkLoaderParameterArr["source_jdbc_url"] = "jdbc:sqlite:/myPath/$model->name";
+			}
+		}
+		if (stripos($model->fkTool->vendor, "Intersystems") !== false)
+		{
+			if (stripos($model->fkTool->tool_name, "Intersystems Cach") !== false)
+			{
+				$bulkLoaderParameterArr["source_jdbc_driver_class"] = "com.intersys.jdbc.CacheDriver";
+				$bulkLoaderParameterArr["source_jdbc_url"] = "jdbc:Cache://127.0.0.1:1972/$model->name";
+			}
 		}
 
 		$exec = ($bulk_loader_executable !== NULL && $bulk_loader_executable !== "") ? $bulk_loader_executable : "kitchen.sh";
 		$returnValue = "";
 		$returnValue .= "## Linux". "\n";
+		$returnValue .= "\n";
+		$returnValue .= ($bulk_loader_java_home !== null && $bulk_loader_java_home !== "") ? "export JAVA_HOME=\"$bulk_loader_java_home\"" : "# export JAVA_HOME=\"&lt;You can set this parameter in the table app_config with the key='bulk_loader_java_home'&gt;\"";
+		$returnValue .= "\n";
+		$returnValue .= "\n";
 		$returnValue .= $exec.' -file:"run_import.kjb" \\' . "\n";
 		foreach($bulkLoaderParameterArr as $key=>$value)
 		{
 			$returnValue .= "-param:" . $key . "=" . '"' . $value . '"' . " \\" . "\n";
 		}
 		
+		$returnValue .= "-----------------------------------------------------------------------------------". "\n";
+
 		$exec = ($bulk_loader_executable !== NULL && $bulk_loader_executable !== "") ? $bulk_loader_executable : "kitchen.bat";
 		$returnValue .= "\n";
-		$returnValue .= ":: Windows". "\n";
-		$returnValue .= $exec.' /file:"run_import.kjb"' . " ";
+		$returnValue .= "REM Windows". "\n";
+		$returnValue .= "@echo off". "\n";
+		$returnValue .= "\n";
+		$returnValue .= ($bulk_loader_java_home !== NULL && $bulk_loader_java_home !== "") ? "SET JAVA_HOME=$bulk_loader_java_home" : "REM SET JAVA_HOME=&lt;You can set this parameter in the table app_config with the key='bulk_loader_java_home'&gt;";
+		$returnValue .= "\n";
+		$returnValue .= "\n";
 		foreach($bulkLoaderParameterArr as $key=>$value)
 		{
-			$returnValue .= '"/param:' . $key . "=" . $value . '"' . " ^" . "\n";
+			$returnValue .= 'SET ' . $key . "=" . $value . "\n";
 		}
+		$returnValue .= "\n";
+		$returnValue .= "pushd %cd%" . "\n";
+		$returnValue .= "SET startcd=%cd%" . "\n";
+		$returnValue .= "SET kettle_bin_path=" . dirname($exec) . "\n";
+		$returnValue .= 'cd "%kettle_bin_path%' . "\n";
+		$returnValue .= 'SET kitchen_bin=' . basename($exec) . "\n";
+		$returnValue .= 'SET job_path="run_import.kjb"' . "\n";
+		$returnValue .= 'start %kitchen_bin% /file:%job_path% ';
+		foreach($bulkLoaderParameterArr as $key=>$value)
+		{
+			$returnValue .= '"/param:' . $key . "=%" . $key . '%" ' ;
+		}
+		$returnValue .= "\n";
+		$returnValue .= 'cd %startcd%' . "\n";
+		$returnValue .= 'popd' . "\n";
 
 		return $returnValue;
 	}

@@ -15,6 +15,8 @@ use app\models\Tool;
 use app\models\DataDeliveryType;
 use app\models\ContactGroup;
 use app\models\DeletedStatus;
+use app\models\ObjectPersistenceMethod;
+use app\models\DatamanagementProcess;
 use Da\User\Filter\AccessRuleFilter;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
@@ -104,6 +106,32 @@ class DatadeliveryobjectController extends Controller
 			$deleted_statusList[$deleted_status->id] = $deleted_status->name;
 		}
 		return $deleted_statusList;
+	}
+
+	private function getObjectPersistenceMethodList()
+	{
+		// autogeneriert ueber gii/CRUD
+		$object_persistence_methodModel = new ObjectPersistenceMethod();
+		$object_persistence_methods = $object_persistence_methodModel::find()->all();
+		$object_persistence_methodList = array();
+		foreach($object_persistence_methods as $object_persistence_method)
+		{
+			$object_persistence_methodList[$object_persistence_method->id] = $object_persistence_method->name;
+		}
+		return $object_persistence_methodList;
+	}
+
+	private function getDatamanagementProcessList()
+	{
+		// autogeneriert ueber gii/CRUD
+		$datamanagement_processModel = new DatamanagementProcess();
+		$datamanagement_processs = $datamanagement_processModel::find()->all();
+		$datamanagement_processList = array();
+		foreach($datamanagement_processs as $datamanagement_process)
+		{
+			$datamanagement_processList[$datamanagement_process->id] = $datamanagement_process->name;
+		}
+		return $datamanagement_processList;
 	}
 	
     public function behaviors()
@@ -275,6 +303,8 @@ class DatadeliveryobjectController extends Controller
 'data_delivery_typeList' => $this->getDataDeliveryTypeList(),		// autogeneriert ueber gii/CRUD
 'contact_group_as_data_ownerList' => $this->getContactGroupAsDataOwnerList(),		// autogeneriert ueber gii/CRUD
 'deleted_statusList' => $this->getDeletedStatusList(),		// autogeneriert ueber gii/CRUD
+'object_persistence_methodList' => $this->getObjectPersistenceMethodList(),		// autogeneriert ueber gii/CRUD
+'datamanagement_processList' => $this->getDatamanagementProcessList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
     }
@@ -305,6 +335,8 @@ class DatadeliveryobjectController extends Controller
 'data_delivery_typeList' => $this->getDataDeliveryTypeList(),		// autogeneriert ueber gii/CRUD
 'contact_group_as_data_ownerList' => $this->getContactGroupAsDataOwnerList(),		// autogeneriert ueber gii/CRUD
 'deleted_statusList' => $this->getDeletedStatusList(),		// autogeneriert ueber gii/CRUD
+'object_persistence_methodList' => $this->getObjectPersistenceMethodList(),		// autogeneriert ueber gii/CRUD
+'datamanagement_processList' => $this->getDatamanagementProcessList(),		// autogeneriert ueber gii/CRUD
             ]);
         }
 		    }

@@ -10,6 +10,8 @@ use yii\bootstrap\Tabs;
 use yii\data\ActiveDataProvider;
 // Kommentierung pro Object ...}
 
+use dmstr\web\MermaidAsset;
+MermaidAsset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $model app\models\DbTableField */
@@ -24,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-	<?= Yii::$app->user->identity->isAdmin || (Yii::$app->User->can('create-dbtablefield'))  ? Html::a(Yii::t('app', 'Update table and fields'), ['dbtablefieldmultipleedit/update', 'id' => $model->fk_db_table_id, '#' => $model->id], ['class' => 'btn btn-primary']) : "" ?>
+	<?= Yii::$app->user->identity->isAdmin || (Yii::$app->User->can('create-dbtablefield'))  ? Html::a(Yii::t('app', 'Update table and fields'), ['dbtablefieldmultipleedit/update', 'id' => $model->fk_db_table_id, '#' => $model->id], ['class' => 'btn btn-primary']) : "" ?>	
 
 		<?php
 			$db_table_show_buttons_for_different_object_type_updates = \vendor\meta_grid\helper\Utils::get_app_config("db_table_show_buttons_for_different_object_type_updates");
@@ -73,6 +75,16 @@ $this->params['breadcrumbs'][] = $this->title;
             'is_PrimaryKey:boolean',
             'is_BusinessKey:boolean',
             'is_GDPR_relevant:boolean',
+            [
+             'label' => Yii::t('app', 'Object Persistence Method'),
+             'value' =>              	$model->fk_object_persistence_method_id == "" ? $model->fk_object_persistence_method_id : $model->fkObjectPersistenceMethod->name
+            ],
+            [
+             'label' => Yii::t('app', 'Datamanagement Process'),
+             'value' =>              	$model->fk_datamanagement_process_id == "" ? $model->fk_datamanagement_process_id : $model->fkDatamanagementProcess->name
+            ],
+            'source_definition:ntext',
+            'source_comment:ntext',
         ],
     ]) ?>
 

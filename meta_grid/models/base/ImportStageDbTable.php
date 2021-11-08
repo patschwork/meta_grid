@@ -5,7 +5,7 @@ namespace app\models\base;
 use Yii;
 
 /**
- * This is the model class for table "import_stage_db_table".
+ * This is the base-model class for table "import_stage_db_table".
  *
  * @property integer $id
  * @property string $client_name
@@ -64,8 +64,6 @@ class ImportStageDbTable extends \yii\db\ActiveRecord
             [['_import_state', 'fk_project_id', 'fk_db_database_id'], 'integer'],
             [['database_or_catalog', 'column_default_value'], 'string', 'max' => 1000],
             [['schema', 'additional_field_1', 'additional_field_2', 'additional_field_3', 'additional_field_4', 'additional_field_5', 'additional_field_6', 'additional_field_7', 'additional_field_8', 'additional_field_9'], 'string', 'max' => 4000],
-            [['db_table_name'], 'required'],
-
         ];
     }
 
@@ -111,20 +109,5 @@ class ImportStageDbTable extends \yii\db\ActiveRecord
             'additional_field_8' => Yii::t('app', 'Additional Field 8'),
             'additional_field_9' => Yii::t('app', 'Additional Field 9'),
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getFkClient()
-    {
-        return $this->hasOne(\app\models\Client::className(), ['id' => 'fk_client_id']);
-    }
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getFkProject()
-    {
-        return $this->hasOne(\app\models\Project::className(), ['id' => 'fk_project_id']);
     }
 }

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000098/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000098" context="object_persistence_method">
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+            CREATE TABLE object_persistence_method (
+            id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+            uuid TEXT DEFAULT NULL,
+            fk_object_type_id INTEGER DEFAULT 26 REFERENCES object_type (id),
+            name TEXT(250) DEFAULT NULL,
+            description TEXT(4000) DEFAULT NULL
+            );
+        ]]>		
+		</sql>
+		<rollback>
+        <sql stripComments="false" splitStatements="false">
+		<![CDATA[
+            DROP TABLE object_persistence_method;
+        ]]>		
+		</sql>
+		</rollback>
+
+		<comment>
+		<![CDATA[
+		New table object_persistence_method.
+		Used objects:
+			object_persistence_method
+		Phabricator tasks:
+			T159
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

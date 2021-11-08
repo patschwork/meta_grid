@@ -41,6 +41,14 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'is_GDPR_relevant')->checkbox() ?>
 
+    <?= $form->field($model, 'fk_object_persistence_method_id') ?>
+
+    <?= $form->field($model, 'fk_datamanagement_process_id') ?>
+
+    <?= $form->field($model, 'source_definition') ?>
+
+    <?= $form->field($model, 'source_comment') ?>
+
     <?= $form->field($model, 'databaseInfoFromLocation') ?>
 
     <div class="form-group">

@@ -338,7 +338,7 @@ class ImportstagedbtableController extends Controller
 						$DbTableCreateModel = new DbTable();
 						$DbTableCreateModel->fk_project_id = $loadModel->fk_project_id;
 						$DbTableCreateModel->name = $loadModel->db_table_name;
-						$DbTableCreateModel->description = $loadModel->db_table_field_description;
+						$DbTableCreateModel->description = $loadModel->db_table_description;
 						$DbTableCreateModel->location = $loadModel->location;
 						// $DbTableCreateModel->fk_db_table_context_id = $loadModel-> ...
 						// $DbTableCreateModel->fk_db_table_type_id = $loadModel-> ... // don't know yet

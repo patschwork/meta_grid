@@ -18,7 +18,7 @@ class ClientSearch extends VClientSearchinterface
     public function rules()
     {
         return [
-            [['id'], 'integer'],
+            [['id', 'fk_object_persistence_method_id', 'fk_datamanagement_process_id'], 'integer'],
             [['uuid', 'name', 'description'], 'safe'],
         ];
     }
@@ -68,6 +68,8 @@ class ClientSearch extends VClientSearchinterface
 
         $query->andFilterWhere([
             'id' => $this->id,
+            'fk_object_persistence_method_id' => $this->fk_object_persistence_method_id,
+            'fk_datamanagement_process_id' => $this->fk_datamanagement_process_id,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])

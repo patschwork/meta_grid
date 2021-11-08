@@ -18,7 +18,7 @@ class UrlSearch extends VUrlSearchinterface
     public function rules()
     {
         return [
-            [['id', 'fk_object_type_id', 'fk_project_id'], 'integer'],
+            [['id', 'fk_object_type_id', 'fk_project_id', 'fk_object_persistence_method_id', 'fk_datamanagement_process_id'], 'integer'],
             [['uuid', 'name', 'description', 'url'], 'safe'],
             [['fk_client_id'], 'integer'],
         ];
@@ -72,6 +72,8 @@ class UrlSearch extends VUrlSearchinterface
             'fk_object_type_id' => $this->fk_object_type_id,
             'fk_project_id' => $this->fk_project_id,
             'fk_client_id' => $this->fk_client_id,
+            'fk_object_persistence_method_id' => $this->fk_object_persistence_method_id,
+            'fk_datamanagement_process_id' => $this->fk_datamanagement_process_id,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])

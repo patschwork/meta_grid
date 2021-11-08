@@ -10,6 +10,8 @@ use yii\bootstrap\Tabs;
 use yii\data\ActiveDataProvider;
 // Kommentierung pro Object ...}
 
+use dmstr\web\MermaidAsset;
+MermaidAsset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $model app\models\DbTable */
@@ -24,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-	<?= Yii::$app->user->identity->isAdmin || (Yii::$app->User->can('create-dbtablefield')) && Yii::$app->User->can('create-dbtable') ? Html::a(Yii::t('app', 'Update table and fields'), ['dbtablefieldmultipleedit/update', 'id' => $model->id], ['class' => 'btn btn-primary']) : "" ?>
+	<?= Yii::$app->user->identity->isAdmin || (Yii::$app->User->can('create-dbtablefield')) && Yii::$app->User->can('create-dbtable') ? Html::a(Yii::t('app', 'Update table and fields'), ['dbtablefieldmultipleedit/update', 'id' => $model->id], ['class' => 'btn btn-primary']) : "" ?>	
 
 		<?php
 			$db_table_show_buttons_for_different_object_type_updates = \vendor\meta_grid\helper\Utils::get_app_config("db_table_show_buttons_for_different_object_type_updates");
@@ -72,6 +74,16 @@ $this->params['breadcrumbs'][] = $this->title;
              'label' => Yii::t('app', 'Deleted Status'),
              'value' =>              	$model->fk_deleted_status_id == "" ? $model->fk_deleted_status_id : $model->fkDeletedStatus->name
             ],
+            [
+             'label' => Yii::t('app', 'Object Persistence Method'),
+             'value' =>              	$model->fk_object_persistence_method_id == "" ? $model->fk_object_persistence_method_id : $model->fkObjectPersistenceMethod->name
+            ],
+            [
+             'label' => Yii::t('app', 'Datamanagement Process'),
+             'value' =>              	$model->fk_datamanagement_process_id == "" ? $model->fk_datamanagement_process_id : $model->fkDatamanagementProcess->name
+            ],
+            'source_definition:ntext',
+            'source_comment:ntext',
         ],
     ]) ?>
 
@@ -81,6 +93,30 @@ $this->params['breadcrumbs'][] = $this->title;
 	
 	
     	<?php
+			 $provider = new yii\data\ArrayDataProvider([
+			'allModels' => $sameTableList,
+			'pagination' => [
+				'pageSize' => 10,
+			],
+			'sort' => [
+				'attributes' => ['id'],
+			],
+		]);
+
+		echo yii\grid\GridView::widget([
+			'dataProvider' => $provider,
+			'columns' => [
+				'id',
+				'project_name',
+				[
+					'label' => 'db_table_location_normalized',
+					'value' => function ($model) {
+						return Html::a($model->location, ['dbtable/view', 'id' => $model->id], ['class' => 'btn btn-default']);
+					},
+					'format' => 'raw'
+				],
+			],
+		]);
 	
 			
 			// {... Kommentierung pro Object

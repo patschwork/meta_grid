@@ -21,6 +21,8 @@ INSERT INTO object_type (id,name) VALUES (19,'mapping_qualifier');
 -- 20-23 reservation for branch feature_interface_contract and tagging
 INSERT INTO object_type (id,name) VALUES (24,'url');
 INSERT INTO object_type (id,name) VALUES (25,'deleted_status');
+INSERT INTO object_type (id,name) VALUES (26,'object_persistence_method');
+INSERT INTO object_type (id,name) VALUES (27,'datamanagement_process');
 
 -- app_config
 INSERT INTO app_config (key,valueINT,description) VALUES ('project_filter',2,'Set a filter to a specific project id (INT). Maybe more than one row/entry.');

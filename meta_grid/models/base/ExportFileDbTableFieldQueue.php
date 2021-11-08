@@ -5,7 +5,7 @@ namespace app\models\base;
 use Yii;
 
 /**
- * This is the model class for table "export_file_db_table_field_queue".
+ * This is the base-model class for table "export_file_db_table_field_queue".
  *
  * @property integer $id
  * @property string $session

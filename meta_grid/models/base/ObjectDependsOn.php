@@ -5,7 +5,7 @@ namespace app\models\base;
 use Yii;
 
 /**
- * This is the model class for table "object_depends_on".
+ * This is the base-model class for table "object_depends_on".
  *
  * @property integer $id
  * @property string $uuid
@@ -13,6 +13,11 @@ use Yii;
  * @property integer $ref_fk_object_type_id_parent
  * @property integer $ref_fk_object_id_child
  * @property integer $ref_fk_object_type_id_child
+ * @property integer $fk_object_persistence_method_id
+ * @property integer $fk_datamanagement_process_id
+ *
+ * @property DatamanagementProcess $fkDatamanagementProcess
+ * @property ObjectPersistenceMethod $fkObjectPersistenceMethod
  */
 class ObjectDependsOn extends \yii\db\ActiveRecord
 {
@@ -31,7 +36,9 @@ class ObjectDependsOn extends \yii\db\ActiveRecord
     {
         return [
             [['uuid'], 'string'],
-            [['ref_fk_object_id_parent', 'ref_fk_object_type_id_parent', 'ref_fk_object_id_child', 'ref_fk_object_type_id_child'], 'integer'],
+            [['ref_fk_object_id_parent', 'ref_fk_object_type_id_parent', 'ref_fk_object_id_child', 'ref_fk_object_type_id_child', 'fk_object_persistence_method_id', 'fk_datamanagement_process_id'], 'integer'],
+            [['fk_datamanagement_process_id'], 'exist', 'skipOnError' => true, 'targetClass' => DatamanagementProcess::className(), 'targetAttribute' => ['fk_datamanagement_process_id' => 'id']],
+            [['fk_object_persistence_method_id'], 'exist', 'skipOnError' => true, 'targetClass' => ObjectPersistenceMethod::className(), 'targetAttribute' => ['fk_object_persistence_method_id' => 'id']],
         ];
     }
 
@@ -47,15 +54,24 @@ class ObjectDependsOn extends \yii\db\ActiveRecord
             'ref_fk_object_type_id_parent' => Yii::t('app', 'Ref Fk Object Type Id Parent'),
             'ref_fk_object_id_child' => Yii::t('app', 'Ref Fk Object Id Child'),
             'ref_fk_object_type_id_child' => Yii::t('app', 'Ref Fk Object Type Id Child'),
+            'fk_object_persistence_method_id' => Yii::t('app', 'Fk Object Persistence Method ID'),
+            'fk_datamanagement_process_id' => Yii::t('app', 'Fk Datamanagement Process ID'),
         ];
     }
 
     /**
-     * @inheritdoc
-     * @return ObjectDependsOnQuery the active query used by this AR class.
+     * @return \yii\db\ActiveQuery
      */
-    public static function find()
+    public function getFkDatamanagementProcess()
     {
-        return new ObjectDependsOnQuery(get_called_class());
+        return $this->hasOne(\app\models\DatamanagementProcess::className(), ['id' => 'fk_datamanagement_process_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFkObjectPersistenceMethod()
+    {
+        return $this->hasOne(\app\models\ObjectPersistenceMethod::className(), ['id' => 'fk_object_persistence_method_id']);
     }
 }

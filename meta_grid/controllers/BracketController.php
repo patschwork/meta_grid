@@ -13,6 +13,8 @@ use app\models\ObjectType;
 use app\models\Project;
 use app\models\Attribute;
 use app\models\ObjectTypeAsSearchFilter;
+use app\models\ObjectPersistenceMethod;
+use app\models\DatamanagementProcess;
 use yii\helpers\ArrayHelper;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
@@ -83,6 +85,32 @@ class BracketController extends Controller
 			$object_type_as_searchFilterList[$object_type_as_searchFilter->id] = $object_type_as_searchFilter->name;
 		}
 		return $object_type_as_searchFilterList;
+	}
+
+	private function getObjectPersistenceMethodList()
+	{
+		// autogeneriert ueber gii/CRUD
+		$object_persistence_methodModel = new ObjectPersistenceMethod();
+		$object_persistence_methods = $object_persistence_methodModel::find()->all();
+		$object_persistence_methodList = array();
+		foreach($object_persistence_methods as $object_persistence_method)
+		{
+			$object_persistence_methodList[$object_persistence_method->id] = $object_persistence_method->name;
+		}
+		return $object_persistence_methodList;
+	}
+
+	private function getDatamanagementProcessList()
+	{
+		// autogeneriert ueber gii/CRUD
+		$datamanagement_processModel = new DatamanagementProcess();
+		$datamanagement_processs = $datamanagement_processModel::find()->all();
+		$datamanagement_processList = array();
+		foreach($datamanagement_processs as $datamanagement_process)
+		{
+			$datamanagement_processList[$datamanagement_process->id] = $datamanagement_process->name;
+		}
+		return $datamanagement_processList;
 	}
 	
     public function behaviors()

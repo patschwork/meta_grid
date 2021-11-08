@@ -415,6 +415,7 @@ $modelBracket = $this->findModel($id);
 			<?php endif; ?>
 <?php if ($generator->modelClass === 'app\models\DbTable'): ?>
 		'SQLSelectStatement' => $this->buildSQLSelectStatement($id),
+		'sameTableList' => $this->sameTableList($id),
 			<?php endif; ?>
         ]);
 		<?php endif; ?>
@@ -1101,6 +1102,11 @@ if (count($pks) === 1) {
 	
 	public function actionCreateexternal($ref_fk_object_id, $ref_fk_object_type_id) {
 	
+		$app_config_mapper_createext_time_limit = \vendor\meta_grid\helper\Utils::get_app_config("mapper_createext_time_limit");
+		set_time_limit($app_config_mapper_createext_time_limit);
+		$app_config_mapper_createext_memory_limit = \vendor\meta_grid\helper\Utils::get_app_config("mapper_createext_memory_limit");
+		ini_set('memory_limit', $app_config_mapper_createext_memory_limit."M");
+
 		// Controller fuer die View, wenn ein Mapping ueber ein Objekt aufgerufen wird.		
 		$objectTypeModel = new \app\models\ObjectType ();
 		$objectTypes = $objectTypeModel::find ()->all ();
@@ -1409,6 +1415,7 @@ Parameter: overwrite_description_if_existing_differs=, default=Y : If there desc
 
 		$bulk_loader_executable = \vendor\meta_grid\helper\Utils::get_app_config("bulk_loader_executable");
 		$bulk_loader_metagrid_jdbc_url = \vendor\meta_grid\helper\Utils::get_app_config("bulk_loader_metagrid_jdbc_url");
+		$bulk_loader_java_home = \vendor\meta_grid\helper\Utils::get_app_config("bulk_loader_java_home");
 
 		$model = $this->findModel($id);
 		$bulkLoaderParameterArr = $this->bulkloadertemplate();
@@ -1447,25 +1454,74 @@ Parameter: overwrite_description_if_existing_differs=, default=Y : If there desc
 				$bulkLoaderParameterArr["source_jdbc_driver_class"] = "org.postgresql.Driver";
 				$bulkLoaderParameterArr["source_jdbc_url"] = "jdbc:postgresql://127.0.0.1:5432/$model->name";
 			}
+		}		
+		if (stripos($model->fkTool->vendor, "ORACLE") !== false)
+		{
+			if (stripos($model->fkTool->tool_name, "MySQL") !== false)
+			{
+				$bulkLoaderParameterArr["source_jdbc_driver_class"] = "com.mysql.jdbc.Driver";
+				$bulkLoaderParameterArr["source_jdbc_url"] = "jdbc:mysql://127.0.0.1:3306/$model->name";
+			}
+		}		
+		if (stripos($model->fkTool->vendor, "SQLite") !== false)
+		{
+			if (stripos($model->fkTool->tool_name, "SQLite") !== false)
+			{
+				$bulkLoaderParameterArr["source_jdbc_driver_class"] = "org.sqlite.JDBC";
+				$bulkLoaderParameterArr["source_jdbc_url"] = "jdbc:sqlite:/myPath/$model->name";
+			}
+		}
+		if (stripos($model->fkTool->vendor, "Intersystems") !== false)
+		{
+			if (stripos($model->fkTool->tool_name, "Intersystems Cach") !== false)
+			{
+				$bulkLoaderParameterArr["source_jdbc_driver_class"] = "com.intersys.jdbc.CacheDriver";
+				$bulkLoaderParameterArr["source_jdbc_url"] = "jdbc:Cache://127.0.0.1:1972/$model->name";
+			}
 		}
 
 		$exec = ($bulk_loader_executable !== NULL && $bulk_loader_executable !== "") ? $bulk_loader_executable : "kitchen.sh";
 		$returnValue = "";
 		$returnValue .= "## Linux". "\n";
+		$returnValue .= "\n";
+		$returnValue .= ($bulk_loader_java_home !== null && $bulk_loader_java_home !== "") ? "export JAVA_HOME=\"$bulk_loader_java_home\"" : "# export JAVA_HOME=\"&lt;You can set this parameter in the table app_config with the key='bulk_loader_java_home'&gt;\"";
+		$returnValue .= "\n";
+		$returnValue .= "\n";
 		$returnValue .= $exec.' -file:"run_import.kjb" \\' . "\n";
 		foreach($bulkLoaderParameterArr as $key=>$value)
 		{
 			$returnValue .= "-param:" . $key . "=" . '"' . $value . '"' . " \\" . "\n";
 		}
 		
+		$returnValue .= "-----------------------------------------------------------------------------------". "\n";
+
 		$exec = ($bulk_loader_executable !== NULL && $bulk_loader_executable !== "") ? $bulk_loader_executable : "kitchen.bat";
 		$returnValue .= "\n";
-		$returnValue .= ":: Windows". "\n";
-		$returnValue .= $exec.' /file:"run_import.kjb"' . " ";
+		$returnValue .= "REM Windows". "\n";
+		$returnValue .= "@echo off". "\n";
+		$returnValue .= "\n";
+		$returnValue .= ($bulk_loader_java_home !== NULL && $bulk_loader_java_home !== "") ? "SET JAVA_HOME=$bulk_loader_java_home" : "REM SET JAVA_HOME=&lt;You can set this parameter in the table app_config with the key='bulk_loader_java_home'&gt;";
+		$returnValue .= "\n";
+		$returnValue .= "\n";
 		foreach($bulkLoaderParameterArr as $key=>$value)
 		{
-			$returnValue .= '"/param:' . $key . "=" . $value . '"' . " ^" . "\n";
+			$returnValue .= 'SET ' . $key . "=" . $value . "\n";
 		}
+		$returnValue .= "\n";
+		$returnValue .= "pushd %cd%" . "\n";
+		$returnValue .= "SET startcd=%cd%" . "\n";
+		$returnValue .= "SET kettle_bin_path=" . dirname($exec) . "\n";
+		$returnValue .= 'cd "%kettle_bin_path%' . "\n";
+		$returnValue .= 'SET kitchen_bin=' . basename($exec) . "\n";
+		$returnValue .= 'SET job_path="run_import.kjb"' . "\n";
+		$returnValue .= 'start %kitchen_bin% /file:%job_path% ';
+		foreach($bulkLoaderParameterArr as $key=>$value)
+		{
+			$returnValue .= '"/param:' . $key . "=%" . $key . '%" ' ;
+		}
+		$returnValue .= "\n";
+		$returnValue .= 'cd %startcd%' . "\n";
+		$returnValue .= 'popd' . "\n";
 
 		return $returnValue;
 	}
@@ -1656,5 +1712,25 @@ Parameter: overwrite_description_if_existing_differs=, default=Y : If there desc
 		}
 		return;
 	}
+
+	public function sameTableList($id)
+	{
+		$permProjectsCanSee = Yii::$app->User->identity->permProjectsCanSee;
+		$model = \app\models\base\VDbTableLocation4SameTableLookup::findOne(['id' => $id]);
+	    if (($model !== null)) 
+		{
+			$allRelatedByName = \app\models\base\VDbTableLocation4SameTableLookup::find()
+				->where(['db_table_location_normalized' => $model->db_table_location_normalized])
+				->andFilterWhere(['<>','id', $id]) // exclude the actual id
+				->andFilterWhere(['in','fk_project_id', $permProjectsCanSee]) // only for the permission given to the user (@TODO, model class contains checks, too. But not working... )
+				->all();
+			if (($allRelatedByName !== null))
+			{
+				return $allRelatedByName;
+			}
+		}
+		return null;
+	}
+
 <?php endif; ?>
 }

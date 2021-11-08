@@ -3,7 +3,7 @@
 # Instllation or update meta#grid
 # on every OS
 # Base helper library
-# v1.2
+# v1.3
 
 import os
 import subprocess
@@ -27,7 +27,7 @@ import time
 from xml.dom import minidom
 
 def myVersion():
-    return "1.2"
+    return "1.3"
 
 def bla(msg, action=None, withLooging=True, logfilepath="", logfile=""):
     colorama.init()
@@ -50,6 +50,8 @@ def bla(msg, action=None, withLooging=True, logfilepath="", logfile=""):
         cprint(msg, 'red')    
     elif (action=="noExecutionBecauseParamFalse"):
         cprint(msg, 'white', 'on_grey')
+    elif (action=="warning"):
+        cprint(msg, color='yellow', on_color=None, attrs=['bold'])
     elif (action=="endOfScript"):
         color='grey'
         if (is_windows):
@@ -473,3 +475,26 @@ def RepresentsInt(s):
         return True
     except ValueError:
         return False
+
+def which_executable(executable):
+    p = subprocess.Popen(["which", executable], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out=p.communicate()[0]
+    result_which_executable = {}
+    out1 = out.splitlines()
+    result_which_executable = out1
+    return result_which_executable
+
+def get_php_version(phpExe):
+    p = subprocess.Popen([phpExe, "-r", """echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION.'.'.PHP_RELEASE_VERSION;"""], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out=p.communicate()[0]
+    out1 = out.splitlines()
+    return out1[0]
+
+def check_if_php_version_is_ok(installed_php_version, minimun_php_version_needed):
+    return (version.parse(installed_php_version) > version.parse(minimun_php_version_needed))
+
+def yii_check_requirements(phpExe, frontendfilesforlder):
+    p = subprocess.Popen([phpExe, os.path.join(frontendfilesforlder, "requirements.php")], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out=p.communicate()[0]
+    out1 = out.splitlines()
+    return out1

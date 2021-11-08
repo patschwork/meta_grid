@@ -23,6 +23,8 @@ $this->params['breadcrumbs'][] = $this->title;
 'db_table_contextList' => $db_table_contextList,		// autogeneriert ueber gii/CRUD
 'db_table_typeList' => $db_table_typeList,		// autogeneriert ueber gii/CRUD
 'deleted_statusList' => $deleted_statusList,		// autogeneriert ueber gii/CRUD
+'object_persistence_methodList' => $object_persistence_methodList,		// autogeneriert ueber gii/CRUD
+'datamanagement_processList' => $datamanagement_processList,		// autogeneriert ueber gii/CRUD
 					]) ?>
 
 </div>

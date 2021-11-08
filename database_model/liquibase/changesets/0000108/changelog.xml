@@ -1,0 +1,712 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000108/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000108" context="">
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_keyfigure_SearchInterface">
+		<![CDATA[
+		SELECT
+			keyfigure.id
+			,IFNULL(keyfigure.uuid, '') AS uuid
+			,keyfigure.fk_object_type_id
+			,project.fk_client_id
+			,IFNULL(project.name, '') AS project_name
+			,IFNULL(client.name, '') AS client_name
+			,keyfigure.fk_project_id
+			,IFNULL(keyfigure.name, '') AS name
+			,IFNULL(keyfigure.description, '') AS description
+			,IFNULL(keyfigure.formula, '') AS formula
+			,IFNULL(keyfigure.aggregation, '') AS aggregation
+			,IFNULL(keyfigure.character, '') AS character
+			,IFNULL(keyfigure.type, '') AS type
+			,IFNULL(keyfigure.unit, '') AS unit
+			,IFNULL(keyfigure.value_range, '') AS value_range
+			,keyfigure.cumulation_possible
+			,keyfigure.fk_deleted_status_id
+			,keyfigure.fk_object_persistence_method_id
+			,keyfigure.fk_datamanagement_process_id
+			,IFNULL(keyfigure.source_definition, '') AS source_definition
+			,IFNULL(keyfigure.source_definition_language, '') AS source_definition_language
+			,IFNULL(keyfigure.source_comment, '') AS source_comment
+		FROM keyfigure
+		LEFT JOIN project ON project.id = keyfigure.fk_project_id
+		LEFT JOIN client ON client.id = project.fk_client_id
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_object_type_SearchInterface">
+		<![CDATA[
+		SELECT
+			object_type.id
+			,IFNULL(object_type.uuid, '') AS uuid
+			,IFNULL(object_type.name, '') AS name
+		FROM object_type
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_client_SearchInterface">
+		<![CDATA[
+		SELECT
+			client.id
+			,IFNULL(client.uuid, '') AS uuid
+			,IFNULL(client.name, '') AS name
+			,IFNULL(client.description, '') AS description
+			,client.fk_object_persistence_method_id
+			,client.fk_datamanagement_process_id
+		FROM client
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_project_SearchInterface">
+		<![CDATA[
+		SELECT
+			project.id
+			,IFNULL(project.uuid, '') AS uuid
+			,project.fk_client_id
+			,IFNULL(project.name, '') AS name
+			,IFNULL(project.description, '') AS description
+			,project.fk_object_persistence_method_id
+			,project.fk_datamanagement_process_id
+		FROM project
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_sourcesystem_SearchInterface">
+		<![CDATA[
+		SELECT
+			sourcesystem.id
+			,IFNULL(sourcesystem.uuid, '') AS uuid
+			,sourcesystem.fk_object_type_id
+			,project.fk_client_id
+			,IFNULL(project.name, '') AS project_name
+			,IFNULL(client.name, '') AS client_name
+			,sourcesystem.fk_project_id
+			,IFNULL(sourcesystem.name, '') AS name
+			,IFNULL(sourcesystem.description, '') AS description
+			,sourcesystem.fk_contact_group_id_as_supporter
+			,sourcesystem.fk_deleted_status_id
+			,sourcesystem.fk_object_persistence_method_id
+			,sourcesystem.fk_datamanagement_process_id
+		FROM sourcesystem
+		LEFT JOIN project ON project.id = sourcesystem.fk_project_id
+		LEFT JOIN client ON client.id = project.fk_client_id
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_data_delivery_object_SearchInterface">
+		<![CDATA[
+		SELECT
+			data_delivery_object.id
+			,IFNULL(data_delivery_object.uuid, '') AS uuid
+			,data_delivery_object.fk_object_type_id
+			,project.fk_client_id
+			,IFNULL(project.name, '') AS project_name
+			,IFNULL(client.name, '') AS client_name
+			,data_delivery_object.fk_project_id
+			,IFNULL(data_delivery_object.name, '') AS name
+			,IFNULL(data_delivery_object.description, '') AS description
+			,data_delivery_object.fk_tool_id
+			,data_delivery_object.fk_data_delivery_type_id
+			,data_delivery_object.fk_contact_group_id_as_data_owner
+			,data_delivery_object.fk_deleted_status_id
+			,data_delivery_object.fk_object_persistence_method_id
+			,data_delivery_object.fk_datamanagement_process_id
+			,IFNULL(data_delivery_object.source_definition, '') AS source_definition
+			,IFNULL(data_delivery_object.source_comment, '') AS source_comment
+		FROM data_delivery_object
+		LEFT JOIN project ON project.id = data_delivery_object.fk_project_id
+		LEFT JOIN client ON client.id = project.fk_client_id
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_map_object_2_object_SearchInterface">
+		<![CDATA[
+		SELECT
+			map_object_2_object.id
+			,IFNULL(map_object_2_object.uuid, '') AS uuid
+			,map_object_2_object.fk_mapping_qualifier_id
+			,map_object_2_object.ref_fk_object_id_1
+			,map_object_2_object.ref_fk_object_type_id_1
+			,map_object_2_object.ref_fk_object_id_2
+			,map_object_2_object.ref_fk_object_type_id_2
+			,map_object_2_object.fk_object_persistence_method_id
+			,map_object_2_object.fk_datamanagement_process_id
+		FROM map_object_2_object
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_tool_SearchInterface">
+		<![CDATA[
+		SELECT
+			tool.id
+			,IFNULL(tool.uuid, '') AS uuid
+			,tool.fk_tool_type_id
+			,IFNULL(tool.tool_name, '') AS tool_name
+			,IFNULL(tool.vendor, '') AS vendor
+			,IFNULL(tool.version, '') AS version
+			,IFNULL(tool.comment, '') AS comment
+			,tool.fk_object_persistence_method_id
+			,tool.fk_datamanagement_process_id
+		FROM tool
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_object_depends_on_SearchInterface">
+		<![CDATA[
+		SELECT
+			object_depends_on.id
+			,IFNULL(object_depends_on.uuid, '') AS uuid
+			,object_depends_on.ref_fk_object_id_parent
+			,object_depends_on.ref_fk_object_type_id_parent
+			,object_depends_on.ref_fk_object_id_child
+			,object_depends_on.ref_fk_object_type_id_child
+			,object_depends_on.fk_object_persistence_method_id
+			,object_depends_on.fk_datamanagement_process_id
+		FROM object_depends_on
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_attribute_SearchInterface">
+		<![CDATA[
+		SELECT
+			attribute.id
+			,IFNULL(attribute.uuid, '') AS uuid
+			,attribute.fk_object_type_id
+			,project.fk_client_id
+			,IFNULL(project.name, '') AS project_name
+			,IFNULL(client.name, '') AS client_name
+			,attribute.fk_project_id
+			,IFNULL(attribute.name, '') AS name
+			,IFNULL(attribute.description, '') AS description
+			,IFNULL(attribute.formula, '') AS formula
+			,attribute.fk_object_persistence_method_id
+			,attribute.fk_datamanagement_process_id
+		FROM attribute
+		LEFT JOIN project ON project.id = attribute.fk_project_id
+		LEFT JOIN client ON client.id = project.fk_client_id
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_tool_type_SearchInterface">
+		<![CDATA[
+		SELECT
+			tool_type.id
+			,IFNULL(tool_type.uuid, '') AS uuid
+			,IFNULL(tool_type.name, '') AS name
+			,IFNULL(tool_type.description, '') AS description
+			,tool_type.fk_object_persistence_method_id
+			,tool_type.fk_datamanagement_process_id
+		FROM tool_type
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_db_table_SearchInterface">
+		<![CDATA[
+		SELECT
+			db_table.id
+			,IFNULL(db_table.uuid, '') AS uuid
+			,db_table.fk_object_type_id
+			,project.fk_client_id
+			,IFNULL(project.name, '') AS project_name
+			,IFNULL(client.name, '') AS client_name
+			,db_table.fk_project_id
+			,IFNULL(db_table.name, '') AS name
+			,IFNULL(db_table.description, '') AS description
+			,IFNULL(db_table.location, '') AS location
+			,db_table.fk_db_table_context_id
+			,db_table.fk_db_table_type_id
+			,db_table.fk_deleted_status_id
+			,db_table.fk_object_persistence_method_id
+			,db_table.fk_datamanagement_process_id
+			,IFNULL(db_table.source_definition, '') AS source_definition
+			,IFNULL(db_table.source_comment, '') AS source_comment
+			,CASE WHEN (LENGTH(db_table.location) - LENGTH(REPLACE(db_table.location, '"."', ''))) / LENGTH('"."')>=2 THEN REPLACE(SUBSTR(db_table.location ,1, INSTR(db_table.location,'.')-1),'"','') ELSE '' END AS databaseInfoFromLocation
+		FROM db_table
+		LEFT JOIN project ON project.id = db_table.fk_project_id
+		LEFT JOIN client ON client.id = project.fk_client_id
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_db_table_field_SearchInterface">
+		<![CDATA[
+		SELECT
+			db_table_field.id
+			,IFNULL(db_table_field.uuid, '') AS uuid
+			,db_table_field.fk_object_type_id
+			,project.fk_client_id
+			,IFNULL(project.name, '') AS project_name
+			,IFNULL(client.name, '') AS client_name
+			,db_table_field.fk_project_id
+			,IFNULL(db_table_field.name, '') AS name
+			,IFNULL(db_table_field.description, '') AS description
+			,db_table_field.fk_db_table_id
+			,IFNULL(db_table_field.datatype, '') AS datatype
+			,IFNULL(db_table_field.bulk_load_checksum, '') AS bulk_load_checksum
+			,db_table_field.fk_deleted_status_id
+			,db_table_field.is_PrimaryKey
+			,db_table_field.is_BusinessKey
+			,db_table_field.is_GDPR_relevant
+			,db_table_field.fk_object_persistence_method_id
+			,db_table_field.fk_datamanagement_process_id
+			,IFNULL(db_table_field.source_definition, '') AS source_definition
+			,IFNULL(db_table_field.source_comment, '') AS source_comment
+			,CASE WHEN (LENGTH(db_table.location) - LENGTH(REPLACE(db_table.location, '"."', ''))) / LENGTH('"."')>=2 THEN REPLACE(SUBSTR(db_table.location ,1, INSTR(db_table.location,'.')-1),'"','') ELSE '' END AS databaseInfoFromLocation
+		FROM db_table_field
+		LEFT JOIN project ON project.id = db_table_field.fk_project_id
+		LEFT JOIN client ON client.id = project.fk_client_id
+		LEFT JOIN db_table ON db_table.id = db_table_field.fk_db_table_id
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_db_table_context_SearchInterface">
+		<![CDATA[
+		SELECT
+			db_table_context.id
+			,IFNULL(db_table_context.uuid, '') AS uuid
+			,db_table_context.fk_object_type_id
+			,project.fk_client_id
+			,IFNULL(project.name, '') AS project_name
+			,IFNULL(client.name, '') AS client_name
+			,db_table_context.fk_project_id
+			,IFNULL(db_table_context.name, '') AS name
+			,IFNULL(db_table_context.description, '') AS description
+			,IFNULL(db_table_context.prefix, '') AS prefix
+			,db_table_context.fk_object_persistence_method_id
+			,db_table_context.fk_datamanagement_process_id
+		FROM db_table_context
+		LEFT JOIN project ON project.id = db_table_context.fk_project_id
+		LEFT JOIN client ON client.id = project.fk_client_id
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_db_database_SearchInterface">
+		<![CDATA[
+		SELECT
+			db_database.id
+			,IFNULL(db_database.uuid, '') AS uuid
+			,db_database.fk_object_type_id
+			,project.fk_client_id
+			,IFNULL(project.name, '') AS project_name
+			,IFNULL(client.name, '') AS client_name
+			,db_database.fk_project_id
+			,IFNULL(db_database.name, '') AS name
+			,IFNULL(db_database.description, '') AS description
+			,db_database.fk_tool_id
+			,db_database.fk_deleted_status_id
+			,db_database.fk_object_persistence_method_id
+			,db_database.fk_datamanagement_process_id
+			,IFNULL(db_database.source_definition, '') AS source_definition
+			,IFNULL(db_database.source_definition_language, '') AS source_definition_language
+			,IFNULL(db_database.source_comment, '') AS source_comment
+		FROM db_database
+		LEFT JOIN project ON project.id = db_database.fk_project_id
+		LEFT JOIN client ON client.id = project.fk_client_id
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_scheduling_SearchInterface">
+		<![CDATA[
+		SELECT
+			scheduling.id
+			,IFNULL(scheduling.uuid, '') AS uuid
+			,scheduling.fk_object_type_id
+			,project.fk_client_id
+			,IFNULL(project.name, '') AS project_name
+			,IFNULL(client.name, '') AS client_name
+			,scheduling.fk_project_id
+			,IFNULL(scheduling.name, '') AS name
+			,IFNULL(scheduling.description, '') AS description
+			,scheduling.fk_tool_id
+			,IFNULL(scheduling.scheduling_series, '') AS scheduling_series
+			,scheduling.fk_deleted_status_id
+			,scheduling.fk_object_persistence_method_id
+			,scheduling.fk_datamanagement_process_id
+			,IFNULL(scheduling.source_definition, '') AS source_definition
+			,IFNULL(scheduling.source_definition_language, '') AS source_definition_language
+			,IFNULL(scheduling.source_comment, '') AS source_comment
+		FROM scheduling
+		LEFT JOIN project ON project.id = scheduling.fk_project_id
+		LEFT JOIN client ON client.id = project.fk_client_id
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_parameter_SearchInterface">
+		<![CDATA[
+		SELECT
+			parameter.id
+			,IFNULL(parameter.uuid, '') AS uuid
+			,parameter.fk_object_type_id
+			,project.fk_client_id
+			,IFNULL(project.name, '') AS project_name
+			,IFNULL(client.name, '') AS client_name
+			,parameter.fk_project_id
+			,IFNULL(parameter.name, '') AS name
+			,IFNULL(parameter.description, '') AS description
+			,parameter.is_optional
+			,IFNULL(parameter.default_value, '') AS default_value
+			,IFNULL(parameter.datatype, '') AS datatype
+			,IFNULL(parameter.range, '') AS range
+			,parameter.fk_deleted_status_id
+			,parameter.fk_object_persistence_method_id
+			,parameter.fk_datamanagement_process_id
+			,IFNULL(parameter.source_definition, '') AS source_definition
+			,IFNULL(parameter.source_definition_language, '') AS source_definition_language
+			,IFNULL(parameter.source_comment, '') AS source_comment
+		FROM parameter
+		LEFT JOIN project ON project.id = parameter.fk_project_id
+		LEFT JOIN client ON client.id = project.fk_client_id
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_db_table_type_SearchInterface">
+		<![CDATA[
+		SELECT
+			db_table_type.id
+			,IFNULL(db_table_type.uuid, '') AS uuid
+			,IFNULL(db_table_type.name, '') AS name
+			,IFNULL(db_table_type.description, '') AS description
+			,db_table_type.fk_object_persistence_method_id
+			,db_table_type.fk_datamanagement_process_id
+			,IFNULL(db_table_type.source_definition_language, '') AS source_definition_language
+		FROM db_table_type
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_object_comment_SearchInterface">
+		<![CDATA[
+		SELECT
+			object_comment.id
+			,IFNULL(object_comment.uuid, '') AS uuid
+			,object_comment.fk_object_type_id
+			,object_comment.ref_fk_object_id
+			,object_comment.ref_fk_object_type_id
+			,IFNULL(object_comment.comment, '') AS comment
+			,IFNULL(object_comment.created_at_datetime, '') AS created_at_datetime
+			,object_comment.fk_object_persistence_method_id
+			,object_comment.fk_datamanagement_process_id
+		FROM object_comment
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_glossary_SearchInterface">
+		<![CDATA[
+		SELECT
+			glossary.id
+			,IFNULL(glossary.uuid, '') AS uuid
+			,glossary.fk_object_type_id
+			,project.fk_client_id
+			,IFNULL(project.name, '') AS project_name
+			,IFNULL(client.name, '') AS client_name
+			,glossary.fk_project_id
+			,IFNULL(glossary.name, '') AS name
+			,IFNULL(glossary.description, '') AS description
+			,glossary.fk_object_persistence_method_id
+			,glossary.fk_datamanagement_process_id
+		FROM glossary
+		LEFT JOIN project ON project.id = glossary.fk_project_id
+		LEFT JOIN client ON client.id = project.fk_client_id
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_data_delivery_type_SearchInterface">
+		<![CDATA[
+		SELECT
+			data_delivery_type.id
+			,IFNULL(data_delivery_type.uuid, '') AS uuid
+			,IFNULL(data_delivery_type.name, '') AS name
+			,IFNULL(data_delivery_type.description, '') AS description
+			,data_delivery_type.fk_object_persistence_method_id
+			,data_delivery_type.fk_datamanagement_process_id
+			,IFNULL(data_delivery_type.source_definition_language, '') AS source_definition_language
+		FROM data_delivery_type
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_data_transfer_process_SearchInterface">
+		<![CDATA[
+		SELECT
+			data_transfer_process.id
+			,IFNULL(data_transfer_process.uuid, '') AS uuid
+			,data_transfer_process.fk_object_type_id
+			,project.fk_client_id
+			,IFNULL(project.name, '') AS project_name
+			,IFNULL(client.name, '') AS client_name
+			,data_transfer_process.fk_project_id
+			,IFNULL(data_transfer_process.name, '') AS name
+			,IFNULL(data_transfer_process.description, '') AS description
+			,data_transfer_process.fk_data_transfer_type_id
+			,IFNULL(data_transfer_process.location, '') AS location
+			,IFNULL(data_transfer_process.source_internal_object_id, '') AS source_internal_object_id
+			,data_transfer_process.fk_deleted_status_id
+			,data_transfer_process.fk_object_persistence_method_id
+			,data_transfer_process.fk_datamanagement_process_id
+			,IFNULL(data_transfer_process.source_definition, '') AS source_definition
+			,IFNULL(data_transfer_process.source_comment, '') AS source_comment
+		FROM data_transfer_process
+		LEFT JOIN project ON project.id = data_transfer_process.fk_project_id
+		LEFT JOIN client ON client.id = project.fk_client_id
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_data_transfer_type_SearchInterface">
+		<![CDATA[
+		SELECT
+			data_transfer_type.id
+			,IFNULL(data_transfer_type.uuid, '') AS uuid
+			,IFNULL(data_transfer_type.name, '') AS name
+			,IFNULL(data_transfer_type.description, '') AS description
+			,data_transfer_type.fk_object_persistence_method_id
+			,data_transfer_type.fk_datamanagement_process_id
+			,IFNULL(data_transfer_type.source_definition_language, '') AS source_definition_language
+		FROM data_transfer_type
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_contact_group_SearchInterface">
+		<![CDATA[
+		SELECT
+			contact_group.id
+			,IFNULL(contact_group.uuid, '') AS uuid
+			,contact_group.fk_object_type_id
+			,contact_group.fk_client_id
+			,IFNULL(contact_group.name, '') AS name
+			,IFNULL(contact_group.description, '') AS description
+			,IFNULL(contact_group.short_name, '') AS short_name
+			,contact_group.fk_deleted_status_id
+			,contact_group.fk_object_persistence_method_id
+			,contact_group.fk_datamanagement_process_id
+		FROM contact_group
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_contact_SearchInterface">
+		<![CDATA[
+		SELECT
+			contact.id
+			,IFNULL(contact.uuid, '') AS uuid
+			,contact.fk_object_type_id
+			,contact.fk_contact_group_id
+			,contact.fk_client_id
+			,IFNULL(contact.givenname, '') AS givenname
+			,IFNULL(contact.surname, '') AS surname
+			,IFNULL(contact.email, '') AS email
+			,IFNULL(contact.phone, '') AS phone
+			,IFNULL(contact.mobile, '') AS mobile
+			,IFNULL(contact.ldap_cn, '') AS ldap_cn
+			,IFNULL(contact.description, '') AS description
+			,contact.fk_deleted_status_id
+			,contact.fk_object_persistence_method_id
+			,contact.fk_datamanagement_process_id
+		FROM contact
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_bracket_SearchInterface">
+		<![CDATA[
+		SELECT
+			bracket.id
+			,IFNULL(bracket.uuid, '') AS uuid
+			,bracket.fk_object_type_id
+			,project.fk_client_id
+			,IFNULL(project.name, '') AS project_name
+			,IFNULL(client.name, '') AS client_name
+			,bracket.fk_project_id
+			,IFNULL(bracket.name, '') AS name
+			,IFNULL(bracket.description, '') AS description
+			,bracket.fk_attribute_id
+			,bracket.fk_object_type_id_as_searchFilter
+			,bracket.fk_object_persistence_method_id
+			,bracket.fk_datamanagement_process_id
+		FROM bracket
+		LEFT JOIN project ON project.id = bracket.fk_project_id
+		LEFT JOIN client ON client.id = project.fk_client_id
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_bracket_searchPattern_SearchInterface">
+		<![CDATA[
+		SELECT
+			bracket_searchPattern.id
+			,IFNULL(bracket_searchPattern.uuid, '') AS uuid
+			,bracket_searchPattern.fk_object_type_id
+			,bracket_searchPattern.fk_bracket_id
+			,IFNULL(bracket_searchPattern.searchPattern, '') AS searchPattern
+			,bracket_searchPattern.fk_object_persistence_method_id
+			,bracket_searchPattern.fk_datamanagement_process_id
+		FROM bracket_searchPattern
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_import_stage_db_table_SearchInterface">
+		<![CDATA[
+		SELECT
+			import_stage_db_table.id
+			,IFNULL(import_stage_db_table.client_name, '') AS client_name
+			,IFNULL(import_stage_db_table.project_name, '') AS project_name
+			,IFNULL(import_stage_db_table.db_table_name, '') AS db_table_name
+			,IFNULL(import_stage_db_table.db_table_description, '') AS db_table_description
+			,IFNULL(import_stage_db_table.db_table_field_name, '') AS db_table_field_name
+			,IFNULL(import_stage_db_table.db_table_field_datatype, '') AS db_table_field_datatype
+			,IFNULL(import_stage_db_table.db_table_field_description, '') AS db_table_field_description
+			,IFNULL(import_stage_db_table.db_table_type_name, '') AS db_table_type_name
+			,IFNULL(import_stage_db_table.db_table_context_name, '') AS db_table_context_name
+			,IFNULL(import_stage_db_table.db_table_context_prefix, '') AS db_table_context_prefix
+			,import_stage_db_table.isPrimaryKeyField
+			,import_stage_db_table.isForeignKeyField
+			,IFNULL(import_stage_db_table.foreignKey_table_name, '') AS foreignKey_table_name
+			,IFNULL(import_stage_db_table.foreignKey_table_field_name, '') AS foreignKey_table_field_name
+			,import_stage_db_table._import_state
+			,import_stage_db_table._import_date
+			,import_stage_db_table.is_BusinessKey
+			,import_stage_db_table.is_GDPR_relevant
+			,IFNULL(import_stage_db_table.location, '') AS location
+			,IFNULL(import_stage_db_table.database_or_catalog, '') AS database_or_catalog
+			,IFNULL(import_stage_db_table.schema, '') AS schema
+			,project.fk_client_id
+			,IFNULL(project.name, '') AS project_name
+			,IFNULL(client.name, '') AS client_name
+			,IFNULL(import_stage_db_table.fk_project_id, '') AS fk_project_id
+			,IFNULL(import_stage_db_table.fk_db_database_id, '') AS fk_db_database_id
+			,IFNULL(import_stage_db_table.column_default_value, '') AS column_default_value
+			,import_stage_db_table.column_cant_be_null
+			,IFNULL(import_stage_db_table.additional_field_1, '') AS additional_field_1
+			,IFNULL(import_stage_db_table.additional_field_2, '') AS additional_field_2
+			,IFNULL(import_stage_db_table.additional_field_3, '') AS additional_field_3
+			,IFNULL(import_stage_db_table.additional_field_4, '') AS additional_field_4
+			,IFNULL(import_stage_db_table.additional_field_5, '') AS additional_field_5
+			,IFNULL(import_stage_db_table.additional_field_6, '') AS additional_field_6
+			,IFNULL(import_stage_db_table.additional_field_7, '') AS additional_field_7
+			,IFNULL(import_stage_db_table.additional_field_8, '') AS additional_field_8
+			,IFNULL(import_stage_db_table.additional_field_9, '') AS additional_field_9
+		FROM import_stage_db_table
+		LEFT JOIN project ON project.id = import_stage_db_table.fk_project_id
+		LEFT JOIN client ON client.id = project.fk_client_id
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="true" viewName="v_url_SearchInterface">
+		<![CDATA[
+		SELECT
+			url.id
+			,IFNULL(url.uuid, '') AS uuid
+			,url.fk_object_type_id
+			,project.fk_client_id
+			,IFNULL(project.name, '') AS project_name
+			,IFNULL(client.name, '') AS client_name
+			,url.fk_project_id
+			,IFNULL(url.name, '') AS name
+			,IFNULL(url.description, '') AS description
+			,IFNULL(url.url, '') AS url
+			,url.fk_object_persistence_method_id
+			,url.fk_datamanagement_process_id
+		FROM url
+		LEFT JOIN project ON project.id = url.fk_project_id
+		LEFT JOIN client ON client.id = project.fk_client_id
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="false" viewName="v_object_persistence_method_SearchInterface">
+		<![CDATA[
+		SELECT
+			object_persistence_method.id
+			,IFNULL(object_persistence_method.uuid, '') AS uuid
+			,object_persistence_method.fk_object_type_id
+			,IFNULL(object_persistence_method.name, '') AS name
+			,IFNULL(object_persistence_method.description, '') AS description
+		FROM object_persistence_method
+		]]>
+		</createView>
+
+		<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->
+		<createView replaceIfExists="false" viewName="v_datamanagement_process_SearchInterface">
+		<![CDATA[
+		SELECT
+			datamanagement_process.id
+			,IFNULL(datamanagement_process.uuid, '') AS uuid
+			,datamanagement_process.fk_object_type_id
+			,IFNULL(datamanagement_process.name, '') AS name
+			,IFNULL(datamanagement_process.description, '') AS description
+			,IFNULL(datamanagement_process.tool, '') AS tool
+			,IFNULL(datamanagement_process.tool_version, '') AS tool_version
+			,IFNULL(datamanagement_process.routine, '') AS routine
+		FROM datamanagement_process
+		]]>
+		</createView>
+
+		<comment>
+		<![CDATA[
+		Used objects:
+			v_keyfigure_SearchInterface
+			v_object_type_SearchInterface
+			v_client_SearchInterface
+			v_project_SearchInterface
+			v_sourcesystem_SearchInterface
+			v_data_delivery_object_SearchInterface
+			v_map_object_2_object_SearchInterface
+			v_tool_SearchInterface
+			v_object_depends_on_SearchInterface
+			v_attribute_SearchInterface
+			v_tool_type_SearchInterface
+			v_db_table_SearchInterface
+			v_db_table_field_SearchInterface
+			v_db_table_context_SearchInterface
+			v_db_database_SearchInterface
+			v_scheduling_SearchInterface
+			v_parameter_SearchInterface
+			v_db_table_type_SearchInterface
+			v_object_comment_SearchInterface
+			v_glossary_SearchInterface
+			v_data_delivery_type_SearchInterface
+			v_data_transfer_process_SearchInterface
+			v_data_transfer_type_SearchInterface
+			v_contact_group_SearchInterface
+			v_contact_SearchInterface
+			v_bracket_SearchInterface
+			v_bracket_searchPattern_SearchInterface
+			v_import_stage_db_table_SearchInterface
+			v_url_SearchInterface
+			v_object_persistence_method_SearchInterface
+			v_datamanagement_process_SearchInterface
+		Phabricator tasks:
+			T159
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

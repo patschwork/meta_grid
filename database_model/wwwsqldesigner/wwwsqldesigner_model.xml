@@ -13,7 +13,7 @@
 		<type label="Timestamp" default="" length="0" sql="TIMESTAMP" quote="" color="rgb(181,248,203)"/>
         
 	</group>
-</datatypes><table x="548" y="12" name="keyfigure">
+</datatypes><table x="335" y="435" name="keyfigure">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -60,12 +60,29 @@
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="deleted_status" row="id" />
 </row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
+<row name="source_definition" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="source_definition_language" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="source_comment" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 <comment>Named keyfigures/measures with description and if possible with a formular (pseudo code formular) or SQL or MDX statement.</comment>
 </table>
-<table x="800" y="372" name="object_type">
+<table x="733" y="476" name="object_type">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -80,7 +97,7 @@
 </key>
 <comment>Types of objects - used for the mappings (keyfigures, sourcesystems, ...)</comment>
 </table>
-<table x="92" y="261" name="client">
+<table x="20" y="19" name="client">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -93,12 +110,20 @@
 <row name="description" null="1" autoincrement="0">
 <datatype>TEXT(500)</datatype>
 <default>NULL</default></row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
 <key type="PRIMARY" name="pk_id_client">
 <part>id</part>
 </key>
 <comment>Client information</comment>
 </table>
-<table x="149" y="474" name="project">
+<table x="358" y="18" name="project">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -115,12 +140,20 @@
 <row name="description" null="1" autoincrement="0">
 <datatype>TEXT(500)</datatype>
 <default>NULL</default></row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
 <key type="PRIMARY" name="pk_id_project">
 <part>id</part>
 </key>
 <comment>Project information for a specific client</comment>
 </table>
-<table x="490" y="363" name="sourcesystem">
+<table x="660" y="44" name="sourcesystem">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 </row>
@@ -150,12 +183,20 @@
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="deleted_status" row="id" />
 </row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
 <key type="PRIMARY" name="pk_id_sourcesystem">
 <part>id</part>
 </key>
 <comment>Quellsystem</comment>
 </table>
-<table x="492" y="584" name="data_delivery_object">
+<table x="322" y="889" name="data_delivery_object">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -193,6 +234,20 @@
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="deleted_status" row="id" />
 </row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
+<row name="source_definition" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="source_comment" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
 <key type="PRIMARY" name="pk_id_report">
 <part>id</part>
 </key>
@@ -200,7 +255,7 @@
 This is an object which provides data for exporting out of an dispositive system such a data warehouse. This is only meant for delivery, not for using a data source.    
 Examples: Report, flatfile export, view with external access...,  </comment>
 </table>
-<table x="1382" y="322" name="map_object_2_object">
+<table x="1305" y="354" name="map_object_2_object">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -225,6 +280,14 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="object_type" row="id" />
 </row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
 <key type="UNIQUE" name="unique_id_map_object_2_object">
 <part>ref_fk_object_id_1</part>
 <part>ref_fk_object_type_id_1</part>
@@ -235,7 +298,7 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <part>id</part>
 </key>
 </table>
-<table x="896" y="775" name="tool">
+<table x="822" y="880" name="tool">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -258,12 +321,20 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <row name="comment" null="1" autoincrement="0">
 <datatype>TEXT(500)</datatype>
 <default>NULL</default></row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
 <key type="PRIMARY" name="pk_id_tool">
 <part>id</part>
 </key>
 <comment>BI or DWH tool which is used to do the job e.g. Report, ETL, DQ, OLAP...</comment>
 </table>
-<table x="1640" y="363" name="object_depends_on">
+<table x="1806" y="424" name="object_depends_on">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 </row>
@@ -282,12 +353,20 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <row name="ref_fk_object_type_id_child" null="1" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
 <key type="PRIMARY" name="pk_id_object_depends_on">
 <part>id</part>
 </key>
 <comment>Abhängigkeit zu Objecten</comment>
 </table>
-<table x="788" y="94" name="attribute">
+<table x="968" y="235" name="attribute">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -311,12 +390,20 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <row name="formula" null="1" autoincrement="0">
 <datatype>TEXT(4000)</datatype>
 <default>NULL</default></row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 <comment>Kennzeichen - zB Wenn Feld im ersten Zeichen ein A ernthaelt, dann ist es ein besonderer Artikel...</comment>
 </table>
-<table x="1106" y="718" name="tool_type">
+<table x="1097" y="834" name="tool_type">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -329,12 +416,20 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <row name="description" null="1" autoincrement="0">
 <datatype>TEXT(500)</datatype>
 <default>NULL</default></row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 <comment>Welcher Typ ist das Programm: Reporting, Dataquality, ETL, Semantic-Layer, Scheduler, Portal, Dashboard, DBMS, OLAP</comment>
 </table>
-<table x="502" y="890" name="db_table">
+<table x="39" y="1163" name="db_table">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -371,12 +466,26 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="deleted_status" row="id" />
 </row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
+<row name="source_definition" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="source_comment" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 <comment>Database table</comment>
 </table>
-<table x="504" y="1171" name="db_table_field">
+<table x="353" y="1249" name="db_table_field">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -421,11 +530,25 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <row name="is_GDPR_relevant" null="1" autoincrement="0">
 <datatype>BOOLEAN</datatype>
 <default>NULL</default></row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
+<row name="source_definition" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="source_comment" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 </table>
-<table x="828" y="1106" name="db_table_context">
+<table x="762" y="1135" name="db_table_context">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -450,12 +573,20 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <datatype>TEXT(100)</datatype>
 <default>NULL</default><comment>Prefix for Tablenames</comment>
 </row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 <comment>Which kind of table is it in a BI context? (staging table, temp, fact, datamart, dimension, ...)</comment>
 </table>
-<table x="1311" y="942" name="db_database">
+<table x="1352" y="1024" name="db_database">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -484,12 +615,29 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="deleted_status" row="id" />
 </row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
+<row name="source_definition" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="source_definition_language" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="source_comment" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 <comment>Generic information which databases is used in context (vendor database, name of the database, kind of use (production, test, dev, ...), IP, type (operational, reporting, analytical, dwh), database-technologie (OLTP, OLAP, NoSQL, ...)</comment>
 </table>
-<table x="1141" y="468" name="scheduling">
+<table x="1011" y="492" name="scheduling">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -522,12 +670,29 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="deleted_status" row="id" />
 </row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
+<row name="source_definition" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="source_definition_language" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="source_comment" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 <comment>Scheduling of BI items (report bursting, copy of files, ETL-jobs, ...)</comment>
 </table>
-<table x="1363" y="671" name="parameter">
+<table x="1363" y="622" name="parameter">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -565,12 +730,29 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="deleted_status" row="id" />
 </row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
+<row name="source_definition" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="source_definition_language" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="source_comment" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 <comment>Parameter which can be set e.g. on report execution, scheduling, ETL jobs, ...</comment>
 </table>
-<table x="196" y="983" name="db_table_type">
+<table x="81" y="1520" name="db_table_type">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -583,12 +765,23 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <row name="description" null="1" autoincrement="0">
 <datatype>TEXT</datatype>
 <default>NULL</default></row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
+<row name="source_definition_language" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 <comment>Typ der Tabelle: Normale Tabelle, View, CSV Datei, XML-Datei, SOAP Methode</comment>
 </table>
-<table x="1205" y="20" name="object_comment">
+<table x="1237" y="29" name="object_comment">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -614,12 +807,20 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <row name="created_at_datetime" null="1" autoincrement="0">
 <datatype>TEXT</datatype>
 <default>NULL</default></row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 <comment>Kommentar zu dem Object</comment>
 </table>
-<table x="282" y="85" name="glossary">
+<table x="348" y="220" name="glossary">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -640,12 +841,20 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <row name="description" null="1" autoincrement="0">
 <datatype>TEXT</datatype>
 <default>NULL</default></row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 <comment>Glosar für Projektspezifische Begriffe oder Eigennamen</comment>
 </table>
-<table x="843" y="586" name="data_delivery_type">
+<table x="642" y="677" name="data_delivery_type">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -658,12 +867,23 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <row name="description" null="1" autoincrement="0">
 <datatype>TEXT(500)</datatype>
 <default>NULL</default></row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
+<row name="source_definition_language" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 <comment>Which types: e.g. report, flatfile export, view, REST or SOAP WebService, ...</comment>
 </table>
-<table x="1126" y="1180" name="data_transfer_process">
+<table x="1054" y="1128" name="data_transfer_process">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -700,12 +920,26 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="deleted_status" row="id" />
 </row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
+<row name="source_definition" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="source_comment" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 <comment>This is an object for describing a data transfer oder data manipulation such as ETL, Script, SQL query, ...</comment>
 </table>
-<table x="1477" y="1186" name="data_transfer_type">
+<table x="1725" y="1343" name="data_transfer_type">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -718,12 +952,23 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <row name="description" null="1" autoincrement="0">
 <datatype>TEXT(4000)</datatype>
 <default>NULL</default></row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
+<row name="source_definition_language" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 <comment>Lookup-List for data transfer processef to describe the kind</comment>
 </table>
-<table x="92" y="67" name="app_config">
+<table x="1762" y="1005" name="app_config">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -747,7 +992,7 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 </key>
 <comment>Applikationsconfigutation</comment>
 </table>
-<table x="155" y="1170" name="contact_group">
+<table x="21" y="659" name="contact_group">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -775,12 +1020,20 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="deleted_status" row="id" />
 </row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 <comment>Kontaktgruppe (Abteilung, Team, ...)</comment>
 </table>
-<table x="156" y="1401" name="contact">
+<table x="35" y="239" name="contact">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -824,12 +1077,20 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="deleted_status" row="id" />
 </row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 <comment>Einzelner Kontakt oder Ansprechpartner</comment>
 </table>
-<table x="1493" y="102" name="bracket">
+<table x="1510" y="86" name="bracket">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -856,12 +1117,20 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <row name="fk_object_type_id_as_searchFilter" null="1" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
 <key type="PRIMARY" name="PK_bracket">
 <part>id</part>
 </key>
 <comment>Defines same objectvalues with different names. E.g. tablefield named Country and CNTRY are spelled different but has the same content and meaning</comment>
 </table>
-<table x="1775" y="29" name="bracket_searchPattern">
+<table x="1564" y="365" name="bracket_searchPattern">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -879,12 +1148,20 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <row name="searchPattern" null="1" autoincrement="0">
 <datatype>TEXT(500)</datatype>
 <default>NULL</default></row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
 <key type="PRIMARY" name="PK_bracket_searchPattern">
 <part>id</part>
 </key>
 <comment>SearchPattern for collecting bracket elements</comment>
 </table>
-<table x="814" y="1373" name="import_stage_db_table">
+<table x="802" y="1480" name="import_stage_db_table">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -996,7 +1273,7 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 </key>
 <comment>Import table for bulk upload</comment>
 </table>
-<table x="425" y="1572" name="perspective_filter">
+<table x="507" y="1698" name="perspective_filter">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -1022,6 +1299,14 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <default>NULL</default><relation table="object_type" row="id" />
 <comment>Referenced fk_object_type_id for filtering</comment>
 </row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
 <key type="PRIMARY" name="PK">
 <part>id</part>
 </key>
@@ -1029,7 +1314,7 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 </key>
 <comment>This table holds the data for filtering on object_types on selected persective (language)</comment>
 </table>
-<table x="1599" y="601" name="mapping_qualifier">
+<table x="1631" y="644" name="mapping_qualifier">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -1054,12 +1339,20 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <datatype>BOOLEAN</datatype>
 <default>0</default><comment>Some objekt links belongs to a parent/child relashionship.</comment>
 </row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
 <key type="PRIMARY" name="PK">
 <part>id</part>
 </key>
 <comment>More details about the relationship between two objects</comment>
 </table>
-<table x="1389" y="1383" name="url">
+<table x="1443" y="1509" name="url">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -1083,13 +1376,21 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <row name="url" null="1" autoincrement="0">
 <datatype>TEXT(4000)</datatype>
 <default>NULL</default></row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 <comment>Holds Links to webpages or files or JDBC Connections, etc.
 Are used for mapping_objects_2_objects only.</comment>
 </table>
-<table x="1086" y="1526" name="cleanup_queue">
+<table x="1143" y="1571" name="cleanup_queue">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -1108,7 +1409,7 @@ Are used for mapping_objects_2_objects only.</comment>
 </key>
 <comment>This table holds temporary items to be cleaned up</comment>
 </table>
-<table x="979" y="31" name="deleted_status">
+<table x="978" y="32" name="deleted_status">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -1125,23 +1426,39 @@ Are used for mapping_objects_2_objects only.</comment>
 <row name="description" null="1" autoincrement="0">
 <datatype>TEXT(4000)</datatype>
 <default>NULL</default></row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 <comment>Indicates a soft delete: E.g. deleted on source system or by user (before hard deleted in the object table)</comment>
 </table>
-<table x="1395" y="1668" name="export_file_db_table_queue">
+<table x="1487" y="1812" name="export_file_db_table_queue">
 <row name="id" null="0" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
 <row name="session" null="1" autoincrement="0">
 <datatype>TEXT(200)</datatype>
 <default>NULL</default></row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
 <key type="PRIMARY" name="PK">
 <part>id</part>
 </key>
 </table>
-<table x="1396" y="1750" name="export_file_db_table_params">
+<table x="1469" y="1955" name="export_file_db_table_params">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -1154,11 +1471,19 @@ Are used for mapping_objects_2_objects only.</comment>
 <row name="allowed_fk_client_id" null="1" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
 <key type="PRIMARY" name="PK">
 <part>id</part>
 </key>
 </table>
-<table x="1127" y="1667" name="export_file_db_table_result">
+<table x="1173" y="1773" name="export_file_db_table_result">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -1225,8 +1550,73 @@ Are used for mapping_objects_2_objects only.</comment>
 <row name="_created_datetime" null="1" autoincrement="0">
 <datatype>TIMESTAMP</datatype>
 <default>CURRENT_TIMESTAMP</default></row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
 <key type="PRIMARY" name="PK">
 <part>_auto_id</part>
 </key>
+</table>
+<table x="139" y="1772" name="object_persistence_method">
+<row name="id" null="0" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_object_type_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>26</default><relation table="object_type" row="id" />
+</row>
+<row name="name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default><comment>added with bulk loader, added with copy&amp;paste, copy, symlink, ....</comment>
+</row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT(4000)</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="pk_id_object_persistence_method">
+<part>id</part>
+</key>
+<comment>In which context is the object beeing created (copied, symlink, ...)</comment>
+</table>
+<table x="131" y="1949" name="datamanagement_process">
+<row name="id" null="0" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_object_type_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>27</default><relation table="object_type" row="id" />
+</row>
+<row name="name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default><comment>Frontend/User, Bulkloader, Copy&amp;Paste Import, Frontend/Copy, Frontend/Symlink, ...</comment>
+</row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT(4000)</datatype>
+<default>NULL</default></row>
+<row name="tool" null="1" autoincrement="0">
+<datatype>TEXT(500)</datatype>
+<default>NULL</default><comment>Pentaho Data Integration (Kettle), Yii2, Python, ...</comment>
+</row>
+<row name="tool_version" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default></row>
+<row name="routine" null="1" autoincrement="0">
+<datatype>TEXT(500)</datatype>
+<default>NULL</default><comment>Name of the routine (e.g. Kettle Transformation / Yii2 name of functionm, ....)</comment>
+</row>
+<key type="PRIMARY" name="pk_id_datamanagement_process">
+<part>id</part>
+</key>
+<comment>Which process/module/tool inserted/updated/copied/... the row</comment>
 </table>
 </sql>

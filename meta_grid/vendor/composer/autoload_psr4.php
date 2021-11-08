@@ -31,6 +31,7 @@ return array(
     'kartik\\depdrop\\' => array($vendorDir . '/kartik-v/yii2-widget-depdrop'),
     'kartik\\base\\' => array($vendorDir . '/kartik-v/yii2-krajee-base'),
     'dosamigos\\selectize\\' => array($vendorDir . '/2amigos/yii2-selectize-widget/src'),
+    'dmstr\\web\\' => array($vendorDir . '/dmstr/yii2-mermaid-asset/src'),
     'dmstr\\helpers\\' => array($vendorDir . '/dmstr/yii2-helpers/src'),
     'dmstr\\db\\tests\\' => array($vendorDir . '/dmstr/yii2-db/db/tests'),
     'dmstr\\db\\' => array($vendorDir . '/dmstr/yii2-db/db'),

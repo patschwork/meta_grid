@@ -68,4 +68,29 @@ class Utils
 
         return null;
      }
+
+     public function DBisReadOnly($database_driver_name, $database_source_path)
+     {
+         $returnValue = null;
+         if ($database_driver_name == "sqlite")
+         {
+             try
+             {
+                 $connection = \Yii::$app->db;
+                 if (is_writable($database_source_path))
+                 {
+                     $returnValue = false;
+                 }
+                 else
+                 {
+                     $returnValue = true;
+                 }
+             }
+             catch (\yii\db\Exception $e)
+             {
+                 $returnValue = true;
+             }
+         }
+         return $returnValue;
+     }
 }

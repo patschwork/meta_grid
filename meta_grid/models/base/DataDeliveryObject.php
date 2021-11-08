@@ -16,7 +16,15 @@ use Yii;
  * @property integer $fk_tool_id
  * @property integer $fk_data_delivery_type_id
  * @property integer $fk_contact_group_id_as_data_owner
+ * @property integer $fk_deleted_status_id
+ * @property string $source_definition
+ * @property string $source_comment
+ * @property integer $fk_object_persistence_method_id
+ * @property integer $fk_datamanagement_process_id
  *
+ * @property DatamanagementProcess $fkDatamanagementProcess
+ * @property ObjectPersistenceMethod $fkObjectPersistenceMethod
+ * @property DeletedStatus $fkDeletedStatus
  * @property ContactGroup $fkContactGroupIdAsDataOwner
  * @property DataDeliveryType $fkDataDeliveryType
  * @property Tool $fkTool
@@ -39,10 +47,18 @@ class DataDeliveryObject extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['uuid'], 'string'],
-            [['fk_object_type_id', 'fk_project_id', 'fk_tool_id', 'fk_data_delivery_type_id', 'fk_contact_group_id_as_data_owner'], 'integer'],
+            [['uuid', 'source_definition', 'source_comment'], 'string'],
+            [['fk_object_type_id', 'fk_project_id', 'fk_tool_id', 'fk_data_delivery_type_id', 'fk_contact_group_id_as_data_owner', 'fk_deleted_status_id', 'fk_object_persistence_method_id', 'fk_datamanagement_process_id'], 'integer'],
             [['name'], 'string', 'max' => 250],
-            [['description'], 'string', 'max' => 4000]
+            [['description'], 'string', 'max' => 500],
+            [['fk_datamanagement_process_id'], 'exist', 'skipOnError' => true, 'targetClass' => DatamanagementProcess::className(), 'targetAttribute' => ['fk_datamanagement_process_id' => 'id']],
+            [['fk_object_persistence_method_id'], 'exist', 'skipOnError' => true, 'targetClass' => ObjectPersistenceMethod::className(), 'targetAttribute' => ['fk_object_persistence_method_id' => 'id']],
+            [['fk_deleted_status_id'], 'exist', 'skipOnError' => true, 'targetClass' => DeletedStatus::className(), 'targetAttribute' => ['fk_deleted_status_id' => 'id']],
+            [['fk_contact_group_id_as_data_owner'], 'exist', 'skipOnError' => true, 'targetClass' => ContactGroup::className(), 'targetAttribute' => ['fk_contact_group_id_as_data_owner' => 'id']],
+            [['fk_data_delivery_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => DataDeliveryType::className(), 'targetAttribute' => ['fk_data_delivery_type_id' => 'id']],
+            [['fk_tool_id'], 'exist', 'skipOnError' => true, 'targetClass' => Tool::className(), 'targetAttribute' => ['fk_tool_id' => 'id']],
+            [['fk_project_id'], 'exist', 'skipOnError' => true, 'targetClass' => Project::className(), 'targetAttribute' => ['fk_project_id' => 'id']],
+            [['fk_object_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => ObjectType::className(), 'targetAttribute' => ['fk_object_type_id' => 'id']],
         ];
     }
 
@@ -61,7 +77,36 @@ class DataDeliveryObject extends \yii\db\ActiveRecord
             'fk_tool_id' => Yii::t('app', 'Fk Tool ID'),
             'fk_data_delivery_type_id' => Yii::t('app', 'Fk Data Delivery Type ID'),
             'fk_contact_group_id_as_data_owner' => Yii::t('app', 'Fk Contact Group Id As Data Owner'),
+            'fk_deleted_status_id' => Yii::t('app', 'Fk Deleted Status ID'),
+            'source_definition' => Yii::t('app', 'Source Definition'),
+            'source_comment' => Yii::t('app', 'Source Comment'),
+            'fk_object_persistence_method_id' => Yii::t('app', 'Fk Object Persistence Method ID'),
+            'fk_datamanagement_process_id' => Yii::t('app', 'Fk Datamanagement Process ID'),
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFkDatamanagementProcess()
+    {
+        return $this->hasOne(\app\models\DatamanagementProcess::className(), ['id' => 'fk_datamanagement_process_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFkObjectPersistenceMethod()
+    {
+        return $this->hasOne(\app\models\ObjectPersistenceMethod::className(), ['id' => 'fk_object_persistence_method_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFkDeletedStatus()
+    {
+        return $this->hasOne(\app\models\DeletedStatus::className(), ['id' => 'fk_deleted_status_id']);
     }
 
     /**

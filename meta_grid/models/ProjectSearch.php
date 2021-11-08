@@ -18,7 +18,7 @@ class ProjectSearch extends VProjectSearchinterface
     public function rules()
     {
         return [
-            [['id', 'fk_client_id'], 'integer'],
+            [['id', 'fk_client_id', 'fk_object_persistence_method_id', 'fk_datamanagement_process_id'], 'integer'],
             [['uuid', 'name', 'description'], 'safe'],
         ];
     }
@@ -69,6 +69,8 @@ class ProjectSearch extends VProjectSearchinterface
         $query->andFilterWhere([
             'id' => $this->id,
             'fk_client_id' => $this->fk_client_id,
+            'fk_object_persistence_method_id' => $this->fk_object_persistence_method_id,
+            'fk_datamanagement_process_id' => $this->fk_datamanagement_process_id,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])

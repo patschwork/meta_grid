@@ -18,7 +18,7 @@ class ToolSearch extends VToolSearchinterface
     public function rules()
     {
         return [
-            [['id', 'fk_tool_type_id'], 'integer'],
+            [['id', 'fk_tool_type_id', 'fk_object_persistence_method_id', 'fk_datamanagement_process_id'], 'integer'],
             [['uuid', 'tool_name', 'vendor', 'version', 'comment'], 'safe'],
         ];
     }
@@ -69,6 +69,8 @@ class ToolSearch extends VToolSearchinterface
         $query->andFilterWhere([
             'id' => $this->id,
             'fk_tool_type_id' => $this->fk_tool_type_id,
+            'fk_object_persistence_method_id' => $this->fk_object_persistence_method_id,
+            'fk_datamanagement_process_id' => $this->fk_datamanagement_process_id,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])

@@ -616,3 +616,34 @@
 			AND
 		ATT.fk_project_id=BRA.bracket_fk_project_id
 	;
+
+-- View to show tables/views with same Schema and Name in different databases and/or projects
+    DROP VIEW v_db_table_location_4_same_table_lookup
+    ;
+    CREATE VIEW v_db_table_location_4_same_table_lookup AS
+    WITH RECURSIVE split(seq, word, str, id, fk_project_id, location) AS (
+        SELECT 0, '.', location||'.',id,fk_project_id,location
+        FROM db_table 
+        WHERE 1=1 
+        AND fk_db_table_type_id IN (1,2) -- TABLE,VIEW
+        AND location LIKE '%.%.%'
+        UNION ALL SELECT
+            seq+1,
+            substr(str, 0, instr(str, '.')),
+            substr(str, instr(str, '.')+1),
+            id,
+            fk_project_id,
+            location
+        FROM split WHERE str != ''
+    ),
+    result AS 
+    (
+        SELECT part1.id, part1.fk_project_id,part1.location,p.name AS project_name, part1.word||'.'||part2.word AS "db_table_location_normalized"
+        FROM split part1
+        INNER JOIN split part2 ON 1=1 AND part2.seq=3 AND part2.id=part1.id
+        LEFT JOIN project p ON 1=1 AND p.id=part1.fk_project_id
+        WHERE part1.seq=2
+    )
+    SELECT * FROM result
+    ORDER BY "db_table_location_normalized"
+    ;

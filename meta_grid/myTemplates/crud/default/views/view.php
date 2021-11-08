@@ -25,6 +25,8 @@ use yii\data\ActiveDataProvider;
 use yii\bootstrap\ActiveForm;
 use wbraganca\dynamicform\DynamicFormWidget;
 <?php endif; ?>
+use dmstr\web\MermaidAsset;
+MermaidAsset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $model <?= ltrim($generator->modelClass, '\\') ?> */
@@ -83,14 +85,17 @@ if ($generator->modelClass === 'app\models\DbTable')
 {
 	$dbtableadditioncode1 = "&& Yii::\$app->User->can('create-dbtable')";
 	$dbtableadditioncode2 = " table";
+	echo "\t<?= Yii::\$app->user->identity->isAdmin || (Yii::\$app->User->can('create-dbtablefield')) $dbtableadditioncode1 ? Html::a(Yii::t('app', 'Update table and fields'), ['dbtablefieldmultipleedit/update', 'id' => \$model->$dbtablefieldadditioncode1], ['class' => 'btn btn-primary']) : \"\" ?>";
 }
 if ($generator->modelClass === 'app\models\DbTableField')
 {
 	$dbtablefieldadditioncode1 = "fk_db_table_" . $dbtablefieldadditioncode1;
 	$dbtablefieldadditioncode2 = "field";
+	echo "\t<?= Yii::\$app->user->identity->isAdmin || (Yii::\$app->User->can('create-dbtablefield')) $dbtableadditioncode1 ? Html::a(Yii::t('app', 'Update table and fields'), ['dbtablefieldmultipleedit/update', 'id' => \$model->$dbtablefieldadditioncode1, '#' => \$model->id], ['class' => 'btn btn-primary']) : \"\" ?>";
 }
+
 ?>
-	<?= "<?= Yii::\$app->user->identity->isAdmin || (Yii::\$app->User->can('create-dbtablefield')) $dbtableadditioncode1 ? Html::a(Yii::t('app', 'Update table and fields'), ['dbtablefieldmultipleedit/update', 'id' => \$model->$dbtablefieldadditioncode1, '#' => \$model->id], ['class' => 'btn btn-primary']) : \"\" ?>
+	<?= "
 
 		<?php
 			\$db_table_show_buttons_for_different_object_type_updates = \\vendor\\meta_grid\\helper\\Utils::get_app_config(\"db_table_show_buttons_for_different_object_type_updates\");
@@ -360,7 +365,33 @@ echo '</div>' . "\n";
 		}
 		
 		?>
-	
+	<?php if ($generator->modelClass === "app\models\DbTable"): ?>
+		 $provider = new yii\data\ArrayDataProvider([
+			'allModels' => $sameTableList,
+			'pagination' => [
+				'pageSize' => 10,
+			],
+			'sort' => [
+				'attributes' => ['id'],
+			],
+		]);
+
+		echo yii\grid\GridView::widget([
+			'dataProvider' => $provider,
+			'columns' => [
+				'id',
+				'project_name',
+				[
+					'label' => 'db_table_location_normalized',
+					'value' => function ($model) {
+						return Html::a($model->location, ['dbtable/view', 'id' => $model->id], ['class' => 'btn btn-default']);
+					},
+					'format' => 'raw'
+				],
+			],
+		]);
+	<?php endif; ?>
+
 	<?php if ($generator->modelClass === "app\models\DbTableField"): ?>
 		$bracket_widget = \vendor\meta_grid\bracket_list\BracketListWidget::widget(
 					    	[

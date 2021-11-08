@@ -18,8 +18,8 @@ class DbTableFieldSearch extends VDbTableFieldSearchinterface
     public function rules()
     {
         return [
-            [['id', 'fk_object_type_id', 'fk_project_id', 'fk_db_table_id', 'fk_deleted_status_id'], 'integer'],
-            [['uuid', 'name', 'description', 'datatype', 'bulk_load_checksum'], 'safe'],
+            [['id', 'fk_object_type_id', 'fk_project_id', 'fk_db_table_id', 'fk_deleted_status_id', 'fk_object_persistence_method_id', 'fk_datamanagement_process_id'], 'integer'],
+            [['uuid', 'name', 'description', 'datatype', 'bulk_load_checksum', 'source_definition', 'source_comment'], 'safe'],
             [['is_PrimaryKey', 'is_BusinessKey', 'is_GDPR_relevant'], 'boolean'],
             [['fk_client_id'], 'integer'],
             [['databaseInfoFromLocation'], 'safe'],
@@ -79,6 +79,8 @@ class DbTableFieldSearch extends VDbTableFieldSearchinterface
             'is_PrimaryKey' => $this->is_PrimaryKey,
             'is_BusinessKey' => $this->is_BusinessKey,
             'is_GDPR_relevant' => $this->is_GDPR_relevant,
+            'fk_object_persistence_method_id' => $this->fk_object_persistence_method_id,
+            'fk_datamanagement_process_id' => $this->fk_datamanagement_process_id,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
@@ -86,7 +88,9 @@ class DbTableFieldSearch extends VDbTableFieldSearchinterface
             ->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['like', 'description', $this->description])
             ->andFilterWhere(['like', 'datatype', $this->datatype])
-            ->andFilterWhere(['like', 'bulk_load_checksum', $this->bulk_load_checksum]);
+            ->andFilterWhere(['like', 'bulk_load_checksum', $this->bulk_load_checksum])
+            ->andFilterWhere(['like', 'source_definition', $this->source_definition])
+            ->andFilterWhere(['like', 'source_comment', $this->source_comment]);
 
         return $dataProvider;
     }
