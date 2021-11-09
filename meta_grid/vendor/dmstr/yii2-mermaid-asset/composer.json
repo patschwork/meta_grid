@@ -1,0 +1,21 @@
+{
+    "name": "dmstr/yii2-mermaid-asset",
+    "description": "Mermaid asset bundle for Yii 2.0 Framework",
+    "type": "library",
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Tobias Munk",
+            "email": "tobias@diemeisterei.de"
+        }
+    ],
+    "require": {
+        "bower-asset/mermaid": "^7.0.3",
+        "yiisoft/yii2": "2.0.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "dmstr\\web\\": "src"
+        }
+    }
+}
