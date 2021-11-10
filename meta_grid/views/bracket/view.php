@@ -12,8 +12,8 @@ use yii\data\ActiveDataProvider;
 
 use yii\bootstrap\ActiveForm;
 use wbraganca\dynamicform\DynamicFormWidget;
-use dmstr\web\MermaidAsset;
-MermaidAsset::register($this);
+use vendor\meta_grid\mermaid_js_asset\MermaidJSAsset;
+MermaidJSAsset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Bracket */

@@ -1,3 +1,21 @@
+# 2.4.4
+- [T179]
+
+# 2.4.3
+- [T178]
+- [T166]
+- [T144]
+- [T152]
+- [T153]
+- [T176]
+- [T171]
+- [T154]
+- [T170]
+- [T168]
+- [T167]
+- [T151]
+- [T158]
+
 # 2.4.2
 
 - [T146]                    Bugfix -> Out-of-memory exception (mapping dialog / new app_config parameter)

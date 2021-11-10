@@ -36,8 +36,7 @@
         "php-cs-fixer/diff": "1.3",
         "symfony/console": "3.4.17",
         "bluezed/yii2-float-thead": "*",
-        "yii2tech/csv-grid": "^1.0",
-        "dmstr/yii2-mermaid-asset": "^0.0.2"
+        "yii2tech/csv-grid": "^1.0"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

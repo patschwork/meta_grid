@@ -1,88 +1,126 @@
-# How to contribute
+# Contributing
 
-Great that you want to be involved in this project! Contributing is fun and contributions are GREAT! :)
+So you want to help? That's great!
 
-This page is currently a starting point and is not so rigorous to start with.
+![Image of happy people jumping with excitement](https://media.giphy.com/media/BlVnrxJgTGsUw/giphy.gif)
 
-Some important guidlines:
+Here are a few things to know to get you started on the right path.
 
-* The work will be organized using the issues list
-    * In the list there will be the bugs/enhancements etc we are working with in the project
-    * There will be milestones outlineing the roadmap ahead
-    * There will issues marked with help wanted
+## Committing code
 
-The issue list and the items marked with **help wanted** is a good starting point if you want to do some work.
+We make all changes via pull requests. As we have many pull requests from developers new to mermaid, the current approach is to have *knsv, Knut Sveidqvist* as a main reviewer of changes and merging pull requests. More precisely like this:
 
+* Large changes reviewed by knsv or other developer asked to review by knsv
+* Smaller low-risk changes like dependecies, documentation etc can be merged by active collaborators
+* documentation (updates to the docs folder is also allowed via direct commits)
 
-## Guidelines for avoiding duplicate work
+To commit code, create a branch, let it start with the type like feature or bug followed by the issue number for reference and some describing text.
 
-Contributing is great. It is not so fun when you are done with your issue and just before you're about to push your
-change you can't because someone else just pushed the same fix so you have wasted your time. The guidelines below are in
-place to prevent this:
+One example:
 
-* Comment in the issue that you are working on it. You will then be added as an assignee (eventually).
-* When you pick an issue to work on.
-    * Check that the issue not assigned
-    * Also check the comments so that no one has started working on it before beeing officially assigned.
+`feature/945_state_diagrams`
 
+Another:
 
-## Submitting changes
+`bug/123_nasty_bug_branch`
 
-Please send a GitHub Pull Request with a clear list of what you've done (read more about pull requests). When you send
-a pull request, we will love you forever if you include jasmine tests. We can always use more test coverage.
+## Committing documentation
 
-Always write a clear log message for your commits. One-line messages are fine for small changes, but bigger changes should look like this:
+Less strict here, it is OK to commit directly in the `develop` branch if you are a collaborator.
 
-$ git commit -m "A brief summary of the commit
->
-> A paragraph describing what changed and its impact."
-Coding conventions
-Start reading our code and you'll get the hang of it. We optimize for readability:
+The documentation is located in the `docs` directory and published using GitHub Pages.
+The documentation site is powered by [Docsify](https://docsify.js.org), a simple documentation site generator.
 
-This is open source software. Consider the people who will read your code, and make it look nice for them. It's sort of
-like driving a car: Perhaps you love doing donuts when you're alone, but with passengers the goal is to make the ride as
-smooth as possible.
+The documentation is written in Markdown, for more information about Markdown [see the GitHub Markdown help page](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
 
-So that we can consistently serve images from the CDN, always use image_path or image_tag when referring to images.
-Never prepend "/images/" when using image_path or image_tag.
-Also for the CDN, always use cwd-relative paths rather than root-relative paths in image URLs in any CSS. So instead of
-url('/images/blah.gif'), use url('../images/blah.gif').
-
-# Build instructions
-
-Fork, then:
+If you want to preview the documentation site on your machine, you need to install `docsify-cli`:
 
 ```
-yarn install
-```
+$ npm i docsify-cli -g
+````
 
-Then the dependencies will have been installed. You use gulp and yarn calls as build tools.
-
-The following targets are probably interesting:
-
-* jison - compiles the jison grammars to parser files
-
-for instance:
-```
-gulp jison
-```
-
-To build:
+If you are more familiar with Yarn, you can use the following command:
 
 ```
-yarn build
+$ yarn global add docsify-cli
 ```
 
-To run the tests:
+The above command will install `docsify-cli` globally.
+If the installation is successful, the command `docsify` will be available in your `PATH`.
+
+You can now run the following command to serve the documentation site:
 
 ```
-yarn test
+$ docsify serve docs
 ```
 
-Make sure you have Chrome browser installed. We use Chrome headless for testing.
+Once the local HTTP server is listening, you can point your browser at http://localhost:3000.
 
-Manual test:
+## Branching
 
+Going forward we will use a git flow inspired approach to branching. So development is done in develop, to do the development in the develop.
+
+Once development is done we branch a release branch from develop for testing.
+
+Once the release happens we merge the release branch to master and kill the release branch.
+
+This means... **branch off your pull request from develop**
+
+## Content of a pull request
+
+A new feature has been born. Great! But without the steps below it might just ... fade away ...
+
+### **Add unit tests for the parsing part**
+
+This is important so that, if someone else does a change to the grammar that does not know about this great feature, gets notified early on when that change breaks the parser. Another important aspect is that without proper parsing tests refactoring is pretty much impossible.
+
+### **Add e2e tests**
+
+This tests the rendering and visual apearance of the diagram. This ensures that the rendering of that feature in the e2e will be reviewed in the release process going forward. Less chance that it breaks!
+
+To start working with the e2e tests, run `yarn dev` to start the dev server, after that start cypress by running `cypress open` in the mermaid folder. (Make sure you have path to cypress in order, the binary is located in node_modules/.bin).
+
+The rendering tests are very straightforward to create. There is a function imgSnapshotTest. This function takes a diagram in text form, the mermaid options and renders that diagram in cypress.
+
+When running in ci it will take a snapshot of the rendered diagram and compare it with the snapshot from last build and flag for review it if it differs.
+
+This is what a rendering test looks like:
 ```
-open dist/demo/index.html
-```
+  it('should render forks and joins', () => {
+    imgSnapshotTest(
+      `
+    stateDiagram
+    state fork_state &lt;&lt;fork&gt;&gt;
+      [*] --> fork_state
+      fork_state --> State2
+      fork_state --> State3
+
+      state join_state &lt;&lt;join&gt;&gt;
+      State2 --> join_state
+      State3 --> join_state
+      join_state --> State4
+      State4 --> [*]
+    `,
+      { logLevel: 0 }
+    );
+    cy.get('svg');
+  });
+  ```
+
+
+### **Add documentation for it**
+
+Finally, if it is not in the documentation, no one will know about it and then **no one will use it**. Wouldn't that be sad? With all the effort that was put into the feature?
+
+The docs are located in the docs folder and are ofc written in markdown. Just pick the right section and start typing. If you want to add to the structure as in adding a new section and new file you do that via the _navbar.md.
+
+The changes in master is reflected in http://mermaid-js.github.io/mermaid/ once released the updates are commited to https://mermaid-js.github.io/#/
+
+## Last words
+
+Don't get daunted if it is hard in the beginning. We have a great community with only encouraging words. So if you get stuck, ask for help and hints in the slack forum. If you want to show off something good, show it off there.
+
+[Join our slack community if you want closer contact!](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE)
+
+
+![Image of superhero wishing you good luck](https://media.giphy.com/media/l49JHz7kJvl6MCj3G/giphy.gif)

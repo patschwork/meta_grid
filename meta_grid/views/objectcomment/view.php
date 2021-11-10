@@ -10,6 +10,8 @@ use yii\bootstrap\Tabs;
 use yii\data\ActiveDataProvider;
 // Kommentierung pro Object ...}
 
+use vendor\meta_grid\mermaid_js_asset\MermaidJSAsset;
+MermaidJSAsset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Objectcomment */

@@ -10,8 +10,8 @@ use yii\bootstrap\Tabs;
 use yii\data\ActiveDataProvider;
 // Kommentierung pro Object ...}
 
-use dmstr\web\MermaidAsset;
-MermaidAsset::register($this);
+use vendor\meta_grid\mermaid_js_asset\MermaidJSAsset;
+MermaidJSAsset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Attribute */
