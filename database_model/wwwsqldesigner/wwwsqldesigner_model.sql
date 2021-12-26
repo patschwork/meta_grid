@@ -13,8 +13,8 @@ unit TEXT(500) DEFAULT NULL,
 value_range TEXT(500) DEFAULT NULL,
 cumulation_possible BOOLEAN DEFAULT NULL,
 fk_deleted_status_id INTEGER DEFAULT NULL REFERENCES deleted_status (id),
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id),
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id),
 source_definition TEXT DEFAULT NULL,
 source_definition_language TEXT(250) DEFAULT NULL,
 source_comment TEXT DEFAULT NULL
@@ -31,8 +31,8 @@ id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
 uuid TEXT DEFAULT NULL,
 name TEXT(250) DEFAULT NULL,
 description TEXT(500) DEFAULT NULL,
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id)
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id)
 );
 
 CREATE TABLE project (
@@ -41,8 +41,8 @@ uuid TEXT DEFAULT NULL,
 fk_client_id INTEGER NOT NULL  DEFAULT NULL REFERENCES client (id),
 name TEXT(250) DEFAULT NULL,
 description TEXT(500) DEFAULT NULL,
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id)
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id)
 );
 
 CREATE TABLE sourcesystem (
@@ -54,8 +54,8 @@ name TEXT(250) DEFAULT NULL,
 description TEXT(500) DEFAULT NULL,
 fk_contact_group_id_as_supporter INTEGER DEFAULT NULL REFERENCES contact_group (id),
 fk_deleted_status_id INTEGER DEFAULT NULL REFERENCES deleted_status (id),
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id)
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id)
 );
 
 CREATE TABLE data_delivery_object (
@@ -69,8 +69,8 @@ fk_tool_id INTEGER NOT NULL  DEFAULT NULL REFERENCES tool (id),
 fk_data_delivery_type_id INTEGER DEFAULT NULL REFERENCES data_delivery_type (id),
 fk_contact_group_id_as_data_owner INTEGER DEFAULT NULL REFERENCES contact_group (id),
 fk_deleted_status_id INTEGER DEFAULT NULL REFERENCES deleted_status (id),
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id),
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id),
 source_definition TEXT DEFAULT NULL,
 source_comment TEXT DEFAULT NULL
 );
@@ -83,8 +83,8 @@ ref_fk_object_id_1 INTEGER NOT NULL  DEFAULT NULL,
 ref_fk_object_type_id_1 INTEGER NOT NULL  DEFAULT NULL REFERENCES object_type (id),
 ref_fk_object_id_2 INTEGER DEFAULT NULL,
 ref_fk_object_type_id_2 INTEGER NOT NULL  DEFAULT NULL REFERENCES object_type (id),
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id),
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id),
 UNIQUE (ref_fk_object_id_1, ref_fk_object_type_id_1, ref_fk_object_id_2, ref_fk_object_type_id_2)
 );
 
@@ -96,8 +96,8 @@ tool_name TEXT(255) DEFAULT NULL,
 vendor TEXT(255) DEFAULT NULL,
 version TEXT(255) DEFAULT NULL,
 comment TEXT(500) DEFAULT NULL,
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id)
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id)
 );
 
 CREATE TABLE object_depends_on (
@@ -107,8 +107,8 @@ ref_fk_object_id_parent INTEGER DEFAULT NULL,
 ref_fk_object_type_id_parent INTEGER DEFAULT NULL,
 ref_fk_object_id_child INTEGER DEFAULT NULL,
 ref_fk_object_type_id_child INTEGER DEFAULT NULL,
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id)
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id)
 );
 
 CREATE TABLE attribute (
@@ -119,8 +119,8 @@ fk_project_id INTEGER NOT NULL  DEFAULT NULL REFERENCES project (id),
 name TEXT(250) DEFAULT NULL,
 description TEXT(4000) DEFAULT NULL,
 formula TEXT(4000) DEFAULT NULL,
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id)
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id)
 );
 
 CREATE TABLE tool_type (
@@ -128,8 +128,8 @@ id INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
 uuid TEXT DEFAULT NULL,
 name TEXT(250) DEFAULT NULL,
 description TEXT(500) DEFAULT NULL,
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id)
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id)
 );
 
 CREATE TABLE db_table (
@@ -138,13 +138,13 @@ uuid TEXT DEFAULT NULL,
 fk_object_type_id INTEGER NOT NULL  DEFAULT 4 REFERENCES object_type (id),
 fk_project_id INTEGER NOT NULL  DEFAULT NULL REFERENCES project (id),
 name TEXT(250) DEFAULT NULL,
-description TEXT(500) DEFAULT NULL,
+description TEXT(4000) DEFAULT NULL,
 location TEXT DEFAULT NULL,
 fk_db_table_context_id INTEGER DEFAULT NULL REFERENCES db_table_context (id),
 fk_db_table_type_id INTEGER DEFAULT NULL REFERENCES db_table_type (id),
 fk_deleted_status_id INTEGER DEFAULT NULL REFERENCES deleted_status (id),
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id),
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id),
 source_definition TEXT DEFAULT NULL,
 source_comment TEXT DEFAULT NULL
 );
@@ -163,8 +163,8 @@ fk_deleted_status_id INTEGER DEFAULT NULL REFERENCES deleted_status (id),
 is_PrimaryKey BOOLEAN DEFAULT NULL,
 is_BusinessKey BOOLEAN DEFAULT NULL,
 is_GDPR_relevant BOOLEAN DEFAULT NULL,
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id),
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id),
 source_definition TEXT DEFAULT NULL,
 source_comment TEXT DEFAULT NULL
 );
@@ -177,8 +177,8 @@ fk_project_id INTEGER NOT NULL  DEFAULT NULL REFERENCES project (id),
 name TEXT(250) DEFAULT NULL,
 description TEXT(500) DEFAULT NULL,
 prefix TEXT(100) DEFAULT NULL,
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id)
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id)
 );
 
 CREATE TABLE db_database (
@@ -190,8 +190,8 @@ name TEXT DEFAULT NULL,
 description TEXT DEFAULT NULL,
 fk_tool_id INTEGER NOT NULL  DEFAULT NULL REFERENCES tool (id),
 fk_deleted_status_id INTEGER DEFAULT NULL REFERENCES deleted_status (id),
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id),
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id),
 source_definition TEXT DEFAULT NULL,
 source_definition_language TEXT(250) DEFAULT NULL,
 source_comment TEXT DEFAULT NULL
@@ -207,8 +207,8 @@ description TEXT DEFAULT NULL,
 fk_tool_id INTEGER NOT NULL  DEFAULT NULL REFERENCES tool (id),
 scheduling_series TEXT DEFAULT NULL,
 fk_deleted_status_id INTEGER DEFAULT NULL REFERENCES deleted_status (id),
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id),
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id),
 source_definition TEXT DEFAULT NULL,
 source_definition_language TEXT(250) DEFAULT NULL,
 source_comment TEXT DEFAULT NULL
@@ -226,8 +226,8 @@ default_value TEXT DEFAULT NULL,
 datatype TEXT DEFAULT NULL,
 range TEXT DEFAULT NULL,
 fk_deleted_status_id INTEGER DEFAULT NULL REFERENCES deleted_status (id),
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id),
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id),
 source_definition TEXT DEFAULT NULL,
 source_definition_language TEXT(250) DEFAULT NULL,
 source_comment TEXT DEFAULT NULL
@@ -238,8 +238,8 @@ id INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
 uuid TEXT DEFAULT NULL,
 name TEXT DEFAULT NULL,
 description TEXT DEFAULT NULL,
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id),
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id),
 source_definition_language TEXT(250) DEFAULT NULL
 );
 
@@ -251,8 +251,8 @@ ref_fk_object_id INTEGER DEFAULT NULL,
 ref_fk_object_type_id INTEGER DEFAULT NULL REFERENCES object_type (id),
 comment TEXT DEFAULT NULL,
 created_at_datetime TEXT DEFAULT NULL,
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id)
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id)
 );
 
 CREATE TABLE glossary (
@@ -262,8 +262,8 @@ fk_object_type_id INTEGER NOT NULL  DEFAULT 10 REFERENCES object_type (id),
 fk_project_id INTEGER NOT NULL  DEFAULT NULL REFERENCES project (id),
 name TEXT DEFAULT NULL,
 description TEXT DEFAULT NULL,
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id)
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id)
 );
 
 CREATE TABLE data_delivery_type (
@@ -271,8 +271,8 @@ id INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
 uuid TEXT DEFAULT NULL,
 name TEXT(250) DEFAULT NULL,
 description TEXT(500) DEFAULT NULL,
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id),
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id),
 source_definition_language TEXT(250) DEFAULT NULL
 );
 
@@ -287,8 +287,8 @@ fk_data_transfer_type_id INTEGER DEFAULT NULL REFERENCES data_transfer_type (id)
 location TEXT(500) DEFAULT NULL,
 source_internal_object_id TEXT(500) DEFAULT NULL,
 fk_deleted_status_id INTEGER DEFAULT NULL REFERENCES deleted_status (id),
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id),
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id),
 source_definition TEXT DEFAULT NULL,
 source_comment TEXT DEFAULT NULL
 );
@@ -298,8 +298,8 @@ id INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
 uuid TEXT DEFAULT NULL,
 name TEXT(250) DEFAULT NULL,
 description TEXT(4000) DEFAULT NULL,
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id),
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id),
 source_definition_language TEXT(250) DEFAULT NULL
 );
 
@@ -321,8 +321,8 @@ name TEXT DEFAULT NULL,
 description TEXT DEFAULT NULL,
 short_name TEXT DEFAULT NULL,
 fk_deleted_status_id INTEGER DEFAULT NULL REFERENCES deleted_status (id),
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id)
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id)
 );
 
 CREATE TABLE contact (
@@ -339,8 +339,8 @@ mobile TEXT DEFAULT NULL,
 ldap_cn TEXT DEFAULT NULL,
 description TEXT DEFAULT NULL,
 fk_deleted_status_id INTEGER DEFAULT NULL REFERENCES deleted_status (id),
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id)
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id)
 );
 
 CREATE TABLE bracket (
@@ -352,8 +352,8 @@ name TEXT(250) DEFAULT NULL,
 description TEXT(4000) DEFAULT NULL,
 fk_attribute_id INTEGER DEFAULT NULL,
 fk_object_type_id_as_searchFilter INTEGER DEFAULT NULL,
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id)
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id)
 );
 
 CREATE TABLE bracket_searchPattern (
@@ -362,8 +362,8 @@ uuid TEXT DEFAULT NULL,
 fk_object_type_id INTEGER DEFAULT 17 REFERENCES object_type (id),
 fk_bracket_id INTEGER DEFAULT NULL REFERENCES bracket (id),
 searchPattern TEXT(500) DEFAULT NULL,
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id)
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id)
 );
 
 CREATE TABLE import_stage_db_table (
@@ -412,8 +412,8 @@ fk_object_type_id INTEGER DEFAULT 18 REFERENCES object_type (id),
 filter_attribute_name TEXT(150) DEFAULT NULL,
 filter_value TEXT(150) DEFAULT NULL,
 ref_fk_object_type_id INTEGER DEFAULT NULL REFERENCES object_type (id),
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id)
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id)
 );
 
 CREATE TABLE mapping_qualifier (
@@ -424,8 +424,8 @@ name TEXT(250) DEFAULT NULL,
 short_name TEXT(250) DEFAULT NULL,
 description TEXT(4000) DEFAULT NULL,
 needs_object_depends_on BOOLEAN NOT NULL  DEFAULT 0,
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id)
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id)
 );
 
 CREATE TABLE url (
@@ -436,8 +436,8 @@ fk_project_id INTEGER DEFAULT NULL REFERENCES project (id),
 name TEXT(250) DEFAULT NULL,
 description TEXT(4000) DEFAULT NULL,
 url TEXT(4000) DEFAULT NULL,
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id)
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id)
 );
 
 CREATE TABLE cleanup_queue (
@@ -453,15 +453,15 @@ uuid TEXT DEFAULT NULL,
 fk_object_type_id INTEGER DEFAULT 25 REFERENCES object_type (id),
 name TEXT(250) DEFAULT NULL,
 description TEXT(4000) DEFAULT NULL,
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id)
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id)
 );
 
 CREATE TABLE export_file_db_table_queue (
 id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY,
 session TEXT(200) DEFAULT NULL,
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id)
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id)
 );
 
 CREATE TABLE export_file_db_table_params (
@@ -469,8 +469,8 @@ id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
 session TEXT(200) DEFAULT NULL,
 allowed_fk_project_id INTEGER DEFAULT NULL,
 allowed_fk_client_id INTEGER DEFAULT NULL,
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id)
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id)
 );
 
 CREATE TABLE export_file_db_table_result (
@@ -496,8 +496,8 @@ mappings TEXT DEFAULT NULL,
 session TEXT(200) DEFAULT NULL,
 _auto_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
 _created_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-fk_object_persistence_method_id INTEGER NOT NULL  DEFAULT NULL REFERENCES object_persistence_method (id),
-fk_datamanagement_process_id INTEGER NOT NULL  DEFAULT NULL REFERENCES datamanagement_process (id)
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id)
 );
 
 CREATE TABLE object_persistence_method (

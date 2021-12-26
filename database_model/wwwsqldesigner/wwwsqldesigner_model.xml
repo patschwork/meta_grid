@@ -448,7 +448,7 @@ Examples: Report, flatfile export, view with external access...,  </comment>
 <datatype>TEXT(250)</datatype>
 <default>NULL</default></row>
 <row name="description" null="1" autoincrement="0">
-<datatype>TEXT(500)</datatype>
+<datatype>TEXT(4000)</datatype>
 <default>NULL</default></row>
 <row name="location" null="1" autoincrement="0">
 <datatype>TEXT</datatype>

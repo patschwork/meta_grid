@@ -57,7 +57,7 @@ class VDbTableLocation4SameTableLookup extends \yii\db\ActiveRecord
 		}
 		else
 		{
-			throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'You have no permission for this data.'));
+			// throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'You have no permission for this data.')); // 0 rows is a valid result!
 			return null;			
 		}
     }

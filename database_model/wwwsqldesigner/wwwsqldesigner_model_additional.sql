@@ -1,5 +1,5 @@
 -- Diese Datei wurde automatisiert ueber das Python-Script create_wwwsqldesigner_model_additional.py erstellt
--- 2021-05-25 00:51:22
+-- 2021-12-26 17:40:16
 
 PRAGMA foreign_keys = ON;
 
@@ -560,7 +560,7 @@ CREATE TABLE db_table_log (
    fk_project_id INTEGER,
    fk_project_uuid TEXT,
    name TEXT(250),
-   description TEXT(500),
+   description TEXT(4000),
    location TEXT,
    fk_db_table_context_id INTEGER,
    fk_db_table_context_uuid TEXT,

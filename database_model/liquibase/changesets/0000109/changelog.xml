@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000109/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000109" context="">
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER TRIG_db_table_log_INSERT;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER TRIG_db_table_log_UPDATE;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER TRIG_db_table_log_DELETE;
+		]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+PRAGMA legacy_alter_table=ON;
+		]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+PRAGMA foreign_keys=OFF;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE db_table RENAME TO db_table_94600467f33e4bf4aeb38b11d65e97b7;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TABLE db_table (
+id INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+uuid TEXT DEFAULT NULL,
+fk_object_type_id INTEGER NOT NULL  DEFAULT 4 REFERENCES object_type (id),
+fk_project_id INTEGER NOT NULL  DEFAULT NULL REFERENCES project (id),
+name TEXT(250) DEFAULT NULL,
+description TEXT(4000) DEFAULT NULL,
+location TEXT DEFAULT NULL,
+fk_db_table_context_id INTEGER DEFAULT NULL REFERENCES db_table_context (id),
+fk_db_table_type_id INTEGER DEFAULT NULL REFERENCES db_table_type (id),
+fk_deleted_status_id INTEGER DEFAULT NULL REFERENCES deleted_status (id),
+"fk_object_persistence_method_id" INTEGER DEFAULT NULL REFERENCES object_persistence_method ("id"), 
+"fk_datamanagement_process_id" INTEGER DEFAULT NULL REFERENCES datamanagement_process ("id"), 
+"source_definition" TEXT DEFAULT NULL, 
+"source_comment" TEXT DEFAULT NULL
+)
+;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO db_table
+(
+    id,uuid,fk_object_type_id,fk_project_id,name,description,location,fk_db_table_context_id,fk_db_table_type_id,fk_deleted_status_id
+	,"fk_object_persistence_method_id", "fk_datamanagement_process_id","source_definition", "source_comment"
+)
+SELECT * FROM db_table_94600467f33e4bf4aeb38b11d65e97b7;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_db_table_log_INSERT AFTER INSERT
+ON db_table
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   INSERT INTO db_table_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,location,fk_db_table_context_id, fk_db_table_context_uuid,fk_db_table_type_id, fk_db_table_type_uuid,fk_deleted_status_id, fk_deleted_status_uuid,fk_object_persistence_method_id, fk_object_persistence_method_uuid,fk_datamanagement_process_id, fk_datamanagement_process_uuid,source_definition,source_comment) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.location,new.fk_db_table_context_id, (SELECT uuid FROM db_table_context WHERE id=new.fk_db_table_context_id),new.fk_db_table_type_id, (SELECT uuid FROM db_table_type WHERE id=new.fk_db_table_type_id),new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id),new.fk_object_persistence_method_id, (SELECT uuid FROM object_persistence_method WHERE id=new.fk_object_persistence_method_id),new.fk_datamanagement_process_id, (SELECT uuid FROM datamanagement_process WHERE id=new.fk_datamanagement_process_id),new.source_definition,new.source_comment);
+   UPDATE db_table SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   DELETE FROM _newUUID;
+   DELETE FROM db_table_log WHERE log_id=(SELECT MAX(log_id)+1 FROM db_table_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
+END;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_db_table_log_UPDATE AFTER UPDATE
+ON db_table
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   UPDATE db_table SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   INSERT INTO db_table_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,location,fk_db_table_context_id, fk_db_table_context_uuid,fk_db_table_type_id, fk_db_table_type_uuid,fk_deleted_status_id, fk_deleted_status_uuid,fk_object_persistence_method_id, fk_object_persistence_method_uuid,fk_datamanagement_process_id, fk_datamanagement_process_uuid,source_definition,source_comment) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.location,new.fk_db_table_context_id, (SELECT uuid FROM db_table_context WHERE id=new.fk_db_table_context_id),new.fk_db_table_type_id, (SELECT uuid FROM db_table_type WHERE id=new.fk_db_table_type_id),new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id),new.fk_object_persistence_method_id, (SELECT uuid FROM object_persistence_method WHERE id=new.fk_object_persistence_method_id),new.fk_datamanagement_process_id, (SELECT uuid FROM datamanagement_process WHERE id=new.fk_datamanagement_process_id),new.source_definition,new.source_comment);
+   DELETE FROM _newUUID;
+END;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_db_table_log_DELETE AFTER DELETE
+ON db_table
+BEGIN
+   INSERT INTO db_table_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,location,fk_db_table_context_id, fk_db_table_context_uuid,fk_db_table_type_id, fk_db_table_type_uuid,fk_deleted_status_id, fk_deleted_status_uuid,fk_object_persistence_method_id, fk_object_persistence_method_uuid,fk_datamanagement_process_id, fk_datamanagement_process_uuid,source_definition,source_comment) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.location,old.fk_db_table_context_id, (SELECT uuid FROM db_table_context WHERE id=old.fk_db_table_context_id),old.fk_db_table_type_id, (SELECT uuid FROM db_table_type WHERE id=old.fk_db_table_type_id),old.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=old.fk_deleted_status_id),old.fk_object_persistence_method_id, (SELECT uuid FROM object_persistence_method WHERE id=old.fk_object_persistence_method_id),old.fk_datamanagement_process_id, (SELECT uuid FROM datamanagement_process WHERE id=old.fk_datamanagement_process_id),old.source_definition,old.source_comment);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TABLE db_table_94600467f33e4bf4aeb38b11d65e97b7;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+ALTER TABLE db_table_log RENAME TO db_table_log_37bd14fe1fec4299846f4bdf60bbbf65;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TABLE db_table_log (
+   log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+   log_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+   log_action TEXT,
+   id INTEGER,
+   uuid TEXT,
+   fk_object_type_id INTEGER,
+   fk_object_type_uuid TEXT,
+   fk_project_id INTEGER,
+   fk_project_uuid TEXT,
+   name TEXT(250),
+   description TEXT(4000),
+   location TEXT,
+   fk_db_table_context_id INTEGER,
+   fk_db_table_context_uuid TEXT,
+   fk_db_table_type_id INTEGER,
+   fk_db_table_type_uuid TEXT,
+   fk_deleted_status_id INTEGER, 
+   fk_deleted_status_uuid TEXT, 
+   "fk_object_persistence_method_id", 
+   "fk_datamanagement_process_id", 
+   "source_definition" TEXT DEFAULT NULL, 
+   "source_comment" TEXT DEFAULT NULL, 
+   "fk_object_persistence_method_uuid", 
+   "fk_datamanagement_process_uuid"
+)
+;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO db_table_log
+(
+    log_id,log_datetime,log_action,id,uuid,fk_object_type_id,fk_object_type_uuid,fk_project_id,fk_project_uuid,name,description,location,fk_db_table_context_id,fk_db_table_context_uuid,fk_db_table_type_id,fk_db_table_type_uuid,fk_deleted_status_id,fk_deleted_status_uuid,fk_object_persistence_method_id,fk_datamanagement_process_id,source_definition,source_comment,fk_object_persistence_method_uuid,fk_datamanagement_process_uuid
+)
+SELECT * FROM db_table_log_37bd14fe1fec4299846f4bdf60bbbf65;
+		]]>		
+		</sql>
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TABLE db_table_log_37bd14fe1fec4299846f4bdf60bbbf65;
+		]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+PRAGMA legacy_alter_table=OFF;
+		]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+PRAGMA foreign_keys=ON;
+		]]>		
+		</sql>
+		
+		<comment>
+		<![CDATA[
+		Changes datatype for column description from TEXT(500) to TEXT(4000).
+		Used objects:
+            db_table
+            db_table_log
+            TRIG_db_table_log_INSERT
+            TRIG_db_table_log_UPDATE			
+            TRIG_db_table_log_DELETE			
+		Phabricator tasks:
+			T181
+        ]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>
