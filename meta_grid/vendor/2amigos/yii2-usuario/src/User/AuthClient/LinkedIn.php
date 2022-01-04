@@ -21,9 +21,17 @@ class LinkedIn extends BaseLinkedIn implements AuthClientInterface
      */
     public function getEmail()
     {
-        return isset($this->getUserAttributes()['email-address'])
-            ? $this->getUserAttributes()['email-address']
-            : null;
+        $userAttributes = $this->getUserAttributes();
+
+        if (isset($userAttributes['email-address'])) {
+            return $userAttributes['email-address'];
+        }
+
+        if (isset($userAttributes['email'])) {
+            return $userAttributes['email'];
+        }
+
+        return null;
     }
 
     /**
@@ -31,6 +39,7 @@ class LinkedIn extends BaseLinkedIn implements AuthClientInterface
      */
     public function getUsername()
     {
-        return null;
+        /* returns the e-mail as it corresponds with the username */
+        return $this->getEmail();
     }
 }

@@ -10,7 +10,7 @@
  */
 
 /**
- * @var \Da\User\Model\Role $model
+ * @var \Da\User\Model\Rule $model
  * @var $this               yii\web\View
  * @var $unassignedItems    string[]
  */
@@ -23,7 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php $this->beginContent('@Da/User/resources/views/shared/admin_layout.php') ?>
 
 <?= $this->render(
-    '_form',
+    '/rule/_form',
     [
         'model' => $model,
     ]

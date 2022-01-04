@@ -1,6 +1,6 @@
 {
     "name": "lajax/yii2-translate-manager",
-    "description": "Online Translate",
+    "description": "Translation management extension for Yii 2",
     "type": "yii2-extension",
     "keywords": ["yii2", "extension", "translate", "language", "module"],
     "license": "MIT",
@@ -15,9 +15,9 @@
         }
     ],
     "require": {
-        "yiisoft/yii2": "*",
-        "yiisoft/yii2-jui": "*",
-        "yiisoft/yii2-bootstrap": "*"
+        "yiisoft/yii2": "~2.0.0",
+        "yiisoft/yii2-jui": "~2.0.0",
+        "yiisoft/yii2-bootstrap": "~2.0.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.1"

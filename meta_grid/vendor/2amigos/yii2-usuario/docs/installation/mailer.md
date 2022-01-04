@@ -4,7 +4,7 @@ Mailer
 The way this module sends its emails is throughout the [`Mailer`](http://www.yiiframework.com/doc-2.0/guide-tutorial-mailing.html) 
 component of Yii 2. Please, follow Yii 2's guidelines to set it up. 
  
-Nevertheless, you have to configure the following attribute of the module: `mailParams`. the following is its default 
+Nevertheless, you wish to configure the following attribute of the module: `mailParams`. the following is its default 
 values:
 
 ```php
@@ -17,7 +17,23 @@ values:
 ]
 ```
 
-Actually, the only thing required is the `fromEmail` value. If you look at the code of `Da\User\Factory\MailFactory.php` 
+Actually, the only thing required is the `fromEmail` value. 
+If you want to set it the same as senderEmail and senderName from your config params (like yii2-app-advanced template):
+```php
+    ...
+    'modules' => [
+        'user' => [
+            'class' => Da\User\Module::class,
+            'mailParams' => [
+                'fromEmail' => function() {
+                    return [Yii::$app->params['senderEmail'] => Yii::$app->params['senderName']];
+                }
+            ],
+        ],
+    ],
+    ...
+```
+If you look at the code of `Da\User\Factory\MailFactory.php` 
 you will easily find the reason why: 
 
 ```php
@@ -55,4 +71,35 @@ public function run()
 }
 ```
 
-© [2amigos](http://www.2amigos.us/) 2013-2017
+> Tip: You can separate `from` by type of mailer of this module:
+```php
+    ...
+    'modules' => [
+        'user' => [
+            'class' => Da\User\Module::class,
+            'mailParams' => [
+                'fromEmail' =>
+                    /**
+                     * @param $type string The type of mail 
+                     *   Da\User\Event\MailEvent::TYPE_WELCOME|Da\User\Event\MailEvent::TYPE_RECOVERY|
+                     *   Da\User\Event\MailEvent::TYPE_CONFIRM|Da\User\Event\MailEvent::TYPE_RECONFIRM
+                     * @return array
+                     */
+                    function ($type) {
+                        switch ($type) {
+                            case Da\User\Event\MailEvent::TYPE_WELCOME:
+                                return [Yii::$app->params['supportEmail'] => Yii::t('app', '{0} welcome!', Yii::$app->name)];
+                            break;
+                            default:
+                                return [Yii::$app->params['supportEmail'] => Yii::t('app', '{0} robot', Yii::$app->name)];
+                            break;
+                        }
+                    },
+            ],
+        ],
+    ],
+    ...
+```
+
+
+© [2amigos](http://www.2amigos.us/) 2013-2019

@@ -9,6 +9,8 @@ On Controllers
 - **AdminController**
     - **UserEvent::EVENT_BEFORE_CREATE**: Occurs before a user has been created
     - **UserEvent::EVENT_AFTER_CREATE**: Occurs after a user has been created 
+    - **UserEvent::EVENT_BEFORE_ACCOUNT_UPDATE**: Occurs before a user's account has been updated
+    - **UserEvent::EVENT_AFTER_ACCOUNT_UPDATE**: Occurs after a user's account has been updated
     - **UserEvent::EVENT_BEFORE_PROFILE_UPDATE**: Occurs before a user's profile has been updated
     - **UserEvent::EVENT_AFTER_PROFILE_UPDATE**: Occurs after a user's profile has been updated
     - **UserEvent::EVENT_BEFORE_CONFIRMATION**: Occurs before a user's email has been confirmed
@@ -78,7 +80,7 @@ Event::on(AdminController::class, UserEvent::EVENT_BEFORE_CREATE, function (User
     $user = $event->getUser();
     
     // ... your logic here
-}
+});
 
 // This will happen at the model's level
 Event::on(User::class, UserEvent::EVENT_BEFORE_CREATE, function (UserEvent $event) {
@@ -86,7 +88,7 @@ Event::on(User::class, UserEvent::EVENT_BEFORE_CREATE, function (UserEvent $even
     $user = $event->getUser();
     
     // ... your logic here
-}
+});
 
 ```
 
@@ -117,4 +119,4 @@ $application->run();
 
 ```
 
-© [2amigos](http://www.2amigos.us/) 2013-2017
+© [2amigos](http://www.2amigos.us/) 2013-2019

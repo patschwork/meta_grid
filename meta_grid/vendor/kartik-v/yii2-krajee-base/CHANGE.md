@@ -1,10 +1,149 @@
 Change Log: `yii2-krajee-base`
 ==============================
 
-## Version 1.9.0 (_under development_)
+## Version 3.0.2
 
-**Date:** (work in progress)
+**Date:** _under development_
 
+- (enh #116): Enhance dependency exception messaging for `getDropdownClass`.
+- (enh #115): Fix code for older PHP version support.
+- (enh #114): Enhancements to HTML 5 input CSS.
+
+## Version 3.0.1
+
+**Date:** 03-Sep-2021
+
+- Add BootstrapIconsAsset bundle.
+- Enhancements to support Bootstrap v5.x.
+
+## Version 3.0.0
+
+**Date:** 01-Sep-2021
+
+- (enh #113): Add bootstrap 5.x support.
+- Create new major release for Bootstrap v5.x support
+
+## Version 2.0.6
+
+**Date:** 08-Apr-2021
+
+- (enh #112): Add new bootstrap CSS Class map `BS_PANEL_SECONDARY`.
+
+## Version 2.0.5
+
+**Date:** 13-Mar-2019
+
+- (enh #108): Add new bootstrap CSS Class map `BS_HIDE`.
+
+## Version 2.0.4
+
+**Date:** 04-Dec-2018
+
+- (enh #106): Back and forward browser bug for PJAX.
+    - New property `pjaxDuplicationFix` available in widgets/extensions that use `kartik\base\WidgetTrait`
+    - The above property if not set will default to `Yii::$app->params['pjaxDuplicationFix']`
+    - `Yii::$app->params['pjaxDuplicationFix']` if not set will default to `true`
+    - Setting `Yii::$app->params['pjaxDuplicationFix']` will globally control the pjax duplication fix for all Krajee widgets
+
+## Version 2.0.3
+
+**Date:** 27-Nov-2018
+
+- (enh #105): Allow global setting of `AssetBundle::bsDependencyEnabled` via `Yii::$app->params`.
+
+## Version 2.0.2
+
+**Date:** 26-Nov-2018
+
+- (enh #104): Allow Bootstrap Asset Bundle dependency to be configurable.
+  - New property `bsDependencyEnabled` in `kartik\base\AssetBundle` (Note that all Krajee extension asset bundles based on bootstrap styles extend this class). The property `bsDependencyEnabled` defaults to `true` whereby based on the `bsVersion`, the asset bundle dependency is set with one of `yii\bootstrap\BootstrapAsset` or `yii\bootstrap4\BootstrapAsset`. If one needs custom control and load their own bootstrap assets - set this property to `false` via yii2 asset manager component in your yii2 application config.
+
+## Version 2.0.1
+
+**Date:** 10-Nov-2018
+
+- Return widget instance in `addCssClass` & `removeCssClass` methods in `BootstrapTrait` for easy chaining of these methods.
+- Update composer dependency to suggest `yii2-bootstrap` or `yii2-bootstrap4` installs.
+- (enh #102): Add BS_PANEL_DEFAULT contextual style.
+- Update README.
+
+## Version 2.0.0
+
+**Date:** 09-Oct-2018
+
+- (enh #101): Remove composer dependency on yii2 bootstrap.
+- Enhancements to `bsVersion` initialization.
+
+## Version 1.9.9
+
+**Date:** 27-Sep-2018
+
+- Enhance `BootstrapTrait::getCssClass` method.
+
+## Version 1.9.8
+
+**Date:** 27-Sep-2018
+
+- Bump up version.
+
+## Version 1.9.7
+
+**Date:** 26-Sep-2018
+
+- (enh #100): Configurable conversion classes between Bootstrap Versions.
+
+## Version 1.9.6
+
+**Date:** 22-Sep-2018
+
+- Implement `BootstrapInterface` and `bsColCssPrefixes`.
+
+## Version 1.9.5
+
+**Date:** 20-Sep-2018
+
+- Enhance `Config` to include `Config::hasCssClass` method.
+
+## Version 1.9.4
+
+**Date:** 05-Sep-2018
+
+- (bug #95): Correct `InputWidget`. 
+- (enh #94): Refactor code and consolidate / optimize properties within traits. 
+- Add Bootstrap button default CSS and icon prefix parsing.
+
+## Version 1.9.3
+
+**Date:** 29-Aug-2018
+
+- Update `Module` to include `bsVersion` configuration.
+- Update `AssetBundle` to include new method `registerBundle` for reading BS Version from widgets.
+- Update `BootstrapTrait` to include better BS Version parsing methods.
+
+## Version 1.9.2
+
+**Date:** 20-Aug-2018
+
+- Enhance bootstrap 4 addon rendering.
+- Reformat and reorganize code.
+- Update animate.css to release v3.7.0.
+
+## Version 1.9.1
+
+**Date:** 16-Aug-2018
+
+- (enh #92): Remove `yii2-bootstrap4` dependency.
+- (enh #90): Implement AddonTrait.
+
+## Version 1.9.0
+
+**Date:** 12-Aug-2018
+
+- Refactor code for Bootstrap 4 support.
+- (enh #87): Update `animate.css` to latest release.
+- (enh #86): Refactor source code into `src` folder.
+- (enh #85): Add bootstrap 4 support.
+- (enh #83): Correct CheckboxX repo in Config class.
 - (enh #82): Enhance `getModule` to retrieve correct module.
 
 ## Version 1.8.9

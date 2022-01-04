@@ -160,8 +160,35 @@ class ClientController extends Controller
 		$this->createRole($newRoleName, "Perm", "May only delete objecttype " . Yii::$app->controller->id, "isNotAGuest", "global-delete", null);
 	}
     
-	private function createClientPermissions()
+	private function createClientPermissions($named_client_id = NULL, $named_client_name = NULL)
 	{	
+		$result1 = false;
+		$result2 = false;
+		if ($named_client_id !== NULL && $named_client_name !== NULL)
+		{
+			$auth = Yii::$app->authManager;
+			$newRoleOrPermName="client-".$named_client_id."-read";
+			$checkPerm = $auth->getPermission($newRoleOrPermName);
+			if (is_null($checkPerm)) {
+				$newAuthObj = $auth->createPermission($newRoleOrPermName);
+				$newAuthObj->ruleName = "isNotAGuest";
+				$newAuthObj->description = "Read-Permission for client " . $named_client_name;
+				$newAuthObj->data = ['id' => $named_client_id, 'dataaccessfilter' => 'client', 'right' => 'read'];
+				$result1 = $auth->add($newAuthObj);
+			}
+			$auth = Yii::$app->authManager;
+			$newRoleOrPermName="client-".$named_client_id."-write";
+			$checkPerm = $auth->getPermission($newRoleOrPermName);
+			if (is_null($checkPerm)) {
+				$newAuthObj = $auth->createPermission($newRoleOrPermName);
+				$newAuthObj->description = "Read-Permission for client " . $named_client_name;
+				$newAuthObj->ruleName = "isNotAGuest";
+				$newAuthObj->data = ['id' => $named_client_id, 'dataaccessfilter' => 'client', 'right' => 'write'];
+				$result2 = $auth->add($newAuthObj);
+			}
+			return $result1 && $result2;
+		}
+		
 		$clientModel = new Client();
 		$clients = $clientModel::find()->all();
 		$clientList = array();
@@ -175,7 +202,7 @@ class ClientController extends Controller
 				$newAuthObj->ruleName = "isNotAGuest";
 				$newAuthObj->description = "Read-Permission for client " . $client->name;
 				$newAuthObj->data = ['id' => $client->id, 'dataaccessfilter' => 'client', 'right' => 'read'];
-				$auth->add($newAuthObj);
+				$result1 = $auth->add($newAuthObj);
 			}
 			$auth = Yii::$app->authManager;
 			$newRoleOrPermName="client-".$client->id."-write";
@@ -185,9 +212,10 @@ class ClientController extends Controller
 				$newAuthObj->description = "Read-Permission for client " . $client->name;
 				$newAuthObj->ruleName = "isNotAGuest";
 				$newAuthObj->data = ['id' => $client->id, 'dataaccessfilter' => 'client', 'right' => 'write'];
-				$auth->add($newAuthObj);
+				$result2 = $auth->add($newAuthObj);
 			}
 		}
+		return $result1 && $result2;
 	}
 
 	public function actionCreateclientpermissions()
@@ -253,7 +281,7 @@ class ClientController extends Controller
     	}    
 			
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-$this->createClientPermissions();
+$this->createClientPermissions($model->id, $model->name);
 			$userId = Yii::$app->User->Id;
 			$this->addPermissionToUser($model->id, $userId);	
         	return $this->redirect(['view', 'id' => $model->id]);

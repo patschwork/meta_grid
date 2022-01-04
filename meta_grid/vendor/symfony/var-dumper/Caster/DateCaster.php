@@ -31,7 +31,11 @@ class DateCaster
             .($location ? ($d->format('I') ? "\nDST On" : "\nDST Off") : '')
         ;
 
-        $a = array();
+        unset(
+            $a[Caster::PREFIX_DYNAMIC.'date'],
+            $a[Caster::PREFIX_DYNAMIC.'timezone'],
+            $a[Caster::PREFIX_DYNAMIC.'timezone_type']
+        );
         $a[$prefix.'date'] = new ConstStub(self::formatDateTime($d, $location ? ' e (P)' : ' P'), $title);
 
         $stub->class .= $d->format(' @U');
@@ -45,7 +49,7 @@ class DateCaster
         $numberOfSeconds = $now->add($interval)->getTimestamp() - $now->getTimestamp();
         $title = number_format($numberOfSeconds, 0, '.', ' ').'s';
 
-        $i = array(Caster::PREFIX_VIRTUAL.'interval' => new ConstStub(self::formatInterval($interval), $title));
+        $i = [Caster::PREFIX_VIRTUAL.'interval' => new ConstStub(self::formatInterval($interval), $title)];
 
         return $filter & Caster::EXCLUDE_VERBOSE ? $i : $i + $a;
     }
@@ -76,26 +80,26 @@ class DateCaster
     {
         $location = $timeZone->getLocation();
         $formatted = (new \DateTime('now', $timeZone))->format($location ? 'e (P)' : 'P');
-        $title = $location && extension_loaded('intl') ? \Locale::getDisplayRegion('-'.$location['country_code'], \Locale::getDefault()) : '';
+        $title = $location && \extension_loaded('intl') ? \Locale::getDisplayRegion('-'.$location['country_code'], \Locale::getDefault()) : '';
 
-        $z = array(Caster::PREFIX_VIRTUAL.'timezone' => new ConstStub($formatted, $title));
+        $z = [Caster::PREFIX_VIRTUAL.'timezone' => new ConstStub($formatted, $title)];
 
         return $filter & Caster::EXCLUDE_VERBOSE ? $z : $z + $a;
     }
 
     public static function castPeriod(\DatePeriod $p, array $a, Stub $stub, $isNested, $filter)
     {
-        if (defined('HHVM_VERSION_ID') || \PHP_VERSION_ID < 50620 || (\PHP_VERSION_ID >= 70000 && \PHP_VERSION_ID < 70005)) { // see https://bugs.php.net/bug.php?id=71635
+        if (\defined('HHVM_VERSION_ID') || \PHP_VERSION_ID < 50620 || (\PHP_VERSION_ID >= 70000 && \PHP_VERSION_ID < 70005)) { // see https://bugs.php.net/71635
             return $a;
         }
 
-        $dates = array();
-        if (\PHP_VERSION_ID >= 70107) { // see https://bugs.php.net/bug.php?id=74639
+        $dates = [];
+        if (\PHP_VERSION_ID >= 70107) { // see https://bugs.php.net/74639
             foreach (clone $p as $i => $d) {
                 if (3 === $i) {
                     $now = new \DateTimeImmutable();
                     $dates[] = sprintf('%s more', ($end = $p->getEndDate())
-                        ? ceil(($end->format('U.u') - $d->format('U.u')) / ($now->add($p->getDateInterval())->format('U.u') - $now->format('U.u')))
+                        ? ceil(($end->format('U.u') - $d->format('U.u')) / ((int) $now->add($p->getDateInterval())->format('U.u') - (int) $now->format('U.u')))
                         : $p->recurrences - $i
                     );
                     break;
@@ -112,7 +116,7 @@ class DateCaster
             ($end = $p->getEndDate()) ? 'to '.self::formatDateTime($end) : 'recurring '.$p->recurrences.' time/s'
         );
 
-        $p = array(Caster::PREFIX_VIRTUAL.'period' => new ConstStub($period, implode("\n", $dates)));
+        $p = [Caster::PREFIX_VIRTUAL.'period' => new ConstStub($period, implode("\n", $dates))];
 
         return $filter & Caster::EXCLUDE_VERBOSE ? $p : $p + $a;
     }
@@ -124,6 +128,6 @@ class DateCaster
 
     private static function formatSeconds($s, $us)
     {
-        return sprintf('%02d.%s', $s, 0 === ($len = strlen($t = rtrim($us, '0'))) ? '0' : ($len <= 3 ? str_pad($t, 3, '0') : $us));
+        return sprintf('%02d.%s', $s, 0 === ($len = \strlen($t = rtrim($us, '0'))) ? '0' : ($len <= 3 ? str_pad($t, 3, '0') : $us));
     }
 }

@@ -15,7 +15,8 @@ $nameAttribute = $generator->getNameAttribute();
 $model = new $generator->modelClass();
 $model->setScenario('crud');
 
-$modelName = Inflector::camel2words(Inflector::pluralize(StringHelper::basename($model::className())));
+$baseName = StringHelper::basename($model::className());
+$modelName = Inflector::camel2words($baseName);
 
 $safeAttributes = $model->safeAttributes();
 if (empty($safeAttributes)) {
@@ -94,14 +95,14 @@ echo '?>';
     <?= "<?php \yii\widgets\Pjax::begin(['id'=>'pjax-main', 'enableReplaceState'=> false, 'linkSelector'=>'#pjax-main ul.pagination a, th a', 'clientOptions' => ['pjax:success'=>'function(){alert(\"yo\")}']]) ?>\n"; ?>
 
     <h1>
-        <?= "<?= Yii::t('{$generator->modelMessageCategory}', '{$modelName}') ?>\n" ?>
+        <?= "<?= Yii::t('{$generator->modelMessageCategory}.plural', '{$modelName}') ?>\n" ?>
         <small>
-            List
+            <?= "<?= Yii::t('{$generator->messageCategory}', 'List') ?>\n" ?>
         </small>
     </h1>
     <div class="clearfix crud-navigation">
 <?php
-if($generator->accessFilter){ 
+if($generator->accessFilter){
 	echo "<?php\n"
 ?>
 if(\Yii::$app->user->can('<?=$permisions['create']['name']?>', ['route' => true])){
@@ -204,11 +205,11 @@ PHP;
             'buttons' => [
                 'view' => function (\$url, \$model, \$key) {
                     \$options = [
-                        'title' => Yii::t('yii', 'View'),
-                        'aria-label' => Yii::t('yii', 'View'),
+                        'title' => Yii::t('{$generator->messageCategory}', 'View'),
+                        'aria-label' => Yii::t('{$generator->messageCategory}', 'View'),
                         'data-pjax' => '0',
                     ];
-                    return Html::a('<span class="glyphicon glyphicon-file"></span>', \$url, \$options);
+                    return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', \$url, \$options);
                 }
             ],
             'urlCreator' => function(\$action, \$model, \$key, \$index) {
@@ -221,11 +222,12 @@ PHP;
         ],
 PHP;
 
-        // action buttons first
-        echo $actionButtonColumn;
-
         $count = 0;
-        echo "\n"; // code-formatting
+        // action buttons first
+        if ($generator->actionButtonColumnPosition != 'right') {
+            echo $actionButtonColumn;
+            echo "\n"; // code-formatting
+        }
 
         foreach ($safeAttributes as $attribute) {
             $format = trim($generator->columnFormat($attribute, $model));
@@ -240,7 +242,11 @@ PHP;
         }
 
         ?>
-        ],
+        <?php if ($generator->actionButtonColumnPosition == 'right') {
+            echo $actionButtonColumn;
+            echo "\n"; // code-formatting
+        } ?>
+        ]
         ]); ?>
     </div>
 

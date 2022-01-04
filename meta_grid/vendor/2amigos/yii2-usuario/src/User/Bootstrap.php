@@ -13,12 +13,15 @@ namespace Da\User;
 
 use Da\User\Component\AuthDbManagerComponent;
 use Da\User\Contracts\AuthManagerInterface;
+use Da\User\Controller\SecurityController;
+use Da\User\Event\FormEvent;
 use Da\User\Helper\ClassMapHelper;
 use Da\User\Model\User;
 use Yii;
 use yii\authclient\Collection;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
+use yii\base\Event as YiiEvent;
 use yii\base\Exception;
 use yii\base\InvalidConfigException;
 use yii\console\Application as ConsoleApplication;
@@ -74,6 +77,7 @@ class Bootstrap implements BootstrapInterface
             $di->set(Event\SocialNetworkAuthEvent::class);
             $di->set(Event\SocialNetworkConnectEvent::class);
             $di->set(Event\UserEvent::class);
+            $di->set(Event\GdprEvent::class);
 
             // forms
             $di->set(Form\LoginForm::class);
@@ -81,6 +85,7 @@ class Bootstrap implements BootstrapInterface
             $di->set(Form\RegistrationForm::class);
             $di->set(Form\ResendForm::class);
             $di->set(Form\SettingsForm::class);
+            $di->set(Form\GdprDeleteForm::class);
 
             // helpers
             $di->set(Helper\AuthHelper::class);
@@ -91,6 +96,7 @@ class Bootstrap implements BootstrapInterface
             // services
             $di->set(Service\AccountConfirmationService::class);
             $di->set(Service\EmailChangeService::class);
+            $di->set(Service\PasswordExpireService::class);
             $di->set(Service\PasswordRecoveryService::class);
             $di->set(Service\ResendConfirmationService::class);
             $di->set(Service\ResetPasswordService::class);
@@ -120,7 +126,7 @@ class Bootstrap implements BootstrapInterface
             foreach ($map as $class => $definition) {
                 $di->set($class, $definition);
                 $model = is_array($definition) ? $definition['class'] : $definition;
-                $name = (substr($class, strrpos($class, '\\') + 1));
+                $name = substr($class, strrpos($class, '\\') + 1);
                 $modelClassMap[$class] = $model;
                 if (in_array($name, ['User', 'Profile', 'Token', 'SocialNetworkAccount'])) {
                     $di->set(
@@ -144,12 +150,24 @@ class Bootstrap implements BootstrapInterface
                 $di->set(Search\RoleSearch::class);
             }
 
+            // Attach an event to check if the password has expired
+            if (null !== Yii::$app->getModule('user')->maxPasswordAge) {
+                YiiEvent::on(SecurityController::class, FormEvent::EVENT_AFTER_LOGIN, function (FormEvent $event) {
+                    $user = $event->form->user;
+                    if ($user->password_age >= Yii::$app->getModule('user')->maxPasswordAge) {
+                        // Force password change
+                        Yii::$app->session->setFlash('warning', Yii::t('usuario', 'Your password has expired, you must change it now'));
+                        Yii::$app->response->redirect(['/user/settings/account'])->send();
+                    }
+                });
+            }
+
             if ($app instanceof WebApplication) {
                 // override Yii
                 $di->set(
                     'yii\web\User',
                     [
-                        'enableAutoLogin' => true,
+                        'enableAutoLogin' => $app->getModule('user')->enableAutoLogin,
                         'loginUrl' => ['/user/security/login'],
                         'identityClass' => $di->get(ClassMapHelper::class)->get(User::class),
                     ]
@@ -262,7 +280,7 @@ class Bootstrap implements BootstrapInterface
      */
     protected function initConsoleCommands(ConsoleApplication $app)
     {
-        $app->getModule('user')->controllerNamespace = 'Da\User\Command';
+        $app->getModule('user')->controllerNamespace = $app->getModule('user')->consoleControllerNamespace;
     }
 
     /**
@@ -272,8 +290,8 @@ class Bootstrap implements BootstrapInterface
      */
     protected function initControllerNamespace(WebApplication $app)
     {
-        $app->getModule('user')->controllerNamespace = 'Da\User\Controller';
-        $app->getModule('user')->setViewPath('@Da/User/resources/views');
+        $app->getModule('user')->controllerNamespace = $app->getModule('user')->controllerNamespace;
+        $app->getModule('user')->setViewPath($app->getModule('user')->viewPath);
     }
 
     /**
@@ -307,6 +325,8 @@ class Bootstrap implements BootstrapInterface
             'LoginForm' => 'Da\User\Form\LoginForm',
             'SettingsForm' => 'Da\User\Form\SettingsForm',
             'RecoveryForm' => 'Da\User\Form\RecoveryForm',
+            // --- services
+            'MailService' => 'Da\User\Service\MailService',
         ];
 
         $routes = [
@@ -330,6 +350,9 @@ class Bootstrap implements BootstrapInterface
                 'LoginForm',
                 'SettingsForm',
                 'RecoveryForm',
+            ],
+            'Da\User\Service' => [
+                'MailService',
             ],
         ];
 

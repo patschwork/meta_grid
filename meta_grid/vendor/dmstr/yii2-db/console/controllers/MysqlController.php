@@ -61,6 +61,13 @@ class MysqlController extends Controller
      */
     public $outputPath = '@runtime/mysql';
 
+    private $_db;
+    private $_dsn;
+    private $_root;
+    private $_rootPassword;
+    private $_user;
+    private $_pass;
+
     /**
      * @inheritdoc
      */
@@ -88,12 +95,57 @@ class MysqlController extends Controller
      */
     public function actionIndex()
     {
+        # if ENV is set get mysql Port, default 3306
+        $port = 3306;
+        if (getenv('DB_PORT_3306_TCP_PORT')) {
+            $port = getenv('DB_PORT_3306_TCP_PORT');
+        }
+
         $this->stdout("MySQL maintenance command\n");
-        echo $cmd = 'mysqlshow -h '.getenv('DB_PORT_3306_TCP_ADDR').
-            ' -u '.getenv('DB_ENV_MYSQL_USER').
-            ' --password='.getenv('DB_ENV_MYSQL_PASSWORD').' '.getenv('DB_ENV_MYSQL_DATABASE');
+        echo $cmd = 'mysqlshow -h ' . getenv('DB_PORT_3306_TCP_ADDR') .
+            ' -u ' . getenv('DB_ENV_MYSQL_USER') . ' -P ' . $port .
+            ' --password=' . getenv('DB_ENV_MYSQL_PASSWORD') . ' ' . getenv('DB_ENV_MYSQL_DATABASE');
         $this->stdout($this->execute($cmd));
         $this->stdout("\n");
+    }
+
+
+    public function actionWaitForConnection(
+        $dsn = null,
+        $user = null,
+        $password = null
+    )
+    {
+        $dsn = $dsn ?: getenv("DATABASE_DSN_BASE");
+        $user = $user ?: getenv("DB_ENV_MYSQL_ROOT_USER");
+        $password = $password ?: getenv("DB_ENV_MYSQL_ROOT_PASSWORD");
+
+        if (empty($user) || empty($password) || empty($dsn)) {
+            $this->stderr('Configuration failed, aborting.');
+            return;
+        }
+
+        // trying to connect to database with PDO (20 times, interval 1 second)
+        $this->stdout(
+            "Checking database connection on DSN '{$dsn}' with user '{$user}'"
+        );
+
+        try {
+            // retry an operation up to 20 times
+            $pdo = \igorw\retry(
+                $this->mysqlRetryMaxCount,
+                function () use ($dsn, $user, $password) {
+                    $this->stdout('.');
+                    sleep($this->mysqlRetryTimeout);
+                    return new \PDO($dsn, $user, $password);
+                }
+            );
+        } catch (FailingTooHardException $e) {
+            $this->stderr("\n\nError: Unable to connect to database '" . $e->getMessage() . "''");
+            \Yii::$app->end(1);
+        }
+        $this->stdout(' [OK]' . PHP_EOL);
+
     }
 
     /**
@@ -119,123 +171,72 @@ class MysqlController extends Controller
         $rootPassword = null,
         $user = null,
         $pass = null
-    ) {
-        // check dsn
-        if ($db === null) {
-            $db = getenv("DATABASE_DSN_DB");
-        }
-        if (empty($db)) {
-            $this->stderr('No database configured, aborting.');
-            return;
-        }
+    )
+    {
+        $this->_db = $db;
+        $this->_dsn = $dsn;
+        $this->_root = $root;
+        $this->_rootPassword = $rootPassword;
+        $this->_user = $user;
+        $this->_pass = $pass;
 
-        // check root user settings
-        $root = $root ?: getenv("DB_ENV_MYSQL_ROOT_USER");
-        if (empty($root)) {
-            $this->stderr('No root user configured, aborting.');
-            return;
-        }
-        $rootPassword = $rootPassword ?: getenv("DB_ENV_MYSQL_ROOT_PASSWORD");
-        if (empty($rootPassword)) {
-            $this->stderr('No root password configured, aborting.');
-            return;
-        }
+        $this->checkParameters();
 
-        $user = $user ?: getenv("DB_ENV_MYSQL_USER");
-        $pass = $pass ?: getenv("DB_ENV_MYSQL_PASSWORD");
-        $dsn = $dsn ?: getenv("DATABASE_DSN_BASE");
-
-        if (empty($user) || empty($pass) || empty($dsn)) {
+        if (empty($this->_pass)) {
             $this->stderr('Configuration failed, aborting.');
             return;
         }
 
-        // trying to connect to database with PDO (20 times, interval 1 second)
-        $this->stdout(
-            "Checking database connection on DSN '{$dsn}' with user '{$root}'"
-        );
-
-        try {
-            // retry an operation up to 20 times
-            $pdo = \igorw\retry(
-                $this->mysqlRetryMaxCount,
-                function () use ($dsn, $root, $rootPassword) {
-                    $this->stdout('.');
-                    sleep($this->mysqlRetryTimeout);
-                    return new \PDO($dsn, $root, $rootPassword);
-                }
-            );
-        } catch (FailingTooHardException $e) {
-            $this->stderr("\n\nError: Unable to connect to database '".$e->getMessage()."''");
-            \Yii::$app->end(1);
-        }
-        $this->stdout(' [OK]');
-
+        // wait for database connection (BC)
+        $this->actionWaitForConnection($dsn, $root, $rootPassword);
 
         // try to create a database for the user
         $this->stdout(
-            "\nCreating database '{$db}' and granting permissions to user '{$user}' on DSN '{$dsn}' with user '{$root}'"
+            "Creating database '{$this->_db}' and granting permissions to user '{$this->_user}' on DSN '{$this->_dsn}' with user '{$this->_root}'"
         );
-        try {
-            \igorw\retry(
-                $this->mysqlRetryMaxCount,
-                function () use ($dsn, $root, $rootPassword, $pdo, $user, $pass, $db) {
-                    $pdo->exec(
-                        "CREATE DATABASE IF NOT EXISTS `$db`;
-                 GRANT ALL ON `$db`.* TO '$user'@'%' IDENTIFIED BY '$pass';
+
+        $pdo = new \PDO($this->_dsn, $this->_root, $this->_rootPassword);
+        $pdo->exec(
+            "CREATE DATABASE IF NOT EXISTS `{$this->_db}`;
+                 CREATE USER IF NOT EXISTS '{$this->_user}'@'%' IDENTIFIED BY '{$this->_pass}';
+                 GRANT ALL ON `{$this->_db}`.* TO '{$this->_user}'@'%';
                  FLUSH PRIVILEGES;"
-                    );
-                    $this->stdout('.');
-                    sleep($this->mysqlRetryTimeout);
-                }
-            );
-        } catch (FailingTooHardException $e) {
-            $this->stderr("\n\nError: Unable to setup database '".$e->getMessage()."''");
-            \Yii::$app->end(1);
-        }
+        );
 
         $this->stdout(' [OK]');
         $this->stdout("\n");
     }
 
     /**
-     * Dumps current database tables to runtime folder
-     *
-     * @throws Exception
+     * Remove the current schema
      */
-    public function actionDump()
+    public function actionDestroy($db = null,
+                                  $dsn = null,
+                                  $root = null,
+                                  $rootPassword = null,
+                                  $user = null,
+                                  $pass = null)
     {
-        $this->stdout("MySQL dump command\n");
-        $ignoreOpts = '';
-        $noDataTables = '';
-        foreach ($this->noDataTables as $table) {
-            $ignoreOpts .= ' --ignore-table='.getenv('DB_ENV_MYSQL_DATABASE').'.'.$table;
-            $noDataTables .= ' '.$table;
+        if ($this->confirm('This is a destructive operation! Continue?', !$this->interactive)) {
+
+            $this->_db = $db;
+            $this->_dsn = $dsn;
+            $this->_root = $root;
+            $this->_rootPassword = $rootPassword;
+            $this->_user = $user;
+
+            $this->checkParameters();
+
+            $pdo = new \PDO($this->_dsn, $this->_root, $this->_rootPassword);
+
+            $this->stdout('Deleting database...' . PHP_EOL);
+            $pdo->exec("DROP DATABASE `{$this->_db}`");
+            $this->stdout('Deleting user...' . PHP_EOL);
+            $pdo->exec("DROP USER '{$this->_user}'@'%'");
+            $pdo->exec('FLUSH PRIVILEGES');
         }
-        $date = date('U');
-
-        $dir = 'runtime/mysql';
-        $file = $dir.'/full-'.$date.'.sql';
-
-        $cmd = 'mkdir -p '.$dir.';';
-        $this->execute($cmd);
-
-        $cmd = 'mysqldump -h '.getenv('DB_PORT_3306_TCP_ADDR').
-            ' -u '.getenv('DB_ENV_MYSQL_USER').
-            ' --password='.getenv('DB_ENV_MYSQL_PASSWORD').
-            ' '.$ignoreOpts.' '.getenv('DB_ENV_MYSQL_DATABASE').' > '.$file.';';
-        $this->execute($cmd);
-
-        $cmd = 'mysqldump -h '.getenv('DB_PORT_3306_TCP_ADDR').
-            ' -u '.getenv('DB_ENV_MYSQL_USER').
-            ' --password='.getenv('DB_ENV_MYSQL_PASSWORD').
-            ' --no-data '.getenv(
-                'DB_ENV_MYSQL_DATABASE'
-            ).' '.$noDataTables.' >> '.$file.';';
-        $this->execute($cmd);
-
-        $this->stdout("Dump to file '$file' completed.\n");
     }
+
 
     /**
      * export data tables, without logs and caches
@@ -244,7 +245,7 @@ class MysqlController extends Controller
      */
     public function actionExport()
     {
-        $fileName = $this->getFilePrefix()."_data.sql";
+        $fileName = $this->getFilePrefix() . "_data.sql";
         $command = new Command('mysqldump');
 
         $command->addArg('-h', getenv('DB_PORT_3306_TCP_ADDR'));
@@ -264,7 +265,7 @@ class MysqlController extends Controller
 
         $this->stdout("Ignoring tables: ");
         foreach ($this->noDataTables as $table) {
-            $command->addArg('--ignore-table', getenv('DB_ENV_MYSQL_DATABASE').'.'.$table);
+            $command->addArg('--ignore-table', getenv('DB_ENV_MYSQL_DATABASE') . '.' . $table);
             $this->stdout("$table, ");
         }
         $this->stdout("\n");
@@ -273,7 +274,7 @@ class MysqlController extends Controller
         $command->execute();
 
         if ($command->getError()) {
-            $this->stderr($command->getError()."\n");
+            $this->stderr($command->getError() . "\n");
             \Yii::$app->end(1);
         }
 
@@ -282,80 +283,73 @@ class MysqlController extends Controller
 
         $dump = $command->getOutput();
         $dump = preg_replace('/LOCK TABLES (.+) WRITE;/', 'LOCK TABLES $1 WRITE; TRUNCATE TABLE $1;', $dump);
-        $file = $dir.'/'.$fileName;
+        $file = $dir . '/' . $fileName;
 
         file_put_contents($file, $dump);
 
         $this->stdout("\nMySQL dump successfully written to '$file'\n", Console::FG_GREEN);
     }
 
+
     /**
-     * Deprecated - alias for export
+     * Dumps current database tables to runtime folder
+     *
+     * @throws Exception
      */
-    public function actionXDumpData()
+    public function actionDump()
     {
-        \Yii::warning('x-dump-data is deprecated, please use export', __METHOD__);
-        return $this->actionExport();
+        $this->stdout("MySQL dump command\n");
+        $ignoreOpts = '';
+        $noDataTables = '';
+        foreach ($this->noDataTables as $table) {
+            $ignoreOpts .= ' --ignore-table=' . getenv('DB_ENV_MYSQL_DATABASE') . '.' . $table;
+            $noDataTables .= ' ' . $table;
+        }
+        $date = date('U');
+
+        $dir = 'runtime/mysql';
+        $file = $dir . '/full-' . $date . '.sql';
+
+        $cmd = 'mkdir -p ' . $dir . ';';
+        $this->execute($cmd);
+
+        $cmd = 'mysqldump -h ' . getenv('DB_PORT_3306_TCP_ADDR') .
+            ' -u ' . getenv('DB_ENV_MYSQL_USER') .
+            ' --password=' . getenv('DB_ENV_MYSQL_PASSWORD') .
+            ' ' . $ignoreOpts . ' ' . getenv('DB_ENV_MYSQL_DATABASE') . ' > ' . $file . ';';
+        $this->execute($cmd);
+
+        $cmd = 'mysqldump -h ' . getenv('DB_PORT_3306_TCP_ADDR') .
+            ' -u ' . getenv('DB_ENV_MYSQL_USER') .
+            ' --password=' . getenv('DB_ENV_MYSQL_PASSWORD') .
+            ' --no-data ' . getenv(
+                'DB_ENV_MYSQL_DATABASE'
+            ) . ' ' . $noDataTables . ' >> ' . $file . ';';
+
+        $this->stdout($cmd);
+        $this->execute($cmd);
+
+        $this->stdout("Dump to file '$file' completed.\n");
     }
 
-    /**
-     * EXPERIMENTAL: Schema and/or Data dumps
-     *
-     * @option: --includeTables
-     * @option: --excludeTables
-     * @option: --dataOnly [0|1]
-     * @option: --truncateTables [0|1]
-     */
-    public function actionXDump()
-    {
-        $command = new Command('mysqldump');
-        $fileNameSuffix = 'schema-data';
-        $truncateTable = '';
-
+    public function actionImport($file) {
+        $command = new Command('mysql');
         $command->addArg('-h', getenv('DB_PORT_3306_TCP_ADDR'));
         $command->addArg('-P', getenv('DB_PORT_3306_TCP_PORT'));
         $command->addArg('-u', getenv('DB_ENV_MYSQL_USER'));
         $command->addArg('--password=', getenv('DB_ENV_MYSQL_PASSWORD'));
-        $command->addArg(getenv('DB_ENV_MYSQL_DATABASE'));
+        $command->addArg('-D', getenv('DB_ENV_MYSQL_DATABASE'));
+        $command->addArg('<', null, false);
+        $command->addArg($file);
 
-        // if only data
-        if ($this->dataOnly == 1) {
-            $fileNameSuffix = 'data';
-            $command->addArg('--no-create-info');
+        $this->stdout('Running command:'.PHP_EOL);
+        $this->stdout($command->getExecCommand());
+        $this->stdout(PHP_EOL);
+
+        if (!$command->execute()) {
+            $this->stderr($command->getError());
+            $this->stderr(PHP_EOL);
         }
-
-        // if include tables
-        if (!empty($this->includeTables)) {
-            foreach ($this->includeTables as $table) {
-                $command->addArg($table);
-            }
-        }
-
-        // if exclude tables
-        if (!empty($this->excludeTables)) {
-            foreach ($this->excludeTables as $table) {
-                $command->addArg('--ignore-table', getenv('DB_ENV_MYSQL_DATABASE').'.'.$table);
-            }
-        }
-
-        $command->execute();
-
-        $dump = $command->getOutput();
-
-        // if truncate tables
-        if ($this->truncateTables == 1) {
-            $truncateTable = 'TRUNCATE TABLE $1;';
-        }
-        $dump = preg_replace('/LOCK TABLES (.+) WRITE;/', 'LOCK TABLES $1 WRITE; '.$truncateTable, $dump);
-
-        // generate file
-        $dir = \Yii::getAlias($this->outputPath);
-        FileHelper::createDirectory($dir);
-        $fileName = $this->getFilePrefix().'_'.$fileNameSuffix.'.sql';
-        $file = $dir.'/'.$fileName;
-        file_put_contents($file, $dump);
-
-        $this->stdout("\nMySQL dump successfully written to '$file'\n", Console::FG_GREEN);
     }
 
     /**
@@ -378,9 +372,39 @@ class MysqlController extends Controller
     private function getFilePrefix()
     {
         $sanitizedVersion = defined('APP_VERSION') ?
-            '_'.Inflector::slug(Inflector::camel2words(trim(APP_VERSION, '_')), '_') :
+            '_' . Inflector::slug(Inflector::camel2words(trim(APP_VERSION, '_')), '_') :
             '';
-        return 'm'.gmdate('ymd_His').'_'.\Yii::$app->id.$sanitizedVersion;
+        return 'm' . gmdate('ymd_His') . '_' . \Yii::$app->id . $sanitizedVersion;
+    }
+
+    private function checkParameters()
+    {
+        $this->_db = $this->_db ?: getenv("DATABASE_DSN_DB");
+        $this->_dsn = $this->_dsn ?: getenv("DATABASE_DSN_BASE");
+        $this->_root = $this->_root ?: getenv("DB_ENV_MYSQL_ROOT_USER");
+        $this->_rootPassword = $this->_rootPassword ?: getenv("DB_ENV_MYSQL_ROOT_PASSWORD");
+        $this->_user = $this->_user ?: getenv("DB_ENV_MYSQL_USER");
+        $this->_pass = $this->_pass ?: getenv("DB_ENV_MYSQL_PASSWORD");
+
+        // check dsn
+        if (empty($this->_db)) {
+            $this->stderr('No database configured, aborting.');
+            return;
+        }
+        // check root user settings
+        if (empty($this->_root)) {
+            $this->stderr('No root user configured, aborting.');
+            return;
+        }
+        if (empty($this->_rootPassword)) {
+            $this->stderr('No root password configured, aborting.');
+            return;
+        }
+
+        if (empty($this->_user) || empty($this->_dsn)) {
+            $this->stderr('Configuration failed, aborting.');
+            return;
+        }
     }
 
 }

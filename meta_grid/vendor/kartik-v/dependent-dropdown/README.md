@@ -1,5 +1,15 @@
-dependent-dropdown
-==================
+<h1 align="center">
+    <a href="http://plugins.krajee.com" title="Krajee Plugins" target="_blank">
+        <img src="http://kartik-v.github.io/bootstrap-fileinput-samples/samples/krajee-logo-b.png" alt="Krajee Logo"/>
+    </a>
+    <br>
+    dependent-dropdown
+    <hr>
+    <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DTP3NZQ6G2AYU"
+       title="Donate via Paypal" target="_blank">
+        <img src="http://kartik-v.github.io/bootstrap-fileinput-samples/samples/donate.png" alt="Donate"/>
+    </a>
+</h1>
 
 [![BOWER version](https://badge-me.herokuapp.com/api/bower/kartik-v/dependent-dropdown.png)](http://badges.enytc.com/for/bower/kartik-v/dependent-dropdown)
 [![Latest Stable Version](https://poser.pugx.org/kartik-v/dependent-dropdown/v/stable)](https://packagist.org/packages/kartik-v/dependent-dropdown)
@@ -9,7 +19,7 @@ dependent-dropdown
 
 A multi level dependent dropdown JQuery plugin that allows nested dependencies. The plugin allows you to convert normal select inputs, whose options are derived based on value selected in another input/or a group of inputs. It works both with normal select options and select with optgroups as well.
 
-> NOTE: The latest version of the plugin v1.4.8 has been released. Refer the [CHANGE LOG](https://github.com/kartik-v/dependent-dropdown/blob/master/CHANGE.md) for details.
+> NOTE: Refer the [CHANGE LOG](https://github.com/kartik-v/dependent-dropdown/blob/master/CHANGE.md) for details on updates to various releases.
 
 ## Features
 
@@ -70,6 +80,11 @@ View the [plugin documentation](http://plugins.krajee.com/dependent-dropdown) an
 You can use the `bower` package manager to install. Run:
 
     bower install dependent-dropdown
+
+### Using NPM
+To install using the `npm` package manager run:
+
+    npm install dependent-dropdown
 
 ### Using Composer
 You can use the `composer` package manager to install. Either run:
@@ -144,4 +159,4 @@ $("#child-2").depdrop({
 
 ## License
 
-**dependent-dropdown** is released under the BSD 3-Clause License. See the bundled `LICENSE.md` for details.
+**dependent-dropdown** is released under the BSD-3-Clause License. See the bundled `LICENSE.md` for details.

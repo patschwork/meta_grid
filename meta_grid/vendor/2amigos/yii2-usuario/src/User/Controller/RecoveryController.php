@@ -22,6 +22,7 @@ use Da\User\Query\UserQuery;
 use Da\User\Service\PasswordRecoveryService;
 use Da\User\Service\ResetPasswordService;
 use Da\User\Traits\ContainerAwareTrait;
+use Da\User\Traits\ModuleAwareTrait;
 use Da\User\Validator\AjaxRequestModelValidator;
 use Yii;
 use yii\base\InvalidConfigException;
@@ -33,6 +34,7 @@ use yii\web\NotFoundHttpException;
 class RecoveryController extends Controller
 {
     use ContainerAwareTrait;
+    use ModuleAwareTrait;
 
     protected $userQuery;
     protected $tokenQuery;
@@ -60,7 +62,7 @@ class RecoveryController extends Controller
     {
         return [
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => AccessControl::class,
                 'rules' => [
                     [
                         'allow' => true,
@@ -94,22 +96,22 @@ class RecoveryController extends Controller
 
         $this->make(AjaxRequestModelValidator::class, [$form])->validate();
 
-        if ($form->load(Yii::$app->request->post())) {
+        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             $this->trigger(FormEvent::EVENT_BEFORE_REQUEST, $event);
 
             $mailService = MailFactory::makeRecoveryMailerService($form->email);
 
             if ($this->make(PasswordRecoveryService::class, [$form->email, $mailService])->run()) {
                 $this->trigger(FormEvent::EVENT_AFTER_REQUEST, $event);
-
-                return $this->render(
-                    '/shared/message',
-                    [
-                        'title' => Yii::t('usuario', 'Recovery message sent'),
-                        'module' => $this->module,
-                    ]
-                );
             }
+
+            return $this->render(
+                '/shared/message',
+                [
+                    'title' => Yii::t('usuario', 'Recovery message sent'),
+                    'module' => $this->module,
+                ]
+            );
         }
 
         return $this->render('request', ['model' => $form]);

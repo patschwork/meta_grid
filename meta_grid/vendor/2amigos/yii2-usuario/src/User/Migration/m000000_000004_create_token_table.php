@@ -33,7 +33,7 @@ class m000000_000004_create_token_table extends Migration
 
         $restrict = MigrationHelper::isMicrosoftSQLServer($this->db->driverName) ? 'NO ACTION' : 'RESTRICT';
 
-        // $this->addForeignKey('fk_token_user', '{{%token}}', 'user_id', '{{%user}}', 'id', 'CASCADE', $restrict);
+        $this->addForeignKey('fk_token_user', '{{%token}}', 'user_id', '{{%user}}', 'id', 'CASCADE', $restrict);
     }
 
     public function safeDown()

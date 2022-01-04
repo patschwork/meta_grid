@@ -14,6 +14,9 @@ namespace Da\User\Event;
 use yii\base\Event;
 use yii\base\Model;
 
+/**
+ * @property-read Model $form
+ */
 class FormEvent extends Event
 {
     const EVENT_BEFORE_REQUEST = 'beforeRequest';
@@ -24,6 +27,7 @@ class FormEvent extends Event
     const EVENT_AFTER_LOGIN = 'afterLogin';
     const EVENT_BEFORE_REGISTER = 'beforeRegister';
     const EVENT_AFTER_REGISTER = 'afterRegister';
+    const EVENT_FAILED_LOGIN = 'failedLogin';
 
     protected $form;
 

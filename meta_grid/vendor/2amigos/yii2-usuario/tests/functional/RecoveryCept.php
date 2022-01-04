@@ -20,7 +20,14 @@ $user = $I->grabFixture('user', 'unconfirmed');
 $I->fillField('#recoveryform-email', $user->email);
 $I->click('Continue');
 
-$I->see('An email has been sent with instructions for resetting your password');
+$I->see('An email with instructions to create a new password has been sent to ' . $user->email); // ... truncate full message text by email
+
+$I->amGoingTo('try to request recovery token for non-existing email');
+$I->amOnRoute('/user/recovery/request');
+$I->fillField('#recoveryform-email', 'any@email.com');
+$I->click('Continue');
+
+$I->see('An email with instructions to create a new password has been sent to ' . 'any@email.com');
 
 $I->amGoingTo('try to request recovery token');
 $I->amOnRoute('/user/recovery/request');
@@ -28,13 +35,13 @@ $user = $I->grabFixture('user', 'user');
 $I->fillField('#recoveryform-email', $user->email);
 $I->click('Continue');
 
-$I->see('An email has been sent with instructions for resetting your password');
+$I->see('An email with instructions to create a new password has been sent to ' . $user->email);
 $user = $I->grabRecord(User::className(), ['email' => $user->email]);
 $token = $I->grabRecord(Token::className(), ['user_id' => $user->id, 'type' => Token::TYPE_RECOVERY]);
 /** @var yii\swiftmailer\Message $message */
 $message = $I->grabLastSentEmail();
 $I->assertArrayHasKey($user->email, $message->getTo());
-$I->assertContains(
+$I->assertStringContainsString(
     Html::encode($token->getUrl()),
     utf8_encode(quoted_printable_decode($message->getSwiftMessage()->toString()))
 );

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000111/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000111" context="Bugfix">
+
+		<sql splitStatements="true">
+		<![CDATA[
+		ALTER TABLE user ADD COLUMN last_login_ip TEXT(45);
+		]]>
+		</sql>
+		
+		<comment>
+		<![CDATA[
+		Add new field last_login_ip to table user.
+		(Taken from m000000_000008_add_last_login_ip.php)
+		Used objects:
+			user
+		Phabricator tasks:
+			T157
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

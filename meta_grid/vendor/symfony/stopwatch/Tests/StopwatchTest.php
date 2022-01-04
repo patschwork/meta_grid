@@ -35,6 +35,14 @@ class StopwatchTest extends TestCase
         $this->assertSame($event, $stopwatch->getEvent('foo'));
     }
 
+    public function testStartWithoutCategory()
+    {
+        $stopwatch = new Stopwatch();
+        $stopwatchEvent = $stopwatch->start('bar');
+        $this->assertSame('default', $stopwatchEvent->getCategory());
+        $this->assertSame($stopwatchEvent, $stopwatch->getEvent('bar'));
+    }
+
     public function testIsStarted()
     {
         $stopwatch = new Stopwatch();
@@ -62,11 +70,11 @@ class StopwatchTest extends TestCase
         $events->setAccessible(true);
 
         $stopwatchMockEvent = $this->getMockBuilder('Symfony\Component\Stopwatch\StopwatchEvent')
-            ->setConstructorArgs(array(microtime(true) * 1000))
+            ->setConstructorArgs([microtime(true) * 1000])
             ->getMock()
         ;
 
-        $events->setValue(end($section), array('foo' => $stopwatchMockEvent));
+        $events->setValue(end($section), ['foo' => $stopwatchMockEvent]);
 
         $this->assertFalse($stopwatch->isStarted('foo'));
     }
@@ -79,23 +87,19 @@ class StopwatchTest extends TestCase
         $event = $stopwatch->stop('foo');
 
         $this->assertInstanceOf('Symfony\Component\Stopwatch\StopwatchEvent', $event);
-        $this->assertEquals(200, $event->getDuration(), null, self::DELTA);
+        $this->assertEqualsWithDelta(200, $event->getDuration(), self::DELTA);
     }
 
-    /**
-     * @expectedException \LogicException
-     */
     public function testUnknownEvent()
     {
+        $this->expectException('LogicException');
         $stopwatch = new Stopwatch();
         $stopwatch->getEvent('foo');
     }
 
-    /**
-     * @expectedException \LogicException
-     */
     public function testStopWithoutStart()
     {
+        $this->expectException('LogicException');
         $stopwatch = new Stopwatch();
         $stopwatch->stop('foo');
     }
@@ -107,9 +111,9 @@ class StopwatchTest extends TestCase
         $stopwatch->start('foo');
         $event = $stopwatch->stop('foo');
 
-        $this->assertInternalType('float', $event->getStartTime());
-        $this->assertInternalType('float', $event->getEndTime());
-        $this->assertInternalType('float', $event->getDuration());
+        $this->assertIsFloat($event->getStartTime());
+        $this->assertIsFloat($event->getEndTime());
+        $this->assertIsFloat($event->getDuration());
     }
 
     public function testSection()
@@ -157,11 +161,9 @@ class StopwatchTest extends TestCase
         $this->assertCount(2, $events['__section__']->getPeriods());
     }
 
-    /**
-     * @expectedException \LogicException
-     */
     public function testReopenANewSectionShouldThrowAnException()
     {
+        $this->expectException('LogicException');
         $stopwatch = new Stopwatch();
         $stopwatch->openSection('section');
     }

@@ -64,7 +64,7 @@
 
 
   <h3 id="helper-classes-carets">Carets</h3>
-  <p>Use carets to indicate dropdown functionality and direction. Note that the default caret will reverse automatically in <a href="../components/#btn-dropdowns-dropup">dropup menus</a>.</p>
+  <p>Use carets to indicate dropdown functionality and direction. Note that the default caret will reverse automatically in <a href="{{ site.baseurl }}/components/#btn-dropdowns-dropup">dropup menus</a>.</p>
   <div class="bs-example" data-example-id="caret">
     <span class="caret"></span>
   </div>
@@ -99,7 +99,7 @@
 
   <div class="bs-callout bs-callout-warning" id="callout-helper-pull-navbar">
     <h4>Not for use in navbars</h4>
-    <p>To align components in navbars with utility classes, use <code>.navbar-left</code> or <code>.navbar-right</code> instead. <a href="../components/#navbar-component-alignment">See the navbar docs</a> for details.</p>
+    <p>To align components in navbars with utility classes, use <code>.navbar-left</code> or <code>.navbar-right</code> instead. <a href="{{ site.baseurl }}/components/#navbar-component-alignment">See the navbar docs</a> for details.</p>
   </div>
 
 
@@ -109,14 +109,14 @@
 <div class="center-block">...</div>
 {% endhighlight %}
 {% highlight scss %}
-// Classes
+// Class
 .center-block {
   display: block;
   margin-left: auto;
   margin-right: auto;
 }
 
-// Usage as mixins
+// Usage as a mixin
 .element {
   .center-block();
 }
@@ -142,7 +142,7 @@
   }
 }
 
-// Usage as a Mixin
+// Usage as a mixin
 .element {
   .clearfix();
 }
@@ -164,7 +164,6 @@
 }
 .hidden {
   display: none !important;
-  visibility: hidden !important;
 }
 .invisible {
   visibility: hidden;
@@ -181,12 +180,12 @@
 
 
   <h3 id="helper-classes-screen-readers">Screen reader and keyboard navigation content</h3>
-  <p>Hide an element to all devices <strong>except screen readers</strong> with <code>.sr-only</code>. Combine <code>.sr-only</code> with <code>.sr-only-focusable</code> to show the element again when it's focused (e.g. by a keyboard-only user). Necessary for following <a href="../getting-started/#accessibility">accessibility best practices</a>. Can also be used as mixins.</p>
+  <p>Hide an element to all devices <strong>except screen readers</strong> with <code>.sr-only</code>. Combine <code>.sr-only</code> with <code>.sr-only-focusable</code> to show the element again when it's focused (e.g. by a keyboard-only user). Necessary for following <a href="{{ site.baseurl }}/getting-started/#accessibility">accessibility best practices</a>. Can also be used as mixins.</p>
 {% highlight html %}
 <a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
 {% endhighlight %}
 {% highlight scss %}
-// Usage as a Mixin
+// Usage as a mixin
 .skip-navigation {
   .sr-only();
   .sr-only-focusable();
@@ -199,8 +198,8 @@
 {% highlight html %}
 <h1 class="text-hide">Custom heading</h1>
 {% endhighlight %}
-  {% highlight scss %}
-// Usage as a Mixin
+{% highlight scss %}
+// Usage as a mixin
 .heading {
   .text-hide();
 }

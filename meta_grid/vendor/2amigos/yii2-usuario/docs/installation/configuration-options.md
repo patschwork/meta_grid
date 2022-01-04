@@ -7,10 +7,53 @@ The module comes with a set of attributes to configure. The following is the lis
 
 Setting this attribute will allow users to configure their login process with two-factor authentication. 
 
-### twoFactorAuthenticationCycles (type: `integer`, default: `1`)
+#### twoFactorAuthenticationCycles (type: `integer`, default: `1`)
 
 By default, Google Authenticator App for two-factor authentication cycles in periods of 30 seconds. In order to allow 
-a bigger period so to avoid out of sync issues. 
+a bigger period so to avoid out of sync issues.
+
+#### enableGdprCompliance (type: `boolean`, default: `false`)
+
+Setting this attribute enables a serie of measures to comply with EU GDPR regulation, like data consent, right to be forgotten and data portability.
+
+#### gdprPrivacyPolicyUrl (type: `array`, default: null)
+The link to privacy policy. This will be used on registration form as "read our pivacy policy". It must follow the same format as `yii\helpers\Url::to`
+
+#### gdprExportProperties (type: `array`)
+
+An array with the name of the user identity properties to be included when user request download of his data.
+Names can include relations like `profile.name`.
+
+Defaults to:
+```php
+      [
+        'email',
+        'username',
+        'profile.public_email',
+        'profile.name',
+        'profile.gravatar_email',
+        'profile.location',
+        'profile.website',
+        'profile.bio'
+      ]
+```
+
+
+#### gdprAnonymizePrefix (type: `string`, default: `GDPR`)
+Prefix to be used as a replacement when user requeste deletion of his data
+
+#### gdprConsentMessage (type: `string`)
+Use this to customize the message that will appear as hint in the give consent checkbox.
+If you leave it empty the next message will be used:
+
+>I agree processing of my personal data and the use of cookies to facilitate the operation of this site. For more information read our privacy policy
+
+#### GdprRequireConsentToAll (type `boolean`, default `false`)
+Whether require to already registered user give consent to process their data. According to GDPR this is mandatory.
+To forbid user access to any function, until it gives consent, use the AccessRuleFilter included with this module.
+
+#### GdprConsentExcludedUrls (type `array`, default `['user/settings/*']`)
+List of urls that does not require explicit data processing consent to be accessed, like own profile, account... You can use wildcards like `route/to/*` .
 
 #### enableRegistration (type: `boolean`, default: `true`)
 
@@ -45,10 +88,28 @@ If `true` it will enable password recovery process.
 
 #### allowAdminPasswordRecovery (type: `boolean`, default: `true`)
 
-If `true` and `allowPasswordRecovery` is false, it will enable administrator to send a password recovery email to a 
-user.
+If `true` it will enable administrator to send a password recovery email to a user.
 
-#### allowAccountDelete (type: `boolean`, default: `true`)
+#### maxPasswordAge (type: `integer`, default: `null`)
+
+If set to an integer value it will check user password age. If the days since last password change are greater than this configuration value
+user will be forced to change it. This enforcement is done only at login stage. In order to perform the check in every action you must configure
+a filter into your controller like this:
+```
+use Da\User\Filter\PasswordAgeEnforceFilter;
+class SiteController extends Controller
+{
+    public function behaviors()
+    {
+        return [
+            [...]
+            'enforcePasswordAge' => [
+                'class' => PasswordAgeEnforceFilter::className(),
+            ],
+```
+This will redirect the user to their account page until the password has been updated.
+
+#### allowAccountDelete (type: `boolean`, default: `false`)
 
 If `true` users will be able to remove their own accounts. 
 
@@ -62,7 +123,7 @@ Configures one of the three ways available to change user's password:
 - **MailChangeStrategyInterface::TYPE_SECURE**: A confirmation message will be sent to the previous and new user's email 
     with a link that would require both to be click through to confirm the change.
     
-#### rememberLoginLifespan (type: `integer`, default: `209600`)
+#### rememberLoginLifespan (type: `integer`, default: `1209600`)
 
 Configures the time length in seconds a user will be remembered without the need to login again. The default time is 2 
 weeks. 
@@ -113,6 +174,14 @@ protected against brute-force attacks, set it to the highest value that is toler
 taken to compute the hash doubles for every increment by one of `$blowfishCost`.
 
 
+#### consoleControllerNamespace (type: `string`, default: `Da\User\Command`)
+
+Allows customization of the console application controller namespace for the module.
+
+#### controllerNamespace (type: `string`, default: `Da\User\Controller`)
+
+Allows customization of the web application controller namespace for the module.
+
 #### classMap (type: `array`, default: `[]`)
 
 Configures the definitions of the classes as they have to be override. For more information see 
@@ -142,6 +211,11 @@ Configures the root directory of the view files. See [overriding views](../enhan
 
 Configures the name of the session key that will be used to hold the original admin identifier.
 
+#### restrictUserPermissionAssignment (type: `boolean`, default: `false`)
+
+If `false`, allow the assignment of both roles and permissions to users.
+Set to `true` to restrict user assignments to roles only.
 
 
-© [2amigos](http://www.2amigos.us/) 2013-2017
+
+© [2amigos](http://www.2amigos.us/) 2013-2019

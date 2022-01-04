@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # Instllation or update meta#grid
 # on every OS
-# v1.3
+# v1.4
 
 import base_lib
 import shutil
@@ -23,7 +23,7 @@ behaviour = const_inst_mode_update
 git_repo_url = "https://github.com/patschwork/meta_grid.git"
 git_repo_zip_url = "https://github.com/patschwork/meta_grid/archive/master.zip"
 min_php_version = "7.0"
-max_php_version = "7.1" # Upper version limit for PHP (depends on the used Yii2 framework)
+max_php_version = "7.4" # Upper version limit for PHP (depends on the used Yii2 framework)
 used_rdbms = const_sqlite
 folderfile_Database = "../../../dwh_meta.sqlite"
 folder_Frontend = "../../../frontend/yii/basic"
@@ -149,7 +149,7 @@ base_lib.set_user_settings(ini_user_settings_path, section, 'pythonExe', pythonE
 
 section="tools"
 actual_value=base_lib.get_user_settings(ini_user_settings_path, section, 'phpExe', phpExe)
-liquibasePathExe=base_lib.get_input_color("Path to PHP executable", actual_value, phpExe, user_option_search_file=os.path.basename(phpExe))
+phpExe=base_lib.get_input_color("Path to PHP executable", actual_value, phpExe, user_option_search_file=os.path.basename(phpExe))
 base_lib.set_user_settings(ini_user_settings_path, section, 'phpExe', phpExe)
 
 section="tools"

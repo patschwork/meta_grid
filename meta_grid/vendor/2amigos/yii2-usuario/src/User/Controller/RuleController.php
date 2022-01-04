@@ -11,18 +11,18 @@
 
 namespace Da\User\Controller;
 
+use Da\User\Filter\AccessRuleFilter;
 use Da\User\Model\Rule;
 use Da\User\Search\RuleSearch;
 use Da\User\Service\AuthRuleEditionService;
 use Da\User\Traits\AuthManagerAwareTrait;
 use Da\User\Traits\ContainerAwareTrait;
 use Da\User\Validator\AjaxRequestModelValidator;
-use Da\User\Filter\AccessRuleFilter;
 use Yii;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\AccessControl;
 
 class RuleController extends Controller
 {
@@ -36,15 +36,15 @@ class RuleController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
             ],
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => AccessControl::class,
                 'ruleConfig' => [
-                    'class' => AccessRuleFilter::className(),
+                    'class' => AccessRuleFilter::class,
                 ],
                 'rules' => [
                     [
@@ -135,6 +135,7 @@ class RuleController extends Controller
         $this->getAuthManager()->invalidateCache();
 
         Yii::$app->getSession()->setFlash('success', Yii::t('usuario', 'Authorization rule has been removed.'));
+        return $this->redirect(['index']);
     }
 
     /**

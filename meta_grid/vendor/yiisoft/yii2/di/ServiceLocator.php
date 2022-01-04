@@ -7,8 +7,8 @@
 
 namespace yii\di;
 
-use Yii;
 use Closure;
+use Yii;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
 
@@ -40,6 +40,7 @@ use yii\base\InvalidConfigException;
  * ```
  *
  * Because [[\yii\base\Module]] extends from ServiceLocator, modules and the application are all service locators.
+ * Modules add [tree traversal](guide:concept-service-locator#tree-traversal) for service resolution.
  *
  * For more details and usage information on ServiceLocator, see the [guide article on service locators](guide:concept-service-locator).
  *
@@ -71,9 +72,9 @@ class ServiceLocator extends Component
     {
         if ($this->has($name)) {
             return $this->get($name);
-        } else {
-            return parent::__get($name);
         }
+
+        return parent::__get($name);
     }
 
     /**
@@ -86,9 +87,9 @@ class ServiceLocator extends Component
     {
         if ($this->has($name)) {
             return true;
-        } else {
-            return parent::__isset($name);
         }
+
+        return parent::__isset($name);
     }
 
     /**
@@ -131,14 +132,14 @@ class ServiceLocator extends Component
             $definition = $this->_definitions[$id];
             if (is_object($definition) && !$definition instanceof Closure) {
                 return $this->_components[$id] = $definition;
-            } else {
-                return $this->_components[$id] = Yii::createObject($definition);
             }
+
+            return $this->_components[$id] = Yii::createObject($definition);
         } elseif ($throwException) {
             throw new InvalidConfigException("Unknown component ID: $id");
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -198,7 +199,11 @@ class ServiceLocator extends Component
             $this->_definitions[$id] = $definition;
         } elseif (is_array($definition)) {
             // a configuration array
-            if (isset($definition['class'])) {
+            if (isset($definition['__class'])) {
+                $this->_definitions[$id] = $definition;
+                $this->_definitions[$id]['class'] = $definition['__class'];
+                unset($this->_definitions[$id]['__class']);
+            } elseif (isset($definition['class'])) {
                 $this->_definitions[$id] = $definition;
             } else {
                 throw new InvalidConfigException("The configuration for the \"$id\" component must contain a \"class\" element.");

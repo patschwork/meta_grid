@@ -31,7 +31,7 @@ $module = Yii::$app->getModule('user');
 
 <div class="row">
     <div class="col-md-3">
-        <?= $this->render('_menu') ?>
+        <?= $this->render('/settings/_menu') ?>
     </div>
     <div class="col-md-9">
         <div class="panel panel-default">
@@ -100,7 +100,7 @@ $module = Yii::$app->getModule('user');
                 </div>
                 <div class="panel-body">
                     <p>
-                        <?= Yii::t('usuario', 'Two factor authentication protects you against stolen credentials') ?>.
+                        <?= Yii::t('usuario', 'Two factor authentication protects you in case of stolen credentials') ?>.
                     </p>
                     <div class="text-right">
                         <?= Html::a(

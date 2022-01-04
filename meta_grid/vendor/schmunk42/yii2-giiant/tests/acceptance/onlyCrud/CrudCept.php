@@ -9,11 +9,11 @@ $I = new AcceptanceTester($scenario);
 $I->wantTo('ensure that crudOnly works (no access rules)');
 
 $I->amOnPage('/onlyCrud/country');
-$I->see('Countries', 'h1');
+$I->see('Country', 'h1');
 $I->makeScreenshot('crud-country');
 
 $I->expectTo('see view, edit and delete button');
-$I->seeElementInDOM('[data-key="1"] .glyphicon-file');
+$I->seeElementInDOM('[data-key="1"] .glyphicon-eye-open');
 $I->seeElementInDOM('[data-key="2"] .glyphicon-pencil');
 $I->seeElementInDOM('[data-key="3"] .glyphicon-trash');
 

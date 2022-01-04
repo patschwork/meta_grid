@@ -1,7 +1,14 @@
 {
     "name": "kartik-v/yii2-krajee-base",
     "description": "Base library and foundation components for all Yii2 Krajee extensions.",
-    "keywords": ["yii2", "extension", "widget", "krajee", "base", "foundation"],
+    "keywords": [
+        "yii2",
+        "extension",
+        "widget",
+        "krajee",
+        "base",
+        "foundation"
+    ],
     "homepage": "https://github.com/kartik-v/yii2-krajee-base",
     "type": "yii2-extension",
     "license": "BSD-3-Clause",
@@ -12,17 +19,18 @@
             "homepage": "http://www.krajee.com/"
         }
     ],
-    "require": {
-        "yiisoft/yii2-bootstrap": "@dev"
+    "suggest": {
+        "yiisoft/yii2-bootstrap": "for Krajee extensions to work with Bootstrap 3.x version",
+        "yiisoft/yii2-bootstrap4": "for Krajee extensions to work with Bootstrap 4.x version"
     },
     "autoload": {
         "psr-4": {
-            "kartik\\base\\": ""
+            "kartik\\base\\": "src"
         }
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.9.x-dev"
+            "dev-master": "3.0.x-dev"
         }
     }
 }

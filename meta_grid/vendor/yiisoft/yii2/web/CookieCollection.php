@@ -7,24 +7,24 @@
 
 namespace yii\web;
 
-use Yii;
 use ArrayIterator;
+use Yii;
+use yii\base\BaseObject;
 use yii\base\InvalidCallException;
-use yii\base\Object;
 
 /**
  * CookieCollection maintains the cookies available in the current request.
  *
  * For more details and usage information on CookieCollection, see the [guide article on handling cookies](guide:runtime-sessions-cookies).
  *
- * @property int $count The number of cookies in the collection. This property is read-only.
- * @property ArrayIterator $iterator An iterator for traversing the cookies in the collection. This property
- * is read-only.
+ * @property-read int $count The number of cookies in the collection. This property is read-only.
+ * @property-read ArrayIterator $iterator An iterator for traversing the cookies in the collection. This
+ * property is read-only.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
  */
-class CookieCollection extends Object implements \IteratorAggregate, \ArrayAccess, \Countable
+class CookieCollection extends BaseObject implements \IteratorAggregate, \ArrayAccess, \Countable
 {
     /**
      * @var bool whether this collection is read only.
@@ -83,7 +83,7 @@ class CookieCollection extends Object implements \IteratorAggregate, \ArrayAcces
     /**
      * Returns the cookie with the specified name.
      * @param string $name the cookie name
-     * @return Cookie the cookie with the specified name. Null if the named cookie does not exist.
+     * @return Cookie|null the cookie with the specified name. Null if the named cookie does not exist.
      * @see getValue()
      */
     public function get($name)
@@ -113,7 +113,7 @@ class CookieCollection extends Object implements \IteratorAggregate, \ArrayAcces
     public function has($name)
     {
         return isset($this->_cookies[$name]) && $this->_cookies[$name]->value !== ''
-            && ($this->_cookies[$name]->expire === null || $this->_cookies[$name]->expire >= time());
+            && ($this->_cookies[$name]->expire === null || $this->_cookies[$name]->expire === 0 || $this->_cookies[$name]->expire >= time());
     }
 
     /**
@@ -147,7 +147,8 @@ class CookieCollection extends Object implements \IteratorAggregate, \ArrayAcces
             $cookie->expire = 1;
             $cookie->value = '';
         } else {
-            $cookie = new Cookie([
+            $cookie = Yii::createObject([
+                'class' => 'yii\web\Cookie',
                 'name' => $cookie,
                 'expire' => 1,
             ]);

@@ -37,12 +37,10 @@ $(function() {
 		<td valign="top">
 			An array of the initial options available to select; array
 			of objects.
-
 			By default this is populated from the original input
 			element.  If your element is a &lt;select&gt; with
 			&lt;option&gt;s specified this property gets populated
 			automatically.
-
 			Setting this property is convenient if you have your data as
 			an array and want to automatically generate the
 			&lt;option&gt;s.
@@ -123,13 +121,13 @@ $(function() {
 		<td valign="top"><code>maxItems</code></td>
 		<td valign="top">The max number of items the user can select. 1 makes the control mono-selection, null allows an unlimited number of items.</td>
 		<td valign="top"><code>int</code></td>
-		<td valign="top"><code>1</code></td>
+		<td valign="top"><code>null</code></td>
 	</tr>
 	<tr>
 		<td valign="top"><code>hideSelected</code></td>
-		<td valign="top">If true, the items that are currently selected will not be shown in the dropdown list of available options.</td>
+		<td valign="top">If true, the items that are currently selected will not be shown in the dropdown list of available options. This defaults to <code>true</code> when in a multi-selection control, to <code>false</code> otherwise.</td>
 		<td valign="top"><code>boolean</code></td>
-		<td valign="top"><code>false</code></td>
+		<td valign="top"><code>null</code></td>
 	</tr>
 	<tr>
 		<td valign="top"><code>closeAfterSelect</code></td>
@@ -197,19 +195,15 @@ $(function() {
 		<td valign="top"><code>boolean</code></td>
 		<td valign="top"><code>true</code></td>
 	</tr>
-
-
 	<tr>
 		<th valign="top" colspan="4" align="left"><a href="#data_searching" name="data_searching">Data / Searching</a></th>
 	</tr>
-
 	<tr>
 		<th valign="top" align="left">Setting</th>
 		<th valign="top" align="left">Description</th>
 		<th valign="top" align="left">Type</th>
 		<th valign="top" align="left">Default</th>
 	</tr>
-
 	<tr>
 		<td valign="top"><code>options</code></td>
 		<td valign="top">See above</td>
@@ -265,12 +259,16 @@ $(function() {
 		<td valign="top"><code>'optgroup'</code></td>
 	</tr>
 	<tr>
+		<td valign="top"><code>disabledField</code></td>
+		<td valign="top">The name of the property to disabled option and optgroup.</td>
+		<td valign="top"><code>string</code></td>
+		<td valign="top"><code>'disabled'</code></td>
+	</tr>
+	<tr>
 		<td valign="top"><code>sortField</code></td>
 		<td valign="top">
 			<p>A single field or an array of fields to sort by. Each item in the array should be an object containing at least a <code>field</code> property. Optionally, <code>direction</code> can be set to <code>'asc'</code> or <code>'desc'</code>. The order of the array defines the sort precedence.</p>
-
 			<p>Unless present, a special `$score` field will be automatically added to the beginning of the sort list. This will make results sorted primarily by match quality (descending).</p>
-
 			<p>You can override the `$score` function. For more information, see the <a href="https://github.com/brianreavis/sifter.js#sifterjs">sifter documentation</a>.</p>
 		</td>
 		<td valign="top"><code>string|array</code></td>
@@ -414,7 +412,6 @@ $(function() {
 			Custom rendering functions. Each function should accept two
 			arguments: <code>data</code> and <code>escape</code> and return HTML (string
 			or DOM element) with a single root element.
-
 			The <code>escape</code> argument is a function that takes a string and
 			escapes all special HTML characters.
 			This is very important to use to prevent XSS vulnerabilities.

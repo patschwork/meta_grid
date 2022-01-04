@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000112/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000112" context="Bugfix">
+
+		<sql splitStatements="true">
+		<![CDATA[
+		ALTER TABLE user ADD COLUMN gdpr_consent boolean DEFAULT 0;
+		]]>
+		</sql>
+
+		<sql splitStatements="true">
+		<![CDATA[
+		ALTER TABLE user ADD COLUMN gdpr_consent_date integer;
+		]]>
+		</sql>
+		
+		<sql splitStatements="true">
+		<![CDATA[
+		ALTER TABLE user ADD COLUMN gdpr_deleted boolean DEFAULT 0;
+		]]>
+		</sql>
+		
+		<comment>
+		<![CDATA[
+		Add new fields gdpr_consent, gdpr_consent_date, gdpr_deleted to table user.
+		(Taken from m000000_000009_add_gdpr_consent_fields.php)
+		Used objects:
+			user
+		Phabricator tasks:
+			T157
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

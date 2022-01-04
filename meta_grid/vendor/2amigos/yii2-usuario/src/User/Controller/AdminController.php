@@ -18,12 +18,14 @@ use Da\User\Model\Profile;
 use Da\User\Model\User;
 use Da\User\Query\UserQuery;
 use Da\User\Search\UserSearch;
+use Da\User\Service\PasswordExpireService;
 use Da\User\Service\PasswordRecoveryService;
 use Da\User\Service\SwitchIdentityService;
 use Da\User\Service\UserBlockService;
 use Da\User\Service\UserConfirmationService;
 use Da\User\Service\UserCreateService;
 use Da\User\Traits\ContainerAwareTrait;
+use Da\User\Traits\ModuleAwareTrait;
 use Da\User\Validator\AjaxRequestModelValidator;
 use Yii;
 use yii\base\Module;
@@ -36,6 +38,7 @@ use yii\web\Controller;
 class AdminController extends Controller
 {
     use ContainerAwareTrait;
+    use ModuleAwareTrait;
 
     /**
      * @var UserQuery
@@ -83,7 +86,8 @@ class AdminController extends Controller
                     'confirm' => ['post'],
                     'block' => ['post'],
                     'switch-identity' => ['post'],
-                    'password-reset' => ['post']
+                    'password-reset' => ['post'],
+                    'force-password-change' => ['post'],
                 ],
             ],
             'access' => [
@@ -130,7 +134,7 @@ class AdminController extends Controller
 
         $this->make(AjaxRequestModelValidator::class, [$user])->validate();
 
-        if ($user->load(Yii::$app->request->post())) {
+        if ($user->load(Yii::$app->request->post()) && $user->validate()) {
             $this->trigger(UserEvent::EVENT_BEFORE_CREATE, $event);
 
             $mailService = MailFactory::makeWelcomeMailerService($user);
@@ -156,11 +160,11 @@ class AdminController extends Controller
         $this->make(AjaxRequestModelValidator::class, [$user])->validate();
 
         if ($user->load(Yii::$app->request->post())) {
-            $this->trigger(ActiveRecord::EVENT_BEFORE_UPDATE, $event);
+            $this->trigger(UserEvent::EVENT_BEFORE_ACCOUNT_UPDATE, $event);
 
             if ($user->save()) {
                 Yii::$app->getSession()->setFlash('success', Yii::t('usuario', 'Account details have been updated'));
-                $this->trigger(ActiveRecord::EVENT_AFTER_UPDATE, $event);
+                $this->trigger(UserEvent::EVENT_AFTER_ACCOUNT_UPDATE, $event);
 
                 return $this->refresh();
             }
@@ -299,9 +303,7 @@ class AdminController extends Controller
 
     public function actionSwitchIdentity($id = null)
     {
-        /** @var \Da\User\Module $module */
-        $module = $this->module;
-        if (false === $module->enableSwitchIdentities) {
+        if (false === $this->module->enableSwitchIdentities) {
             Yii::$app->getSession()->setFlash('danger', Yii::t('usuario', 'Switch identities is disabled.'));
 
             return $this->redirect(['index']);
@@ -327,5 +329,21 @@ class AdminController extends Controller
         }
 
         return $this->redirect(['index']);
+    }
+    
+    /**
+     * Forces the user to change password at next login
+     * @param integer $id
+     */
+    public function actionForcePasswordChange($id)
+    {
+        /** @var User $user */
+        $user = $this->userQuery->where(['id' => $id])->one();
+        if ($this->make(PasswordExpireService::class, [$user])->run()) {
+            Yii::$app->session->setFlash("success", Yii::t('usuario', 'User will be required to change password at next login'));
+        } else {
+            Yii::$app->session->setFlash("danger", Yii::t('usuario', 'There was an error in saving user'));
+        }
+        $this->redirect(['index']);
     }
 }

@@ -21,10 +21,10 @@ class Section
     /**
      * @var StopwatchEvent[]
      */
-    private $events = array();
+    private $events = [];
 
     /**
-     * @var null|float
+     * @var float|null
      */
     private $origin;
 
@@ -41,7 +41,7 @@ class Section
     /**
      * @var Section[]
      */
-    private $children = array();
+    private $children = [];
 
     /**
      * @param float|null $origin        Set the origin of the events in this section, use null to set their origin to their start time
@@ -67,6 +67,8 @@ class Section
                 return $child;
             }
         }
+
+        return null;
     }
 
     /**
@@ -110,8 +112,8 @@ class Section
     /**
      * Starts an event.
      *
-     * @param string $name     The event name
-     * @param string $category The event category
+     * @param string      $name     The event name
+     * @param string|null $category The event category
      *
      * @return StopwatchEvent The event
      */

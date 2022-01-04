@@ -1,6 +1,23 @@
 Change Log: `yii2-widget-depdrop`
 =================================
 
+## Version 1.0.6
+
+**Date:** 19-Apr-2019
+
+- (enh #73): Bump composer dependencies.
+- (enh #71, #72): Add `enableCsrfValidation` property to `DepDropAction`.
+
+## Version 1.0.5
+
+**Date:** 09-Oct-2018
+
+- Bump composer dependencies.
+- Add Bootstrap 4.x support.
+- Reorganize all source code in `src` directory.
+- Add github contribution and issue/PR log templates.
+- Update copyright year to current.
+
 ## Version 1.0.4
 
 **Date:** 10-Jan-2016

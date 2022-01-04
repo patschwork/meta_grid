@@ -175,14 +175,39 @@ class ProjectController extends Controller
 	}
     
 
-	private function createProjectPermissions()
+	private function createProjectPermissions($named_project_id = NULL, $named_project_name = NULL, $named_client_name = NULL)
 	{
+		$result1 = false;
+		$result2 = false;
+		if ($named_project_id !== NULL && $named_project_name !== NULL && $named_client_name !== NULL)
+		{
+			$auth = Yii::$app->authManager;
+			$newRoleOrPermName="project-".$named_project_id."-read";
+			$checkPerm = $auth->getPermission($newRoleOrPermName);
+			if (is_null($checkPerm)) {
+				$newAuthObj = $auth->createPermission($newRoleOrPermName);
+				$newAuthObj->ruleName = "isNotAGuest";
+				$newAuthObj->description = "Read-Permission for project " . $named_project_name . " (" . $named_client_name . ")";
+				$newAuthObj->data = ['id' => $named_project_id, 'dataaccessfilter' => 'project', 'right' => 'read'];
+				$result1 = $auth->add($newAuthObj);
+			}
+			$auth = Yii::$app->authManager;
+			$newRoleOrPermName="project-".$named_project_id."-write";
+			$checkPerm = $auth->getPermission($newRoleOrPermName);
+			if (is_null($checkPerm)) {
+				$newAuthObj = $auth->createPermission($newRoleOrPermName);
+				$newAuthObj->description = "Read-Permission for project " . $named_project_name . " (" . $named_client_name . ")";
+				$newAuthObj->ruleName = "isNotAGuest";
+				$newAuthObj->data = ['id' => $named_project_id, 'dataaccessfilter' => 'project', 'right' => 'write'];
+				$result2 = $auth->add($newAuthObj);
+			}
+			return $result1 && $result2;
+		}
+
 		$projectModel = new Project();
 		$projects = $projectModel::find()->all();
 		foreach($projects as $project)
 		{
-			// $clientList[$client->id] = $client->name;
-
 			$auth = Yii::$app->authManager;
 			$newRoleOrPermName="project-".$project->id."-read";
 			$checkPerm = $auth->getPermission($newRoleOrPermName);
@@ -191,7 +216,7 @@ class ProjectController extends Controller
 				$newAuthObj->ruleName = "isNotAGuest";
 				$newAuthObj->description = "Read-Permission for project " . $project->name . " (" . $project->fkClient->name . ")";
 				$newAuthObj->data = ['id' => $project->id, 'dataaccessfilter' => 'project', 'right' => 'read'];
-				$auth->add($newAuthObj);
+				$result1 = $auth->add($newAuthObj);
 			}
 			$auth = Yii::$app->authManager;
 			$newRoleOrPermName="project-".$project->id."-write";
@@ -201,9 +226,10 @@ class ProjectController extends Controller
 				$newAuthObj->description = "Read-Permission for project " . $project->name . " (" . $project->fkClient->name . ")";
 				$newAuthObj->ruleName = "isNotAGuest";
 				$newAuthObj->data = ['id' => $project->id, 'dataaccessfilter' => 'project', 'right' => 'write'];
-				$auth->add($newAuthObj);
+				$result2 = $auth->add($newAuthObj);
 			}
 		}
+		return $result1 && $result2;
 	}
 
 	public function actionCreateprojectpermissions()
@@ -269,7 +295,7 @@ class ProjectController extends Controller
     	}    
 			
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			$this->createProjectPermissions();
+			$this->createProjectPermissions($model->id, $model->name, $model->fkClient->name);
 			$userId = Yii::$app->User->Id;
 			$this->addPermissionToUser($model->id, $userId);	
         	return $this->redirect(['view', 'id' => $model->id]);

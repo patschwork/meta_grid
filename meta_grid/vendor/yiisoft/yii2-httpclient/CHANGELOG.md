@@ -1,6 +1,78 @@
 Yii Framework 2 HTTP client extension Change Log
 ================================================
 
+2.0.14 August 09, 2021
+----------------------
+
+- Enh #215: Added possibility to skip charset in header on `UrlEncodedFormatter::format()` (egorrishe)
+- Enh #216: Use `random_int()` when generating boundary (samdark)
+
+
+2.0.13 December 23, 2020
+------------------------
+
+- Bug #209: Fixed error code, thrown by Exception in `CurlTransport` (kwazaro)
+
+
+2.0.12 October 08, 2019
+-----------------------
+
+- Enh #192: Implement `Request::responseTime()` which returns the seconds (microtime precession) elapsed from request to response (HenryVolkmer)
+
+
+2.0.11 May 14, 2019
+-------------------
+
+- Bug #189: Fixed Content-Length header when using `CURLOPT_INFILE` option (alexkart)
+
+
+2.0.10 April 30, 2019
+---------------------
+
+- Enh #167: Added support of multiple parameters with the same name for multipart requests (alexkart)
+
+
+2.0.9 April 23, 2019
+--------------------
+
+- Bug #149: Fixed type error in `StreamTransport` when `$http_response_header = null` (alexkart)
+- Bug #171: Added "Content-Length: 0" header when sending request with empty body (alexkart)
+- Enh #66: Added `CURLOPT_FILE` option support to `CurlTransport` (alexkart)
+- Enh #85: Added `CurlFormatter` in order to support `CURLFile` for uploading files (alexkart)
+
+
+2.0.8 April 16, 2019
+--------------------
+
+- Bug #168: `Response::detectFormatByContent` falsely detected HTML as XML (CeBe)
+- Bug #173: Added extra check to `Message::addData()` to prevent error on trying to merge non-array (samdark)
+- Enh #153: Allow configuring `JsonParser` to parse JSON as objects instead of arrays (CeBe)
+- Enh #174: Add `MockTransport` for test environments (Slamdunk)
+
+
+2.0.7 September 24, 2018
+------------------------
+
+- Bug #165: `Response::detectFormatByContent` now detects JSON Array (germanow)
+- Enh #156: Added `Request::setFullUrl()` return reference (vuongxuongminh)
+
+
+2.0.6 February 13, 2018
+-----------------------
+
+- Bug #129: Fixed `Message::getHeaders()` unable to parse HTTP status code in case reason phrase contains `:` character (lan143)
+- Enh #142: `Request::createFullUrl()` now prevents appearance of multiple slashes while combining `Client::$baseUrl` and `Request::$url` (zhangdi)
+
+
+2.0.5 November 03, 2017
+-----------------------
+
+- Bug #128: Fixed `Response` with redirection takes wrong 'Content-Type' header value for content parsing (klimov-paul)
+- Bug: Usage of deprecated `yii\base\Object` changed to `yii\base\BaseObject` allowing compatibility with PHP 7.2 (klimov-paul)
+- Enh #119: Options for client SSL certificate specification added to `Request::$options` (bscheshirwork)
+- Chg #118: Enforced cookie validation removed from `Request` (klimov-paul)
+
+
 2.0.4 June 23, 2017
 -------------------
 

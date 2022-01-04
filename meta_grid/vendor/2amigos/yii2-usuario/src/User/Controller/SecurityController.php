@@ -19,6 +19,7 @@ use Da\User\Query\SocialNetworkAccountQuery;
 use Da\User\Service\SocialNetworkAccountConnectService;
 use Da\User\Service\SocialNetworkAuthenticateService;
 use Da\User\Traits\ContainerAwareTrait;
+use Da\User\Traits\ModuleAwareTrait;
 use Yii;
 use yii\authclient\AuthAction;
 use yii\base\InvalidConfigException;
@@ -33,6 +34,7 @@ use yii\widgets\ActiveForm;
 class SecurityController extends Controller
 {
     use ContainerAwareTrait;
+    use ModuleAwareTrait;
 
     protected $socialNetworkAccountQuery;
 
@@ -61,7 +63,7 @@ class SecurityController extends Controller
     {
         return [
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => AccessControl::class,
                 'rules' => [
                     [
                         'allow' => true,
@@ -76,7 +78,7 @@ class SecurityController extends Controller
                 ],
             ],
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'logout' => ['post'],
                 ],
@@ -91,7 +93,7 @@ class SecurityController extends Controller
     {
         return [
             'auth' => [
-                'class' => AuthAction::className(),
+                'class' => AuthAction::class,
                 // if user is not logged in, will try to log him in, otherwise
                 // will try to connect social account to user.
                 'successCallback' => Yii::$app->user->isGuest
@@ -137,11 +139,18 @@ class SecurityController extends Controller
 
             $this->trigger(FormEvent::EVENT_BEFORE_LOGIN, $event);
             if ($form->login()) {
-                $form->getUser()->updateAttributes(['last_login_at' => time()]);
+                $form->getUser()->updateAttributes([
+                    'last_login_at' => time(),
+                    'last_login_ip' => Yii::$app->request->getUserIP(),
+                ]);
 
                 $this->trigger(FormEvent::EVENT_AFTER_LOGIN, $event);
 
                 return $this->goBack();
+            }
+            else
+            {
+                $this->trigger(FormEvent::EVENT_FAILED_LOGIN, $event);    
             }
         }
 

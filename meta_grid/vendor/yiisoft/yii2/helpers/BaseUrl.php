@@ -8,7 +8,7 @@
 namespace yii\helpers;
 
 use Yii;
-use yii\base\InvalidParamException;
+use yii\base\InvalidArgumentException;
 
 /**
  * BaseUrl provides concrete implementation for [[Url]].
@@ -91,7 +91,7 @@ class BaseUrl
      *   for protocol-relative URL).
      *
      * @return string the generated URL
-     * @throws InvalidParamException a relative route is given while there is no active controller
+     * @throws InvalidArgumentException a relative route is given while there is no active controller
      */
     public static function toRoute($route, $scheme = false)
     {
@@ -100,9 +100,9 @@ class BaseUrl
 
         if ($scheme !== false) {
             return static::getUrlManager()->createAbsoluteUrl($route, is_string($scheme) ? $scheme : null);
-        } else {
-            return static::getUrlManager()->createUrl($route);
         }
+
+        return static::getUrlManager()->createUrl($route);
     }
 
     /**
@@ -122,7 +122,7 @@ class BaseUrl
      *
      * @param string $route the route. This can be either an absolute route or a relative route.
      * @return string normalized route suitable for UrlManager
-     * @throws InvalidParamException a relative route is given while there is no active controller
+     * @throws InvalidArgumentException a relative route is given while there is no active controller
      */
     protected static function normalizeRoute($route)
     {
@@ -134,16 +134,16 @@ class BaseUrl
 
         // relative route
         if (Yii::$app->controller === null) {
-            throw new InvalidParamException("Unable to resolve the relative route: $route. No active controller is available.");
+            throw new InvalidArgumentException("Unable to resolve the relative route: $route. No active controller is available.");
         }
 
         if (strpos($route, '/') === false) {
             // empty or an action ID
             return $route === '' ? Yii::$app->controller->getRoute() : Yii::$app->controller->getUniqueId() . '/' . $route;
-        } else {
-            // relative to module
-            return ltrim(Yii::$app->controller->module->getUniqueId() . '/' . $route, '/');
         }
+
+        // relative to module
+        return ltrim(Yii::$app->controller->module->getUniqueId() . '/' . $route, '/');
     }
 
     /**
@@ -206,7 +206,7 @@ class BaseUrl
      *   for protocol-relative URL).
      *
      * @return string the generated URL
-     * @throws InvalidParamException a relative route is given while there is no active controller
+     * @throws InvalidArgumentException a relative route is given while there is no active controller
      */
     public static function to($url = '', $scheme = false)
     {
@@ -232,12 +232,12 @@ class BaseUrl
     }
 
     /**
-     * Normalize URL by ensuring that it use specified scheme.
+     * Normalize the URL by ensuring it uses specified scheme.
      *
-     * If URL is relative or scheme is not string, normalization is skipped.
+     * If the URL is relative or the scheme is not a string, normalization is skipped.
      *
      * @param string $url the URL to process
-     * @param string $scheme the URI scheme used in URL (e.g. `http` or `https`). Use empty string to
+     * @param string $scheme the URI scheme used in the URL (e.g. `http` or `https`). Use an empty string to
      * create protocol-relative URL (e.g. `//example.com/path`)
      * @return string the processed URL
      * @since 2.0.11
@@ -248,7 +248,7 @@ class BaseUrl
             return $url;
         }
 
-        if (substr($url, 0, 2) === '//') {
+        if (strpos($url, '//') === 0) {
             // e.g. //example.com/path/to/resource
             return $scheme === '' ? $url : "$scheme:$url";
         }
@@ -320,13 +320,14 @@ class BaseUrl
     {
         if ($name === null) {
             return Yii::$app->getUser()->getReturnUrl();
-        } else {
-            return Yii::$app->getSession()->get($name);
         }
+
+        return Yii::$app->getSession()->get($name);
     }
 
     /**
      * Returns the canonical URL of the currently requested page.
+     *
      * The canonical URL is constructed using the current controller's [[\yii\web\Controller::route]] and
      * [[\yii\web\Controller::actionParams]]. You may use the following code in the layout view to add a link tag
      * about canonical URL:
@@ -428,7 +429,7 @@ class BaseUrl
     {
         $currentParams = Yii::$app->getRequest()->getQueryParams();
         $currentParams[0] = '/' . Yii::$app->controller->getRoute();
-        $route = ArrayHelper::merge($currentParams, $params);
+        $route = array_replace_recursive($currentParams, $params);
         return static::toRoute($route, $scheme);
     }
 

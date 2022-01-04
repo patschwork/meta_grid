@@ -24,6 +24,8 @@ The following are the classes that you can override throughout that attribute:
     - LoginForm
     - SettingsForm
     - RecoveryForm
+- Service Classes
+    - MailService
     
 
 How to Override
@@ -52,6 +54,8 @@ $defaults = [
     'LoginForm' => 'Da\User\Form\LoginForm',
     'SettingsForm' => 'Da\User\Form\SettingsForm',
     'RecoveryForm' => 'Da\User\Form\RecoveryForm',
+    // --- services
+    'MailService' => 'Da\User\Service\MailService',
 ];
 ```
 
@@ -106,4 +110,4 @@ The definition can be any of the following (from Yii2's DI container):
 
 > See [how to enhance a User model](how-to-enhance-a-user-model.md) guide to see a practical example.
 
-© [2amigos](http://www.2amigos.us/) 2013-2017
+© [2amigos](http://www.2amigos.us/) 2013-2019

@@ -110,9 +110,27 @@ Once we have it installed, we have to configure it on your `config.php` file.
 'modules' => [
     'user' => [
         'class' => Da\User\Module::class,
+        // ...other configs from here: [Configuration Options](installation/configuration-options.md), e.g.
+        // 'administrators' => ['admin'], // this is required for accessing administrative actions
+        // 'generatePasswords' => true,
+        // 'switchIdentitySessionKey' => 'myown_usuario_admin_user_key',
     ]
 ]
 ```
+
+NOTE: If you are using the Yii2 Basic Template, make sure you remove this (default user model config) from your `config.php`,
+i.e. `config/web.php` file:
+
+```php
+'components' => [
+    'user' => [
+        'identityClass' => 'app\models\User',
+        'enableAutoLogin' => true,
+    ],
+],
+```
+
+This will ensure the proper functionality of login/guest user detection etc.
 
 Configuration may differ from template to template, the following are some guidelines for sidekit app template and 
 the official Yii2 advanced application template: 
@@ -127,6 +145,12 @@ See also all the possible configuration options available:
 - [Console Commands](installation/console-commands.md)
 - [Mailer](installation/mailer.md)
 - [Available Actions](installation/available-actions.md)
+- [Migration guide from Dektrium tools](installation/migration-guide-from-dektrium-tools.md)
+
+#### Step 4 - First steps to use Yii2-usuario
+
+Proceed with [First steps to use Yii2-usuario](helpful-guides/first-steps.md)
+
 
 Enhancing and Overriding
 ------------------------
@@ -161,7 +185,7 @@ Helpful Guides
 - [How to Add Captcha Widget](helpful-guides/how-to-add-captcha-widget.md)
 - [How to Add Google reCaptcha Widget](helpful-guides/how-to-use-recaptcha-widget.md)
 - [How to Implement Two-Factor Authentication](helpful-guides/how-to-implement-two-factor-auth.md)
-- [How to Switch Identities](helpful-guides/how-to-swith-identities.md)
+- [How to Switch Identities](helpful-guides/how-to-switch-identities.md)
 - [Separate Frontend and Backend Sessions](helpful-guides/separate-frontend-and-backend-sessions.md)
 - [Social Network Authentication](helpful-guides/social-network-authentication.md)
 
@@ -171,4 +195,4 @@ Contributing
 - [How to Contribute](contributing/how-to.md)
 - [Clean Code](contributing/clean-code.md)
 
-© [2amigos](http://www.2amigos.us/) 2013-2017
+© [2amigos](http://www.2amigos.us/) 2013-2018

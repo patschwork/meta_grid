@@ -75,14 +75,12 @@ class Language extends \yii\db\ActiveRecord
     {
         return [
             [['language_id', 'language', 'country', 'name', 'name_ascii', 'status'], 'required'],
-            // [['language_id'], 'string', 'max' => 5],
-            [['language_id'], 'string', 'max' => 32],
+            [['language_id'], 'string', 'max' => 5],
             [['language_id'], 'unique'],
-            // [['language_id'], 'match', 'pattern' => '/^([a-z]{2}[_-][A-Z]{2}|[a-z]{2})$/'],
+            [['language_id'], 'match', 'pattern' => '/^([a-z]{2}[_-][A-Z]{2}|[a-z]{2})$/'],
             [['language', 'country'], 'string', 'max' => 2],
             [['language', 'country'], 'match', 'pattern' => '/^[a-z]{2}$/i'],
-            // [['name', 'name_ascii'], 'string', 'max' => 32],
-            [['name', 'name_ascii'], 'string', 'max' => 254],
+            [['name', 'name_ascii'], 'string', 'max' => 32],
             [['status'], 'integer'],
             [['status'], 'in', 'range' => array_keys(self::$_CONDITIONS)],
         ];

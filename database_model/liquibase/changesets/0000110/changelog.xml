@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000110/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000110" context="Bugfix">
+
+		<sql splitStatements="true">
+		<![CDATA[
+		ALTER TABLE user ADD COLUMN password_changed_at int;
+		]]>
+		</sql>
+		
+		<comment>
+		<![CDATA[
+		Add new field password_changed_at to table user.
+		(Taken from m000000_000007_enable_password_expiration.php)
+		Used objects:
+			user
+		Phabricator tasks:
+			T157
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

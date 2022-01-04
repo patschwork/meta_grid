@@ -19,8 +19,8 @@ $(function () {
 {% endhighlight %}
   </div>
   <div class="bs-callout bs-callout-warning" id="callout-popover-groups">
-    <h4>Popovers in button groups and input groups require special setting</h4>
-    <p>When using popovers on elements within a <code>.btn-group</code> or an <code>.input-group</code>, you'll have to specify the option <code>container: 'body'</code> (documented below) to avoid unwanted side effects (such as the element growing wider and/or losing its rounded corners when the popover is triggered).</p>
+    <h4>Popovers in button groups, input groups, and tables require special setting</h4>
+    <p>When using popovers on elements within a <code>.btn-group</code> or an <code>.input-group</code>, or on table-related elements (<code>&lt;td&gt;</code>, <code>&lt;th&gt;</code>, <code>&lt;tr&gt;</code>, <code>&lt;thead&gt;</code>, <code>&lt;tbody&gt;</code>, <code>&lt;tfoot&gt;</code>), you'll have to specify the option <code>container: 'body'</code> (documented below) to avoid unwanted side effects (such as the element growing wider and/or losing its rounded corners when the popover is triggered).</p>
   </div>
   <div class="bs-callout bs-callout-warning" id="callout-popover-hidden">
     <h4>Don't try to show popovers on hidden elements</h4>
@@ -76,7 +76,7 @@ $(function () {
   </div>
 
   <h3>Live demo</h3>
-  <div class="bs-example" style="padding-bottom: 24px;">
+  <div class="bs-example bs-example-padded-bottom">
     <button type="button" class="btn btn-lg btn-danger bs-docs-popover" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">Click to toggle popover</button>
   </div>
 {% highlight html %}
@@ -86,8 +86,8 @@ $(function () {
   <h4>Four directions</h4>
   <div class="bs-example popover-demo">
     <div class="bs-example-popovers">
-      <button type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="left" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
-        Popover on left
+      <button type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="right" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
+        Popover on right
       </button>
       <button type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
         Popover on top
@@ -95,8 +95,8 @@ $(function () {
       <button type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
         Popover on bottom
       </button>
-      <button type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="right" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
-        Popover on right
+      <button type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="left" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
+        Popover on left
       </button>
     </div>
   </div><!-- /example -->
@@ -123,9 +123,9 @@ sagittis lacus vel augue laoreet rutrum faucibus.">
   <p>Use the <code>focus</code> trigger to dismiss popovers on the next click that the user makes.</p>
   <div class="bs-callout bs-callout-danger" id="callout-popover-dismiss-click">
     <h4>Specific markup required for dismiss-on-next-click</h4>
-    <p>For proper cross-browser and cross-platform behavior, you must use the <code>&lt;a&gt;</code> tag, <i>not</i> the <code>&lt;button&gt;</code> tag, and you also must include a <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes#tabindex"><code>tabindex</code></a> attribute.</p>
+    <p>For proper cross-browser and cross-platform behavior, you must use the <code>&lt;a&gt;</code> tag, <i>not</i> the <code>&lt;button&gt;</code> tag, and you also must include the <code>role="button"</code> and <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex"><code>tabindex</code></a> attributes.</p>
   </div>
-  <div class="bs-example" style="padding-bottom: 24px;">
+  <div class="bs-example bs-example-padded-bottom">
     <a tabindex="0" class="btn btn-lg btn-danger bs-docs-popover" role="button" data-toggle="popover" data-trigger="focus" title="Dismissible popover" data-content="And here's some amazing content. It's very engaging. Right?">Dismissible popover</a>
   </div>
 {% highlight html %}
@@ -139,13 +139,18 @@ sagittis lacus vel augue laoreet rutrum faucibus.">
 
   <h3 id="popovers-options">Options</h3>
   <p>Options can be passed via data attributes or JavaScript. For data attributes, append the option name to <code>data-</code>, as in <code>data-animation=""</code>.</p>
+
+  <div class="bs-callout bs-callout-warning" id="callout-popover-disabled-options">
+    <p>Note that for security reasons the <code>sanitize</code>, <code>sanitizeFn</code> and <code>whiteList</code> options cannot be supplied using data attributes.</p>
+  </div>
+
   <div class="table-responsive">
-    <table class="table table-bordered table-striped">
+    <table class="table table-bordered table-striped js-options-table js-options-table">
       <thead>
         <tr>
-          <th style="width: 100px;">Name</th>
-          <th style="width: 100px;">Type</th>
-          <th style="width: 50px;">Default</th>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Default</th>
           <th>Description</th>
         </tr>
       </thead>
@@ -229,16 +234,35 @@ sagittis lacus vel augue laoreet rutrum faucibus.">
           <td>trigger</td>
           <td>string</td>
           <td>'click'</td>
-          <td>How popover is triggered - click | hover | focus | manual. You may pass multiple triggers; separate them with a space.</td>
+          <td>How popover is triggered - click | hover | focus | manual. You may pass multiple triggers; separate them with a space. <code>manual</code> cannot be combined with any other trigger.</td>
         </tr>
         <tr>
           <td>viewport</td>
-          <td>string | object</td>
+          <td>string | object | function</td>
           <td>{ selector: 'body', padding: 0 }</td>
           <td>
             <p>Keeps the popover within the bounds of this element. Example: <code>viewport: '#viewport'</code> or <code>{ "selector": "#viewport", "padding": 0 }</code></p>
+            <p>If a function is given, it is called with the triggering element DOM node as its only argument. The <code>this</code> context is set to the popover instance.</p>
           </td>
-       </tr>
+        </tr>
+        <tr>
+          <td>sanitize</td>
+          <td>boolean</td>
+          <td>true</td>
+          <td>Enable or disable the sanitization. If activated <code>'template'</code>, <code>'content'</code> and <code>'title'</code> options will be sanitized.</td>
+        </tr>
+        <tr>
+          <td>whiteList</td>
+          <td>object</td>
+          <td><a href="#js-sanitizer">Default value</a></td>
+          <td>Object which contains allowed attributes and tags</td>
+        </tr>
+        <tr>
+          <td>sanitizeFn</td>
+          <td>null | function</td>
+          <td>null</td>
+          <td>Here you can supply your own sanitize function. This can be useful if you prefer to use a dedicated library to perform sanitization.</td>
+        </tr>
       </tbody>
     </table>
   </div><!-- /.table-responsive -->
@@ -247,24 +271,24 @@ sagittis lacus vel augue laoreet rutrum faucibus.">
     <p>Options for individual popovers can alternatively be specified through the use of data attributes, as explained above.</p>
   </div>
 
-  <h3>Methods</h3>
-  <h4>$().popover(options)</h4>
+  <h3 id="popovers-methods">Methods</h3>
+  <h4><code>$().popover(options)</code></h4>
   <p>Initializes popovers for an element collection.</p>
 
-  <h4>.popover('show')</h4>
+  <h4><code>.popover('show')</code></h4>
   <p>Reveals an element's popover. <strong>Returns to the caller before the popover has actually been shown</strong> (i.e. before the <code>shown.bs.popover</code> event occurs). This is considered a "manual" triggering of the popover. Popovers whose both title and content are zero-length are never displayed.</p>
   {% highlight js %}$('#element').popover('show'){% endhighlight %}
 
-  <h4>.popover('hide')</h4>
+  <h4><code>.popover('hide')</code></h4>
   <p>Hides an element's popover. <strong>Returns to the caller before the popover has actually been hidden</strong> (i.e. before the <code>hidden.bs.popover</code> event occurs). This is considered a "manual" triggering of the popover.</p>
   {% highlight js %}$('#element').popover('hide'){% endhighlight %}
 
-  <h4>.popover('toggle')</h4>
+  <h4><code>.popover('toggle')</code></h4>
   <p>Toggles an element's popover. <strong>Returns to the caller before the popover has actually been shown or hidden</strong> (i.e. before the <code>shown.bs.popover</code> or <code>hidden.bs.popover</code> event occurs). This is considered a "manual" triggering of the popover.</p>
   {% highlight js %}$('#element').popover('toggle'){% endhighlight %}
 
-  <h4>.popover('destroy')</h4>
-  <p>Hides and destroys an element's popover.</p>
+  <h4><code>.popover('destroy')</code></h4>
+  <p>Hides and destroys an element's popover. Popovers that use delegation (which are created using <a href="#popovers-options">the <code>selector</code> option</a>) cannot be individually destroyed on descendant trigger elements.</p>
   {% highlight js %}$('#element').popover('destroy'){% endhighlight %}
 
   <h3 id="popovers-events">Events</h3>
@@ -272,7 +296,7 @@ sagittis lacus vel augue laoreet rutrum faucibus.">
     <table class="table table-bordered table-striped bs-events-table">
       <thead>
         <tr>
-          <th style="width: 150px;">Event Type</th>
+          <th>Event Type</th>
           <th>Description</th>
         </tr>
       </thead>
@@ -292,6 +316,10 @@ sagittis lacus vel augue laoreet rutrum faucibus.">
         <tr>
           <td>hidden.bs.popover</td>
           <td>This event is fired when the popover has finished being hidden from the user (will wait for CSS transitions to complete).</td>
+        </tr>
+        <tr>
+          <td>inserted.bs.popover</td>
+          <td>This event is fired after the <code>show.bs.popover</code> event when the popover template has been added to the DOM.</td>
         </tr>
       </tbody>
     </table>

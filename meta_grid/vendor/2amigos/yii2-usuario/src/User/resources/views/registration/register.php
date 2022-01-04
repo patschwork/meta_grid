@@ -41,8 +41,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 <?= $form->field($model, 'username') ?>
 
-                <?php if ($module->generatePasswords == false): ?>
+                <?php if ($module->generatePasswords === false): ?>
                     <?= $form->field($model, 'password')->passwordInput() ?>
+                <?php endif ?>
+
+                <?php if ($module->enableGdprCompliance): ?>
+                    <?= $form->field($model, 'gdpr_consent')->checkbox(['value' => 1]) ?>
                 <?php endif ?>
 
                 <?= Html::submitButton(Yii::t('usuario', 'Sign up'), ['class' => 'btn btn-success btn-block']) ?>

@@ -4,6 +4,8 @@ require 'json'
 set :public_folder, File.dirname(settings.root)
 enable :static
 
+jquery_version = '3.2'
+
 helpers do
   def pjax?
     env['HTTP_X_PJAX'] && !params[:layout]
@@ -17,17 +19,22 @@ helpers do
       nil
     end
   end
+
+  define_method(:jquery_version) do
+    jquery_version
+  end
 end
 
 after do
   if pjax?
-    response.headers['X-PJAX-URL'] = request.url
+    response.headers['X-PJAX-URL'] ||= request.url
     response.headers['X-PJAX-Version'] = 'v1'
   end
 end
 
 
 get '/' do
+  jquery_version = params[:jquery] if params[:jquery]
   erb :qunit
 end
 
@@ -48,7 +55,17 @@ delete '/env.html' do
 end
 
 get '/redirect.html' do
-  redirect "/hello.html"
+  if params[:anchor]
+    path = "/hello.html##{params[:anchor]}"
+    if pjax?
+      response.headers['X-PJAX-URL'] = uri(path)
+      status 200
+    else
+      redirect path
+    end
+  else
+    redirect "/hello.html"
+  end
 end
 
 get '/timeout.html' do
@@ -82,4 +99,8 @@ end
 
 get '/:page.html' do
   erb :"#{params[:page]}", :layout => !pjax?
+end
+
+get '/some-&-path/hello.html' do
+  erb :hello, :layout => !pjax?
 end

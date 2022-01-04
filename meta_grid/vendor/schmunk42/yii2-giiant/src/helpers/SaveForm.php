@@ -2,6 +2,7 @@
 
 namespace schmunk42\giiant\helpers;
 
+use yii\helpers\Json;
 use yii\helpers\StringHelper;
 
 class SaveForm
@@ -30,11 +31,13 @@ class SaveForm
     }
 
     /**
-     * walk througt all modules gii directories and collect Giant crud generator saved forms.
+     * walk through all modules gii directories and collect Giant crud generator saved forms.
      *
-     * @return array
+     * @param $generatorName
+     * @return array|bool
+     * @throws \ReflectionException
      */
-    public static function loadSavedForms($generatorName)
+    public static function loadSavedForms($generatorName, $giiInfoPath)
     {
         $suffix = str_replace(' ', '', $generatorName);
 
@@ -45,54 +48,61 @@ class SaveForm
         /*
          * get all possible gii directories with out validation on existing
          */
-        $giiDirs = [];
-        $giiDirs[] = \Yii::getAlias('@app/gii');
-        if ($commonGiiDir = \Yii::getAlias('@common/gii', false)) {
-            $giiDirs[] = $commonGiiDir;
+        $forms = [];
+        self::buildJson(\Yii::getAlias('@app/' . $giiInfoPath), $forms, $suffix, 'app');
+        if ($commonGiiDir = \Yii::getAlias('@common/' . $giiInfoPath, false)) {
+            self::buildJson($commonGiiDir, $forms, $suffix,  'common');
         }
         foreach (\Yii::$app->modules as $moduleId => $module) {
-
             /*
              * get module base path
              */
             if (method_exists($module, 'getBasePath')) {
                 $basePath = $module->getBasePath();
             } else {
+                if(!class_exists($module['class'])){
+                    \Yii::warning('Invalid class definition for module ' . $moduleId);
+                    continue;
+                }
                 $reflector = new \ReflectionClass($module['class']);
                 $basePath = StringHelper::dirname($reflector->getFileName());
             }
-            $basePath .= '/gii';
+            $basePath .= '/' . $giiInfoPath;
 
-            $giiDirs[] = $basePath;
-        }
-
-        /*
-         * from all gii directories collec forms
-         */
-        $forms = [];
-        foreach ($giiDirs as $basePath) {
-            /*
-             * search in module gii directory all forms json files
-             * with required suffix
-             */
-            if (!file_exists($basePath)) {
-                continue;
-            }
-
-            $files = scandir($basePath);
-            foreach ($files as $file) {
-                if (!preg_match('#'.$suffix.'\.json$#', $file)) {
-                    continue;
-                }
-                $name = preg_replace('#'.$suffix.'\.json$#', '', $file);
-                $forms[$moduleId.$name] = [
-                    'jsonData' => file_get_contents($basePath.'/'.$file),
-                    'label' => $moduleId.' - '.$name,
-                ];
-            }
+            self::buildJson($basePath, $forms, $suffix, $moduleId);
         }
 
         return self::$savedFormList = $forms;
+    }
+
+    /**
+     * from all gii directories collect forms
+     * @param string $path
+     * @param string $moduleId
+     * @param array $forms
+     * @param string $suffix
+     */
+    protected static function buildJson($path, &$forms, $suffix, $moduleId = NULL)
+    {
+        /*
+         * search in module gii directory all forms json files
+         * with required suffix
+         */
+        if (!file_exists($path)) {
+            return;
+        }
+
+        $files = scandir($path);
+        foreach ($files as $file) {
+            if (!preg_match('#' . $suffix . '\.json$#', $file)) {
+                continue;
+            }
+            $name = preg_replace('#' . $suffix . '\.json$#', '', $file);
+            $forms[$moduleId . $name] = [
+                'jsonData' => file_get_contents($path . '/' . $file),
+                'label' => $moduleId . ' - ' . $name,
+            ];
+        }
     }
 
     /**
@@ -100,10 +110,10 @@ class SaveForm
      *
      * @return array
      */
-    public static function getSavedFormsListbox($generatorName)
+    public static function getSavedFormsListbox($generatorName, $giiInfoPath)
     {
         $r = ['0' => ' - '];
-        foreach (self::loadSavedForms($generatorName) as $k => $row) {
+        foreach (self::loadSavedForms($generatorName, $giiInfoPath) as $k => $row) {
             $r[$k] = $row['label'];
         }
 
@@ -115,12 +125,12 @@ class SaveForm
      *
      * @return string
      */
-    public static function getSavedFormsJs($generatorName)
+    public static function getSavedFormsJs($generatorName, $giiInfoPath)
     {
         $js = [];
 
-        foreach (self::loadSavedForms($generatorName) as $k => $row) {
-            $js[] = $k.":'".$row['jsonData']."'";
+        foreach (self::loadSavedForms($generatorName, $giiInfoPath) as $k => $row) {
+            $js[] = $k.":'".Json::encode(Json::decode($row['jsonData']))."'";
         }
 
         return 'var savedForms = {'.str_replace('\\', '\\\\', implode(',', $js)).'};';
@@ -168,11 +178,9 @@ class SaveForm
             
             var fieldId = "generator-" + filedName;
             if (jQuery("#" + fieldId).is("input") || jQuery("#" + fieldId).is("select")){
-                jQuery("#" + fieldId).val(formData[filedName]["value"]);
+                jQuery("#" + fieldId).val(formData[filedName]["value"]).trigger("input");
                 continue;
             }    
-            
-
         }    
     }
         ';

@@ -28,6 +28,13 @@ class RelationProvider extends \schmunk42\giiant\base\Provider
     public $skipVirtualAttributes = false;
 
     /**
+     * @var bool generate dropdown filter in GridView on related fields values
+     *
+     * @since 0.11
+     */
+    public $gridFilterDropdownRelation = false;
+
+    /**
      * Formatter for relation form inputs.
      *
      * Renders a drop-down list for a `hasOne`/`belongsTo` relation
@@ -43,7 +50,11 @@ class RelationProvider extends \schmunk42\giiant\base\Provider
             return;
         }
 
-        $relation = $this->generator->getRelationByColumn($this->generator->modelClass, $column);
+        // TODO: NoSQL hotfix
+        if (is_string($column)) {
+            return null;
+        }
+        $relation = $this->generator->getRelationByColumn($this->generator->modelClass, $column, ['belongs_to']);
         if ($relation) {
             switch (true) {
                 case !$relation->multiple:
@@ -105,6 +116,11 @@ EOS;
             return;
         }
 
+        // TODO: NoSQL hotfix
+        if (is_string($column)) {
+            return "'$column'";
+        }
+
         // handle columns with a primary key, to create links in pivot tables (changed at 0.3-dev; 03.02.2015)
         // TODO double check with primary keys not named `id` of non-pivot tables
         // TODO Note: condition does not apply in every case
@@ -112,7 +128,7 @@ EOS;
             //return null; #TODO: double check with primary keys not named `id` of non-pivot tables
         }
 
-        $relation = $this->generator->getRelationByColumn($this->generator->modelClass, $column);
+        $relation = $this->generator->getRelationByColumn($this->generator->modelClass, $column, ['belongs_to']);
         if ($relation) {
             if ($relation->multiple) {
                 return;
@@ -125,18 +141,18 @@ EOS;
             $routeIndex = $this->generator->createRelationRoute($relation, 'index');
 
             $modelClass = $this->generator->modelClass;
-            $relationGetter = 'get'.(new ModelGenerator())->generateRelationName(
+            $relationProperty = lcfirst((new ModelGenerator())->generateRelationName(
                     [$relation],
                     $modelClass::getTableSchema(),
                     $column->name,
                     $relation->multiple
-                ).'()';
+                ));
             $relationModel = new $relation->modelClass();
             $relationModelName = StringHelper::basename($modelClass);
             $pks = $relationModel->primaryKey();
             $paramArrayItems = '';
             foreach ($pks as $attr) {
-                $paramArrayItems .= "'{$attr}' => \$model->{$relationGetter}->one()->{$attr},";
+                $paramArrayItems .= "'{$attr}' => \$model->{$relationProperty}->{$attr},";
             }
             $attachArrayItems = "'{$relationModelName}'=>['{$column->name}' => \$model->{$column->name}]";
 
@@ -146,9 +162,9 @@ EOS;
 [
     'format' => 'html',
     'attribute' => '$column->name',
-    'value' => (\$model->{$relationGetter}->one() ? 
+    'value' => (\$model->{$relationProperty} ? 
         Html::a('<i class="glyphicon glyphicon-list"></i>', ['{$routeIndex}']).' '.
-        Html::a('<i class="glyphicon glyphicon-circle-arrow-right"></i> '.\$model->{$relationGetter}->one()->{$title}, ['{$route}', {$paramArrayItems}]).' '.
+        Html::a('<i class="glyphicon glyphicon-circle-arrow-right"></i> '.\$model->{$relationProperty}->{$title}, ['{$route}', {$paramArrayItems}]).' '.
         Html::a('<i class="glyphicon glyphicon-paperclip"></i>', ['{$routeAttach}', {$attachArrayItems}])
         : 
         '<span class="label label-warning">?</span>'),
@@ -176,6 +192,11 @@ EOS;
             return;
         }
 
+        // TODO: NoSQL hotfix
+        if (is_string($column)) {
+            return $column;
+        }
+
         // handle columns with a primary key, to create links in pivot tables (changed at 0.3-dev; 03.02.2015)
         // TODO double check with primary keys not named `id` of non-pivot tables
         // TODO Note: condition does not apply in every case
@@ -183,7 +204,7 @@ EOS;
             //return null;
         }
 
-        $relation = $this->generator->getRelationByColumn($model, $column);
+        $relation = $this->generator->getRelationByColumn($model, $column, ['belongs_to']);
         if ($relation) {
             if ($relation->multiple) {
                 return;
@@ -192,12 +213,12 @@ EOS;
             $route = $this->generator->createRelationRoute($relation, 'view');
             $method = __METHOD__;
             $modelClass = $this->generator->modelClass;
-            $relationGetter = 'get'.(new ModelGenerator())->generateRelationName(
+            $relationProperty = lcfirst((new ModelGenerator())->generateRelationName(
                     [$relation],
                     $modelClass::getTableSchema(),
                     $column->name,
                     $relation->multiple
-                ).'()';
+                ));
             $relationModel = new $relation->modelClass();
             $pks = $relationModel->primaryKey();
             $paramArrayItems = '';
@@ -206,18 +227,27 @@ EOS;
                 $paramArrayItems .= "'{$attr}' => \$rel->{$attr},";
             }
 
+            $filter = '';
+            //params for filter
+            if ($this->gridFilterDropdownRelation) {
+                $name = $this->generator->getModelNameAttribute($relation->modelClass);
+                $pk = key($relation->link);
+
+                $filter = "\n'filter' => \yii\helpers\ArrayHelper::map({$relation->modelClass}::find()->select(['{$pk}', '{$name}'])->asArray()->all(), '{$pk}', '{$name}'),";
+            }
+
             $code = <<<EOS
 // generated by {$method}
 [
     'class' => yii\\grid\\DataColumn::className(),
     'attribute' => '{$column->name}',
     'value' => function (\$model) {
-        if (\$rel = \$model->{$relationGetter}->one()) {
+        if (\$rel = \$model->{$relationProperty}) {
             return Html::a(\$rel->{$title}, ['{$route}', {$paramArrayItems}], ['data-pjax' => 0]);
         } else {
             return '';
         }
-    },
+    },{$filter}
     'format' => 'raw',
 ]
 EOS;
@@ -300,7 +330,9 @@ EOS;
 EOS;
 
         // add action column
-        $columns .= $actionColumn.",\n";
+        if ($this->generator->actionButtonColumnPosition != 'right') {
+            $columns .= $actionColumn . ",\n";
+        }
 
         // prepare grid column formatters
         $model->setScenario('crud');
@@ -331,6 +363,10 @@ EOS;
             ++$counter;
         }
 
+        if ($this->generator->actionButtonColumnPosition == 'right') {
+            $columns .= $actionColumn . ",\n";
+        }
+
         $query = $showAllRecords ?
             "'query' => \\{$relation->modelClass}::find()" :
             "'query' => \$model->get{$name}()";
@@ -340,7 +376,7 @@ EOS;
         $code = "'<div class=\"table-responsive\">'\n . ";
         $code .= <<<EOS
 \\yii\\grid\\GridView::widget([
-    'layout' => '{summary}{pager}<br/>{items}{pager}',
+    'layout' => '{summary}<div class="text-center">{pager}</div>{items}<div class="text-center">{pager}</div>',
     'dataProvider' => new \\yii\\data\\ActiveDataProvider([
         {$query},
         'pagination' => [

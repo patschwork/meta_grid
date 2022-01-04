@@ -7,6 +7,7 @@ use schmunk42\giiant\generators\model\Generator as ModelGenerator;
 use yii\console\Controller;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
+use Yii;
 
 /**
  * @author Tobias Munk <schmunk@usrbin.de>
@@ -34,6 +35,36 @@ class BatchController extends Controller
     public $useTimestampBehavior = true;
 
     /**
+     * @var string support user custom TimestampBehavior class
+     */
+    public $timestampBehaviorClass = 'yii\behaviors\TimestampBehavior';
+
+    /**
+     * @var string the name of the column where the user who updated the entry is stored
+     */
+    public $createdAtColumn = 'created_at';
+
+    /**
+     * @var string the name of the column where the user who updated the entry is stored
+     */
+    public $updatedAtColumn = 'updated_at';
+
+    /**
+     * @var bool whether or not to use BlameableBehavior
+     */
+    public $useBlameableBehavior = true;
+
+    /**
+     * @var string the name of the column where the user who created the entry is stored
+     */
+    public $createdByColumn = 'created_by';
+
+    /**
+     * @var string the name of the column where the user who updated the entry is stored
+     */
+    public $updatedByColumn = 'updated_by';
+
+    /**
      * @var string the name of the table containing the translations. {{table}} will be replaced with the value in
      *             "Table Name" field
      */
@@ -55,6 +86,11 @@ class BatchController extends Controller
     public $tables = [];
 
     /**
+     * @var array skip db tables for generating models
+     */
+    public $skipTables = [];
+
+    /**
      * @var string eg. `app_`
      */
     public $tablePrefix = '';
@@ -68,6 +104,11 @@ class BatchController extends Controller
      * @var string namespace path for model classes
      */
     public $modelNamespace = 'common\\models';
+
+    /**
+     * @var string suffix to prepend to the base model, setting "Base" will result in a model named "BasePost"
+     */
+    public $modelBaseClassPrefix = '';
 
     /**
      * @var string suffix to append to the base model, setting "Base" will result in a model named "PostBase"
@@ -93,6 +134,21 @@ class BatchController extends Controller
      * @var
      */
     public $modelRemoveDuplicateRelations = false;
+
+    /**
+     * @var
+     */
+    public $modelCacheRelationsData = true;
+
+    /**
+     * @var
+     */
+    public $modelGenerateRelations = ModelGenerator::RELATIONS_ALL;
+
+    /**
+     * @var
+     */
+    public $modelGenerateJunctionRelationMode = ModelGenerator::JUNCTION_RELATION_VIA_TABLE;
 
     /**
      * @var bool whether the strings will be generated using `Yii::t()` or normal strings
@@ -139,7 +195,7 @@ class BatchController extends Controller
     /**
      * @var string route prefix for crud controller actions
      */
-    public $crudPathPrefix = 'crud/';
+    public $crudPathPrefix = '/crud/';
 
     /**
      * @var array list of code provider classes (fully namespaced path required)
@@ -161,6 +217,26 @@ class BatchController extends Controller
      */
     public $crudAccessFilter;
 
+    /**
+     * @var bool whether to overwrite extended controller classes in crud generator
+     */
+    public $crudOverwriteControllerClass = false;
+
+    /**
+     * @var bool whether to overwrite rest/api controller classes in crud generator
+     */
+    public $crudOverwriteRestControllerClass = false;
+
+    /**
+     * @var bool whether to overwrite search classes in crud generator
+     */
+    public $crudOverwriteSearchModelClass = false;
+
+    /**
+     * @var bool whether to generate access filter migrations
+     */
+    public $generateAccessFilterMigrations;
+
     public $crudBaseTraits;
 
     public $crudTemplate = 'default';
@@ -168,6 +244,10 @@ class BatchController extends Controller
     public $crudIndexWidgetType = 'grid';
 
     public $crudIndexGridClass = 'yii\\grid\\GridView';
+
+    public $crudFormLayout = 'horizontal';
+
+    public $crudActionButtonColumnPosition = 'left';
 
     /**
      * @var bool indicates whether to generate ActiveQuery for the ActiveRecord class
@@ -223,22 +303,33 @@ class BatchController extends Controller
             [
                 'template',
                 'overwrite',
-                'useTranslatableBehavior',
                 'useTimestampBehavior',
+                'timestampBehaviorClass',
+                'createdAtColumn',
+                'updatedAtColumn',
+                'useTranslatableBehavior',
                 'languageTableName',
                 'languageCodeColumn',
+                'useBlameableBehavior',
+                'createdByColumn',
+                'updatedByColumn',
                 'extendedModels',
                 'enableI18N',
                 'messageCategory',
                 'singularEntities',
                 'tables',
+                'skipTables',
                 'tablePrefix',
                 'modelDb',
                 'modelNamespace',
                 'modelBaseClass',
                 'modelBaseTraits',
+                'modelBaseClassPrefix',
                 'modelBaseClassSuffix',
                 'modelRemoveDuplicateRelations',
+                'modelCacheRelationsData',
+                'modelGenerateRelations',
+                'modelGenerateJunctionRelationMode',
                 'modelGenerateQuery',
                 'modelQueryNamespace',
                 'modelQueryBaseClass',
@@ -256,6 +347,11 @@ class BatchController extends Controller
                 'crudBaseControllerClass',
                 'crudAccessFilter',
                 'crudTemplate',
+                'crudFormLayout',
+                'crudOverwriteSearchModelClass',
+                'crudOverwriteRestControllerClass',
+                'crudOverwriteControllerClass',
+                'generateAccessFilterMigrations'
             ]
         );
     }
@@ -273,9 +369,19 @@ class BatchController extends Controller
         $this->appConfig['id'] = 'temp';
         $this->modelGenerator = new ModelGenerator(['db' => $this->modelDb]);
 
+        if ($this->tables && $this->skipTables) {
+            $this->stderr("Only one property of 'tables' or 'skipTables' can be set." . PHP_EOL);
+            return false;
+        }
+
         if (!$this->tables) {
             $this->modelGenerator->tableName = '*';
             $this->tables = $this->modelGenerator->getTableNames();
+            foreach ($this->tables AS $i => $table) {
+                if (in_array($table, $this->skipTables)) {
+                    unset($this->tables[$i]);
+                }
+            }
             $tableList = implode("\n\t- ", $this->tables);
             $msg = "Are you sure that you want to run action \"{$action->id}\" for the following tables?\n\t- {$tableList}\n\n";
             if (!$this->confirm($msg)) {
@@ -305,16 +411,23 @@ class BatchController extends Controller
      */
     public function actionModels()
     {
+        $startTime = microtime(true);
+
         // create models
         foreach ($this->tables as $table) {
-            //var_dump($this->tableNameMap, $table);exit;
             $params = [
                 'interactive' => $this->interactive,
                 'overwrite' => $this->overwrite,
-                'useTranslatableBehavior' => $this->useTranslatableBehavior,
                 'useTimestampBehavior' => $this->useTimestampBehavior,
+                'timestampBehaviorClass' => $this->timestampBehaviorClass,
+                'createdAtColumn' => $this->createdAtColumn,
+                'updatedAtColumn' => $this->updatedAtColumn,
+                'useTranslatableBehavior' => $this->useTranslatableBehavior,
                 'languageTableName' => $this->languageTableName,
                 'languageCodeColumn' => $this->languageCodeColumn,
+                'useBlameableBehavior' => $this->useBlameableBehavior,
+                'createdByColumn' => $this->createdByColumn,
+                'updatedByColumn' => $this->updatedByColumn,
                 'template' => $this->template,
                 'ns' => $this->modelNamespace,
                 'db' => $this->modelDb,
@@ -324,6 +437,7 @@ class BatchController extends Controller
                 'singularEntities' => $this->singularEntities,
                 'messageCategory' => $this->modelMessageCategory,
                 'generateModelClass' => $this->extendedModels,
+                'baseClassPrefix' => $this->modelBaseClassPrefix,
                 'baseClassSuffix' => $this->modelBaseClassSuffix,
                 'modelClass' => isset($this->tableNameMap[$table]) ?
                     $this->tableNameMap[$table] :
@@ -331,6 +445,9 @@ class BatchController extends Controller
                 'baseClass' => $this->modelBaseClass,
                 'baseTraits' => $this->modelBaseTraits,
                 'removeDuplicateRelations' => $this->modelRemoveDuplicateRelations,
+                'cacheRelationsData' => $this->modelCacheRelationsData,
+                'generateRelations' => $this->modelGenerateRelations,
+                'generateJunctionRelationMode' => $this->modelGenerateJunctionRelationMode,
                 'tableNameMap' => $this->tableNameMap,
                 'generateQuery' => $this->modelGenerateQuery,
                 'queryNs' => $this->modelQueryNamespace,
@@ -343,10 +460,17 @@ class BatchController extends Controller
             $app = \Yii::$app;
             $temp = new \yii\console\Application($this->appConfig);
             $temp->runAction(ltrim($route, '/'), $params);
+            if (\Yii::$container->has($this->modelDb)) {
+                \Yii::$container->get($this->modelDb)->close();
+            } else {
+                $temp->get($this->modelDb)->close();
+            }
             unset($temp);
             \Yii::$app = $app;
             \Yii::$app->log->logger->flush(true);
         }
+
+        Yii::debug('Generated models in ' . round(microtime(true) - $startTime, 3) . ' seconds.', __METHOD__);
     }
 
     /**
@@ -364,17 +488,25 @@ class BatchController extends Controller
         $this->createDirectoryFromNamespace($this->crudSearchModelNamespace);
 
         foreach ($this->tables as $table) {
-            $table = str_replace($this->tablePrefix, '', $table);
-            $name = isset($this->tableNameMap[$table]) ? $this->tableNameMap[$table] :
-                $this->modelGenerator->generateClassName($table);
+
+            if (isset($this->tableNameMap[$table])) {
+                $tmp_name = $this->tableNameMap[$table];
+            } else {
+                $tmp_name = str_replace($this->tablePrefix, '', $table);
+            }
+            $name = $this->modelGenerator->generateClassName($tmp_name);
+
             $params = [
                 'interactive' => $this->interactive,
                 'overwrite' => $this->overwrite,
+                'overwriteSearchModelClass' => $this->crudOverwriteSearchModelClass,
+                'overwriteRestControllerClass' => $this->crudOverwriteRestControllerClass,
+                'overwriteControllerClass' => $this->crudOverwriteControllerClass,
                 'template' => $this->template,
-                'modelClass' => $this->modelNamespace.'\\'.$name,
-                'searchModelClass' => $this->crudSearchModelNamespace.'\\'.$name.$this->crudSearchModelSuffix,
+                'modelClass' => $this->modelNamespace . '\\' . $name,
+                'searchModelClass' => $this->crudSearchModelNamespace . '\\' . $name . $this->crudSearchModelSuffix,
                 'controllerNs' => $this->crudControllerNamespace,
-                'controllerClass' => $this->crudControllerNamespace.'\\'.$name.'Controller',
+                'controllerClass' => $this->crudControllerNamespace . '\\' . $name . 'Controller',
                 'viewPath' => $this->crudViewPath,
                 'pathPrefix' => $this->crudPathPrefix,
                 'tablePrefix' => $this->tablePrefix,
@@ -393,6 +525,9 @@ class BatchController extends Controller
                 'template' => $this->crudTemplate,
                 'indexWidgetType' => $this->crudIndexWidgetType,
                 'indexGridClass' => $this->crudIndexGridClass,
+                'formLayout' => $this->crudFormLayout,
+                'generateAccessFilterMigrations' => $this->generateAccessFilterMigrations,
+                'actionButtonColumnPosition' => $this->crudActionButtonColumnPosition,
             ];
             $route = 'gii/giiant-crud';
             $app = \Yii::$app;
@@ -417,13 +552,13 @@ class BatchController extends Controller
             $config = $GLOBALS['config'];
         } else {
             $config = \yii\helpers\ArrayHelper::merge(
-                require(\Yii::getAlias('@app').'/../common/config/main.php'),
-                (is_file(\Yii::getAlias('@app').'/../common/config/main-local.php')) ?
-                    require(\Yii::getAlias('@app').'/../common/config/main-local.php')
+                require(\Yii::getAlias('@app') . '/../common/config/main.php'),
+                (is_file(\Yii::getAlias('@app') . '/../common/config/main-local.php')) ?
+                    require(\Yii::getAlias('@app') . '/../common/config/main-local.php')
                     : [],
-                require(\Yii::getAlias('@app').'/../console/config/main.php'),
-                (is_file(\Yii::getAlias('@app').'/../console/config/main-local.php')) ?
-                    require(\Yii::getAlias('@app').'/../console/config/main-local.php')
+                require(\Yii::getAlias('@app') . '/../console/config/main.php'),
+                (is_file(\Yii::getAlias('@app') . '/../console/config/main-local.php')) ?
+                    require(\Yii::getAlias('@app') . '/../console/config/main-local.php')
                     : []
             );
         }
@@ -439,7 +574,8 @@ class BatchController extends Controller
     private function createDirectoryFromNamespace($ns)
     {
         echo \Yii::getRootAlias($ns);
-        $dir = \Yii::getAlias('@'.str_replace('\\', '/', ltrim($ns, '\\')));
+        $dir = \Yii::getAlias('@' . str_replace('\\', '/', ltrim($ns, '\\')));
         @mkdir($dir);
     }
 }
+

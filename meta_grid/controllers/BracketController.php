@@ -330,6 +330,8 @@ class BracketController extends Controller
    				'projectList' => $this->getProjectList(),		// autogeneriert ueber gii/CRUD
    				'attributeList' => $this->getAttributeList(),		// autogeneriert ueber gii/CRUD
   				'object_type_as_searchFilterList' => $this->getObjectTypeAsSearchFilterList(),		// autogeneriert ueber gii/CRUD
+  				'object_persistence_methodList' => $this->getObjectPersistenceMethodList(),	  // added **manual**
+  				'datamanagement_processList' => $this->getDatamanagementProcessList(),		  // added **manual**
   				'modelsBracketSearchPattern' => (empty($modelsBracketSearchPattern)) ? [new BracketSearchPattern] : $modelsBracketSearchPattern
       		]);
 		    }
@@ -402,6 +404,8 @@ class BracketController extends Controller
    				'projectList' => $this->getProjectList(),		// autogeneriert ueber gii/CRUD
    				'attributeList' => $this->getAttributeList(),		// autogeneriert ueber gii/CRUD
   				'object_type_as_searchFilterList' => $this->getObjectTypeAsSearchFilterList(),		// autogeneriert ueber gii/CRUD
+  				'object_persistence_methodList' => $this->getObjectPersistenceMethodList(),	  // added **manual**
+  				'datamanagement_processList' => $this->getDatamanagementProcessList(),		  // added **manual**
   				'modelsBracketSearchPattern' => (empty($modelsBracketSearchPattern)) ? [new BracketSearchPattern] : $modelsBracketSearchPattern
         ]);
 		    }

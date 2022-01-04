@@ -7,7 +7,7 @@
  *
  * PHP version >= 5
  *
- * @copyright 2003-2017 Magnus Rosenbaum
+ * @copyright 2003-2020 Magnus Rosenbaum
  * @license   GPL v2
  *
  * This program is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * @version 3.0 (2017-03-09)
+ * @version 3.3 (2020-10-24)
  * @author  Magnus Rosenbaum <phptidy@cmr.cx>
  * @package phptidy
  */
@@ -90,7 +90,7 @@ $encoding = "";
 // phptidy will strip these variables and constants from the beginning of
 // include and require commands to generate appropriate @see tags also for
 // these files.
-// Example: array('DOCROOT', '$docroot', '$GLOBALS[\'docroot\']');
+// Example: array('DOCROOT', '$docroot');
 $docrootvars = array();
 
 // Enable the single cleanup functions
@@ -957,7 +957,7 @@ function replace_phptags(&$tokens) {
 		case T_OPEN_TAG:
 
 			// The open tag is already the right one
-			if ( rtrim($token[1]) == $GLOBALS['open_tag'] ) continue;
+			if ( rtrim($token[1]) == $GLOBALS['open_tag'] ) continue 2;
 
 			// Collect following whitespace
 			preg_match("/\s*$/", $token[1], $matches);
@@ -1000,7 +1000,7 @@ function replace_phptags(&$tokens) {
 		case T_OPEN_TAG_WITH_ECHO:
 
 			// If we use short tags we also accept the echo tags
-			if ($GLOBALS['open_tag']=="<?" or $GLOBALS['keep_open_echo_tags']) continue;
+			if ($GLOBALS['open_tag']=="<?" or $GLOBALS['keep_open_echo_tags']) continue 2;
 
 			if ( $tokens[$key+1][0] === T_WHITESPACE ) {
 				// If there is already whitespace following we only replace the open tag
@@ -1438,7 +1438,7 @@ function fix_docblock_format(&$tokens) {
 
 		$param_max_type_length = 7;
 		$param_max_variable_length = 2;
-		while ( list($l, $line) = each($lines) ) {
+		while ( $line = current($lines) ) {
 
 			// DocTag format
 			if ( preg_match('/^\* @param(\s+([^\s\$]*))?(\s+(&?\$[^\s]+))?(.*)$/', $line, $matches) ) {
@@ -1460,12 +1460,13 @@ function fix_docblock_format(&$tokens) {
 					continue;
 				}
 
-				$lines[$l] = "* @param "
+				$lines[key($lines)] = "* @param "
 					.str_pad($matches[2], $param_max_type_length)." "
 					.str_pad($matches[4], $param_max_variable_length)." "
 					.trim($matches[5]);
 			}
 
+			next($lines);
 		}
 
 		// Sort DocTags

@@ -27,6 +27,7 @@ use Da\User\Service\UserConfirmationService;
 use Da\User\Service\UserCreateService;
 use Da\User\Service\UserRegisterService;
 use Da\User\Traits\ContainerAwareTrait;
+use Da\User\Traits\ModuleAwareTrait;
 use Da\User\Validator\AjaxRequestModelValidator;
 use Yii;
 use yii\base\Module;
@@ -37,6 +38,7 @@ use yii\web\NotFoundHttpException;
 class RegistrationController extends Controller
 {
     use ContainerAwareTrait;
+    use ModuleAwareTrait;
 
     protected $userQuery;
     protected $socialNetworkAccountQuery;
@@ -69,7 +71,7 @@ class RegistrationController extends Controller
     {
         return [
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => AccessControl::class,
                 'rules' => [
                     [
                         'allow' => true,
@@ -86,6 +88,9 @@ class RegistrationController extends Controller
         ];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function actionRegister()
     {
         if (!$this->module->enableRegistration) {
@@ -100,19 +105,34 @@ class RegistrationController extends Controller
 
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
             $this->trigger(FormEvent::EVENT_BEFORE_REGISTER, $event);
+
             /** @var User $user */
-            $user = $this->make(User::class, [], $form->attributes);
+
+            // Create a temporay $user so we can get the attributes, then get
+            // the intersection between the $form fields  and the $user fields.
+            $user = $this->make(User::class, [] );
+            $fields = array_intersect_key($form->attributes, $user->attributes);
+
+             // Becomes password_hash
+            $fields['password'] = $form['password'];
+
+            $user = $this->make(User::class, [], $fields );
+
             $user->setScenario('register');
             $mailService = MailFactory::makeWelcomeMailerService($user);
 
             if ($this->make(UserRegisterService::class, [$user, $mailService])->run()) {
-                Yii::$app->session->setFlash(
-                    'info',
-                    Yii::t(
-                        'usuario',
-                        'Your account has been created and a message with further instructions has been sent to your email'
-                    )
-                );
+                if ($this->module->enableEmailConfirmation) {
+                    Yii::$app->session->setFlash(
+                        'info',
+                        Yii::t(
+                            'usuario',
+                            'Your account has been created and a message with further instructions has been sent to your email'
+                        )
+                    );
+                } else {
+                    Yii::$app->session->setFlash('info', Yii::t('usuario', 'Your account has been created'));
+                }
                 $this->trigger(FormEvent::EVENT_AFTER_REGISTER, $event);
                 return $this->render(
                     '/shared/message',
@@ -127,6 +147,9 @@ class RegistrationController extends Controller
         return $this->render('register', ['model' => $form, 'module' => $this->module]);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function actionConnect($code)
     {
         /** @var SocialNetworkAccount $account */
@@ -145,7 +168,7 @@ class RegistrationController extends Controller
 
         $this->make(AjaxRequestModelValidator::class, [$user])->validate();
 
-        if ($user->load(Yii::$app->request->post())) {
+        if ($user->load(Yii::$app->request->post()) && $user->validate()) {
             $this->trigger(SocialNetworkConnectEvent::EVENT_BEFORE_CONNECT, $event);
 
             $mailService = MailFactory::makeWelcomeMailerService($user);
@@ -168,6 +191,9 @@ class RegistrationController extends Controller
         );
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function actionConfirm($id, $code)
     {
         /** @var User $user */
@@ -204,6 +230,9 @@ class RegistrationController extends Controller
         );
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function actionResend()
     {
         if ($this->module->enableEmailConfirmation === false) {

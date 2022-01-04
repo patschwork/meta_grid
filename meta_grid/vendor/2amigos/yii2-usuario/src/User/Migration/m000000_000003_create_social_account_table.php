@@ -43,15 +43,15 @@ class m000000_000003_create_social_account_table extends Migration
 
         $this->createIndex('idx_social_account_code', '{{%social_account}}', 'code', true);
 
-        // $this->addForeignKey(
-            // 'fk_social_account_user',
-            // '{{%social_account}}',
-            // 'user_id',
-            // '{{%user}}',
-            // 'id',
-            // 'CASCADE',
-            // (MigrationHelper::isMicrosoftSQLServer($this->db->driverName) ? 'NO ACTION' : 'RESTRICT')
-        // );
+        $this->addForeignKey(
+            'fk_social_account_user',
+            '{{%social_account}}',
+            'user_id',
+            '{{%user}}',
+            'id',
+            'CASCADE',
+            (MigrationHelper::isMicrosoftSQLServer($this->db->driverName) ? 'NO ACTION' : 'RESTRICT')
+        );
     }
 
     public function safeDown()

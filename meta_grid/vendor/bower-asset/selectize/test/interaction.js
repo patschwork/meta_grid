@@ -41,6 +41,23 @@
 				});
 			});
 		});
+    
+    it('should reopen dropdown if clicked after being closed by closeAfterSelect: true', function(done) {
+      var test = setup_test('<select multiple>' +
+				'<option value="a">A</option>' +
+				'<option value="b">B</option>' +
+				'</select>', {closeAfterSelect: true});
+
+			click(test.selectize.$control, function() {
+				click($('[data-value=a]', test.selectize.$dropdown_content), function() {
+          click(test.selectize.$control, function () {
+  					expect(test.selectize.isOpen).to.be.equal(true);
+  					expect(test.selectize.isFocused).to.be.equal(true);
+  					done();
+          });
+				});
+			});
+    });
 
 		it('should close and blur dropdown after selection made if closeAfterSelect: true and in single mode' , function(done) {
 			var test = setup_test('<select>' +
@@ -285,6 +302,23 @@
 					.delay(0, function() {
 						expect(test.selectize.isOpen).to.be.equal(true);
 						expect(test.selectize.options).to.not.have.property('asdf');
+						done();
+					});
+				});
+			});
+
+			it('should not delete any dropdown option text if duplicate match occurs', function(done) {
+				var test = setup_test('<select>' +
+					'<option></option>' +
+					'<option value="a"></option>' +
+					'<option value="b">Isabel Street</option>' +
+				'</select>', {});
+
+				click(test.selectize.$control, function() {
+					// Here, the 'S' in St will also match the 's' in Isabel (a duplicate match)
+					syn.type('Isabel St', test.selectize.$control_input)
+					.delay(0, function() {
+						expect(test.selectize.$dropdown_content.find('.option[data-value=b]').text()).to.be.equal('Isabel Street');
 						done();
 					});
 				});

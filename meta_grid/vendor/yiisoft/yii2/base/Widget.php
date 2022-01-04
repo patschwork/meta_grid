@@ -7,18 +7,19 @@
 
 namespace yii\base;
 
-use Yii;
 use ReflectionClass;
+use Yii;
 
 /**
  * Widget is the base class for widgets.
  *
  * For more details and usage information on Widget, see the [guide article on widgets](guide:structure-widgets).
  *
- * @property string $id ID of the widget.
+ * @property string|null $id ID of the widget. Note that the type of this property differs in getter and
+ * setter. See [[getId()]] and [[setId()]] for details.
  * @property \yii\web\View $view The view object that can be used to render views or view files. Note that the
  * type of this property differs in getter and setter. See [[getView()]] and [[setView()]] for details.
- * @property string $viewPath The directory containing the view files for this widget. This property is
+ * @property-read string $viewPath The directory containing the view files for this widget. This property is
  * read-only.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
@@ -87,7 +88,7 @@ class Widget extends Component implements ViewContextInterface
         $config['class'] = get_called_class();
         /* @var $widget Widget */
         $widget = Yii::createObject($config);
-        static::$stack[] = $widget;
+        self::$stack[] = $widget;
 
         return $widget;
     }
@@ -101,8 +102,8 @@ class Widget extends Component implements ViewContextInterface
      */
     public static function end()
     {
-        if (!empty(static::$stack)) {
-            $widget = array_pop(static::$stack);
+        if (!empty(self::$stack)) {
+            $widget = array_pop(self::$stack);
             if (get_class($widget) === get_called_class()) {
                 /* @var $widget Widget */
                 if ($widget->beforeRun()) {
@@ -110,13 +111,14 @@ class Widget extends Component implements ViewContextInterface
                     $result = $widget->afterRun($result);
                     echo $result;
                 }
+
                 return $widget;
-            } else {
-                throw new InvalidCallException('Expecting end() of ' . get_class($widget) . ', found ' . get_called_class());
             }
-        } else {
-            throw new InvalidCallException('Unexpected ' . get_called_class() . '::end() call. A matching begin() is not found.');
+
+            throw new InvalidCallException('Expecting end() of ' . get_class($widget) . ', found ' . get_called_class());
         }
+
+        throw new InvalidCallException('Unexpected ' . get_called_class() . '::end() call. A matching begin() is not found.');
     }
 
     /**
@@ -155,7 +157,7 @@ class Widget extends Component implements ViewContextInterface
     /**
      * Returns the ID of the widget.
      * @param bool $autoGenerate whether to generate an ID if it is not set previously
-     * @return string ID of the widget.
+     * @return string|null ID of the widget.
      */
     public function getId($autoGenerate = true)
     {
@@ -212,6 +214,7 @@ class Widget extends Component implements ViewContextInterface
 
     /**
      * Renders a view.
+     *
      * The view to be rendered can be specified in one of the following formats:
      *
      * - [path alias](guide:concept-aliases) (e.g. "@app/views/site/index");
@@ -227,7 +230,7 @@ class Widget extends Component implements ViewContextInterface
      * @param string $view the view name.
      * @param array $params the parameters (name-value pairs) that should be made available in the view.
      * @return string the rendering result.
-     * @throws InvalidParamException if the view file does not exist.
+     * @throws InvalidArgumentException if the view file does not exist.
      */
     public function render($view, $params = [])
     {
@@ -239,7 +242,7 @@ class Widget extends Component implements ViewContextInterface
      * @param string $file the view file to be rendered. This can be either a file path or a [path alias](guide:concept-aliases).
      * @param array $params the parameters (name-value pairs) that should be made available in the view.
      * @return string the rendering result.
-     * @throws InvalidParamException if the view file does not exist.
+     * @throws InvalidArgumentException if the view file does not exist.
      */
     public function renderFile($file, $params = [])
     {

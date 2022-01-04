@@ -34,7 +34,7 @@ class Generator extends \yii\gii\generators\crud\Generator
      *
      * @var string
      */
-    public $actionButtonClass = 'yii\web\grid\ActionColumn';
+    public $actionButtonClass = 'yii\grid\ActionColumn';
     /**
      * @var array relations to be excluded in UI rendering
      */
@@ -99,7 +99,7 @@ class Generator extends \yii\gii\generators\crud\Generator
     public $baseTraits;
 
     /**
-     * @var sting controller base namespace
+     * @var string controller base namespace
      */
     public $controllerNs;
 
@@ -121,7 +121,12 @@ class Generator extends \yii\gii\generators\crud\Generator
     /**
      * @var bool whether to use phptidy on renderer files before saving
      */
-    public $tidyOutput = true;
+    public $tidyOutput = false;
+
+    /**
+     * @var string command-line options for phptidy command
+     */
+    public $tidyOptions = '';
 
     /**
      * @var bool whether to use php-cs-fixer to generate PSR compatible output
@@ -129,14 +134,27 @@ class Generator extends \yii\gii\generators\crud\Generator
     public $fixOutput = false;
 
     /**
+     * @var string command-line options for php-cs-fixer command
+     */
+    public $fixOptions = '';
+
+    /**
      * @var string form field for selecting and loading saved gii forms
      */
     public $savedForm;
 
     public $moduleNs;
+
     public $migrationClass;
 
     public $indexGridClass = 'yii\\grid\\GridView';
+
+    /**
+     * @var string position of action column in gridview 'left' or 'right'
+     */
+    public $actionButtonColumnPosition = 'left';
+
+    public $giiInfoPath = '.gii';
 
     private $_p = [];
 
@@ -379,10 +397,9 @@ class Generator extends \yii\gii\generators\crud\Generator
         $suffix = str_replace(' ', '', $this->getName());
         $controllerFileinfo = pathinfo($controllerFile);
         $formDataFile = StringHelper::dirname(StringHelper::dirname($controllerFile))
-                .'/gii/'
+                .'/'.$this->giiInfoPath.'/'
                 .str_replace('Controller', $suffix, $controllerFileinfo['filename']).'.json';
-        //$formData = json_encode($this->getFormAttributesValues());
-        $formData = json_encode(SaveForm::getFormAttributesValues($this, $this->formAttributes()));
+        $formData = json_encode(SaveForm::getFormAttributesValues($this, $this->formAttributes()), JSON_PRETTY_PRINT);
         $files[] = new CodeFile($formDataFile, $formData);
 
         return $files;
@@ -399,13 +416,13 @@ class Generator extends \yii\gii\generators\crud\Generator
         file_put_contents($tmpFile, $code);
 
         if ($this->tidyOutput) {
-            $command = Yii::getAlias('@vendor/bin/phptidy').' replace '.$tmpFile;
+            $command = Yii::getAlias('@vendor/bin/phptidy.php').' replace '.$this->tidyOptions.' '.$tmpFile;
             shell_exec($command);
             $code = file_get_contents($tmpFile);
         }
 
         if ($this->fixOutput) {
-            $command = Yii::getAlias('@vendor/bin/php-cs-fixer').' fix '.$tmpFile;
+            $command = Yii::getAlias('@vendor/bin/php-cs-fixer').' fix '.$this->fixOptions.' '.$tmpFile;
             shell_exec($command);
             $code = file_get_contents($tmpFile);
         }

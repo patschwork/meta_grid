@@ -16,6 +16,7 @@ use Da\User\Event\UserEvent;
 use Da\User\Helper\SecurityHelper;
 use Da\User\Model\User;
 use Da\User\Traits\MailAwareTrait;
+use Da\User\Traits\ModuleAwareTrait;
 use Exception;
 use Yii;
 use yii\base\InvalidCallException;
@@ -23,6 +24,7 @@ use yii\base\InvalidCallException;
 class UserCreateService implements ServiceInterface
 {
     use MailAwareTrait;
+    use ModuleAwareTrait;
 
     protected $model;
     protected $securityHelper;
@@ -57,23 +59,33 @@ class UserCreateService implements ServiceInterface
                 ? $model->password
                 : $this->securityHelper->generatePassword(8);
 
-            $model->trigger(UserEvent::EVENT_BEFORE_CREATE);
+            /** @var UserEvent $event */
+            $event = $this->make(UserEvent::class, [$model]);
+            $model->trigger(UserEvent::EVENT_BEFORE_CREATE, $event);
 
             if (!$model->save()) {
                 $transaction->rollBack();
                 return false;
             }
 
-            $model->trigger(UserEvent::EVENT_AFTER_CREATE);
+            $model->trigger(UserEvent::EVENT_AFTER_CREATE, $event);
             if (!$this->sendMail($model)) {
-                Yii::$app->session->setFlash(
-                    'warning',
-                    Yii::t(
-                        'usuario',
-                        'Error sending welcome message to "{email}". Please try again later.',
-                        ['email' => $model->email]
-                    )
+                $error_msg = Yii::t(
+                    'usuario',
+                    'Error sending welcome message to "{email}". Please try again later.',
+                    ['email' => $model->email]
                 );
+                // from web display a flash message (if enabled)
+                if ($this->getModule()->enableFlashMessages === true && is_a(Yii::$app, yii\web\Application::class)) {
+                    Yii::$app->session->setFlash(
+                        'warning',
+                        $error_msg
+                    );
+                }
+                // if we're from console add an error to the model in order to return an error message
+                if (is_a(Yii::$app, yii\console\Application::class)) {
+                    $model->addError('username', $error_msg);
+                }
                 $transaction->rollBack();
                 return false;
             }

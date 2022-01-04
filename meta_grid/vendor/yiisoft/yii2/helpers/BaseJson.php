@@ -7,9 +7,10 @@
 
 namespace yii\helpers;
 
-use yii\base\InvalidParamException;
 use yii\base\Arrayable;
+use yii\base\InvalidArgumentException;
 use yii\web\JsExpression;
+use yii\base\Model;
 
 /**
  * BaseJson provides concrete implementation for [[Json]].
@@ -22,7 +23,14 @@ use yii\web\JsExpression;
 class BaseJson
 {
     /**
-     * List of JSON Error messages assigned to constant names for better handling of version differences
+     * @var bool|null Enables human readable output a.k.a. Pretty Print.
+     * This can useful for debugging during development but is not recommended in a production environment!
+     * In case `prettyPrint` is `null` (default) the `options` passed to `encode` functions will not be changed.
+     * @since 2.0.43
+     */
+    public static $prettyPrint = null;
+    /**
+     * List of JSON Error messages assigned to constant names for better handling of version differences.
      * @var array
      * @since 2.0.7
      */
@@ -50,9 +58,9 @@ class BaseJson
      *
      * @param mixed $value the data to be encoded.
      * @param int $options the encoding options. For more details please refer to
-     * <http://www.php.net/manual/en/function.json-encode.php>. Default is `JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE`.
+     * <https://secure.php.net/manual/en/function.json-encode.php>. Default is `JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE`.
      * @return string the encoding result.
-     * @throws InvalidParamException if there is any encoding error.
+     * @throws InvalidArgumentException if there is any encoding error.
      */
     public static function encode($value, $options = 320)
     {
@@ -61,6 +69,13 @@ class BaseJson
         set_error_handler(function () {
             static::handleJsonError(JSON_ERROR_SYNTAX);
         }, E_WARNING);
+
+        if (static::$prettyPrint === true) {
+            $options |= JSON_PRETTY_PRINT;
+        } elseif (static::$prettyPrint === false) {
+            $options &= ~JSON_PRETTY_PRINT;
+        }
+
         $json = json_encode($value, $options);
         restore_error_handler();
         static::handleJsonError(json_last_error());
@@ -81,7 +96,7 @@ class BaseJson
      * @param mixed $value the data to be encoded
      * @return string the encoding result
      * @since 2.0.4
-     * @throws InvalidParamException if there is any encoding error
+     * @throws InvalidArgumentException if there is any encoding error
      */
     public static function htmlEncode($value)
     {
@@ -93,12 +108,12 @@ class BaseJson
      * @param string $json the JSON string to be decoded
      * @param bool $asArray whether to return objects in terms of associative arrays.
      * @return mixed the PHP data
-     * @throws InvalidParamException if there is any decoding error
+     * @throws InvalidArgumentException if there is any decoding error
      */
     public static function decode($json, $asArray = true)
     {
         if (is_array($json)) {
-            throw new InvalidParamException('Invalid JSON data.');
+            throw new InvalidArgumentException('Invalid JSON data.');
         } elseif ($json === null || $json === '') {
             return null;
         }
@@ -111,8 +126,8 @@ class BaseJson
     /**
      * Handles [[encode()]] and [[decode()]] errors by throwing exceptions with the respective error message.
      *
-     * @param int $lastError error code from [json_last_error()](http://php.net/manual/en/function.json-last-error.php).
-     * @throws \yii\base\InvalidParamException if there is any encoding/decoding error.
+     * @param int $lastError error code from [json_last_error()](https://secure.php.net/manual/en/function.json-last-error.php).
+     * @throws InvalidArgumentException if there is any encoding/decoding error.
      * @since 2.0.6
      */
     protected static function handleJsonError($lastError)
@@ -129,10 +144,10 @@ class BaseJson
         }
 
         if (isset($availableErrors[$lastError])) {
-            throw new InvalidParamException($availableErrors[$lastError], $lastError);
+            throw new InvalidArgumentException($availableErrors[$lastError], $lastError);
         }
 
-        throw new InvalidParamException('Unknown JSON encoding/decoding error.');
+        throw new InvalidArgumentException('Unknown JSON encoding/decoding error.');
     }
 
     /**
@@ -150,9 +165,17 @@ class BaseJson
                 $expressions['"' . $token . '"'] = $data->expression;
 
                 return $token;
-            } elseif ($data instanceof \JsonSerializable) {
+            }
+
+            if ($data instanceof \JsonSerializable) {
                 return static::processData($data->jsonSerialize(), $expressions, $expPrefix);
-            } elseif ($data instanceof Arrayable) {
+            }
+
+            if ($data instanceof \DateTimeInterface) {
+                return static::processData((array)$data, $expressions, $expPrefix);
+            }
+
+            if ($data instanceof Arrayable) {
                 $data = $data->toArray();
             } elseif ($data instanceof \SimpleXMLElement) {
                 $data = (array) $data;
@@ -178,5 +201,46 @@ class BaseJson
         }
 
         return $data;
+    }
+
+    /**
+     * Generates a summary of the validation errors.
+     * @param Model|Model[] $models the model(s) whose validation errors are to be displayed.
+     * @param array $options the tag options in terms of name-value pairs. The following options are specially handled:
+     *
+     * - showAllErrors: boolean, if set to true every error message for each attribute will be shown otherwise
+     *   only the first error message for each attribute will be shown. Defaults to `false`.
+     *
+     * @return string the generated error summary
+     * @since 2.0.14
+     */
+    public static function errorSummary($models, $options = [])
+    {
+        $showAllErrors = ArrayHelper::remove($options, 'showAllErrors', false);
+        $lines = self::collectErrors($models, $showAllErrors);
+
+        return json_encode($lines);
+    }
+
+    /**
+     * Return array of the validation errors
+     * @param Model|Model[] $models the model(s) whose validation errors are to be displayed.
+     * @param $showAllErrors boolean, if set to true every error message for each attribute will be shown otherwise
+     * only the first error message for each attribute will be shown.
+     * @return array of the validation errors
+     * @since 2.0.14
+     */
+    private static function collectErrors($models, $showAllErrors)
+    {
+        $lines = [];
+        if (!is_array($models)) {
+            $models = [$models];
+        }
+
+        foreach ($models as $model) {
+            $lines = array_unique(array_merge($lines, $model->getErrorSummary($showAllErrors)));
+        }
+
+        return $lines;
     }
 }

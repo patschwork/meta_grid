@@ -8,7 +8,7 @@
 namespace yii\web;
 
 use Yii;
-use yii\caching\Cache;
+use yii\caching\CacheInterface;
 use yii\di\Instance;
 
 /**
@@ -31,7 +31,7 @@ use yii\di\Instance;
  * ]
  * ```
  *
- * @property bool $useCustomStorage Whether to use custom storage. This property is read-only.
+ * @property-read bool $useCustomStorage Whether to use custom storage. This property is read-only.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
@@ -39,7 +39,7 @@ use yii\di\Instance;
 class CacheSession extends Session
 {
     /**
-     * @var Cache|array|string the cache object or the application component ID of the cache object.
+     * @var CacheInterface|array|string the cache object or the application component ID of the cache object.
      * The session data will be stored using this cache object.
      *
      * After the CacheSession object is created, if you want to change this property,
@@ -56,7 +56,7 @@ class CacheSession extends Session
     public function init()
     {
         parent::init();
-        $this->cache = Instance::ensure($this->cache, Cache::className());
+        $this->cache = Instance::ensure($this->cache, 'yii\caching\CacheInterface');
     }
 
     /**
@@ -67,6 +67,26 @@ class CacheSession extends Session
     public function getUseCustomStorage()
     {
         return true;
+    }
+
+    /**
+     * Session open handler.
+     * @internal Do not call this method directly.
+     * @param string $savePath session save path
+     * @param string $sessionName session name
+     * @return bool whether session is opened successfully
+     */
+    public function openSession($savePath, $sessionName)
+    {
+        if ($this->getUseStrictMode()) {
+            $id = $this->getId();
+            if (!$this->cache->exists($this->calculateKey($id))) {
+                //This session id does not exist, mark it for forced regeneration
+                $this->_forceRegenerateId = $id;
+            }
+        }
+
+        return parent::openSession($savePath, $sessionName);
     }
 
     /**
@@ -91,6 +111,11 @@ class CacheSession extends Session
      */
     public function writeSession($id, $data)
     {
+        if ($this->getUseStrictMode() && $id === $this->_forceRegenerateId) {
+            //Ignore write when forceRegenerate is active for this id
+            return true;
+        }
+
         return $this->cache->set($this->calculateKey($id), $data, $this->getTimeout());
     }
 

@@ -7,8 +7,8 @@
 
 namespace yii\test;
 
-use Yii;
 use yii\base\InvalidConfigException;
+use yii\db\ActiveRecord;
 use yii\db\TableSchema;
 
 /**
@@ -25,7 +25,7 @@ use yii\db\TableSchema;
  *
  * For more details and usage information on ActiveFixture, see the [guide article on fixtures](guide:test-fixtures).
  *
- * @property TableSchema $tableSchema The schema information of the database table associated with this
+ * @property-read TableSchema $tableSchema The schema information of the database table associated with this
  * fixture. This property is read-only.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
@@ -54,21 +54,25 @@ class ActiveFixture extends BaseActiveFixture
 
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function init()
     {
         parent::init();
-        if ($this->modelClass === null && $this->tableName === null) {
-            throw new InvalidConfigException('Either "modelClass" or "tableName" must be set.');
+        if ($this->tableName === null) {
+            if ($this->modelClass === null) {
+                throw new InvalidConfigException('Either "modelClass" or "tableName" must be set.');
+            }
+            /** @var ActiveRecord $modelClass */
+            $modelClass = $this->modelClass;
+            $this->db = $modelClass::getDb();
         }
     }
 
     /**
      * Loads the fixture.
      *
-     * The default implementation will first clean up the table by calling [[resetTable()]].
-     * It will then populate the table with the data returned by [[getData()]].
+     * It populate the table with the data returned by [[getData()]].
      *
      * If you override this method, you should consider calling the parent implementation
      * so that the data returned by [[getData()]] can be populated into the table.
@@ -96,17 +100,21 @@ class ActiveFixture extends BaseActiveFixture
     protected function getData()
     {
         if ($this->dataFile === null) {
-            $class = new \ReflectionClass($this);
-            $dataFile = dirname($class->getFileName()) . '/data/' . $this->getTableSchema()->fullName . '.php';
 
-            return is_file($dataFile) ? require($dataFile) : [];
-        } else {
-            return parent::getData();
+            if ($this->dataDirectory !== null) {
+                $dataFile = $this->getTableSchema()->fullName . '.php';
+            } else {
+                $class = new \ReflectionClass($this);
+                $dataFile = dirname($class->getFileName()) . '/data/' . $this->getTableSchema()->fullName . '.php';
+            }
+
+            return $this->loadData($dataFile, false);
         }
+        return parent::getData();
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function unload()
     {
@@ -123,7 +131,7 @@ class ActiveFixture extends BaseActiveFixture
         $table = $this->getTableSchema();
         $this->db->createCommand()->delete($table->fullName)->execute();
         if ($table->sequenceName !== null) {
-            $this->db->createCommand()->resetSequence($table->fullName, 1)->execute();
+            $this->db->createCommand()->executeResetSequence($table->fullName, 1);
         }
     }
 

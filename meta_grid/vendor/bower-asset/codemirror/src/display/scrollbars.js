@@ -1,11 +1,11 @@
-import { addClass, elt, rmClass } from "../util/dom"
-import { on } from "../util/event"
-import { scrollGap, paddingVert } from "../measurement/position_measurement"
-import { ie, ie_version, mac, mac_geMountainLion } from "../util/browser"
-import { updateHeightsInViewport } from "./update_lines"
-import { Delayed } from "../util/misc"
+import { addClass, elt, rmClass } from "../util/dom.js"
+import { on } from "../util/event.js"
+import { scrollGap, paddingVert } from "../measurement/position_measurement.js"
+import { ie, ie_version, mac, mac_geMountainLion } from "../util/browser.js"
+import { updateHeightsInViewport } from "./update_lines.js"
+import { Delayed } from "../util/misc.js"
 
-import { setScrollLeft, setScrollTop } from "./scroll_events"
+import { setScrollLeft, updateScrollTop } from "./scrolling.js"
 
 // SCROLLBARS
 
@@ -32,6 +32,7 @@ class NativeScrollbars {
     this.cm = cm
     let vert = this.vert = elt("div", [elt("div", null, null, "min-width: 1px")], "CodeMirror-vscrollbar")
     let horiz = this.horiz = elt("div", [elt("div", null, null, "height: 100%; min-height: 1px")], "CodeMirror-hscrollbar")
+    vert.tabIndex = horiz.tabIndex = -1
     place(vert); place(horiz)
 
     on(vert, "scroll", () => {
@@ -59,6 +60,7 @@ class NativeScrollbars {
       this.vert.firstChild.style.height =
         Math.max(0, measure.scrollHeight - measure.clientHeight + totalHeight) + "px"
     } else {
+      this.vert.scrollTop = 0
       this.vert.style.display = ""
       this.vert.firstChild.style.height = "0"
     }
@@ -185,7 +187,7 @@ export function initScrollbars(cm) {
     node.setAttribute("cm-not-content", "true")
   }, (pos, axis) => {
     if (axis == "horizontal") setScrollLeft(cm, pos)
-    else setScrollTop(cm, pos)
+    else updateScrollTop(cm, pos)
   }, cm)
   if (cm.display.scrollbars.addClass)
     addClass(cm.display.wrapper, cm.display.scrollbars.addClass)

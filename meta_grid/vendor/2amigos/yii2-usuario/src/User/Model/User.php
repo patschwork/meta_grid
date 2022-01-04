@@ -31,7 +31,9 @@ use yii\web\IdentityInterface;
  *
  * @property bool $isAdmin
  * @property bool $isBlocked
- * @property bool $isConfirmed whether user account has been confirmed or not
+ * @property bool $isConfirmed      whether user account has been confirmed or not
+ * @property bool $gdpr_deleted     whether user requested deletion of his account
+ * @property bool $gdpr_consent     whether user has consent personal data processing
  *
  * Database fields:
  * @property int $id
@@ -42,14 +44,17 @@ use yii\web\IdentityInterface;
  * @property string $auth_key
  * @property string $auth_tf_key
  * @property int $auth_tf_enabled
- * @property int $registration_ip
+ * @property string $registration_ip
  * @property int $confirmed_at
  * @property int $blocked_at
  * @property int $flags
  * @property int $created_at
  * @property int $updated_at
  * @property int $last_login_at
- *
+ * @property int $gdpr_consent_date date of agreement of data processing
+ * @property string $last_login_ip
+ * @property int $password_changed_at
+ * @property int $password_age
  * Defined relations:
  * @property SocialNetworkAccount[] $socialNetworkAccounts
  * @property Profile $profile
@@ -60,7 +65,7 @@ class User extends ActiveRecord implements IdentityInterface
     use ContainerAwareTrait;
 
     // following constants are used on secured email changing process
-    const OLD_EMAIL_CONFIRMED = 0b1;
+    const OLD_EMAIL_CONFIRMED = 0b01;
     const NEW_EMAIL_CONFIRMED = 0b10;
 
     /**
@@ -79,6 +84,40 @@ class User extends ActiveRecord implements IdentityInterface
      * @throws InvalidConfigException
      * @throws Exception
      */
+    public static function tableName()
+    {
+        return '{{%user}}';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function findIdentity($id)
+    {
+        return static::findOne($id);
+    }
+
+    /**
+     * @return UserQuery
+     */
+    public static function find()
+    {
+        return new UserQuery(static::class);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @throws NotSupportedException
+     */
+    public static function findIdentityByAccessToken($token, $type = null)
+    {
+        throw new NotSupportedException('Method "' . __CLASS__ . '::' . __METHOD__ . '" is not implemented.');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function beforeSave($insert)
     {
         /** @var SecurityHelper $security */
@@ -95,6 +134,7 @@ class User extends ActiveRecord implements IdentityInterface
                 'password_hash',
                 $security->generatePasswordHash($this->password, $this->getModule()->blowfishCost)
             );
+            $this->password_changed_at = time();
         }
 
         return parent::beforeSave($insert);
@@ -118,19 +158,21 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
-    {
-        return '{{%user}}';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function behaviors()
     {
-        return [
-            TimestampBehavior::className(),
+        $behaviors = [
+            TimestampBehavior::class,
         ];
+
+        if ($this->module->enableGdprCompliance) {
+            $behaviors['GDPR'] = [
+                'class' => TimestampBehavior::class,
+                'createdAtAttribute' => 'gdpr_consent_date',
+                'updatedAtAttribute' => false
+            ];
+        }
+
+        return $behaviors;
     }
 
     /**
@@ -146,7 +188,10 @@ class User extends ActiveRecord implements IdentityInterface
             'password' => Yii::t('usuario', 'Password'),
             'created_at' => Yii::t('usuario', 'Registration time'),
             'confirmed_at' => Yii::t('usuario', 'Confirmation time'),
-            'last_login_at' => Yii::t('usuario', 'Last login'),
+            'last_login_at' => Yii::t('usuario', 'Last login time'),
+            'last_login_ip' => Yii::t('usuario', 'Last login IP'),
+            'password_changed_at' => Yii::t('usuario', 'Last password change'),
+            'password_age' => Yii::t('usuario', 'Password age'),
         ];
     }
 
@@ -175,7 +220,7 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             // username rules
             'usernameRequired' => ['username', 'required', 'on' => ['register', 'create', 'connect', 'update']],
-            'usernameMatch' => ['username', 'match', 'pattern' => '/^[-a-zA-Z0-9_\.@]+$/'],
+            'usernameMatch' => ['username', 'match', 'pattern' => '/^[-a-zA-Z0-9_\.@\+]+$/'],
             'usernameLength' => ['username', 'string', 'min' => 3, 'max' => 255],
             'usernameTrim' => ['username', 'trim'],
             'usernameUnique' => [
@@ -203,7 +248,7 @@ class User extends ActiveRecord implements IdentityInterface
             // two factor auth rules
             'twoFactorSecretTrim' => ['auth_tf_key', 'trim'],
             'twoFactorSecretLength' => ['auth_tf_key', 'string', 'max' => 16],
-            'twoFactorEnabledNumber' => ['auth_tf_enabled', 'integer']
+            'twoFactorEnabledNumber' => ['auth_tf_enabled', 'boolean']
         ];
     }
 
@@ -232,14 +277,6 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public static function findIdentity($id)
-    {
-        return static::findOne($id);
-    }
-
-    /**
      * @return bool whether is blocked or not
      */
     public function getIsBlocked()
@@ -249,7 +286,7 @@ class User extends ActiveRecord implements IdentityInterface
 
     /**
      * @throws InvalidConfigException
-     * @return bool whether the user is an admin or not
+     * @return bool                   whether the user is an admin or not
      */
     public function getIsAdmin()
     {
@@ -312,20 +349,16 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * @return UserQuery
+     * Returns password age in days
+     * @return integer
      */
-    public static function find()
+    public function getPassword_age()
     {
-        return new UserQuery(static::class);
-    }
+        if (is_null($this->password_changed_at)) {
+            return $this->getModule()->maxPasswordAge;
+        }
+        $d = new \DateTime("@{$this->password_changed_at}");
 
-    /**
-     * {@inheritdoc}
-     *
-     * @throws NotSupportedException
-     */
-    public static function findIdentityByAccessToken($token, $type = null)
-    {
-        throw new NotSupportedException('Method "' . __CLASS__ . '::' . __METHOD__ . '" is not implemented.');
+        return $d->diff(new \DateTime(), true)->format("%a");
     }
 }

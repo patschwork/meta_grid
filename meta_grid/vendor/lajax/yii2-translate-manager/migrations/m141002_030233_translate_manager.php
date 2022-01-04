@@ -103,11 +103,11 @@ class m141002_030233_translate_manager extends Migration
         }
 
         $this->createTable('{{%language}}', [
-            'language_id' => Schema::TYPE_STRING . '(32) NOT NULL',
+            'language_id' => Schema::TYPE_STRING . '(5) NOT NULL',
             'language' => Schema::TYPE_STRING . '(3) NOT NULL',
             'country' => Schema::TYPE_STRING . '(3) NOT NULL',
-            'name' => Schema::TYPE_STRING . '(254) NOT NULL',
-            'name_ascii' => Schema::TYPE_STRING . '(254) NOT NULL',
+            'name' => Schema::TYPE_STRING . '(32) NOT NULL',
+            'name_ascii' => Schema::TYPE_STRING . '(32) NOT NULL',
             'status' => Schema::TYPE_SMALLINT . ' NOT NULL',
             'PRIMARY KEY (language_id)',
         ], $tableOptions);
@@ -129,15 +129,15 @@ class m141002_030233_translate_manager extends Migration
 
         $this->createTable('{{%language_translate}}', [
             'id' => Schema::TYPE_INTEGER . ' NOT NULL',
-            'language' => Schema::TYPE_STRING . '(32) NOT NULL',
+            'language' => Schema::TYPE_STRING . '(5) NOT NULL',
             'translation' => Schema::TYPE_TEXT,
-            'PRIMARY KEY (id, language) FOREIGN KEY (language) REFERENCES language(language_id) FOREIGN KEY (id) REFERENCES language_source(id)',
+            'PRIMARY KEY (id, language)',
         ], $tableOptions);
 
         $this->createIndex('language_translate_idx_language', '{{%language_translate}}', 'language');
 
-        // $this->addForeignKey('language_translate_ibfk_1', '{{%language_translate}}', ['language'], '{{%language}}', ['language_id'], 'CASCADE', 'CASCADE');
-        // $this->addForeignKey('language_translate_ibfk_2', '{{%language_translate}}', ['id'], '{{%language_source}}', ['id'], 'CASCADE', 'CASCADE');
+        $this->addForeignKey('language_translate_ibfk_1', '{{%language_translate}}', ['language'], '{{%language}}', ['language_id'], 'CASCADE', 'CASCADE');
+        $this->addForeignKey('language_translate_ibfk_2', '{{%language_translate}}', ['id'], '{{%language_source}}', ['id'], 'CASCADE', 'CASCADE');
     }
 
     public function down()

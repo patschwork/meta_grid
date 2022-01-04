@@ -34,9 +34,11 @@ class RequiredValidator extends Validator
      * @var bool whether the comparison between the attribute value and [[requiredValue]] is strict.
      * When this is true, both the values and types must match.
      * Defaults to false, meaning only the values need to match.
-     * Note that when [[requiredValue]] is null, if this property is true, the validator will check
-     * if the attribute value is null; If this property is false, the validator will call [[isEmpty]]
-     * to check if the attribute value is empty.
+     *
+     * Note that behavior for when [[requiredValue]] is null is the following:
+     *
+     * - In strict mode, the validator will check if the attribute value is null
+     * - In non-strict mode validation will fail
      */
     public $strict = false;
     /**
@@ -51,7 +53,7 @@ class RequiredValidator extends Validator
 
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function init()
     {
@@ -63,7 +65,7 @@ class RequiredValidator extends Validator
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function validateValue($value)
     {
@@ -76,15 +78,15 @@ class RequiredValidator extends Validator
         }
         if ($this->requiredValue === null) {
             return [$this->message, []];
-        } else {
-            return [$this->message, [
-                'requiredValue' => $this->requiredValue,
-            ]];
         }
+
+        return [$this->message, [
+            'requiredValue' => $this->requiredValue,
+        ]];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function clientValidateAttribute($model, $attribute, $view)
     {
@@ -95,7 +97,7 @@ class RequiredValidator extends Validator
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getClientOptions($model, $attribute)
     {

@@ -16,12 +16,14 @@ use Da\User\Factory\TokenFactory;
 use Da\User\Model\User;
 use Da\User\Query\UserQuery;
 use Da\User\Traits\MailAwareTrait;
+use Da\User\Traits\ModuleAwareTrait;
 use Exception;
 use Yii;
 
 class PasswordRecoveryService implements ServiceInterface
 {
     use MailAwareTrait;
+    use ModuleAwareTrait;
 
     protected $query;
 
@@ -39,8 +41,19 @@ class PasswordRecoveryService implements ServiceInterface
     public function run()
     {
         try {
+            if ($this->getModule()->enableFlashMessages == true) {
+                Yii::$app->session->setFlash(
+                    'info',
+                    Yii::t('usuario', 'An email with instructions to create a new password has been sent to {email} if it is associated with an {appName} account. Your existing password has not been changed.', ['email' => $this->email, 'appName' => Yii::$app->name])
+                );
+            }
+
             /** @var User $user */
             $user = $this->query->whereEmail($this->email)->one();
+
+            if ($user === null) {
+                throw new \RuntimeException('User not found.');
+            }
 
             $token = TokenFactory::makeRecoveryToken($user->id);
 
@@ -53,11 +66,6 @@ class PasswordRecoveryService implements ServiceInterface
             if (!$this->sendMail($user)) {
                 return false;
             }
-
-            Yii::$app->session->setFlash(
-                'info',
-                Yii::t('usuario', 'An email has been sent with instructions for resetting your password')
-            );
 
             return true;
         } catch (Exception $e) {

@@ -12,10 +12,10 @@ use schmunk42\giiant\helpers\SaveForm;
  * on chenging listbox, form fill with selected saved forma data
  * currently work with input text, input checkbox and select form fields
  */
-$this->registerJs(SaveForm::getSavedFormsJs($generator->getName()), yii\web\View::POS_END);
+$this->registerJs(SaveForm::getSavedFormsJs($generator->getName(), $generator->giiInfoPath), yii\web\View::POS_END);
 $this->registerJs(SaveForm::jsFillForm(), yii\web\View::POS_END);
 echo $form->field($generator, 'savedForm')->dropDownList(
-        SaveForm::getSavedFormsListbox($generator->getName()), ['onchange' => 'fillForm(this.value)']
+        SaveForm::getSavedFormsListbox($generator->getName() , $generator->giiInfoPath), ['onchange' => 'fillForm(this.value)']
 );
 
 echo $form->field($generator, 'tableName');
@@ -25,9 +25,13 @@ echo $form->field($generator, 'ns');
 echo $form->field($generator, 'baseClass');
 echo $form->field($generator, 'db');
 echo $form->field($generator, 'generateRelations')->dropDownList([
-    Generator::RELATIONS_NONE => Yii::t('yii', 'No relations'),
-    Generator::RELATIONS_ALL => Yii::t('yii', 'All relations'),
-    Generator::RELATIONS_ALL_INVERSE => Yii::t('yii', 'All relations with inverse'),
+    Generator::RELATIONS_NONE => Yii::t('giiant', 'No relations'),
+    Generator::RELATIONS_ALL => Yii::t('giiant', 'All relations'),
+    Generator::RELATIONS_ALL_INVERSE => Yii::t('giiant', 'All relations with inverse'),
+]);
+echo $form->field($generator, 'generateJunctionRelationMode')->dropDownList([
+    Generator::JUNCTION_RELATION_VIA_TABLE => Yii::t('giiant', 'Via Table'),
+    Generator::JUNCTION_RELATION_VIA_MODEL => Yii::t('giiant', 'Via Model'),
 ]);
 //echo $form->field($generator, 'generateRelationsFromCurrentSchema')->checkbox();
 echo $form->field($generator, 'generateLabelsFromComments')->checkbox();

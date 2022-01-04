@@ -7,11 +7,11 @@
  */
 namespace schmunk42\giiant\generators\model;
 
+use schmunk42\giiant\helpers\SaveForm;
 use Yii;
 use yii\gii\CodeFile;
 use yii\helpers\Inflector;
 use yii\helpers\StringHelper;
-use schmunk42\giiant\helpers\SaveForm;
 
 /**
  * This generator will generate one or multiple ActiveRecord classes for the specified database table.
@@ -58,6 +58,11 @@ class Generator extends \yii\gii\generators\model\Generator
     public $useTimestampBehavior = true;
 
     /**
+     * @var string support user custom TimestampBehavior class
+     */
+    public $timestampBehaviorClass = 'yii\behaviors\TimestampBehavior';
+
+    /**
      * @var string the name of the column where the user who updated the entry is stored
      */
     public $createdAtColumn = 'created_at';
@@ -84,6 +89,11 @@ class Generator extends \yii\gii\generators\model\Generator
     public $languageCodeColumn = 'language';
 
     /**
+     * @var string prefix to prepend to the base model, setting "Base" will result in a model named "BasePost"
+     */
+    public $baseClassPrefix = '';
+
+    /**
      * @var string suffix to append to the base model, setting "Base" will result in a model named "PostBase"
      */
     public $baseClassSuffix = '';
@@ -95,6 +105,9 @@ class Generator extends \yii\gii\generators\model\Generator
     public $singularEntities = false;
 
     public $removeDuplicateRelations = false;
+
+    /** @var bool Cache relations data between model generation */
+    public $cacheRelationsData = true;
 
     /**
      * @var bool This indicates whether the generator should generate attribute hints by using the comments of the corresponding DB columns
@@ -108,7 +121,11 @@ class Generator extends \yii\gii\generators\model\Generator
 
     public $messageCategory = 'models';
 
+    public $giiInfoPath = '.gii';
+
     protected $classNames2;
+
+    protected static $_relationsCache = null;
 
     /**
      * {@inheritdoc}
@@ -142,7 +159,7 @@ class Generator extends \yii\gii\generators\model\Generator
                     'useTimestampBehavior',
                     'singularEntities',
                     ], 'boolean'],
-                [['languageTableName', 'languageCodeColumn', 'createdByColumn', 'updatedByColumn', 'createdAtColumn', 'updatedAtColumn', 'savedForm'], 'string'],
+                [['languageTableName', 'languageCodeColumn', 'createdByColumn', 'updatedByColumn', 'createdAtColumn', 'updatedAtColumn', 'savedForm', 'timestampBehaviorClass'], 'string'],
                 [['tablePrefix'], 'safe'],
             ]
         );
@@ -163,6 +180,7 @@ class Generator extends \yii\gii\generators\model\Generator
             'baseClass',
             'db',
             'generateRelations',
+            'generateJunctionRelationMode',
             //'generateRelationsFromCurrentSchema',
             'generateLabelsFromComments',
             'generateHintsFromComments',
@@ -183,6 +201,7 @@ class Generator extends \yii\gii\generators\model\Generator
             'useTimestampBehavior',
             'createdAtColumn',
             'updatedAtColumn',
+            'timestampBehaviorClass',
             ];
     }
 
@@ -216,6 +235,7 @@ class Generator extends \yii\gii\generators\model\Generator
                 'generateHintsFromComments' => 'This indicates whether the generator should generate attribute hints
                     by using the comments of the corresponding DB columns.',
                 'useTimestampBehavior' => 'Use <code>TimestampBehavior</code> for tables with column(s) for created at and/or updated at timestamps.',
+                'timestampBehaviorClass' => 'Use custom TimestampBehavior class.',
                 'createdAtColumn' => 'The column name where the created at timestamp is stored.',
                 'updatedAtColumn' => 'The column name where the updated at timestamp is stored.',
                 'useBlameableBehavior' => 'Use <code>BlameableBehavior</code> for tables with column(s) for created by and/or updated by user IDs.',
@@ -240,13 +260,22 @@ class Generator extends \yii\gii\generators\model\Generator
     public function generate()
     {
         $files = [];
-        $relations = $this->generateRelations();
+
+        if ($this->cacheRelationsData) {
+            if (static::$_relationsCache === null) {
+                static::$_relationsCache = $this->generateRelations();
+            }
+            $relations = static::$_relationsCache;
+        } else {
+            $relations = $this->generateRelations();
+        }
+
         $db = $this->getDbConnection();
 
         foreach ($this->getTableNames() as $tableName) {
             list($relations, $translations) = array_values($this->extractTranslations($tableName, $relations));
 //var_dump($relations,$tableName);exit;
-            $className = php_sapi_name() === 'cli'
+            $className = $this->modelClass === '' || php_sapi_name() === 'cli'
                 ? $this->generateClassName($tableName)
                 : $this->modelClass;
 
@@ -275,8 +304,8 @@ class Generator extends \yii\gii\generators\model\Generator
 
             $files[] = new CodeFile(
                 Yii::getAlias(
-                    '@'.str_replace('\\', '/', $this->ns)
-                ).'/base/'.$className.$this->baseClassSuffix.'.php',
+                    '@' . str_replace('\\', '/', $this->ns)
+                ) . '/base/' . $this->baseClassPrefix . $className . $this->baseClassSuffix . '.php',
                 $this->render('model.php', $params)
             );
 
@@ -310,10 +339,12 @@ class Generator extends \yii\gii\generators\model\Generator
             $suffix = str_replace(' ', '', $this->getName());
             $formDataDir = Yii::getAlias('@'.str_replace('\\', '/', $this->ns));
             $formDataFile = StringHelper::dirname($formDataDir)
-                    .'/gii'
+                    .'/'.$this->giiInfoPath.'/'
                     .'/'.$tableName.$suffix.'.json';
-
-            $formData = json_encode(SaveForm::getFormAttributesValues($this, $this->formAttributes()));
+            $generatorForm = (clone $this);
+            $generatorForm->tableName = $tableName;
+			$generatorForm->modelClass = $className;
+            $formData = json_encode(SaveForm::getFormAttributesValues($generatorForm, $this->formAttributes()), JSON_PRETTY_PRINT);
             $files[] = new CodeFile($formDataFile, $formData);
         }
 
@@ -468,10 +499,7 @@ class Generator extends \yii\gii\generators\model\Generator
                 $const_name = str_replace(['-', '_', ' '], '_', $const_name);
                 $const_name = preg_replace('/[^A-Z0-9_]/', '', $const_name);
 
-                $label = ucwords(
-                    trim(strtolower(str_replace(['-', '_'], ' ', preg_replace('/(?<![A-Z])[A-Z]/', ' \0', $value))))
-                );
-                $label = preg_replace('/\s+/', ' ', $label);
+                $label = Inflector::camel2words($value);
 
                 $enum[$column->name]['values'][] = [
                     'value' => $value,
@@ -674,11 +702,13 @@ class Generator extends \yii\gii\generators\model\Generator
 
         if ($this->useTimestampBehavior && ($createdAt || $updatedAt)) {
             return [
-                'createdAtAttribute' => $createdAt,
-                'updatedAtAttribute' => $updatedAt,
+                'createdAtAttribute'     => $createdAt,
+                'updatedAtAttribute'     => $updatedAt,
+                'timestampBehaviorClass' => $this->timestampBehaviorClass,
             ];
         }
 
         return [];
     }
 }
+

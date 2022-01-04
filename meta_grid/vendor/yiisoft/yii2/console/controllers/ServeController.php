@@ -12,7 +12,7 @@ use yii\console\Controller;
 use yii\helpers\Console;
 
 /**
- * Runs PHP built-in web server
+ * Runs PHP built-in web server.
  *
  * In order to access server from remote machines use 0.0.0.0:8000. That is especially useful when running server in
  * a virtual machine.
@@ -36,14 +36,14 @@ class ServeController extends Controller
      */
     public $docroot = '@app/web';
     /**
-     * @var string path to router script.
+     * @var string path or [path alias](guide:concept-aliases) to router script.
      * See https://secure.php.net/manual/en/features.commandline.webserver.php
      */
     public $router;
 
 
     /**
-     * Runs PHP built-in web server
+     * Runs PHP built-in web server.
      *
      * @param string $address address to serve on. Either "host" or "host:port".
      *
@@ -52,6 +52,7 @@ class ServeController extends Controller
     public function actionIndex($address = 'localhost')
     {
         $documentRoot = Yii::getAlias($this->docroot);
+        $router = $this->router !== null ? Yii::getAlias($this->router) : null;
 
         if (strpos($address, ':') === false) {
             $address = $address . ':' . $this->port;
@@ -67,23 +68,23 @@ class ServeController extends Controller
             return self::EXIT_CODE_ADDRESS_TAKEN_BY_ANOTHER_PROCESS;
         }
 
-        if ($this->router !== null && !file_exists($this->router)) {
-            $this->stdout("Routing file \"$this->router\" does not exist.\n", Console::FG_RED);
+        if ($this->router !== null && !file_exists($router)) {
+            $this->stdout("Routing file \"$router\" does not exist.\n", Console::FG_RED);
             return self::EXIT_CODE_NO_ROUTING_FILE;
         }
 
         $this->stdout("Server started on http://{$address}/\n");
         $this->stdout("Document root is \"{$documentRoot}\"\n");
         if ($this->router) {
-            $this->stdout("Routing file is \"$this->router\"\n");
+            $this->stdout("Routing file is \"$router\"\n");
         }
         $this->stdout("Quit the server with CTRL-C or COMMAND-C.\n");
 
-        passthru('"' . PHP_BINARY . '"' . " -S {$address} -t \"{$documentRoot}\" $this->router");
+        passthru('"' . PHP_BINARY . '"' . " -S {$address} -t \"{$documentRoot}\" $router");
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function options($actionID)
     {
@@ -95,7 +96,7 @@ class ServeController extends Controller
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      * @since 2.0.8
      */
     public function optionAliases()

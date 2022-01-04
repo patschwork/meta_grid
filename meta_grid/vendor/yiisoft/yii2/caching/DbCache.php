@@ -10,6 +10,7 @@ namespace yii\caching;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\Connection;
+use yii\db\PdoValue;
 use yii\db\Query;
 use yii\di\Instance;
 
@@ -57,12 +58,20 @@ class DbCache extends Cache
      * );
      * ```
      *
+     * For MSSQL:
+     * ```php
+     * CREATE TABLE cache (
+     *     id VARCHAR(128) NOT NULL PRIMARY KEY,
+     *     expire INT(11),
+     *     data VARBINARY(MAX)
+     * );
+     * ```
+     *
      * where 'BLOB' refers to the BLOB-type of your preferred DBMS. Below are the BLOB type
      * that can be used for some popular DBMS:
      *
      * - MySQL: LONGBLOB
      * - PostgreSQL: BYTEA
-     * - MSSQL: BLOB
      *
      * When using DbCache in a production server, we recommend you create a DB index for the 'expire'
      * column in the cache table to improve the performance.
@@ -74,6 +83,8 @@ class DbCache extends Cache
      * This number should be between 0 and 1000000. A value 0 meaning no GC will be performed at all.
      */
     public $gcProbability = 100;
+
+    protected $isVarbinaryDataField;
 
 
     /**
@@ -101,7 +112,7 @@ class DbCache extends Cache
     {
         $key = $this->buildKey($key);
 
-        $query = new Query;
+        $query = new Query();
         $query->select(['COUNT(*)'])
             ->from($this->cacheTable)
             ->where('[[id]] = :id AND ([[expire]] = 0 OR [[expire]] >' . time() . ')', [':id' => $key]);
@@ -125,8 +136,8 @@ class DbCache extends Cache
      */
     protected function getValue($key)
     {
-        $query = new Query;
-        $query->select(['data'])
+        $query = new Query();
+        $query->select([$this->getDataFieldName()])
             ->from($this->cacheTable)
             ->where('[[id]] = :id AND ([[expire]] = 0 OR [[expire]] >' . time() . ')', [':id' => $key]);
         if ($this->db->enableQueryCache) {
@@ -137,6 +148,7 @@ class DbCache extends Cache
 
             return $result;
         }
+
         return $query->createCommand($this->db)->queryScalar();
     }
 
@@ -150,8 +162,8 @@ class DbCache extends Cache
         if (empty($keys)) {
             return [];
         }
-        $query = new Query;
-        $query->select(['id', 'data'])
+        $query = new Query();
+        $query->select(['id', $this->getDataFieldName()])
             ->from($this->cacheTable)
             ->where(['id' => $keys])
             ->andWhere('([[expire]] = 0 OR [[expire]] > ' . time() . ')');
@@ -169,7 +181,11 @@ class DbCache extends Cache
             $results[$key] = false;
         }
         foreach ($rows as $row) {
-            $results[$row['id']] = $row['data'];
+            if (is_resource($row['data']) && get_resource_type($row['data']) === 'stream') {
+                $results[$row['id']] = stream_get_contents($row['data']);
+            } else {
+                $results[$row['id']] = $row['data'];
+            }
         }
 
         return $results;
@@ -186,21 +202,23 @@ class DbCache extends Cache
      */
     protected function setValue($key, $value, $duration)
     {
-        $result = $this->db->noCache(function (Connection $db) use ($key, $value, $duration) {
-            $command = $db->createCommand()
-                ->update($this->cacheTable, [
+        try {
+            $this->db->noCache(function (Connection $db) use ($key, $value, $duration) {
+                $db->createCommand()->upsert($this->cacheTable, [
+                    'id' => $key,
                     'expire' => $duration > 0 ? $duration + time() : 0,
-                    'data' => [$value, \PDO::PARAM_LOB],
-                ], ['id' => $key]);
-            return $command->execute();
-        });
+                    'data' => $this->getDataFieldValue($value),
+                ])->execute();
+            });
 
-        if ($result) {
             $this->gc();
 
             return true;
+        } catch (\Exception $e) {
+            Yii::warning("Unable to update or insert cache data: {$e->getMessage()}", __METHOD__);
+
+            return false;
         }
-        return $this->addValue($key, $value, $duration);
     }
 
     /**
@@ -222,12 +240,14 @@ class DbCache extends Cache
                     ->insert($this->cacheTable, [
                         'id' => $key,
                         'expire' => $duration > 0 ? $duration + time() : 0,
-                        'data' => [$value, \PDO::PARAM_LOB],
+                        'data' => $this->getDataFieldValue($value),
                     ])->execute();
             });
 
             return true;
         } catch (\Exception $e) {
+            Yii::warning("Unable to insert cache data: {$e->getMessage()}", __METHOD__);
+
             return false;
         }
     }
@@ -256,7 +276,8 @@ class DbCache extends Cache
      */
     public function gc($force = false)
     {
-        if ($force || mt_rand(0, 1000000) < $this->gcProbability) {
+
+        if ($force || random_int(0, 1000000) < $this->gcProbability) {
             $this->db->createCommand()
                 ->delete($this->cacheTable, '[[expire]] > 0 AND [[expire]] < ' . time())
                 ->execute();
@@ -275,5 +296,36 @@ class DbCache extends Cache
             ->execute();
 
         return true;
+    }
+
+    /**
+     * @return bool whether field is MSSQL varbinary
+     * @since 2.0.42
+     */
+    protected function isVarbinaryDataField()
+    {
+        if ($this->isVarbinaryDataField === null) {
+            $this->isVarbinaryDataField = in_array($this->db->getDriverName(), ['sqlsrv', 'dblib']) &&
+                $this->db->getTableSchema($this->cacheTable)->columns['data']->dbType === 'varbinary';
+        }
+        return $this->isVarbinaryDataField;
+    }
+
+    /**
+     * @return string `data` field name converted for usage in MSSQL (if needed)
+     * @since 2.0.42
+     */
+    protected function getDataFieldName()
+    {
+        return $this->isVarbinaryDataField() ? 'convert(nvarchar(max),[data]) data' : 'data';
+    }
+
+    /**
+     * @return PdoValue PdoValue or direct $value for usage in MSSQL
+     * @since 2.0.42
+     */
+    protected function getDataFieldValue($value)
+    {
+        return $this->isVarbinaryDataField() ? $value : new PdoValue($value, \PDO::PARAM_LOB);
     }
 }

@@ -16,10 +16,8 @@ class RegistrationCest
 
     public function _after(FunctionalTester $I)
     {
-        \Yii::$container->set(Module::className(), [
-            'enableEmailConfirmation' => true,
-            'generatePasswords' => false,
-        ]);
+        Yii::$app->getModule('user')->enableEmailConfirmation = true;
+        Yii::$app->getModule('user')->generatePasswords = true;
     }
 
     /**
@@ -29,10 +27,8 @@ class RegistrationCest
      */
     public function testRegistration(FunctionalTester $I)
     {
-        \Yii::$container->set(Module::className(), [
-            'enableEmailConfirmation' => false,
-            'generatePasswords' => false,
-        ]);
+        Yii::$app->getModule('user')->enableEmailConfirmation = false;
+        Yii::$app->getModule('user')->generatePasswords = false;
 
         $I->amOnRoute('/user/registration/register');
 
@@ -50,7 +46,7 @@ class RegistrationCest
         $I->see(Html::encode('This email address has already been taken'));
 
         $this->register($I, 'tester@example.com', 'tester', 'tester');
-        $I->see('Your account has been created and a message with further instructions has been sent to your email');
+        $I->see('Your account has been created');
         $user = $I->grabRecord(User::className(), ['email' => 'tester@example.com']);
         $I->assertTrue($user->isConfirmed);
 
@@ -68,9 +64,7 @@ class RegistrationCest
      */
     public function testRegistrationWithConfirmation(FunctionalTester $I)
     {
-        \Yii::$container->set(Module::className(), [
-            'enableEmailConfirmation' => true,
-        ]);
+        Yii::$app->getModule('user')->enableEmailConfirmation = true;
         $I->amOnRoute('/user/registration/register');
         $this->register($I, 'tester@example.com', 'tester', 'tester');
         $I->see('Your account has been created and a message with further instructions has been sent to your email');
@@ -79,7 +73,7 @@ class RegistrationCest
         /** @var yii\swiftmailer\Message $message */
         $message = $I->grabLastSentEmail();
         $I->assertArrayHasKey($user->email, $message->getTo());
-        $I->assertContains(Html::encode($token->getUrl()), utf8_encode(quoted_printable_decode($message->getSwiftMessage()->toString())));
+        $I->assertStringContainsString(Html::encode($token->getUrl()), utf8_encode(quoted_printable_decode($message->getSwiftMessage()->toString())));
         $I->assertFalse($user->isConfirmed);
     }
 
@@ -90,19 +84,17 @@ class RegistrationCest
      */
     public function testRegistrationWithoutPassword(FunctionalTester $I)
     {
-        \Yii::$container->set(Module::className(), [
-            'enableEmailConfirmation' => false,
-            'generatePasswords' => true,
-        ]);
+        Yii::$app->getModule('user')->enableEmailConfirmation = false;
+        Yii::$app->getModule('user')->generatePasswords = true;
         $I->amOnRoute('/user/registration/register');
         $this->register($I, 'tester@example.com', 'tester');
-        $I->see('Your account has been created and a message with further instructions has been sent to your email');
+        $I->see('Your account has been created');
         $user = $I->grabRecord(User::className(), ['email' => 'tester@example.com']);
         $I->assertEquals('tester', $user->username);
         /** @var yii\swiftmailer\Message $message */
         $message = $I->grabLastSentEmail();
         $I->assertArrayHasKey($user->email, $message->getTo());
-        $I->assertContains('We have generated a password for you', utf8_encode(quoted_printable_decode($message->getSwiftMessage()->toString())));
+        $I->assertStringContainsString('We have generated a password for you', utf8_encode(quoted_printable_decode($message->getSwiftMessage()->toString())));
     }
 
     protected function register(FunctionalTester $I, $email, $username = null, $password = null) {

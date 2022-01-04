@@ -14,6 +14,7 @@ namespace Da\User\Model;
 use Da\User\Traits\AuthManagerAwareTrait;
 use Da\User\Validator\RbacRuleNameValidator;
 use Da\User\Validator\RbacRuleValidator;
+use Yii;
 use yii\base\Model;
 
 class Rule extends Model
@@ -52,9 +53,20 @@ class Rule extends Model
         return [
             [['name', 'className'], 'trim'],
             [['name', 'className'], 'required'],
-            [['name', 'previousName'], 'match', 'pattern' => '/^[\w][\w-.:]+[\w]$/'],
+            [['name', 'previousName'], 'match', 'pattern' => '/^\w[\w.:\-]+\w$/'],
             [['name'], RbacRuleNameValidator::class, 'previousName' => $this->previousName],
             [['className'], RbacRuleValidator::class],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'name' => Yii::t('usuario', 'Name'),
+            'className' => Yii::t('usuario', 'Rule class name'),
         ];
     }
 }

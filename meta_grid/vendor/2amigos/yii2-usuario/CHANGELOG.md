@@ -1,6 +1,76 @@
 # CHANGELOG
 
-## 1.1.1 - Work in progress
+## work in progress
+
+## 1.5.1 April 5, 2020
+ - Fix #370: Extending view fix (effsoft)
+ - Fix #306: Add event for failed login (ivan-cc)
+ - Fix #347: Only pass fields known to User model in registrationControl->actionRegister() (BillHeaton)
+ - Fix #346: Update ReCaptcha guide to not use AJAX  (BillHeaton)
+ - Fix #345: Update ReCaptcha guide to add scenarios() in recoveryForm  (BillHeaton)
+ - Fix #307: Fix French translation (arollmann)
+ - Fix #316: Fix new response from Google OAuth Api (Julian-B90)
+ - Fix #321: Fix new response from LinkedIn OAuth Api (tonydspaniard) 
+ - Fix #322: Fix boolean values in migrations for SQL server (tsdogs)
+ - Enh #325: Added support for sqlite3 (santilin)
+ - Fix #326: Fix rule for the user auth_tf_enabled field (santilin)
+ - Fix #290: Fix wrong email message for resending confirmation (tonydspaniard)
+ - Enh #269: Added help documentation to console commands (tonydspaniard)
+ - Fix #244: Fix forced inclusion of a suggested class (tonydspaniard)
+ - Fix user event triggering in admin controller (maxxer)
+ - Enh #331: Added Ukrainian translations (kwazaro)
+ - Enh #324: Added option to restrict user assignments to roles only (CheckeredFlag)
+ - Enh #224: Added option to require consent (eseperio)
+ - Enh: Added classMap for MailService (necrox87)
+
+## 1.5.0 April 19, 2019
+ - Fix: Fix condition in EmailChangeService (it was always false) (borisaeric)
+ - Fix #198: Updated translations by quique, bizley, TonisOrmisson, guogan, Dezinger, maxxer, wautvda, mrbig00, fabiomlferreira, WeeSee
+ - Fix #209: Doc fix. allowAccountDelete default value is false (Dezinger)
+ - Fix #211: Migration boolean default value set to FALSE instead 0 (Dezinger)
+ - Fix #213: Migration sql syntax fix (Dezinger)
+ - Ehn #131: 2FA libraries now optional (maxxer)
+ - Ehn #187: Add GDPR features (Eseperio)
+ - Enh #184: Add `last-login-ip` capture capability (kartik-v)
+ - Enh: Changed `View::render()` calls in views to use absolute paths (ajmedway)
+ - Fix #169: Fix bug in ReCaptchaComponent (BuTaMuH)
+ - Fix #168: Fix spelling in russian language (EvgenyOrekhov)
+ - Fix #195: UserCreateService: check if we're from web before setting flash message (maxxer)
+ - Enh: Improvements to the admin responsive design (wautvda)
+ - Enh: Add controller module class reference (TonisOrmisson)
+ - Enh: Replace the deprecated InvalidParamException in ClassMapHelper (TonisOrmisson)
+ - Fix #242: Add POST filter for `admin/force-password-change` action (bscheshirwork)
+ - Enh #251: Use `asset-packagist` instead of `fxp-asset` if you run it as a module without having a project around (bscheshirwork)
+ - Fix #252: Delete check for unexpected property `allowPasswordRecovery` for resend email by admin (bscheshirwork)
+ - Fix #254: Rename `GDPR` properties to `lowerCamelCase` style (bscheshirwork)
+ - Enh #253: Add PHPDoc for events class (bscheshirwork)
+ - Fix #258: Rename `GDPR` delete action to `lowerCamelCase`/`dash` style (bscheshirwork)
+ - Fix #271: Add closure support for `from` email address; Change default sender to `supportEmail` (bscheshirwork)
+ - Fix #276: Fix missing translatable strings
+ - Enh #249: Show message `email send if possible` any time on reset password request (bscheshirwork)
+ - Enh #282: Allows customization of controller namespace (maxxer)
+ - Enh #303: Added French translation (pde159)
+ - Fix #304: Fixed broken regex character class (CheckeredFlag)
+
+## 1.1.4 - February 19, 2018
+- Enh: Check enableEmailConfirmation on registration (faenir)
+- Fix #154: Fix DateTime constructor with Unix timestamps (tonydspaniard)
+
+## 1.1.2-3 - February 9, 2018
+- Bug: Bugfix for Model events UserEvent::EVENT_BEFORE_CONFIRMATION and UserEvent::EVENT_AFTER_CONFIRMATION (ajmedway)
+- Bug: Bugfix for Model events UserEvent::EVENT_BEFORE_CREATE and UserEvent::EVENT_AFTER_CREATE (ajmedway)
+- Enh #137: Added the ability to make `enableAutologin` configurable (pappfer)
+- Enh #135: Added Estonian translation (tonisormisson)
+- Bug #133: Fix user search returning no results in admin page (phiurs)
+- Bug #125: Fix validation in non-ajax requests (faenir)
+- Bug #122: Fix wrong email message for email address change (liviuk2)
+- Bug #102: Implemented password expiration feature (maxxer)
+- Enh #143: Introduced "conflict" configuration in composer.json (maxxer)
+- Enh #145: Allowed the `+` sign in username (maxxer)
+- Bug #9:   Documentation about migration from Dektrium tools (maxxer)
+- Bug #110: Honor `enableFlashMessages` in `PasswordRecoveryService` (maxxer)
+
+## 1.1.1 - November 27, 2017
 - Bug #115: Convert client_id to string because pgsql fail with type convertion (Dezinger)
 - Bug #119: Security fix: add AccessControl to RuleController (Dezinger)
 - Enh #120: 2FA i18n russian translation (Dezinger)

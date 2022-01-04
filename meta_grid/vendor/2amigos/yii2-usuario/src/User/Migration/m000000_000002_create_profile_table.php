@@ -21,7 +21,7 @@ class m000000_000002_create_profile_table extends Migration
         $this->createTable(
             '{{%profile}}',
             [
-                'user_id' => $this->primaryKey(),
+                'user_id' => $this->integer()->notNull(),
                 'name' => $this->string(255),
                 'public_email' => $this->string(255),
                 'gravatar_email' => $this->string(255),
@@ -34,9 +34,11 @@ class m000000_000002_create_profile_table extends Migration
             MigrationHelper::resolveTableOptions($this->db->driverName)
         );
 
+        $this->addPrimaryKey('{{%profile_pk}}', '{{%profile}}', 'user_id');
+
         $restrict = MigrationHelper::isMicrosoftSQLServer($this->db->driverName) ? 'NO ACTION' : 'RESTRICT';
 
-        // $this->addForeignKey('fk_profile_user', '{{%profile}}', 'user_id', '{{%user}}', 'id', 'CASCADE', $restrict);
+        $this->addForeignKey('fk_profile_user', '{{%profile}}', 'user_id', '{{%user}}', 'id', 'CASCADE', $restrict);
     }
 
     public function safeDown()

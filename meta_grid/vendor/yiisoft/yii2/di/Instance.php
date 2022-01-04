@@ -7,6 +7,7 @@
 
 namespace yii\di;
 
+use Exception;
 use Yii;
 use yii\base\InvalidConfigException;
 
@@ -59,25 +60,32 @@ class Instance
      * @var string the component ID, class name, interface name or alias name
      */
     public $id;
+    /**
+     * @var bool if null should be returned instead of throwing an exception
+     */
+    public $optional;
 
 
     /**
      * Constructor.
      * @param string $id the component ID
+     * @param bool $optional if null should be returned instead of throwing an exception
      */
-    protected function __construct($id)
+    protected function __construct($id, $optional = false)
     {
         $this->id = $id;
+        $this->optional = $optional;
     }
 
     /**
      * Creates a new Instance object.
      * @param string $id the component ID
+     * @param bool $optional if null should be returned instead of throwing an exception
      * @return Instance the new Instance object.
      */
-    public static function of($id)
+    public static function of($id, $optional = false)
     {
-        return new static($id);
+        return new static($id, $optional);
     }
 
     /**
@@ -94,9 +102,9 @@ class Instance
      * use yii\db\Connection;
      *
      * // returns Yii::$app->db
-     * $db = Instance::ensure('db', Connection::className());
+     * $db = Instance::ensure('db', Connection::class);
      * // returns an instance of Connection using the given configuration
-     * $db = Instance::ensure(['dsn' => 'sqlite:path/to/my.db'], Connection::className());
+     * $db = Instance::ensure(['dsn' => 'sqlite:path/to/my.db'], Connection::class);
      * ```
      *
      * @param object|string|array|static $reference an object or a reference to the desired object.
@@ -119,9 +127,9 @@ class Instance
             $component = $container->get($class, [], $reference);
             if ($type === null || $component instanceof $type) {
                 return $component;
-            } else {
-                throw new InvalidConfigException('Invalid data type: ' . $class .'. ' . $type . ' is expected.');
             }
+
+            throw new InvalidConfigException('Invalid data type: ' . $class . '. ' . $type . ' is expected.');
         } elseif (empty($reference)) {
             throw new InvalidConfigException('The required component is not specified.');
         }
@@ -140,9 +148,9 @@ class Instance
             }
             if ($type === null || $component instanceof $type) {
                 return $component;
-            } else {
-                throw new InvalidConfigException('"' . $reference->id . '" refers to a ' . get_class($component) . " component. $type is expected.");
             }
+
+            throw new InvalidConfigException('"' . $reference->id . '" refers to a ' . get_class($component) . " component. $type is expected.");
         }
 
         $valueType = is_object($reference) ? get_class($reference) : gettype($reference);
@@ -157,18 +165,25 @@ class Instance
      */
     public function get($container = null)
     {
-        if ($container) {
-            return $container->get($this->id);
-        }
-        if (Yii::$app && Yii::$app->has($this->id)) {
-            return Yii::$app->get($this->id);
-        } else {
+        try {
+            if ($container) {
+                return $container->get($this->id);
+            }
+            if (Yii::$app && Yii::$app->has($this->id)) {
+                return Yii::$app->get($this->id);
+            }
+
             return Yii::$container->get($this->id);
+        } catch (Exception $e) {
+            if ($this->optional) {
+                return null;
+            }
+            throw $e;
         }
     }
 
     /**
-     * Restores class state after using `var_export()`
+     * Restores class state after using `var_export()`.
      *
      * @param array $state
      * @return Instance

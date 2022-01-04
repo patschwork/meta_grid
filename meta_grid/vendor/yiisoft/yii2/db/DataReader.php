@@ -37,18 +37,18 @@ use yii\base\InvalidCallException;
  * Doing it the second time will throw an exception.
  *
  * It is possible to use a specific mode of data fetching by setting
- * [[fetchMode]]. See the [PHP manual](http://www.php.net/manual/en/function.PDOStatement-setFetchMode.php)
+ * [[fetchMode]]. See the [PHP manual](https://secure.php.net/manual/en/function.PDOStatement-setFetchMode.php)
  * for more details about possible fetch mode.
  *
- * @property int $columnCount The number of columns in the result set. This property is read-only.
- * @property int $fetchMode Fetch mode. This property is write-only.
- * @property bool $isClosed Whether the reader is closed or not. This property is read-only.
- * @property int $rowCount Number of rows contained in the result. This property is read-only.
+ * @property-read int $columnCount The number of columns in the result set. This property is read-only.
+ * @property-write int $fetchMode Fetch mode. This property is write-only.
+ * @property-read bool $isClosed Whether the reader is closed or not. This property is read-only.
+ * @property-read int $rowCount Number of rows contained in the result. This property is read-only.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
  */
-class DataReader extends \yii\base\Object implements \Iterator, \Countable
+class DataReader extends \yii\base\BaseObject implements \Iterator, \Countable
 {
     /**
      * @var \PDOStatement the PDOStatement associated with the command
@@ -80,7 +80,7 @@ class DataReader extends \yii\base\Object implements \Iterator, \Countable
      * should match the case of the column, as returned by the driver.
      * @param mixed $value Name of the PHP variable to which the column will be bound.
      * @param int $dataType Data type of the parameter
-     * @see http://www.php.net/manual/en/function.PDOStatement-bindColumn.php
+     * @see https://secure.php.net/manual/en/function.PDOStatement-bindColumn.php
      */
     public function bindColumn($column, &$value, $dataType = null)
     {
@@ -92,9 +92,10 @@ class DataReader extends \yii\base\Object implements \Iterator, \Countable
     }
 
     /**
-     * Set the default fetch mode for this statement
+     * Set the default fetch mode for this statement.
+     *
      * @param int $mode fetch mode
-     * @see http://www.php.net/manual/en/function.PDOStatement-setFetchMode.php
+     * @see https://secure.php.net/manual/en/function.PDOStatement-setFetchMode.php
      */
     public function setFetchMode($mode)
     {

@@ -8,8 +8,8 @@
 namespace yii\data;
 
 use Yii;
+use yii\base\BaseObject;
 use yii\base\InvalidConfigException;
-use yii\base\Object;
 use yii\helpers\Html;
 use yii\helpers\Inflector;
 use yii\web\Request;
@@ -71,13 +71,13 @@ use yii\web\Request;
  * @property array $attributeOrders Sort directions indexed by attribute names. Sort direction can be either
  * `SORT_ASC` for ascending order or `SORT_DESC` for descending order. Note that the type of this property
  * differs in getter and setter. See [[getAttributeOrders()]] and [[setAttributeOrders()]] for details.
- * @property array $orders The columns (keys) and their corresponding sort directions (values). This can be
- * passed to [[\yii\db\Query::orderBy()]] to construct a DB query. This property is read-only.
+ * @property-read array $orders The columns (keys) and their corresponding sort directions (values). This can
+ * be passed to [[\yii\db\Query::orderBy()]] to construct a DB query. This property is read-only.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
  */
-class Sort extends Object
+class Sort extends BaseObject
 {
     /**
      * @var bool whether the sorting can be applied to multiple attributes simultaneously.
@@ -185,6 +185,12 @@ class Sort extends Object
      * the `urlManager` application component will be used.
      */
     public $urlManager;
+    /**
+     * @var int Allow to control a value of the fourth parameter which will be
+     * passed to [[ArrayHelper::multisort()]]
+     * @since 2.0.33
+     */
+    public $sortFlags = SORT_REGULAR;
 
 
     /**
@@ -257,8 +263,7 @@ class Sort extends Object
                 $params = $request instanceof Request ? $request->getQueryParams() : [];
             }
             if (isset($params[$this->sortParam])) {
-                $attributes = $this->parseSortParam($params[$this->sortParam]);
-                foreach ($attributes as $attribute) {
+                foreach ($this->parseSortParam($params[$this->sortParam]) as $attribute) {
                     $descending = false;
                     if (strncmp($attribute, '-', 1) === 0) {
                         $descending = true;
@@ -337,7 +342,7 @@ class Sort extends Object
     /**
      * Returns the sort direction of the specified attribute in the current request.
      * @param string $attribute the attribute name
-     * @return bool|null Sort direction of the attribute. Can be either `SORT_ASC`
+     * @return int|null Sort direction of the attribute. Can be either `SORT_ASC`
      * for ascending order or `SORT_DESC` for descending order. Null is returned
      * if the attribute is invalid or does not need to be sorted.
      */
@@ -412,9 +417,9 @@ class Sort extends Object
         $urlManager = $this->urlManager === null ? Yii::$app->getUrlManager() : $this->urlManager;
         if ($absolute) {
             return $urlManager->createAbsoluteUrl($params);
-        } else {
-            return $urlManager->createUrl($params);
         }
+
+        return $urlManager->createUrl($params);
     }
 
     /**

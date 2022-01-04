@@ -97,7 +97,7 @@ class CompareValidator extends Validator
 
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function init()
     {
@@ -135,7 +135,7 @@ class CompareValidator extends Validator
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function validateAttribute($model, $attribute)
     {
@@ -146,6 +146,9 @@ class CompareValidator extends Validator
             return;
         }
         if ($this->compareValue !== null) {
+            if ($this->compareValue instanceof \Closure) {
+                $this->compareValue = call_user_func($this->compareValue);
+            }
             $compareLabel = $compareValue = $compareValueOrAttribute = $this->compareValue;
         } else {
             $compareAttribute = $this->compareAttribute === null ? $attribute . '_repeat' : $this->compareAttribute;
@@ -163,12 +166,15 @@ class CompareValidator extends Validator
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function validateValue($value)
     {
         if ($this->compareValue === null) {
             throw new InvalidConfigException('CompareValidator::compareValue must be set.');
+        }
+        if ($this->compareValue instanceof \Closure) {
+            $this->compareValue = call_user_func($this->compareValue);
         }
         if (!$this->compareValues($this->operator, $this->type, $value, $this->compareValue)) {
             return [$this->message, [
@@ -176,9 +182,9 @@ class CompareValidator extends Validator
                 'compareValue' => $this->compareValue,
                 'compareValueOrAttribute' => $this->compareValue,
             ]];
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -221,18 +227,22 @@ class CompareValidator extends Validator
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function clientValidateAttribute($model, $attribute, $view)
     {
+        if ($this->compareValue != null && $this->compareValue instanceof \Closure) {
+            $this->compareValue = call_user_func($this->compareValue);
+        }
+
         ValidationAsset::register($view);
         $options = $this->getClientOptions($model, $attribute);
 
-        return 'yii.validation.compare(value, messages, ' . json_encode($options, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . ');';
+        return 'yii.validation.compare(value, messages, ' . json_encode($options, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . ', $form);';
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getClientOptions($model, $attribute)
     {
@@ -248,6 +258,7 @@ class CompareValidator extends Validator
             $compareAttribute = $this->compareAttribute === null ? $attribute . '_repeat' : $this->compareAttribute;
             $compareValue = $model->getAttributeLabel($compareAttribute);
             $options['compareAttribute'] = Html::getInputId($model, $compareAttribute);
+            $options['compareAttributeName'] = Html::getInputName($model, $compareAttribute);
             $compareLabel = $compareValueOrAttribute = $model->getAttributeLabel($compareAttribute);
         }
 

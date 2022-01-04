@@ -30,28 +30,28 @@ to the require section of your `composer.json` file.
 Commands
 --------
 
-**/!\ EXPERIMENTAL /!\**
+### `yii db`
+
+```
+DESCRIPTION
+
+MySQL database maintenance command.
 
 
-Only include specific tables (schema & data dump) 
+SUB-COMMANDS
 
-* `yii db/x-dump --includeTables=table_1,table,2,table_3,...`
+- db/create               Create MySQL database
+- db/destroy              Remove the current schema
+- db/dump                 Dumps current database tables to runtime folder
+- db/export               export data tables, without logs and caches
+- db/import
+- db/index (default)      Displays tables in database
+- db/wait-for-connection
 
+To see the detailed information about individual sub-commands, enter:
 
-Only include specific tables (data dump)
-
-* `yii db/x-dump --includeTables=table_1,table,2,table_3,... --dataOnly=1`
-
-
-Dump all tables excluding specific tables (schema & data dump) 
-
-* `yii db/x-dump --excludeTables=table_1,table,2,table_3,...`
-
-
-Dump all tables excluding specific tables (data dump) 
-
-* `yii db/x-dump --excludeTables=table_1,table,2,table_3,... --dataOnly=1`
-
+  yii help <sub-command>
+```
 
 
 Usage
@@ -136,7 +136,16 @@ This migrations adds the available access check columns to your database table(s
 
 - *(update your cruds)*
 
+### RBAC permissions
 
+Permissions for selections
+
+- `access.availableDomains:any`
+
+Permissions to set default values
+
+- `access.defaults.accessDomain:global`
+- `access.defaults.updateDelete:<ROLE>`
 
 **Option 2:**
 

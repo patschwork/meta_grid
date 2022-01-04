@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000113/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000113" context="Bugfix">
+
+		<sql splitStatements="false">
+		<![CDATA[
+		CREATE TRIGGER TRIG_user_DELETE BEFORE DELETE
+		ON "user"
+		BEGIN
+		   DELETE FROM token WHERE user_id=old.id;
+		   DELETE FROM profile WHERE user_id=old.id;
+		   DELETE FROM auth_assignment WHERE user_id=old.id;
+		END;
+		]]>
+		</sql>
+
+		<comment>
+		<![CDATA[
+		Add new trigger to delete related rows if user will be deleted.
+		Used objects:
+			TRIG_user_DELETE
+		Phabricator tasks:
+			T81
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

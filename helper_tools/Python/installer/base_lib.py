@@ -3,7 +3,7 @@
 # Instllation or update meta#grid
 # on every OS
 # Base helper library
-# v1.3
+# v1.4
 
 import os
 import subprocess
@@ -27,7 +27,7 @@ import time
 from xml.dom import minidom
 
 def myVersion():
-    return "1.3"
+    return "1.4"
 
 def bla(msg, action=None, withLooging=True, logfilepath="", logfile=""):
     colorama.init()
