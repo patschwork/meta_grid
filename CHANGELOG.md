@@ -1,3 +1,10 @@
+# 2.5
+- [T81 | GitHub Issue #4]   Bugfix -> User can't be deleted
+- [T157]                    Yii2 framework update 2.0.12 to 2.0.43
+- [T175]                    Bugfix
+- [T185]                    Bugfix
+- [T188]                    Support higher PHP versions (up to PHP 7.4)
+----------------------------------------------------------------------------------------------------
 # 2.4.5
 - [T182]
 - [T181]
