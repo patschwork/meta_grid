@@ -1,4 +1,4 @@
-![meta#grid logo]([https://blog.meta-grid.com/wp-content/uploads/2020/11/logo_v2_01_green_blue_middle.svg_.png](https://blog.meta-grid.com/wp-content/uploads/2022/06/base_logo_transparent_background.png))
+![meta#grid logo](https://blog.meta-grid.com/wp-content/uploads/2022/06/base_logo_transparent_background.png)
 
 # meta#grid
 meta#grid is a meta data tooling/framework for BI and data warehousing.
