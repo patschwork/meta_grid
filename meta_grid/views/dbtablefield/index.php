@@ -117,8 +117,8 @@ else
 								$html_btn = Html::a('<span style="color: silver;" class="glyphicon glyphicon-pencil"></span>', $url, [
 										'title' => Yii::t('app', 'Update dbtablefield individual'),
 								]);
-		
-								$db_table_show_buttons_for_different_object_type_updates = \vendor\meta_grid\helper\Utils::get_app_config("db_table_show_buttons_for_different_object_type_updates");
+								$Utils = new \vendor\meta_grid\helper\Utils();
+								$db_table_show_buttons_for_different_object_type_updates = $Utils->get_app_config("db_table_show_buttons_for_different_object_type_updates");
 								if ($db_table_show_buttons_for_different_object_type_updates == 1) 
 								{
 									return $html_btn;
@@ -207,42 +207,11 @@ else
             // 'is_PrimaryKey:boolean',
             // 'is_BusinessKey:boolean',
             // 'is_GDPR_relevant:boolean',
-/*            [
-             'label' => Yii::t('app', 'Object Persistence Method'),
-             'value' => function($model) {
-             		return $model->fk_object_persistence_method_id == "" ? $model->fk_object_persistence_method_id : (isset($_GET["searchShow"]) ? $model->fkObjectPersistenceMethod->name . ' [' . $model->fk_object_persistence_method_id . ']' : $model->fkObjectPersistenceMethod->name);
-             		},
-            'filter' => Select2::widget([
-            		'model' => $searchModel,
-            		'attribute' => 'fk_object_persistence_method_id',
-            		'data' => ArrayHelper::map(app\models\ObjectPersistenceMethod::find()->asArray()->all(), 'id', 'name'),
-            		'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_fkObjectPersistenceMethod', 'multiple' => true],
-            		'pluginOptions' => [
-            				'allowClear' => true
-            		],
-			]),
-            ],
-*//*            [
-             'label' => Yii::t('app', 'Datamanagement Process'),
-             'value' => function($model) {
-             		return $model->fk_datamanagement_process_id == "" ? $model->fk_datamanagement_process_id : (isset($_GET["searchShow"]) ? $model->fkDatamanagementProcess->name . ' [' . $model->fk_datamanagement_process_id . ']' : $model->fkDatamanagementProcess->name);
-             		},
-            'filter' => Select2::widget([
-            		'model' => $searchModel,
-            		'attribute' => 'fk_datamanagement_process_id',
-            		'data' => ArrayHelper::map(app\models\DatamanagementProcess::find()->asArray()->all(), 'id', 'name'),
-            		'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_fkDatamanagementProcess', 'multiple' => true],
-            		'pluginOptions' => [
-            				'allowClear' => true
-            		],
-			]),
-            ],
-*/            // 'source_definition:ntext',
-            // 'source_comment:ntext',
         ],
     ]); ?>
 
-	<?php 	if (\vendor\meta_grid\helper\Utils::get_app_config("floatthead_for_gridviews") == 1)
+	<?php 	$Utils = new \vendor\meta_grid\helper\Utils();
+	if ($Utils->get_app_config("floatthead_for_gridviews") == 1)
 	{
 		\bluezed\floatThead\FloatThead::widget(
 			[

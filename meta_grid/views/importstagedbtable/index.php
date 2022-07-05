@@ -22,7 +22,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', $this->title);
 <h2>The import stage is a <span style="color: red">beta</span> feature!</h2>
 
 <?php
-        $beta_Features_enabled = \vendor\meta_grid\helper\Utils::get_app_config("enable_beta_features");
+       	$Utils = new \vendor\meta_grid\helper\Utils();
+		$beta_Features_enabled = $Utils->get_app_config("enable_beta_features");
 
         if ($beta_Features_enabled !== 1)
         {
@@ -211,7 +212,9 @@ else
 
 	<?= Html::endForm();?> 
 
-	<?php 	if (\vendor\meta_grid\helper\Utils::get_app_config("floatthead_for_gridviews") == 1)
+	<?php 	
+   	$Utils = new \vendor\meta_grid\helper\Utils();
+	if ($Utils->get_app_config("floatthead_for_gridviews") == 1)
 	{
 		\bluezed\floatThead\FloatThead::widget(
 			[

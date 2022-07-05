@@ -84,7 +84,8 @@ use app\models\Url;
 		'sql' => "SELECT MAX(log_datetime) FROM map_object_2_object_log WHERE 1=1 AND (ref_fk_object_type_id_1=$ref_fk_object_type_id OR ref_fk_object_type_id_2=$ref_fk_object_type_id) AND (ref_fk_object_id_1=$filter_ref_fk_object_id OR ref_fk_object_id_2=$filter_ref_fk_object_id)",
 	];
 	$variations = [Yii::$app->user->id, Yii::$app->language];
-	$duration = \vendor\meta_grid\helper\Utils::get_app_config("cache_duration_mappings_list");
+	$Utils = new \vendor\meta_grid\helper\Utils(); 
+	$duration = $Utils->get_app_config("cache_duration_mappings_list");
 	$cacheid = "cache_".Yii::$app->controller->id."_".$filter_ref_fk_object_id;
 	if ($this->beginCache($cacheid, ['dependency' => $dependency, 'variations' => $variations, 'duration' => $duration]))
 	{

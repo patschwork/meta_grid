@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000114/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000114" context="">
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE data_delivery_object_log ADD COLUMN "fk_object_persistence_method_id";
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE data_delivery_object_log ADD COLUMN "fk_object_persistence_method_uuid";
+		]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE data_delivery_object_log ADD COLUMN "fk_datamanagement_process_id";
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        ALTER TABLE data_delivery_object_log ADD COLUMN "fk_datamanagement_process_uuid";
+		]]>		
+		</sql>
+
+		<comment>
+		<![CDATA[
+		New fields "fk_datamanagement_process_id", "fk_datamanagement_process_uuid", "fk_object_persistence_method_id", "fk_object_persistence_method_uuid" for several tables.
+		Used objects:
+            data_delivery_object_log
+		Phabricator tasks:
+			T189
+        ]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

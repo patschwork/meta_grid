@@ -59,21 +59,6 @@ $this->params['breadcrumbs'][] = $this->title;
              'value' =>              	$model->fk_tool_id == "" ? $model->fk_tool_id : $model->fkTool->tool_name
             ],
             [
-             'label' => Yii::t('app', 'Deleted Status'),
-             'value' =>              	$model->fk_deleted_status_id == "" ? $model->fk_deleted_status_id : $model->fkDeletedStatus->name
-            ],
-            [
-             'label' => Yii::t('app', 'Object Persistence Method'),
-             'value' =>              	$model->fk_object_persistence_method_id == "" ? $model->fk_object_persistence_method_id : $model->fkObjectPersistenceMethod->name
-            ],
-            [
-             'label' => Yii::t('app', 'Datamanagement Process'),
-             'value' =>              	$model->fk_datamanagement_process_id == "" ? $model->fk_datamanagement_process_id : $model->fkDatamanagementProcess->name
-            ],
-            'source_definition:ntext',
-            'source_definition_language:ntext',
-            'source_comment:ntext',
-            [
              'label' => Yii::t('app', 'Bulkloader Execution Script'),
              'value' => '<button class="btn btn-default" type="button" id="btn_show_code" onclick="document.getElementById(\'bulkloaderExecutionString\').style.display=\'block\'; document.getElementById(\'btn_show_code\').style.display=\'none\';">' . Yii::t('app', 'Show') . '</button><div id="bulkloaderExecutionString" style="display: none;"><pre>' . $bulkloaderExecutionString . "</pre></div>",
              'format' => 'raw',

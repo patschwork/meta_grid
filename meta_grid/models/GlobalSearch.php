@@ -54,7 +54,8 @@ class GlobalSearch extends VAllObjectsUnion
 
         if (count($params)<=1)
         {
-            if (\vendor\meta_grid\helper\Utils::get_app_config("globalsearch_init_empty") === 1)
+            $Utils = new \vendor\meta_grid\helper\Utils();
+            if ($Utils->get_app_config("globalsearch_init_empty") === 1)
             {
                 $query->where('0=1');
             }

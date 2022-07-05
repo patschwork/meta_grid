@@ -175,39 +175,14 @@ class ProjectController extends Controller
 	}
     
 
-	private function createProjectPermissions($named_project_id = NULL, $named_project_name = NULL, $named_client_name = NULL)
+	private function createProjectPermissions()
 	{
-		$result1 = false;
-		$result2 = false;
-		if ($named_project_id !== NULL && $named_project_name !== NULL && $named_client_name !== NULL)
-		{
-			$auth = Yii::$app->authManager;
-			$newRoleOrPermName="project-".$named_project_id."-read";
-			$checkPerm = $auth->getPermission($newRoleOrPermName);
-			if (is_null($checkPerm)) {
-				$newAuthObj = $auth->createPermission($newRoleOrPermName);
-				$newAuthObj->ruleName = "isNotAGuest";
-				$newAuthObj->description = "Read-Permission for project " . $named_project_name . " (" . $named_client_name . ")";
-				$newAuthObj->data = ['id' => $named_project_id, 'dataaccessfilter' => 'project', 'right' => 'read'];
-				$result1 = $auth->add($newAuthObj);
-			}
-			$auth = Yii::$app->authManager;
-			$newRoleOrPermName="project-".$named_project_id."-write";
-			$checkPerm = $auth->getPermission($newRoleOrPermName);
-			if (is_null($checkPerm)) {
-				$newAuthObj = $auth->createPermission($newRoleOrPermName);
-				$newAuthObj->description = "Read-Permission for project " . $named_project_name . " (" . $named_client_name . ")";
-				$newAuthObj->ruleName = "isNotAGuest";
-				$newAuthObj->data = ['id' => $named_project_id, 'dataaccessfilter' => 'project', 'right' => 'write'];
-				$result2 = $auth->add($newAuthObj);
-			}
-			return $result1 && $result2;
-		}
-
 		$projectModel = new Project();
 		$projects = $projectModel::find()->all();
 		foreach($projects as $project)
 		{
+			// $clientList[$client->id] = $client->name;
+
 			$auth = Yii::$app->authManager;
 			$newRoleOrPermName="project-".$project->id."-read";
 			$checkPerm = $auth->getPermission($newRoleOrPermName);
@@ -216,7 +191,7 @@ class ProjectController extends Controller
 				$newAuthObj->ruleName = "isNotAGuest";
 				$newAuthObj->description = "Read-Permission for project " . $project->name . " (" . $project->fkClient->name . ")";
 				$newAuthObj->data = ['id' => $project->id, 'dataaccessfilter' => 'project', 'right' => 'read'];
-				$result1 = $auth->add($newAuthObj);
+				$auth->add($newAuthObj);
 			}
 			$auth = Yii::$app->authManager;
 			$newRoleOrPermName="project-".$project->id."-write";
@@ -226,10 +201,9 @@ class ProjectController extends Controller
 				$newAuthObj->description = "Read-Permission for project " . $project->name . " (" . $project->fkClient->name . ")";
 				$newAuthObj->ruleName = "isNotAGuest";
 				$newAuthObj->data = ['id' => $project->id, 'dataaccessfilter' => 'project', 'right' => 'write'];
-				$result2 = $auth->add($newAuthObj);
+				$auth->add($newAuthObj);
 			}
 		}
-		return $result1 && $result2;
 	}
 
 	public function actionCreateprojectpermissions()
@@ -267,7 +241,7 @@ class ProjectController extends Controller
 
     /**
      * Displays a single Project model.
-     * @param integer $id
+     * @param int $id ID
      * @return mixed
      */
     public function actionView($id)
@@ -295,7 +269,7 @@ class ProjectController extends Controller
     	}    
 			
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			$this->createProjectPermissions($model->id, $model->name, $model->fkClient->name);
+			$this->createProjectPermissions();
 			$userId = Yii::$app->User->Id;
 			$this->addPermissionToUser($model->id, $userId);	
         	return $this->redirect(['view', 'id' => $model->id]);
@@ -312,7 +286,7 @@ class ProjectController extends Controller
     /**
      * Updates an existing Project model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
+     * @param int $id ID
      * @return mixed
      */
     public function actionUpdate($id)
@@ -340,7 +314,7 @@ class ProjectController extends Controller
     /**
      * Deletes an existing Project model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
+     * @param int $id ID
      * @return mixed
      */
     public function actionDelete($id)
@@ -369,7 +343,7 @@ class ProjectController extends Controller
     /**
      * Finds the Project model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
+     * @param int $id ID
      * @return Project the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */

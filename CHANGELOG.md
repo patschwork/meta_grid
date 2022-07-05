@@ -1,3 +1,9 @@
+# 2.5.1
+- [T198]                    Ready for PHP 8.1.2
+- [T204]                    Don't show unused fields
+- [T199]                    Easy Demo Login
+- [T189]                    Bugfix
+----------------------------------------------------------------------------------------------------
 # 2.5
 - [T81 | GitHub Issue #4]   Bugfix -> User can't be deleted
 - [T157]                    Yii2 framework update 2.0.12 to 2.0.43

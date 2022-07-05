@@ -190,8 +190,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', $this->title);
 								$html_btn = Html::a(\'<span style="color: silver;" class="glyphicon glyphicon-pencil"></span>\', $url, [
 										\'title\' => Yii::t(\'app\', \'Update dbtablefield individual\'),
 								]);
-		
-								$db_table_show_buttons_for_different_object_type_updates = \vendor\meta_grid\helper\Utils::get_app_config("db_table_show_buttons_for_different_object_type_updates");
+								$Utils = new \vendor\meta_grid\helper\Utils();
+								$db_table_show_buttons_for_different_object_type_updates = $Utils->get_app_config("db_table_show_buttons_for_different_object_type_updates");
 								if ($db_table_show_buttons_for_different_object_type_updates == 1) 
 								{
 									return $html_btn;
@@ -242,12 +242,18 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
 //     	}
         $format = $generator->generateColumnFormat($column);
         
-        // Patrick, 2016-01-16, ueberspringen der Felder welche nicht angezeigt werden sollen.
+        // Patrick, 2016-01-16, ignore fields
         if ($column->name=="id") continue;
         if ($column->name=="uuid") continue;
         if ($column->name=="fk_object_type_id") continue;
         if ($column->name=="location") continue;
-        if ($column->name=="fk_deleted_status_id") continue; // not for now
+		if ($column->name=="fk_deleted_status_id") continue; // not for now (T204)
+		if ($column->name=="fk_datamanagement_process_id") continue; // not for now (T204)
+		if ($column->name=="fk_object_persistence_method_id") continue; // not for now (T204)
+		if ($column->name=="source_definition") continue; // not for now (T204)
+		if ($column->name=="source_comment") continue; // not for now (T204)
+		if ($column->name=="source_definition_language") continue; // not for now (T204)
+	
 		
         if ($column->name=="description" && $generator->modelClass=="app\models\DbTable") continue; // phabricator-task: T23
 
@@ -444,7 +450,8 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
     ]); ?>
 
 	<?= "<?php " ?>
-	if (\vendor\meta_grid\helper\Utils::get_app_config("floatthead_for_gridviews") == 1)
+	$Utils = new \vendor\meta_grid\helper\Utils();
+	if ($Utils->get_app_config("floatthead_for_gridviews") == 1)
 	{
 		\bluezed\floatThead\FloatThead::widget(
 			[

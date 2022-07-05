@@ -291,8 +291,9 @@ class ImportController extends \yii\web\Controller
 
     protected function mapValues($template_id, $fk_project_id, $array_csv, $import_templates, $use_header, $replace_string_to_null)
     {
-		$app_config_import_processing_time_limit = \vendor\meta_grid\helper\Utils::get_app_config("import_processing_time_limit");
-		$app_config_import_processing_memory_limit = \vendor\meta_grid\helper\Utils::get_app_config("import_processing_memory_limit");
+        $Utils = new \vendor\meta_grid\helper\Utils();
+        $app_config_import_processing_time_limit = $Utils->get_app_config("import_processing_time_limit");
+		$app_config_import_processing_memory_limit = $Utils->get_app_config("import_processing_memory_limit");
 		set_time_limit($app_config_import_processing_time_limit);
 		ini_set('memory_limit', $app_config_import_processing_memory_limit."M");
 

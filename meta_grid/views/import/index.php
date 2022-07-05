@@ -13,7 +13,8 @@ use conquer\codemirror\CodemirrorAsset;
 <h2>The import via copy & paste is a <span style="color: red">beta</span> feature!</h2>
 
 <?php
-        $beta_Features_enabled = \vendor\meta_grid\helper\Utils::get_app_config("enable_beta_features");
+    	$Utils = new \vendor\meta_grid\helper\Utils();
+        $beta_Features_enabled = $Utils->get_app_config("enable_beta_features");
 
         if ($beta_Features_enabled !== 1)
         {

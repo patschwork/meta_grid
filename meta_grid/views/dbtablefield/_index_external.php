@@ -17,7 +17,8 @@ use yii\helpers\VarDumper;
     <br>
 
 		<?php
-		$db_table_show_buttons_for_different_object_type_updates = \vendor\meta_grid\helper\Utils::get_app_config("db_table_show_buttons_for_different_object_type_updates");
+		$Utils = new \vendor\meta_grid\helper\Utils();
+		$db_table_show_buttons_for_different_object_type_updates = $Utils->get_app_config("db_table_show_buttons_for_different_object_type_updates");
 		if ($db_table_show_buttons_for_different_object_type_updates == 1) 
 		{
 			echo Html::a(Yii::t('app', 'Create new field'), ['dbtablefield/createexternal', 'fk_db_table_id' => $fk_db_table_id], ['class' => 'btn btn-primary'], [

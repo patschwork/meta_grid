@@ -198,7 +198,7 @@ class MapperController extends Controller
 
     /**
      * Displays a single MapObject2Object model.
-     * @param integer $id
+     * @param int $id ID
      * @return mixed
      */
     public function actionView($id)
@@ -239,7 +239,7 @@ class MapperController extends Controller
     /**
      * Updates an existing MapObject2Object model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
+     * @param int $id ID
      * @return mixed
      */
     public function actionUpdate($id)
@@ -265,7 +265,7 @@ class MapperController extends Controller
     /**
      * Deletes an existing MapObject2Object model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
+     * @param int $id ID
      * @return mixed
      */
     public function actionDelete($id)
@@ -293,7 +293,7 @@ class MapperController extends Controller
     /**
      * Finds the MapObject2Object model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
+     * @param int $id ID
      * @return MapObject2Object the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -391,9 +391,10 @@ class MapperController extends Controller
 	
 	public function actionCreateexternal($ref_fk_object_id, $ref_fk_object_type_id) {
 	
-		$app_config_mapper_createext_time_limit = \vendor\meta_grid\helper\Utils::get_app_config("mapper_createext_time_limit");
+		$Utils = new \vendor\meta_grid\helper\Utils();
+		$app_config_mapper_createext_time_limit = $Utils->get_app_config("mapper_createext_time_limit");
 		set_time_limit($app_config_mapper_createext_time_limit);
-		$app_config_mapper_createext_memory_limit = \vendor\meta_grid\helper\Utils::get_app_config("mapper_createext_memory_limit");
+		$app_config_mapper_createext_memory_limit = $Utils->get_app_config("mapper_createext_memory_limit");
 		ini_set('memory_limit', $app_config_mapper_createext_memory_limit."M");
 
 		// Controller fuer die View, wenn ein Mapping ueber ein Objekt aufgerufen wird.		

@@ -76,12 +76,13 @@ $this->title = 'Meta#Grid'.(stristr(Yii::$app->homeUrl, 'dev') ? ' DEV' : '');
 
 if (!Yii::$app->user->isGuest)
 {
-    $newVersionAvaiable = \vendor\meta_grid\helper\ApplicationVersion::isNewApplicationAvailable();
+    $ApplicationVersion = new \vendor\meta_grid\helper\ApplicationVersion();
+    $newVersionAvaiable = $ApplicationVersion->isNewApplicationAvailable();
     
     if ($newVersionAvaiable)
     {
         $msg = Yii::t('', 'A new Version {newVersion} of {appName} is available. Your current version is {currentVersion}.<br><br>Read the <a class="btn btn-primary" href="{linkToDoc}" target="_blank">documentation</a> how to update the application.<br><br><button class="btn btn-warning" onclick="hideMeSomeDays()">Hide this message for 3 days</button>'
-                ,['newVersion' => \vendor\meta_grid\helper\ApplicationVersion::getCookieNewerVersion(), 'currentVersion' => \vendor\meta_grid\helper\ApplicationVersion::$applicationVersion, 'linkToDoc' => 'https://blog.meta-grid.com/category/docs/update', 'appName' => \vendor\meta_grid\helper\ApplicationVersion::getApplicationName()]);
+                ,['newVersion' => $ApplicationVersion->getCookieNewerVersion(), 'currentVersion' => $ApplicationVersion->$applicationVersion, 'linkToDoc' => 'https://blog.meta-grid.com/category/docs/update', 'appName' => $ApplicationVersion->getApplicationName()]);
         echo yii\bootstrap\Alert::widget([
             'options' => [
                     'class' => 'alert-info',
@@ -130,8 +131,9 @@ if ($foundIssues>0)
 
 try
 {
+    $Utils = new \vendor\meta_grid\helper\Utils();
     // get the path from the app_config database table. If not exists, then use a default.
-    $app_config_liquibase_changelog_master_filepath = \vendor\meta_grid\helper\Utils::get_app_config("liquibase_changelog_master_filepath");
+    $app_config_liquibase_changelog_master_filepath = $Utils->get_app_config("liquibase_changelog_master_filepath");
 
     // reads the LiquiBase Changelog-Master-XML File
     $xml=simplexml_load_file($app_config_liquibase_changelog_master_filepath) or die("Error: Cannot create object");
@@ -202,6 +204,19 @@ if (!Yii::$app->user->isGuest)
     }
 }
 
+if (Yii::$app->user->isGuest)
+{
+    if (stristr(Yii::$app->urlManager->createAbsoluteUrl(['/']), 'demo'))
+    {
+        echo yii\bootstrap\Alert::widget([
+                'options' => [
+                                'class' => 'alert-info',
+                ],
+                'body' => 'Login as <u><i>admin</i></u> with<br>&emsp;username:<b>admin</b><br>&emsp;password: <b>admin</b><br><br><br>or as <u><i>non-admin-user</i></u> with <br>&emsp;username: <b>user</b><br>&emsp;password: <b>user</b>',
+        ]);
+    }
+}
+
 if (!Yii::$app->user->isGuest)
 {
     if (Yii::$app->db->getDriverName() == "sqlite")
@@ -228,7 +243,7 @@ if (!Yii::$app->user->isGuest)
     }
    
     $db_path = str_replace("sqlite:", "", Yii::$app->db->dsn);
-    if (\vendor\meta_grid\helper\Utils::DBisReadOnly(Yii::$app->db->getDriverName(), $db_path))
+    if ($Utils->DBisReadOnly(Yii::$app->db->getDriverName(), $db_path))
     {
         echo yii\bootstrap\Alert::widget([
             'options' => [
@@ -493,9 +508,9 @@ function printHeader($csvObjecttypes, $title) {
      <div class="jumbotron">
         <h1>Welcome to Meta#Grid</h1>
      
-        <p class="lead"><?php echo Lx::t('general','Log in, to spin up your metadata'); ?></p>
+        <!-- <p class="lead"><?php //echo Lx::t('general','Log in, to spin up your metadata'); ?></p> -->
 		
-        <!--  <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com">Get started with Yii</a></p> -->
+        <p><a class="btn btn-lg btn-success" href="<?= Yii::$app->urlManager->createUrl(['/user/security/login']) ?>">Log in</a>, to spin up your metadata</p>
      </div>
         <!--  <p><a class="btn btn-lg btn-primary" href="<?= $wa_gui_url ?>sourcesystem.php">Workaround GUI</a></p>  -->
 <?php endif; ?>        

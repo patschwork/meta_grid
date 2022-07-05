@@ -47,14 +47,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'ref_fk_object_type_id_parent',
             'ref_fk_object_id_child',
             'ref_fk_object_type_id_child',
-            [
-             'label' => Yii::t('app', 'Object Persistence Method'),
-             'value' =>              	$model->fk_object_persistence_method_id == "" ? $model->fk_object_persistence_method_id : $model->fkObjectPersistenceMethod->name
-            ],
-            [
-             'label' => Yii::t('app', 'Datamanagement Process'),
-             'value' =>              	$model->fk_datamanagement_process_id == "" ? $model->fk_datamanagement_process_id : $model->fkDatamanagementProcess->name
-            ],
         ],
     ]) ?>
 

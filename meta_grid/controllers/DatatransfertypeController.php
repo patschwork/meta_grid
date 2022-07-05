@@ -179,7 +179,7 @@ class DatatransfertypeController extends Controller
 
     /**
      * Displays a single DataTransferType model.
-     * @param integer $id
+     * @param int $id ID
      * @return mixed
      */
     public function actionView($id)
@@ -219,7 +219,7 @@ class DatatransfertypeController extends Controller
     /**
      * Updates an existing DataTransferType model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
+     * @param int $id ID
      * @return mixed
      */
     public function actionUpdate($id)
@@ -244,7 +244,7 @@ class DatatransfertypeController extends Controller
     /**
      * Deletes an existing DataTransferType model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
+     * @param int $id ID
      * @return mixed
      */
     public function actionDelete($id)
@@ -272,7 +272,7 @@ class DatatransfertypeController extends Controller
     /**
      * Finds the DataTransferType model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
+     * @param int $id ID
      * @return DataTransferType the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */

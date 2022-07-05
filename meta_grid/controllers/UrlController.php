@@ -207,7 +207,7 @@ class UrlController extends Controller
 
     /**
      * Displays a single Url model.
-     * @param integer $id
+     * @param int $id ID
      * @return mixed
      */
     public function actionView($id)
@@ -250,7 +250,7 @@ class UrlController extends Controller
     /**
      * Updates an existing Url model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
+     * @param int $id ID
      * @return mixed
      */
     public function actionUpdate($id)
@@ -278,7 +278,7 @@ class UrlController extends Controller
     /**
      * Deletes an existing Url model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
+     * @param int $id ID
      * @return mixed
      */
     public function actionDelete($id)
@@ -307,7 +307,7 @@ class UrlController extends Controller
     /**
      * Finds the Url model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
+     * @param int $id ID
      * @return Url the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */

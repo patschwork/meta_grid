@@ -22,18 +22,6 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'ref_fk_object_type_id_child')->textInput() ?>
 
-	<?php
-		// autogeneriert ueber gii/CRUD
-		echo $form->field($model, 'fk_object_persistence_method_id')->dropDownList($object_persistence_methodList, ['id'=>'name']);
-	?>
- <!--  	// automatisch auskommentiert ueber gii/CRUD    <?= $form->field($model, 'fk_object_persistence_method_id')->textInput() ?>  -->
-
-	<?php
-		// autogeneriert ueber gii/CRUD
-		echo $form->field($model, 'fk_datamanagement_process_id')->dropDownList($datamanagement_processList, ['id'=>'name']);
-	?>
- <!--  	// automatisch auskommentiert ueber gii/CRUD    <?= $form->field($model, 'fk_datamanagement_process_id')->textInput() ?>  -->
-
 
 
     <div class="form-group">

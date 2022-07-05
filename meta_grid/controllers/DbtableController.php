@@ -252,7 +252,7 @@ class DbtableController extends Controller
 
     /**
      * Displays a single DbTable model.
-     * @param integer $id
+     * @param int $id ID
      * @return mixed
      */
     public function actionView($id)
@@ -271,7 +271,8 @@ class DbtableController extends Controller
      */
     public function actionCreate()
     {
-		$db_table_show_buttons_for_different_object_type_updates=\vendor\meta_grid\helper\Utils::get_app_config("db_table_show_buttons_for_different_object_type_updates");
+		$Utils = new \vendor\meta_grid\helper\Utils();
+	$db_table_show_buttons_for_different_object_type_updates=$Utils->get_app_config("db_table_show_buttons_for_different_object_type_updates");
 
 		if ($db_table_show_buttons_for_different_object_type_updates != 1) 
 		{
@@ -306,12 +307,13 @@ class DbtableController extends Controller
     /**
      * Updates an existing DbTable model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
+     * @param int $id ID
      * @return mixed
      */
     public function actionUpdate($id)
     {
-		$db_table_show_buttons_for_different_object_type_updates = \vendor\meta_grid\helper\Utils::get_app_config("db_table_show_buttons_for_different_object_type_updates");
+		$Utils = new \vendor\meta_grid\helper\Utils();
+	$db_table_show_buttons_for_different_object_type_updates = $Utils->get_app_config("db_table_show_buttons_for_different_object_type_updates");
 		if ($db_table_show_buttons_for_different_object_type_updates != 1) 
 		{
 			return $this->redirect(['dbtablefieldmultipleedit/update', 'id' => $id]);
@@ -342,7 +344,7 @@ class DbtableController extends Controller
     /**
      * Deletes an existing DbTable model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
+     * @param int $id ID
      * @return mixed
      */
     public function actionDelete($id)
@@ -371,7 +373,7 @@ class DbtableController extends Controller
     /**
      * Finds the DbTable model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
+     * @param int $id ID
      * @return DbTable the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */

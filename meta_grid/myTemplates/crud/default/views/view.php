@@ -98,7 +98,8 @@ if ($generator->modelClass === 'app\models\DbTableField')
 	<?= "
 
 		<?php
-			\$db_table_show_buttons_for_different_object_type_updates = \\vendor\\meta_grid\\helper\\Utils::get_app_config(\"db_table_show_buttons_for_different_object_type_updates\");
+		    \$Utils = new \\vendor\\meta_grid\\helper\\Utils();
+			\$db_table_show_buttons_for_different_object_type_updates = \$Utils->get_app_config(\"db_table_show_buttons_for_different_object_type_updates\");
 			if (\$db_table_show_buttons_for_different_object_type_updates == 1) 
 			{
 				echo Yii::\$app->user->identity->isAdmin || Yii::\$app->User->can('create-dbtable$dbtablefieldadditioncode2')  ? Html::a(Yii::t('app', 'Update$dbtableadditioncode2'), ['update', 'id' => \$model->id], ['class' => 'btn btn-primary']) : \"\";
@@ -128,7 +129,15 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
 } else {
     foreach ($generator->getTableSchema()->columns as $column) {
     	
-    	
+    	// Patrick, ignore fields
+		if ($column->name=="fk_deleted_status_id") continue; // not for now (T204)
+		if ($column->name=="fk_datamanagement_process_id") continue; // not for now (T204)
+		if ($column->name=="fk_object_persistence_method_id") continue; // not for now (T204)
+		if ($column->name=="source_definition") continue; // not for now (T204)
+		if ($column->name=="source_comment") continue; // not for now (T204)
+		if ($column->name=="source_definition_language") continue; // not for now (T204)
+
+
     	// Patrick, 2016-01-16, "related" Infos anzeigen
     	$setRelationInformation = 0;
 		$useGenCode = 0;

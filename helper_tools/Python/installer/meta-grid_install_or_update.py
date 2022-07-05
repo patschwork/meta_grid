@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # Instllation or update meta#grid
 # on every OS
-# v1.4
+# v1.6
 
 import base_lib
 import shutil
@@ -23,7 +23,7 @@ behaviour = const_inst_mode_update
 git_repo_url = "https://github.com/patschwork/meta_grid.git"
 git_repo_zip_url = "https://github.com/patschwork/meta_grid/archive/master.zip"
 min_php_version = "7.0"
-max_php_version = "7.4" # Upper version limit for PHP (depends on the used Yii2 framework)
+max_php_version = "8.1.2" # Upper version limit for PHP (depends on the used Yii2 framework)
 used_rdbms = const_sqlite
 folderfile_Database = "../../../dwh_meta.sqlite"
 folder_Frontend = "../../../frontend/yii/basic"
@@ -323,7 +323,7 @@ abspath_frontend = base_lib.getFilePathRelativeScriptPath(os.path.dirname(folder
 
 # Yii2 Check requirements (we have to use the folder downloaded from the repository... We want to check the to be installed version)
 # Note: Still in Yii2 2.0.33 Requirement for PHP is minimum 5.4.0. That's not true in fact... :-(
-res = base_lib.yii_check_requirements(phpExe, abspath_frontend)
+res = base_lib.yii_check_requirements(phpExe, folder_Fresh_frontend)
 for i in range(len(res)-4,len(res)-1):
     if (res[i].find("Errors:") >= 0):
         yii2reqsummaryline = res[i]

@@ -58,18 +58,6 @@ $this->params['breadcrumbs'][] = $this->title;
              'label' => Yii::t('app', 'Contact Group As Supporter'),
              'value' =>              	$model->fk_contact_group_id_as_supporter == "" ? $model->fk_contact_group_id_as_supporter : $model->fkContactGroupIdAsSupporter->name
             ],
-            [
-             'label' => Yii::t('app', 'Deleted Status'),
-             'value' =>              	$model->fk_deleted_status_id == "" ? $model->fk_deleted_status_id : $model->fkDeletedStatus->name
-            ],
-            [
-             'label' => Yii::t('app', 'Object Persistence Method'),
-             'value' =>              	$model->fk_object_persistence_method_id == "" ? $model->fk_object_persistence_method_id : $model->fkObjectPersistenceMethod->name
-            ],
-            [
-             'label' => Yii::t('app', 'Datamanagement Process'),
-             'value' =>              	$model->fk_datamanagement_process_id == "" ? $model->fk_datamanagement_process_id : $model->fkDatamanagementProcess->name
-            ],
         ],
     ]) ?>
 

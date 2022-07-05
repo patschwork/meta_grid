@@ -5,7 +5,10 @@
 # on OS=linux
 import os
 import sys
-import ConfigParser
+if (int(sys.version_info[0]) >= 3):
+    import configparser as ConfigParser
+else:
+    import ConfigParser
 import subprocess
 import datetime
 
@@ -16,17 +19,17 @@ DATETIMENOW = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 def cli_params():
     global ENVKEY
     global CONFIGFOLDER
-    print sys.argv
+    print(sys.argv)
     if len(sys.argv) < 2:
-        print "You must call me like:"
-        print "   deploy.py <Environment Key (e.g. DEV)>"
+        print("You must call me like:")
+        print("   deploy.py <Environment Key (e.g. DEV)>")
         raise Exception("Call parameter missing!")
         sys.exit(1)
     ENVKEY = sys.argv[1]
     try:
         CONFIGFOLDER = sys.argv[2]
     except:
-        print "CONFIGFOLDER not given. Using default"
+        print("CONFIGFOLDER not given. Using default")
 
 def ConfigSectionMap(section):
     dict1 = {}
@@ -51,11 +54,16 @@ def writeOutputLog(logpath, msg):
 	myFile.close() 
     
 def printCurrentEnvSettings(prop, value):
-    print prop + ": "  + value
+    print(prop + ": "  + value)
     writeOutputLog(logfilepath, prop + ": "  + value + "\n")
 	
 def getFilePathRelativeScriptPath(filepath):
     return os.path.abspath(os.path.join(dirPath, filepath))
+
+
+# if (int(sys.version_info[0]) < 3):
+#     print("You need Python 3 to run this script!")
+#     sys.exit(1)
 
 debug=0
 cli_params()
@@ -65,7 +73,7 @@ if CONFIGFOLDER == "":
 
 
 if (os.path.isfile(getConfigFilePath(CONFIGFOLDER, ENVKEY))):
-    print "Config file found: " + getConfigFilePath(CONFIGFOLDER, ENVKEY)
+    print("Config file found: " + getConfigFilePath(CONFIGFOLDER, ENVKEY))
 else:
     raise Exception("Config file not found!")
     sys.exit(1)
@@ -78,8 +86,10 @@ realPath = os.path.realpath(currentFile)  # /home/user/test/my_script.py
 dirPath = os.path.dirname(realPath)  # /home/user/test
 dirName = os.path.basename(dirPath) # test
 
-
-Config = ConfigParser.SafeConfigParser()
+if (int(sys.version_info[0]) >= 3):
+    Config = ConfigParser.ConfigParser()
+else:
+    Config = ConfigParser.SafeConfigParser()
 # Config._interpolation = ConfigParser.ExtendedInterpolation()
 Config.read(getConfigFilePath(CONFIGFOLDER, ENVKEY))
 
@@ -140,7 +150,7 @@ if liquibaseActionValue != "":
             output = e.output
         success = False
     writeOutputLog(logfilepath, output)
-    print output
+    print(output)
 else:
     #subprocess.call([liquibasePathExe, "--driver=" + liquibaseDriver, "--changeLogFile=" + getFilePathRelativeScriptPath(liquibaseChangeLogFile), "--url=" + liquibaseDriverUrlprefix , liquibaseAction])        
     try:
@@ -156,4 +166,4 @@ else:
             output = e.output
         success = False
     writeOutputLog(logfilepath, output)
-    print output
+    print(output)

@@ -244,7 +244,7 @@ class BracketController extends Controller
 
     /**
      * Displays a single Bracket model.
-     * @param integer $id
+     * @param int $id ID
      * @return mixed
      */
     public function actionView($id)
@@ -330,8 +330,6 @@ class BracketController extends Controller
    				'projectList' => $this->getProjectList(),		// autogeneriert ueber gii/CRUD
    				'attributeList' => $this->getAttributeList(),		// autogeneriert ueber gii/CRUD
   				'object_type_as_searchFilterList' => $this->getObjectTypeAsSearchFilterList(),		// autogeneriert ueber gii/CRUD
-  				'object_persistence_methodList' => $this->getObjectPersistenceMethodList(),	  // added **manual**
-  				'datamanagement_processList' => $this->getDatamanagementProcessList(),		  // added **manual**
   				'modelsBracketSearchPattern' => (empty($modelsBracketSearchPattern)) ? [new BracketSearchPattern] : $modelsBracketSearchPattern
       		]);
 		    }
@@ -339,7 +337,7 @@ class BracketController extends Controller
     /**
      * Updates an existing Bracket model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
+     * @param int $id ID
      * @return mixed
      */
     public function actionUpdate($id)
@@ -404,8 +402,6 @@ class BracketController extends Controller
    				'projectList' => $this->getProjectList(),		// autogeneriert ueber gii/CRUD
    				'attributeList' => $this->getAttributeList(),		// autogeneriert ueber gii/CRUD
   				'object_type_as_searchFilterList' => $this->getObjectTypeAsSearchFilterList(),		// autogeneriert ueber gii/CRUD
-  				'object_persistence_methodList' => $this->getObjectPersistenceMethodList(),	  // added **manual**
-  				'datamanagement_processList' => $this->getDatamanagementProcessList(),		  // added **manual**
   				'modelsBracketSearchPattern' => (empty($modelsBracketSearchPattern)) ? [new BracketSearchPattern] : $modelsBracketSearchPattern
         ]);
 		    }
@@ -413,7 +409,7 @@ class BracketController extends Controller
     /**
      * Deletes an existing Bracket model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
+     * @param int $id ID
      * @return mixed
      */
     public function actionDelete($id)
@@ -442,7 +438,7 @@ class BracketController extends Controller
     /**
      * Finds the Bracket model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
+     * @param int $id ID
      * @return Bracket the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */

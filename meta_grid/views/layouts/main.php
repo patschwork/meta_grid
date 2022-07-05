@@ -33,9 +33,10 @@ ShortcutAsset::register($this);
             {
                 if (Yii::$app->user->identity->isAdmin) $isAdmin = TRUE;
             }
-
-            $app_config_web_app_header_bckcolor = \vendor\meta_grid\helper\Utils::get_app_config("web_app_header_bckcolor");
-            $app_config_web_app_header_brandlabel_additional_text = \vendor\meta_grid\helper\Utils::get_app_config("web_app_header_brandlabel_additional_text");
+            
+            $Utils = new \vendor\meta_grid\helper\Utils();
+            $app_config_web_app_header_bckcolor = $Utils->get_app_config("web_app_header_bckcolor");
+            $app_config_web_app_header_brandlabel_additional_text = $Utils->get_app_config("web_app_header_brandlabel_additional_text");
 
             NavBar::begin([
                 // 'brandLabel' => 'Meta#Grid'.(stristr(Yii::$app->homeUrl, 'dev') ? ' DEV' : ''),
@@ -98,10 +99,13 @@ ShortcutAsset::register($this);
         </div>
     </div>
 
+    <?php
+        $ApplicationVersion = new \vendor\meta_grid\helper\ApplicationVersion();
+    ?>
     <footer class="footer">
         <div class="container">
-            <p class="pull-left">&copy; <?= \vendor\meta_grid\helper\ApplicationVersion::getApplicationName() . " " . date('Y') ?></p>
-            <p class="pull-right"><?= "v" . \vendor\meta_grid\helper\ApplicationVersion::getVersion() ?></p>
+            <p class="pull-left">&copy; <?= $ApplicationVersion->getApplicationName() . " " . date('Y') ?></p>
+            <p class="pull-right"><?= "v" . $ApplicationVersion->getVersion() ?></p>
 
         </div>
     </footer>

@@ -497,7 +497,8 @@ $modelBracket = new Bracket();
   				'modelsBracketSearchPattern' => (empty($modelsBracketSearchPattern)) ? [new BracketSearchPattern] : $modelsBracketSearchPattern
       		]);
 		<?php else: ?>
-<?php if ($generator->modelClass === 'app\models\DbTable'): ?>$db_table_show_buttons_for_different_object_type_updates=\vendor\meta_grid\helper\Utils::get_app_config("db_table_show_buttons_for_different_object_type_updates");
+<?php if ($generator->modelClass === 'app\models\DbTable'): ?>$Utils = new \vendor\meta_grid\helper\Utils();
+	$db_table_show_buttons_for_different_object_type_updates=$Utils->get_app_config("db_table_show_buttons_for_different_object_type_updates");
 
 		if ($db_table_show_buttons_for_different_object_type_updates != 1) 
 		{
@@ -620,7 +621,8 @@ $modelBracket = $this->findModel($id);
   				'modelsBracketSearchPattern' => (empty($modelsBracketSearchPattern)) ? [new BracketSearchPattern] : $modelsBracketSearchPattern
         ]);
 		<?php else: ?>
-<?php if ($generator->modelClass === 'app\models\DbTable'): ?>$db_table_show_buttons_for_different_object_type_updates = \vendor\meta_grid\helper\Utils::get_app_config("db_table_show_buttons_for_different_object_type_updates");
+<?php if ($generator->modelClass === 'app\models\DbTable'): ?>$Utils = new \vendor\meta_grid\helper\Utils();
+	$db_table_show_buttons_for_different_object_type_updates = $Utils->get_app_config("db_table_show_buttons_for_different_object_type_updates");
 		if ($db_table_show_buttons_for_different_object_type_updates != 1) 
 		{
 			return $this->redirect(['dbtablefieldmultipleedit/update', 'id' => $id]);
@@ -1102,9 +1104,10 @@ if (count($pks) === 1) {
 	
 	public function actionCreateexternal($ref_fk_object_id, $ref_fk_object_type_id) {
 	
-		$app_config_mapper_createext_time_limit = \vendor\meta_grid\helper\Utils::get_app_config("mapper_createext_time_limit");
+		$Utils = new \vendor\meta_grid\helper\Utils();
+		$app_config_mapper_createext_time_limit = $Utils->get_app_config("mapper_createext_time_limit");
 		set_time_limit($app_config_mapper_createext_time_limit);
-		$app_config_mapper_createext_memory_limit = \vendor\meta_grid\helper\Utils::get_app_config("mapper_createext_memory_limit");
+		$app_config_mapper_createext_memory_limit = $Utils->get_app_config("mapper_createext_memory_limit");
 		ini_set('memory_limit', $app_config_mapper_createext_memory_limit."M");
 
 		// Controller fuer die View, wenn ein Mapping ueber ein Objekt aufgerufen wird.		
@@ -1413,9 +1416,10 @@ Parameter: overwrite_description_if_existing_differs=, default=Y : If there desc
 	private function buildBulkloaderExecutionString($id)
 	{
 
-		$bulk_loader_executable = \vendor\meta_grid\helper\Utils::get_app_config("bulk_loader_executable");
-		$bulk_loader_metagrid_jdbc_url = \vendor\meta_grid\helper\Utils::get_app_config("bulk_loader_metagrid_jdbc_url");
-		$bulk_loader_java_home = \vendor\meta_grid\helper\Utils::get_app_config("bulk_loader_java_home");
+		$Utils = new \vendor\meta_grid\helper\Utils();
+		$bulk_loader_executable = $Utils->get_app_config("bulk_loader_executable");
+		$bulk_loader_metagrid_jdbc_url = $Utils->get_app_config("bulk_loader_metagrid_jdbc_url");
+		$bulk_loader_java_home = $Utils->get_app_config("bulk_loader_java_home");
 
 		$model = $this->findModel($id);
 		$bulkLoaderParameterArr = $this->bulkloadertemplate();

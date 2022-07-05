@@ -136,4 +136,5 @@
   <include relativeToChangelogFile="true" file="changesets/0000111/changelog.xml"/>  <!-- SQL ALTER TABLE | user -->
   <include relativeToChangelogFile="true" file="changesets/0000112/changelog.xml"/>  <!-- SQL ALTER TABLE | user -->
   <include relativeToChangelogFile="true" file="changesets/0000113/changelog.xml"/>  <!-- CREATE trigger | TRIG_user_DELETE -->
+  <include relativeToChangelogFile="true" file="changesets/0000114/changelog.xml"/>  <!-- SQL ALTER TABLE | data_delivery_object_log -->
 </databaseChangeLog> 

@@ -160,35 +160,8 @@ class ClientController extends Controller
 		$this->createRole($newRoleName, "Perm", "May only delete objecttype " . Yii::$app->controller->id, "isNotAGuest", "global-delete", null);
 	}
     
-	private function createClientPermissions($named_client_id = NULL, $named_client_name = NULL)
+	private function createClientPermissions()
 	{	
-		$result1 = false;
-		$result2 = false;
-		if ($named_client_id !== NULL && $named_client_name !== NULL)
-		{
-			$auth = Yii::$app->authManager;
-			$newRoleOrPermName="client-".$named_client_id."-read";
-			$checkPerm = $auth->getPermission($newRoleOrPermName);
-			if (is_null($checkPerm)) {
-				$newAuthObj = $auth->createPermission($newRoleOrPermName);
-				$newAuthObj->ruleName = "isNotAGuest";
-				$newAuthObj->description = "Read-Permission for client " . $named_client_name;
-				$newAuthObj->data = ['id' => $named_client_id, 'dataaccessfilter' => 'client', 'right' => 'read'];
-				$result1 = $auth->add($newAuthObj);
-			}
-			$auth = Yii::$app->authManager;
-			$newRoleOrPermName="client-".$named_client_id."-write";
-			$checkPerm = $auth->getPermission($newRoleOrPermName);
-			if (is_null($checkPerm)) {
-				$newAuthObj = $auth->createPermission($newRoleOrPermName);
-				$newAuthObj->description = "Read-Permission for client " . $named_client_name;
-				$newAuthObj->ruleName = "isNotAGuest";
-				$newAuthObj->data = ['id' => $named_client_id, 'dataaccessfilter' => 'client', 'right' => 'write'];
-				$result2 = $auth->add($newAuthObj);
-			}
-			return $result1 && $result2;
-		}
-		
 		$clientModel = new Client();
 		$clients = $clientModel::find()->all();
 		$clientList = array();
@@ -202,7 +175,7 @@ class ClientController extends Controller
 				$newAuthObj->ruleName = "isNotAGuest";
 				$newAuthObj->description = "Read-Permission for client " . $client->name;
 				$newAuthObj->data = ['id' => $client->id, 'dataaccessfilter' => 'client', 'right' => 'read'];
-				$result1 = $auth->add($newAuthObj);
+				$auth->add($newAuthObj);
 			}
 			$auth = Yii::$app->authManager;
 			$newRoleOrPermName="client-".$client->id."-write";
@@ -212,10 +185,9 @@ class ClientController extends Controller
 				$newAuthObj->description = "Read-Permission for client " . $client->name;
 				$newAuthObj->ruleName = "isNotAGuest";
 				$newAuthObj->data = ['id' => $client->id, 'dataaccessfilter' => 'client', 'right' => 'write'];
-				$result2 = $auth->add($newAuthObj);
+				$auth->add($newAuthObj);
 			}
 		}
-		return $result1 && $result2;
 	}
 
 	public function actionCreateclientpermissions()
@@ -254,7 +226,7 @@ class ClientController extends Controller
 
     /**
      * Displays a single Client model.
-     * @param integer $id
+     * @param int $id ID
      * @return mixed
      */
     public function actionView($id)
@@ -281,7 +253,7 @@ class ClientController extends Controller
     	}    
 			
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-$this->createClientPermissions($model->id, $model->name);
+$this->createClientPermissions();
 			$userId = Yii::$app->User->Id;
 			$this->addPermissionToUser($model->id, $userId);	
         	return $this->redirect(['view', 'id' => $model->id]);
@@ -297,7 +269,7 @@ $this->createClientPermissions($model->id, $model->name);
     /**
      * Updates an existing Client model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
+     * @param int $id ID
      * @return mixed
      */
     public function actionUpdate($id)
@@ -323,7 +295,7 @@ $this->createClientPermissions($model->id, $model->name);
     /**
      * Deletes an existing Client model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
+     * @param int $id ID
      * @return mixed
      */
     public function actionDelete($id)
@@ -351,7 +323,7 @@ $this->createClientPermissions($model->id, $model->name);
     /**
      * Finds the Client model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
+     * @param int $id ID
      * @return Client the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */

@@ -236,7 +236,7 @@ class DbdatabaseController extends Controller
 
     /**
      * Displays a single DbDatabase model.
-     * @param integer $id
+     * @param int $id ID
      * @return mixed
      */
     public function actionView($id)
@@ -282,7 +282,7 @@ class DbdatabaseController extends Controller
     /**
      * Updates an existing DbDatabase model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
+     * @param int $id ID
      * @return mixed
      */
     public function actionUpdate($id)
@@ -312,7 +312,7 @@ class DbdatabaseController extends Controller
     /**
      * Deletes an existing DbDatabase model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
+     * @param int $id ID
      * @return mixed
      */
     public function actionDelete($id)
@@ -341,7 +341,7 @@ class DbdatabaseController extends Controller
     /**
      * Finds the DbDatabase model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
+     * @param int $id ID
      * @return DbDatabase the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -412,9 +412,10 @@ Parameter: overwrite_description_if_existing_differs=, default=Y : If there desc
 	private function buildBulkloaderExecutionString($id)
 	{
 
-		$bulk_loader_executable = \vendor\meta_grid\helper\Utils::get_app_config("bulk_loader_executable");
-		$bulk_loader_metagrid_jdbc_url = \vendor\meta_grid\helper\Utils::get_app_config("bulk_loader_metagrid_jdbc_url");
-		$bulk_loader_java_home = \vendor\meta_grid\helper\Utils::get_app_config("bulk_loader_java_home");
+		$Utils = new \vendor\meta_grid\helper\Utils();
+		$bulk_loader_executable = $Utils->get_app_config("bulk_loader_executable");
+		$bulk_loader_metagrid_jdbc_url = $Utils->get_app_config("bulk_loader_metagrid_jdbc_url");
+		$bulk_loader_java_home = $Utils->get_app_config("bulk_loader_java_home");
 
 		$model = $this->findModel($id);
 		$bulkLoaderParameterArr = $this->bulkloadertemplate();

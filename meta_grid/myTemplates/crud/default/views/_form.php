@@ -97,6 +97,15 @@ var p_scope_field		 = '#fk_project_id :selected';
     <?= "<?php " ?><?= $generator->modelClass=="app\models\Bracket" ? "\$form = ActiveForm::begin(['id' => 'dynamic-form']); ?>" : "\$form = ActiveForm::begin(); ?>" ?>
 
 <?php foreach ($generator->getColumnNames() as $attribute) {
+
+	// Patrick, ignore fields
+	if ($attribute=="fk_deleted_status_id") continue; // not for now (T204)
+	if ($attribute=="fk_datamanagement_process_id") continue; // not for now (T204)
+	if ($attribute=="fk_object_persistence_method_id") continue; // not for now (T204)
+	if ($attribute=="source_definition") continue; // not for now (T204)
+	if ($attribute=="source_comment") continue; // not for now (T204)
+	if ($attribute=="source_definition_language") continue; // not for now (T204)
+
     if (in_array($attribute, $safeAttributes)) {
 		$ignore1 = "";
 		$ignore2 = "";
