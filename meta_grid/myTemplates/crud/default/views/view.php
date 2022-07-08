@@ -118,6 +118,30 @@ if ($generator->modelClass === 'app\models\DbTableField')
 <?php endif; ?>	
     </p>
 
+<?php
+$mode="";
+foreach ($generator->getTableSchema()->columns as $column)
+{
+	// create tag widget only of object has a relation to a project
+	if ($column->name=="fk_project_id")
+	{
+		$mode="fk_project_id";
+	}
+}
+if ($mode == "fk_project_id")
+{
+	echo "<?php" . "\n";
+	echo "\$TagsWidget = \\vendor\\meta_grid\\tag_select\\TagSelectWidget::widget(" . "\n";
+	echo "	[" . "\n";
+	echo "		'object_id' => \$model->id," . "\n";
+	echo "		'object_type_id' => \$model->fk_object_type_id," . "\n";
+	echo "		'user_id' => \Yii::\$app->getUser()->id," . "\n";
+	echo "		'project_id' => \$model->fkProject->id" . "\n";
+	echo "	]);" . "\n";
+	echo "?>	" . "\n";
+}
+?>
+
     <?= "<?= " ?>DetailView::widget([
         'model' => $model,
         'attributes' => [
@@ -127,8 +151,9 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
         echo "            '" . $name . "',\n";
     }
 } else {
+	$i = 0;
     foreach ($generator->getTableSchema()->columns as $column) {
-    	
+    	$i++;
     	// Patrick, ignore fields
 		if ($column->name=="fk_deleted_status_id") continue; // not for now (T204)
 		if ($column->name=="fk_datamanagement_process_id") continue; // not for now (T204)
@@ -141,7 +166,21 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
     	// Patrick, 2016-01-16, "related" Infos anzeigen
     	$setRelationInformation = 0;
 		$useGenCode = 0;
-    	if (substr($column->name,0,3)=="fk_")
+		$genCode = "";
+		//echo $i;
+		if ($i==1)
+		{
+		 	if ($mode !== "")
+		 	{	
+				echo "            [\n";
+				echo "             'label' => Yii::t('app', 'Tags'),\n";
+				echo "             'value' => \$TagsWidget,\n";
+				echo "             'format' => 'raw',\n";
+				echo "            ],\n";
+			}
+		}
+
+	if (substr($column->name,0,3)=="fk_")
     	{
     		$setRelationInformation = 1;
     		
@@ -163,17 +202,14 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
     		}
     		 
     		$relFieldnameLabel = Inflector::camel2words(str_replace("fk_","",str_replace("_id","",$column->name)));
-    		
-    		$genCode = "";
-   		
+		$genCode = "";	   
     		if ($column->name=="fk_project_id")
     		{
-    			$genCode .= "            [\n";
+			$genCode .= "            [\n";
     			$genCode .= "             'label' => Yii::t('app', 'Client'),\n";
     			$genCode .= "             'value' => ";
     			$genCode .= "             		\$model->".$column->name." == \"\" ? \$model->".$column->name." : \$model->".$relFieldname."->fkClient->name\n";
-    			$genCode .= "            ],\n";
-    		
+    			$genCode .= "            ],\n"; 		
     		}
     		
     		$nameFieldProperty = "name";

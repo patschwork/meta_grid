@@ -647,3 +647,12 @@
     SELECT * FROM result
     ORDER BY "db_table_location_normalized"
     ;
+
+-- View for tag grouping in frontend (selectize component)
+	DROP VIEW v_tagsOptGroup;	
+	CREATE VIEW v_tagsOptGroup AS
+	SELECT 
+	 *
+	 ,CASE WHEN fk_project_id IS NULL AND fk_user_id IS NULL THEN 0 WHEN IFNULL(fk_project_id,-1)>0 THEN 1 WHEN IFNULL(fk_user_id,-1)>0 THEN 2 ELSE -1 END AS optgroup
+	FROM tag
+	;

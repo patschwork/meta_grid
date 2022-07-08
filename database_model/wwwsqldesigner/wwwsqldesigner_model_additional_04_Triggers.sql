@@ -80,3 +80,14 @@ BEGIN
     DELETE FROM cleanup_queue WHERE (id=new.id) OR (ref_fk_object_type_id=12 AND -1=new.ref_fk_object_id AND -1=new.ref_fk_object_type_id);
 END;
  
+CREATE TRIGGER TRIG_tag_Check_Business_Rule BEFORE INSERT
+ON tag
+FOR EACH ROW
+WHEN (
+      (IFNULL(NEW.fk_project_id,-1) >0 AND IFNULL(NEW.fk_user_id,-1) >0) 
+      OR
+      ((SELECT COUNT(name) FROM tag WHERE name=NEW.name AND IFNULL(fk_project_id,-1)=IFNULL(NEW.fk_project_id,-1) AND IFNULL(fk_user_id,-1)=IFNULL(NEW.fk_user_id,-1))>0)
+     ) 
+BEGIN
+    SELECT RAISE(ABORT, 'Invalid combination: Only scope project or user or none of them then it is global. Each tag must be unique for every scope.');
+END;

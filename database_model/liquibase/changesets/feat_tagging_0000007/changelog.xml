@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="feat_tagging_0000007/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="feat_tagging_0000007" context="feature_tagging">
+		<createView replaceIfExists="false" viewName="v_tagsOptGroup">
+		<![CDATA[
+		SELECT 
+		 *
+		 ,CASE WHEN fk_project_id IS NULL AND fk_user_id IS NULL THEN 0 WHEN IFNULL(fk_project_id,-1)>0 THEN 1 WHEN IFNULL(fk_user_id,-1)>0 THEN 2 ELSE -1 END AS optgroup
+		FROM tag
+		]]>
+		</createView>
+
+
+		<comment>
+		<![CDATA[
+		Used objects:
+			v_tagsOptGroup
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

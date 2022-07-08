@@ -129,6 +129,17 @@ if ($foundIssues>0)
 	]);
 }
 
+$session = Yii::$app->session;
+if ($session->hasFlash('new_role_created'))
+{	
+    echo yii\bootstrap\Alert::widget([
+            'options' => [
+                            'class' => 'alert-info',
+            ],
+            'body' => $session->getFlash('new_role_created'),
+    ]);
+}	
+
 try
 {
     $Utils = new \vendor\meta_grid\helper\Utils();
@@ -296,62 +307,50 @@ function UseMayAccessObject($objecttype) {
  
     switch ($objecttype) {
         case "client":
-            // $tooltip     = "Kunden-/Mandanteneinstellung";
             $buttonTitle = "Client";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
         case "project":
-            // $tooltip     = "Projekte";
             $buttonTitle = "Project";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
         case "keyfigure":
-            // $tooltip     = "Kennzahlen und KPIs";
             $buttonTitle = "Keyfigure";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
         case "attribute":
-            // $tooltip     = "Attribute und Kennzeichen";
             $buttonTitle = "Attribute";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
         case "contact":
-            // $tooltip     = "Kontaktinformationen und Ansprechpartner";
             $buttonTitle = "Contact";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
         case "contactgroup":
-            // $tooltip     = "Kontaktgruppen in welchen Kontakte wirken (Abteilung, Team, Projekt, etc.)";
             $buttonTitle = "ContactGroup";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
         case "sourcesystem":
-            // $tooltip     = "Quellsysteme";
             $buttonTitle = "Sourcesystem";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
         case "dbdatabase":
-            // $tooltip     = "Datenbanken, Universum, Cube, ...";
             $buttonTitle = "Database";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
         case "dbtable":
-            // $tooltip     = "Datenbanktabellen, -Views, Exceltabelle, CSV-Dateien, ...";
             $buttonTitle = "Table";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
         case "dbtablefield":
-            // $tooltip     = "Felder einer dbtable";
             $buttonTitle = "Table Field";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
         case "dbtablecontext":
-            // $tooltip     = "Kontext einer dbtable, z.B. Staging-, Fakt-, Dimension-Tabelle, ...";
             $buttonTitle = "Table Context";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
         case "dbtabletype":
-            // $tooltip     = "Tabellentyp, z.B. Datenbanktabelle/-view, CSV-Datei, ...";
             $buttonTitle = "Table Type";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
@@ -360,74 +359,55 @@ function UseMayAccessObject($objecttype) {
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
         case "tooltype":
-            // $tooltip     = "Art der Programmsuite, z.B. Datenbanksystem, Officeprogramm, BI-Suite, ...";
-            // $tooltip     = "Type of programms uite, e.g. RDBMS, office suite, BI suite, ...";
             $buttonTitle = "Tool Type";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
         case "objectcomment":
-            // $tooltip     = "Alle Kommentare zu Objekten";
-            // $tooltip     = "All comments of objects";
             $buttonTitle = "Comments";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
         case "datatransferprocess":
-            // $tooltip     = "ETL, StoredProcedure zur Datentransformation etc.";
-            // $tooltip     = "ETL, StoredProcedure for data transformation etc.";
             $buttonTitle = "Data Transfer Process";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
         case "datatransfertype":
-            // $tooltip     = "Datentransfertyp";
-            // $tooltip     = "Definition of data transferring";
             $buttonTitle = "Data Transfer Type";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
         case "datadeliveryobject":
-            // $tooltip     = "Report, Exportschnittstelle, Exportdatei, ...";
-            // $tooltip     = "Reports, export interface, export file, ...";
             $buttonTitle = "Data Delivery Object";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
         case "datadeliverytype":
-            // $tooltip     = "Welcher Art der Belieferung";
-            // $tooltip     = "Definition of delivery";
             $buttonTitle = "Data Delivery Type";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
         case "scheduling":
-            // $tooltip     = "Planung zur automatischen, regelm&auml;&szlig;igen Prozessen";
-            // $tooltip     = "Scheduling of recurring processes";
             $buttonTitle = "Scheduling";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
         case "mapper":
-            // $tooltip     = "Verknuepfungen zu Objekten";
-            // $tooltip     = "Link to objects to objects";
             $buttonTitle = "Mappings";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
         case "objectdependson":
-            // $tooltip     = "Abhaengigkeiten";
-            // $tooltip     = "Dependencies";
             $buttonTitle = "Object depends on";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
         case "glossary":
-            // $tooltip     = "Glossar";
             $buttonTitle = "Glossary";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
         case "bracket":
-            // $tooltip     = "Zusammenfassen von Objekten";
-            // $tooltip     = "Grouping of objects";
             $buttonTitle = "Bracket";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
         case "url":
-            // $tooltip     = "Zusammenfassen von Objekten";
-            // $tooltip     = "Grouping of objects";
             $buttonTitle = "URL";
+            $tooltip     = "TooltipMainPage: " . $buttonTitle;
+            break;
+        case "tag":
+            $buttonTitle = "Tags";
             $tooltip     = "TooltipMainPage: " . $buttonTitle;
             break;
         }
@@ -533,7 +513,7 @@ function printHeader($csvObjecttypes, $title) {
                 <?= UseMayAccessObject("contactgroup") ?>
             </div>
             <div class="col-lg-4">
-                <h2><?= printHeader("sourcesystem;dbdatabase;dbtable;dbtablefield;dbtablecontext;dbtabletype;tool;tooltype;objectcomment", "Technical Information") ?></h2>
+                <h2><?= printHeader("sourcesystem;dbdatabase;dbtable;dbtablefield;dbtablecontext;dbtabletype;tool;tooltype;objectcomment;tag", "Technical Information") ?></h2>
 				<?= UseMayAccessObject("sourcesystem") ?>
 				<?= UseMayAccessObject("dbdatabase") ?>
 				<?= UseMayAccessObject("dbtable") ?>
@@ -549,6 +529,7 @@ function printHeader($csvObjecttypes, $title) {
                         echo "<hr>";
                     } ?>
 				<?= UseMayAccessObject("objectcomment") ?>
+				<?= UseMayAccessObject("tag") ?>
                 <!--  <p><a style="width: 250px;" class="btn btn-warning" target="_blank" href="<?= $wa_gui_url ?>db_database.php">Database &raquo;</a></p>	-->
                 <!--  <p><a style="width: 250px;" class="btn btn-warning" target="_blank" href="<?= $wa_gui_url ?>db_table.php">Table &raquo;</a></p>	-->
                 <!--  <p><a style="width: 250px;" class="btn btn-warning" target="_blank" href="<?= $wa_gui_url ?>db_table_field.php">Table Field &raquo;</a></p>	-->

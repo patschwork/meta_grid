@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000115/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000115" context="language,perpective,tagging">
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_source (id, category, message)
+		SELECT
+			(SELECT MAX(id)+1 FROM language_source) AS new_language_source_id
+		,'app' AS new_category
+		,'Tags' AS new_message
+		WHERE 0=(SELECT COUNT(*) FROM language_source WHERE category = 'app' AND message = 'Tags')
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_translate ("language",id,"translation")
+		SELECT
+			"language"
+		,language_source_id
+		,CASE
+			WHEN "language"='en-US'      THEN 'Tags'
+			WHEN "language"='de-DE'      THEN 'Schlagwörter'
+			WHEN "language"='de-MS_SSRS' THEN 'Schlagwörter'
+			ELSE NULL
+			END AS new_translation
+		FROM
+		(
+			SELECT 
+			DISTINCT 
+				"language"
+				,CASE
+					WHEN "language" IS NOT NULL THEN sq01.message
+					ELSE NULL
+					END AS "message"
+				,sq01.id AS language_source_id
+			FROM language_translate
+			LEFT JOIN (
+				SELECT id,message FROM language_source WHERE category='app' AND message='Tags'
+			) sq01 ON 1=1
+		) sq02
+		;
+		]]>		
+		</sql>		
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_source (id, category, message)
+		SELECT
+			(SELECT MAX(id)+1 FROM language_source) AS new_language_source_id
+		,'app' AS new_category
+		,'Tag' AS new_message
+		WHERE 0=(SELECT COUNT(*) FROM language_source WHERE category = 'app' AND message = 'Tag')
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_source (id, category, message)
+		SELECT
+			(SELECT MAX(id)+1 FROM language_source) AS new_language_source_id
+		,'app' AS new_category
+		,'Personal tag' AS new_message
+		WHERE 0=(SELECT COUNT(*) FROM language_source WHERE category = 'app' AND message = 'Personal tag')
+		;
+		]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_translate ("language",id,"translation")
+		SELECT
+			"language"
+		,language_source_id
+		,CASE
+			WHEN "language"='en-US'      THEN 'Tag'
+			WHEN "language"='de-DE'      THEN 'Schlagwort'
+			WHEN "language"='de-MS_SSRS' THEN 'Schlagwort'
+			ELSE NULL
+			END AS new_translation
+		FROM
+		(
+			SELECT 
+			DISTINCT 
+				"language"
+				,CASE
+					WHEN "language" IS NOT NULL THEN sq01.message
+					ELSE NULL
+					END AS "message"
+				,sq01.id AS language_source_id
+			FROM language_translate
+			LEFT JOIN (
+				SELECT id,message FROM language_source WHERE category='app' AND message='Tag'
+			) sq01 ON 1=1
+		) sq02
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_translate ("language",id,"translation")
+		SELECT
+			"language"
+		,language_source_id
+		,CASE
+			WHEN "language"='en-US'      THEN 'Personal tag'
+			WHEN "language"='de-DE'      THEN 'Persönliches Schlagwort'
+			WHEN "language"='de-MS_SSRS' THEN 'Persönliches Schlagwort'
+			ELSE NULL
+			END AS new_translation
+		FROM
+		(
+			SELECT 
+			DISTINCT 
+				"language"
+				,CASE
+					WHEN "language" IS NOT NULL THEN sq01.message
+					ELSE NULL
+					END AS "message"
+				,sq01.id AS language_source_id
+			FROM language_translate
+			LEFT JOIN (
+				SELECT id,message FROM language_source WHERE category='app' AND message='Personal tag'
+			) sq01 ON 1=1
+		) sq02
+		;
+		]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_source (id, category, message)
+		SELECT
+			(SELECT MAX(id)+1 FROM language_source) AS new_language_source_id
+		,'app' AS new_category
+		,'Global tag' AS new_message
+		WHERE 0=(SELECT COUNT(*) FROM language_source WHERE category = 'app' AND message = 'Global tag')
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_translate ("language",id,"translation")
+		SELECT
+			"language"
+		,language_source_id
+		,CASE
+			WHEN "language"='en-US'      THEN 'Global tag'
+			WHEN "language"='de-DE'      THEN 'Globales Schlagwort'
+			WHEN "language"='de-MS_SSRS' THEN 'Globales Schlagwort'
+			ELSE NULL
+			END AS new_translation
+		FROM
+		(
+			SELECT 
+			DISTINCT 
+				"language"
+				,CASE
+					WHEN "language" IS NOT NULL THEN sq01.message
+					ELSE NULL
+					END AS "message"
+				,sq01.id AS language_source_id
+			FROM language_translate
+			LEFT JOIN (
+				SELECT id,message FROM language_source WHERE category='app' AND message='Global tag'
+			) sq01 ON 1=1
+		) sq02
+		;
+		]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_source (id, category, message)
+		SELECT
+			(SELECT MAX(id)+1 FROM language_source) AS new_language_source_id
+		,'app' AS new_category
+		,'Project tag' AS new_message
+		WHERE 0=(SELECT COUNT(*) FROM language_source WHERE category = 'app' AND message = 'Project tag')
+		;
+		]]>		
+		</sql>		
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_translate ("language",id,"translation")
+		SELECT
+			"language"
+		,language_source_id
+		,CASE
+			WHEN "language"='en-US'      THEN 'Project tag'
+			WHEN "language"='de-DE'      THEN 'Projektspezifisches Schlagwort'
+			WHEN "language"='de-MS_SSRS' THEN 'Projektspezifisches Schlagwort'
+			ELSE NULL
+			END AS new_translation
+		FROM
+		(
+			SELECT 
+			DISTINCT 
+				"language"
+				,CASE
+					WHEN "language" IS NOT NULL THEN sq01.message
+					ELSE NULL
+					END AS "message"
+				,sq01.id AS language_source_id
+			FROM language_translate
+			LEFT JOIN (
+				SELECT id,message FROM language_source WHERE category='app' AND message='Project tag'
+			) sq01 ON 1=1
+		) sq02
+		;
+		]]>		
+		</sql>		
+		
+		<comment>
+		<![CDATA[
+		New translations regarding tags
+		Used objects:
+            language_source
+            language_translate
+		Phabricator tasks:
+			T1
+        ]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

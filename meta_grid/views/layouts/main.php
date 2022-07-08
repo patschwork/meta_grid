@@ -73,6 +73,7 @@ ShortcutAsset::register($this);
 											'label' => Yii::t('general','Rebuild Project Permissions'), 'visible' => True],
 								['label' => Yii::t('general','Translate'), 'url' => ['/translatemanager']],
 								['label' => Yii::t('general','Gii - Yii2 Code Generator'), 'url' => ['/gii']],
+								['label' => Yii::t('general','Tag Security Matrix Admin View'), 'url' => ['/tag/admininfomatrix']],
 																					  
 							]
 						],

@@ -1,3 +1,7 @@
+# 2.6
+- [T1]                      Using tags for all object types
+- [T206]                    Scripts (Linux/Debian and Windows) for updating the meta-grid-installer-updater
+----------------------------------------------------------------------------------------------------
 # 2.5.1
 - [T198]                    Ready for PHP 8.1.2
 - [T204]                    Don't show unused fields

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000116/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000116" context="language,perpective,tagging">
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_source (id, category, message)
+		SELECT
+			(SELECT MAX(id)+1 FROM language_source) AS new_language_source_id
+		,'app' AS new_category
+		,'TooltipMainPage: Tags' AS new_message
+		WHERE 0=(SELECT COUNT(*) FROM language_source WHERE category = 'app' AND message = 'TooltipMainPage: Tags')
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_translate ("language",id,"translation")
+		SELECT
+			"language"
+		,language_source_id
+		,CASE
+			WHEN "language"='en-US'      THEN 'Get overview of existings tags.'
+			WHEN "language"='de-DE'      THEN 'Übersicht über die zur Verfügung stehenden Schlagwörter'
+			WHEN "language"='de-MS_SSRS' THEN 'Übersicht über die zur Verfügung stehenden Schlagwörter'
+			ELSE NULL
+			END AS new_translation
+		FROM
+		(
+			SELECT 
+			DISTINCT 
+				"language"
+				,CASE
+					WHEN "language" IS NOT NULL THEN sq01.message
+					ELSE NULL
+					END AS "message"
+				,sq01.id AS language_source_id
+			FROM language_translate
+			LEFT JOIN (
+				SELECT id,message FROM language_source WHERE category='app' AND message='TooltipMainPage: Tags'
+			) sq01 ON 1=1
+		) sq02
+		;
+		]]>		
+		</sql>		
+		
+		<comment>
+		<![CDATA[
+		New translations regarding tags
+		Used objects:
+            language_source
+            language_translate
+		Phabricator tasks:
+			T1
+        ]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

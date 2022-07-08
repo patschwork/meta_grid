@@ -518,3 +518,22 @@ tool TEXT(500) DEFAULT NULL,
 tool_version TEXT(250) DEFAULT NULL,
 routine TEXT(500) DEFAULT NULL
 );
+
+CREATE TABLE tag (
+id INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+uuid TEXT DEFAULT NULL,
+fk_object_type_id INTEGER DEFAULT 20 REFERENCES object_type (id),
+name TEXT(250) NOT NULL ,
+fk_project_id INTEGER DEFAULT NULL REFERENCES project (id),
+fk_user_id INTEGER DEFAULT NULL,
+UNIQUE (name, fk_project_id, fk_user_id)
+);
+
+CREATE TABLE map_object_2_tag (
+id INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+uuid TEXT DEFAULT NULL,
+ref_fk_object_id INTEGER NOT NULL ,
+ref_fk_object_type_id INTEGER NOT NULL  REFERENCES object_type (id),
+fk_tag_id INTEGER NOT NULL  REFERENCES tag (id),
+UNIQUE (ref_fk_object_id, ref_fk_object_type_id, fk_tag_id)
+);

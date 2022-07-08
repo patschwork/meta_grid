@@ -3,9 +3,8 @@
 namespace vendor\meta_grid\helper;
 
 // use vendor\meta_grid\helper\Configs;
+
 use Yii;
-use yii\caching\TagDependency;
-use yii\helpers\ArrayHelper;
 use yii\web\User;
 
 /**
@@ -282,4 +281,79 @@ class RBACHelper
         return $buttons;
     }
 
+    private static function abstractMayEditDeleteCheckTag($fk_user_id, $fk_project_id, $case)
+    {
+        $returnValue = false;
+        if ($fk_user_id !== null)
+        {
+            if ($fk_user_id === Yii::$app->user->id)
+            {
+                $returnValue = true;
+                return $returnValue; // Personal tag
+            }
+        }
+        if(Yii::$app->User->can($case . '-' . "tag") || Yii::$app->user->identity->isAdmin)
+        {
+            if ($fk_user_id === null && $fk_project_id === null)
+            {
+                $returnValue = true;
+                return $returnValue; // Global tag allowed           
+            }
+            if (in_array($fk_project_id, Yii::$app->User->identity->permProjectsCanEdit))
+            {
+                $returnValue = true;
+                return $returnValue; // Project tag allowed                 
+            }
+        }
+        return $returnValue;
+    }
+
+    public function mayEditTag($fk_user_id, $fk_project_id)
+    {
+        return static::abstractMayEditDeleteCheckTag($fk_user_id, $fk_project_id, 'create');
+    }    
+    
+    public function mayDeleteTag($fk_user_id, $fk_project_id)
+    {
+        return static::abstractMayEditDeleteCheckTag($fk_user_id, $fk_project_id, 'delete');
+    }
+
+    public function matrixRoleTag($fk_user_id)
+    {
+        $matrix = array();
+
+        $matrix["index"]["fk_user_id"][0]=$fk_user_id;
+        $matrix["create_or_edit"]["fk_user_id"][0]=$fk_user_id;
+        $matrix["delete"]["fk_user_id"][0]=$fk_user_id;
+        
+        $auth = Yii::$app->authManager;
+
+        if ($auth->checkAccess($fk_user_id,"view" . '-' . "tag"))
+        {
+            $matrix["index"]["GLOBAL"][0]=1;
+            foreach(Yii::$app->User->identity->getPermProjectsCanSeeByUserId($fk_user_id) as $key=>$fk_project_id)
+            {
+                $matrix["index"]["fk_project_id"][$key]=$fk_project_id;
+            }
+        }
+        
+        if ($auth->checkAccess($fk_user_id,"create" . '-' . "tag"))
+        {
+            $matrix["create_or_edit"]["GLOBAL"][0]=1;
+            foreach(Yii::$app->User->identity->getPermProjectsCanEditByUserId($fk_user_id) as $key=>$fk_project_id)
+            {
+                $matrix["create_or_edit"]["fk_project_id"][$key]=$fk_project_id;
+            }
+        }
+
+        if ($auth->checkAccess($fk_user_id,"delete" . '-' . "tag"))
+        {
+            $matrix["delete"]["GLOBAL"][0]=1;
+            foreach(Yii::$app->User->identity->getPermProjectsCanEditByUserId($fk_user_id) as $key=>$fk_project_id)
+            {
+                $matrix["delete"]["fk_project_id"][$key]=$fk_project_id;
+            }
+        }
+        return $matrix;
+    }
 }

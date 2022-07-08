@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="feat_tagging_0000006/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="feat_tagging_0000006" context="feature_tagging">
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_tag_Check_Business_Rule;
+		]]>		
+		</sql>
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_tag_Check_Business_Rule
+BEFORE INSERT ON tag
+FOR EACH ROW
+WHEN (
+      (IFNULL(NEW.fk_project_id,-1) >0 AND IFNULL(NEW.fk_user_id,-1) >0) 
+      OR
+      ((SELECT COUNT(name) FROM tag WHERE name=NEW.name AND IFNULL(fk_project_id,-1)=IFNULL(NEW.fk_project_id,-1) AND IFNULL(fk_user_id,-1)=IFNULL(NEW.fk_user_id,-1))>0)
+     ) 
+BEGIN
+    SELECT RAISE(ABORT, 'Invalid combination: Only scope project or user or none of them then it is global. Each tag must be unique for every scope.')
+;
+END;
+]]>		
+		</sql>
+
+		<comment>
+		<![CDATA[
+		TRIGGER to prevent false data.
+		Used objects:
+			TRIG_tag_Check_Business_Rule
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

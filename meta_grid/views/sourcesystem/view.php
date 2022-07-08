@@ -38,9 +38,24 @@ $this->params['breadcrumbs'][] = $this->title;
 	
     </p>
 
+<?php
+$TagsWidget = \vendor\meta_grid\tag_select\TagSelectWidget::widget(
+	[
+		'object_id' => $model->id,
+		'object_type_id' => $model->fk_object_type_id,
+		'user_id' => \Yii::$app->getUser()->id,
+		'project_id' => $model->fkProject->id
+	]);
+?>	
+
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
+            [
+             'label' => Yii::t('app', 'Tags'),
+             'value' => $TagsWidget,
+             'format' => 'raw',
+            ],
             'id',
             'uuid:ntext',
             'fk_object_type_id',

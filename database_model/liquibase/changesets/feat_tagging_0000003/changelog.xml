@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="feat_tagging_0000003/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="feat_tagging_0000003" context="feature_tagging">
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TABLE tag_log (
+   log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+   log_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+   log_action TEXT,
+   id INTEGER,
+   uuid TEXT,
+   fk_object_type_id INTEGER,
+   fk_object_type_uuid TEXT,
+   name TEXT(250),
+   fk_project_id INTEGER,
+   fk_project_uuid TEXT,
+   fk_user_id INTEGER
+-- Wegen des UNIQUE muss das Komma immer am Ende entfernt werden! Siehe auch TRIGGER!
+-- fk_user_uuid entfernen, das es das feld nicht gibt. Siehe auch TRIGGER!
+);
+		]]>		
+		</sql>
+		
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TABLE map_object_2_tag_log (
+   log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+   log_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+   log_action TEXT,
+   id INTEGER,
+   uuid TEXT,
+   ref_fk_object_id INTEGER,
+   ref_fk_object_type_id INTEGER,
+   fk_tag_id INTEGER,
+   fk_tag_uuid TEXT
+-- Wegen des UNIQUE muss das Komma immer am Ende entfernt werden! Siehe auch TRIGGER!
+);
+		]]>		
+		</sql>
+		
+		<comment>
+		<![CDATA[
+		New logging tables for map_object_2_tag and tag.
+		Used objects:
+			map_object_2_tag_log
+			tag_log
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

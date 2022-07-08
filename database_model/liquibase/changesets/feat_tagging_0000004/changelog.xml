@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="feat_tagging_0000004/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="feat_tagging_0000004" context="feature_tagging">
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_tag_log_INSERT;
+		]]>		
+		</sql>
+		
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_tag_log_INSERT AFTER INSERT
+ON tag
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   INSERT INTO tag_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,name,fk_project_id, fk_project_uuid,fk_user_id) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.name,new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.fk_user_id);
+   UPDATE tag SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   DELETE FROM _newUUID;
+   DELETE FROM tag_log WHERE log_id=(SELECT MAX(log_id)+1 FROM tag_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
+END;
+		]]>		
+		</sql>
+		
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_tag_log_UPDATE;
+		]]>		
+		</sql>
+		
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_tag_log_UPDATE AFTER UPDATE
+ON tag
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   UPDATE tag SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   INSERT INTO tag_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,name,fk_project_id, fk_project_uuid,fk_user_id) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.name,new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.fk_user_id);
+   DELETE FROM _newUUID;
+END;
+		]]>		
+		</sql>
+		
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_tag_log_DELETE;
+		]]>		
+		</sql>
+		
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_tag_log_DELETE AFTER DELETE
+ON tag
+BEGIN
+   INSERT INTO tag_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,name,fk_project_id, fk_project_uuid,fk_user_id) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.name,old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.fk_user_id);
+END;
+		]]>		
+		</sql>
+		
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_map_object_2_tag_log_INSERT;
+		]]>		
+		</sql>
+		
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_map_object_2_tag_log_INSERT AFTER INSERT
+ON map_object_2_tag
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   INSERT INTO map_object_2_tag_log (log_action, id,uuid,ref_fk_object_id,ref_fk_object_type_id,fk_tag_id, fk_tag_uuid) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.ref_fk_object_id,new.ref_fk_object_type_id,new.fk_tag_id, (SELECT uuid FROM tag WHERE id=new.fk_tag_id));
+   UPDATE map_object_2_tag SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   DELETE FROM _newUUID;
+   DELETE FROM map_object_2_tag_log WHERE log_id=(SELECT MAX(log_id)+1 FROM map_object_2_tag_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
+END;
+		]]>		
+		</sql>
+		
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_map_object_2_tag_log_UPDATE;
+		]]>		
+		</sql>
+		
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_map_object_2_tag_log_UPDATE AFTER UPDATE
+ON map_object_2_tag
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   UPDATE map_object_2_tag SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   INSERT INTO map_object_2_tag_log (log_action, id,uuid,ref_fk_object_id,ref_fk_object_type_id,fk_tag_id, fk_tag_uuid) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.ref_fk_object_id,new.ref_fk_object_type_id,new.fk_tag_id, (SELECT uuid FROM tag WHERE id=new.fk_tag_id));
+   DELETE FROM _newUUID;
+END;
+		]]>		
+		</sql>
+		
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+DROP TRIGGER IF EXISTS TRIG_map_object_2_tag_log_DELETE;
+		]]>		
+		</sql>
+		
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+CREATE TRIGGER TRIG_map_object_2_tag_log_DELETE AFTER DELETE
+ON map_object_2_tag
+BEGIN
+   INSERT INTO map_object_2_tag_log (log_action, id,uuid,ref_fk_object_id,ref_fk_object_type_id,fk_tag_id, fk_tag_uuid) VALUES ('DELETE',old.id,old.uuid,old.ref_fk_object_id,old.ref_fk_object_type_id,old.fk_tag_id, (SELECT uuid FROM tag WHERE id=old.fk_tag_id));
+END;
+		]]>		
+		</sql>
+		
+		
+		<comment>
+		<![CDATA[
+		Trigger for filling logging tables for tag_log and map_object_2_tag_log.
+		Used objects:
+			tag_log
+			map_object_2_object_log
+			TRIG_tag_log_INSERT
+			TRIG_tag_log_UPDATE
+			TRIG_tag_log_DELETE
+			TRIG_map_object_2_object_log_INSERT
+			TRIG_map_object_2_object_log_UPDATE
+			TRIG_map_object_2_object_log_DELETE
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

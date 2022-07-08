@@ -1,5 +1,5 @@
 -- Diese Datei wurde automatisiert ueber das Python-Script create_wwwsqldesigner_model_additional.py erstellt
--- 2021-12-26 17:40:16
+-- 2022-07-07 03:03:11
 
 PRAGMA foreign_keys = ON;
 
@@ -326,7 +326,7 @@ CREATE TABLE map_object_2_object_log (
    fk_object_persistence_method_id INTEGER,
    fk_object_persistence_method_uuid TEXT,
    fk_datamanagement_process_id INTEGER,
-   fk_datamanagement_process_uuid TEXT,
+   fk_datamanagement_process_uuid TEXT
 -- Wegen des UNIQUE muss das Komma immer am Ende entfernt werden! Siehe auch TRIGGER!
 );
 
@@ -1471,9 +1471,9 @@ END;
 --    database_or_catalog TEXT(1000),
 --    schema TEXT(4000),
 --    fk_project_id TEXT,
-   fk_project_uuid TEXT,
+--    fk_project_uuid TEXT,
 --    fk_db_database_id TEXT,
-   fk_db_database_uuid TEXT,
+--    fk_db_database_uuid TEXT,
 --    column_default_value TEXT(1000),
 --    column_cant_be_null BOOLEAN,
 --    additional_field_1 TEXT(4000),
@@ -2004,6 +2004,98 @@ CREATE TRIGGER TRIG_datamanagement_process_log_DELETE AFTER DELETE
 ON datamanagement_process
 BEGIN
    INSERT INTO datamanagement_process_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,name,description,tool,tool_version,routine) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.name,old.description,old.tool,old.tool_version,old.routine);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+
+
+DROP TABLE IF EXISTS tag_log;
+CREATE TABLE tag_log (
+   log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+   log_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+   log_action TEXT,
+   id INTEGER,
+   uuid TEXT,
+   fk_object_type_id INTEGER,
+   fk_object_type_uuid TEXT,
+   name TEXT(250),
+   fk_project_id INTEGER,
+   fk_project_uuid TEXT,
+   fk_user_id INTEGER
+-- Wegen des UNIQUE muss das Komma immer am Ende entfernt werden! Siehe auch TRIGGER!
+);
+
+DROP TRIGGER IF EXISTS TRIG_tag_log_INSERT;
+CREATE TRIGGER TRIG_tag_log_INSERT AFTER INSERT
+ON tag
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   INSERT INTO tag_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,name,fk_project_id, fk_project_uuid,fk_user_id) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.name,new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.fk_user_id);
+   UPDATE tag SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   DELETE FROM _newUUID;
+   DELETE FROM tag_log WHERE log_id=(SELECT MAX(log_id)+1 FROM tag_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
+END;
+
+DROP TRIGGER IF EXISTS TRIG_tag_log_UPDATE;
+CREATE TRIGGER TRIG_tag_log_UPDATE AFTER UPDATE
+ON tag
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   UPDATE tag SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   INSERT INTO tag_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,name,fk_project_id, fk_project_uuid,fk_user_id) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.name,new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.fk_user_id);
+   DELETE FROM _newUUID;
+END;
+
+DROP TRIGGER IF EXISTS TRIG_tag_log_DELETE;
+CREATE TRIGGER TRIG_tag_log_DELETE AFTER DELETE
+ON tag
+BEGIN
+   INSERT INTO tag_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,name,fk_project_id, fk_project_uuid,fk_user_id) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.name,old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.fk_user_id);
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+
+
+DROP TABLE IF EXISTS map_object_2_tag_log;
+CREATE TABLE map_object_2_tag_log (
+   log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+   log_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+   log_action TEXT,
+   id INTEGER,
+   uuid TEXT,
+   ref_fk_object_id INTEGER,
+   ref_fk_object_type_id INTEGER,
+   fk_tag_id INTEGER,
+   fk_tag_uuid TEXT
+-- Wegen des UNIQUE muss das Komma immer am Ende entfernt werden! Siehe auch TRIGGER!
+);
+
+DROP TRIGGER IF EXISTS TRIG_map_object_2_tag_log_INSERT;
+CREATE TRIGGER TRIG_map_object_2_tag_log_INSERT AFTER INSERT
+ON map_object_2_tag
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   INSERT INTO map_object_2_tag_log (log_action, id,uuid,ref_fk_object_id,ref_fk_object_type_id,fk_tag_id, fk_tag_uuid) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.ref_fk_object_id,new.ref_fk_object_type_id,new.fk_tag_id, (SELECT uuid FROM tag WHERE id=new.fk_tag_id));
+   UPDATE map_object_2_tag SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   DELETE FROM _newUUID;
+   DELETE FROM map_object_2_tag_log WHERE log_id=(SELECT MAX(log_id)+1 FROM map_object_2_tag_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
+END;
+
+DROP TRIGGER IF EXISTS TRIG_map_object_2_tag_log_UPDATE;
+CREATE TRIGGER TRIG_map_object_2_tag_log_UPDATE AFTER UPDATE
+ON map_object_2_tag
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   UPDATE map_object_2_tag SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   INSERT INTO map_object_2_tag_log (log_action, id,uuid,ref_fk_object_id,ref_fk_object_type_id,fk_tag_id, fk_tag_uuid) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.ref_fk_object_id,new.ref_fk_object_type_id,new.fk_tag_id, (SELECT uuid FROM tag WHERE id=new.fk_tag_id));
+   DELETE FROM _newUUID;
+END;
+
+DROP TRIGGER IF EXISTS TRIG_map_object_2_tag_log_DELETE;
+CREATE TRIGGER TRIG_map_object_2_tag_log_DELETE AFTER DELETE
+ON map_object_2_tag
+BEGIN
+   INSERT INTO map_object_2_tag_log (log_action, id,uuid,ref_fk_object_id,ref_fk_object_type_id,fk_tag_id, fk_tag_uuid) VALUES ('DELETE',old.id,old.uuid,old.ref_fk_object_id,old.ref_fk_object_type_id,old.fk_tag_id, (SELECT uuid FROM tag WHERE id=old.fk_tag_id));
 
    INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
 END;

@@ -19,6 +19,7 @@ INSERT INTO object_type (id,name) VALUES (17,'bracket_searchPattern');
 INSERT INTO object_type (id,name) VALUES (18,'perspective_filter');
 INSERT INTO object_type (id,name) VALUES (19,'mapping_qualifier');
 -- 20-23 reservation for branch feature_interface_contract and tagging
+INSERT INTO object_type (id,name) VALUES (20,'tag');
 INSERT INTO object_type (id,name) VALUES (24,'url');
 INSERT INTO object_type (id,name) VALUES (25,'deleted_status');
 INSERT INTO object_type (id,name) VALUES (26,'object_persistence_method');

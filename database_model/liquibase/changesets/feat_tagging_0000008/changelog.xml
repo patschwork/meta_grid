@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="feat_tagging_0000008/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="feat_tagging_0000008" context="feature_tagging">
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO auth_item (name, type, description, rule_name) 
+SELECT 'view-tag', 2, 'May only view objecttype tag', 'isNotAGuest'
+WHERE 0=(SELECT COUNT(*) FROM auth_item WHERE name='view-tag')
+        ]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO auth_item (name, type, description, rule_name)
+SELECT 'create-tag', 2, 'May only create objecttype tag', 'isNotAGuest'
+WHERE 0=(SELECT COUNT(*) FROM auth_item WHERE name='create-tag')
+        ]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO auth_item (name, type, description, rule_name)
+SELECT 'delete-tag', 2, 'May only delete objecttype tag', 'isNotAGuest'
+WHERE 0=(SELECT COUNT(*) FROM auth_item WHERE name='delete-tag')
+        ]]>		
+		</sql>
+
+		
+		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO auth_item_child (parent, child) 
+SELECT 'global-view', 'view-tag'
+WHERE 0=(SELECT COUNT(*) FROM auth_item_child WHERE child='view-tag')
+        ]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO auth_item_child (parent, child) 
+SELECT 'global-create', 'create-tag'
+WHERE 0=(SELECT COUNT(*) FROM auth_item_child WHERE child='create-tag')
+        ]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO auth_item_child (parent, child) 
+SELECT 'global-delete', 'delete-tag'
+WHERE 0=(SELECT COUNT(*) FROM auth_item_child WHERE child='delete-tag')
+        ]]>		
+		</sql>
+
+		<comment>
+		<![CDATA[
+		Insert new permissions (if not exists).
+		Used objects:
+			auth_item
+			auth_item_child
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

@@ -101,6 +101,14 @@
   <include relativeToChangelogFile="true" file="changesets/0000076/changelog.xml"/>  <!-- Update view | v_scheduling_SearchInterface -->
   <include relativeToChangelogFile="true" file="changesets/0000077/changelog.xml"/>  <!-- Update view | v_map_object_2_object_SearchInterface -->
   <include relativeToChangelogFile="true" file="changesets/0000078/changelog.xml"/>  <!-- SQL INSERT | app_config -->
+  <include relativeToChangelogFile="true" file="changesets/feat_tagging_0000001/changelog.xml"/>  <!-- SQL Create table (with PK, FK) | tag -->
+  <include relativeToChangelogFile="true" file="changesets/feat_tagging_0000002/changelog.xml"/>  <!-- SQL Create table (with PK, FK) | map_object_2_tag -->
+  <include relativeToChangelogFile="true" file="changesets/feat_tagging_0000003/changelog.xml"/>  <!-- SQL Create table (with PK) | tag_log;map_object_2_tag_log -->
+  <include relativeToChangelogFile="true" file="changesets/feat_tagging_0000004/changelog.xml"/>  <!-- SQL CREATE TRIGGER | tag_log;map_object_2_object_log;TRIG_tag_log_INSERT;TRIG_tag_log_UPDATE;TRIG_tag_log_DELETE;TRIG_map_object_2_object_log_INSERT;TRIG_map_object_2_object_log_UPDATE;TRIG_map_object_2_object_log_DELETE -->
+  <include relativeToChangelogFile="true" file="changesets/feat_tagging_0000005/changelog.xml"/>  <!-- SQL INSERT | object_type -->
+  <include relativeToChangelogFile="true" file="changesets/feat_tagging_0000006/changelog.xml"/>  <!-- SQL CREATE TRIGGER | TRIG_tag_Check_Business_Rule -->
+  <include relativeToChangelogFile="true" file="changesets/feat_tagging_0000007/changelog.xml"/>  <!-- Create view | v_tagsOptGroup -->
+  <include relativeToChangelogFile="true" file="changesets/feat_tagging_0000008/changelog.xml"/>  <!-- SQL INSERT | auth_item;auth_item_child -->
   <include relativeToChangelogFile="true" file="changesets/0000079/changelog.xml"/>  <!-- Update view | v_db_table_SearchInterface -->
   <include relativeToChangelogFile="true" file="changesets/0000080/changelog.xml"/>  <!-- Update view | v_db_table_field_SearchInterface -->
   <include relativeToChangelogFile="true" file="changesets/0000081/changelog.xml"/>  <!-- Update view | v_All_Objects_Union -->
@@ -137,4 +145,6 @@
   <include relativeToChangelogFile="true" file="changesets/0000112/changelog.xml"/>  <!-- SQL ALTER TABLE | user -->
   <include relativeToChangelogFile="true" file="changesets/0000113/changelog.xml"/>  <!-- CREATE trigger | TRIG_user_DELETE -->
   <include relativeToChangelogFile="true" file="changesets/0000114/changelog.xml"/>  <!-- SQL ALTER TABLE | data_delivery_object_log -->
+  <include relativeToChangelogFile="true" file="changesets/0000115/changelog.xml"/>  <!-- SQL INSERT | language_source;language_translate -->
+  <include relativeToChangelogFile="true" file="changesets/0000116/changelog.xml"/>  <!-- SQL INSERT | language_source;language_translate -->
 </databaseChangeLog> 

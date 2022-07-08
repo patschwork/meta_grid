@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="feat_tagging_0000005/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="feat_tagging_0000005" context="feature_tagging">
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+INSERT INTO object_type (id,name) VALUES (20,'tag');
+		]]>		
+		</sql>
+
+		<comment>
+		<![CDATA[
+		Register new object_type for tags.
+		Used objects:
+			object_type
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>
