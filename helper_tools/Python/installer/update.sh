@@ -1,8 +1,10 @@
 #!/bin/sh
 
 # sudo apt-get install jq
+# sudo apt-get install curl
 
 whichjq=$(which jq)
+whichcurl=$(which curl)
 
 if [ -z "$whichjq" ]
 then
@@ -10,8 +12,12 @@ then
       exit
 fi
 
-$ScriptPath = [io.path]::GetDirectoryName($MyInvocation.MyCommand.Path)
-cd $ScriptPath
+if [ -z "$whichcurl" ]
+then
+      echo "curl is not installed. Cannot proceed."
+      exit
+fi
+
 
 $destdir=$PWD
 url_repo="patschwork/meta_grid_install_update"
