@@ -19,7 +19,7 @@ then
 fi
 
 
-$destdir=$PWD
+destdir=$PWD
 url_repo="patschwork/meta_grid_install_update"
 latest=$(curl --silent "https://api.github.com/repos/$url_repo/releases/latest" | jq -r .tag_name)
 file="meta_grid_updater.zip"
