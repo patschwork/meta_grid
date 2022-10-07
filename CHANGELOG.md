@@ -1,3 +1,54 @@
+# 3.0
+New UI and UX, updated Yii2-Framework and components, several bugfixes
+- [T211]                    Update to Yii2 v2.0.45
+- [T209]                    New UI
+- [T209]                    Using AdminLTE3 as UI framework
+- [T221]                    Referenced objects can now be created in the same form (don't need to switch and re-enter everything)
+- [T260]                    All import and export functionality of Meta#Grid is available on the main nav menu
+- [T245]                    Redesign breadcumbs (now showing clients or projects) between name/title of object
+- [T259]                    Objecttypes renaming e.g. Attributes are now Patterns
+- [T255]                    Roles and permissions are refreshed with the updating tool (see also Meta#Grid Installer/Updater v1.7). 
+                            A cli for this now available to do this also the manual way if needed.
+- [T236]                    List of tags for direct select to the user on the (new) left side-panel
+- [T237]                    No "hard" errors if permissions for user is only partial (e.g. client). A hint is given as output.
+- [T218]                    After switching the language/perspective stay at the location (old behaviour: changing to home)
+- [T203]                    Meta#Grid Installer/Updater accepts PHP up to 8.1.2 (see also Meta#Grid Installer/Updater v1.7).
+- [T212]                    Minor update / common bugfix
+- [T216]                    Minor update / common bugfix
+- [T219]                    Minor update / common bugfix
+- [T234]                    Minor update / common bugfix
+- [T223]                    Minor update / common bugfix
+- [T225]                    Minor update / common bugfix
+- [T226]                    Minor update / common bugfix
+- [T227]                    Minor update / common bugfix
+- [T232]                    Minor update / common bugfix
+- [T233]                    Minor update / common bugfix
+- [T239]                    Minor update / common bugfix
+- [T242]                    Minor update / common bugfix
+- [T217]                    Minor update / common bugfix
+- [T243]                    Minor update / common bugfix
+- [T215]                    Minor update / common bugfix
+- [T241]                    Minor update / common bugfix
+- [T229]                    Minor update / common bugfix
+- [T244]                    Minor update / common bugfix
+- [T246]                    Minor update / common bugfix
+- [T248]                    Minor update / common bugfix
+- [T249]                    Minor update / common bugfix
+- [T250]                    Minor update / common bugfix
+- [T261]                    Minor update / common bugfix
+- [T263]                    Minor update / common bugfix
+- [T258]                    Minor update / common bugfix
+- [T214]                    Minor update / common bugfix
+- [T210]                    Minor update / common bugfix
+- [T222]                    Minor update / common bugfix
+- [T231]                    Minor update / common bugfix
+- [T252]                    Minor update / common bugfix
+- [T254]                    Minor update / common bugfix
+- [T257]                    Minor update / common bugfix
+- [T251]                    Minor update / common bugfix
+- [T213]                    Minor update / common bugfix
+
+----------------------------------------------------------------------------------------------------
 # 2.6
 - [T1]                      Using tags for all object types
 - [T206]                    Scripts (Linux/Debian and Windows) for updating the meta-grid-installer-updater
