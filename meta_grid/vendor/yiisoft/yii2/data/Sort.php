@@ -1,8 +1,8 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
+ * @link https://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license https://www.yiiframework.com/license/
  */
 
 namespace yii\data;
@@ -72,7 +72,7 @@ use yii\web\Request;
  * `SORT_ASC` for ascending order or `SORT_DESC` for descending order. Note that the type of this property
  * differs in getter and setter. See [[getAttributeOrders()]] and [[setAttributeOrders()]] for details.
  * @property-read array $orders The columns (keys) and their corresponding sort directions (values). This can
- * be passed to [[\yii\db\Query::orderBy()]] to construct a DB query. This property is read-only.
+ * be passed to [[\yii\db\Query::orderBy()]] to construct a DB query.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
@@ -159,7 +159,7 @@ class Sort extends BaseObject
      */
     public $defaultOrder;
     /**
-     * @var string the route of the controller action for displaying the sorted contents.
+     * @var string|null the route of the controller action for displaying the sorted contents.
      * If not set, it means using the currently requested route.
      */
     public $route;
@@ -168,7 +168,7 @@ class Sort extends BaseObject
      */
     public $separator = ',';
     /**
-     * @var array parameters (name => value) that should be used to obtain the current sort directions
+     * @var array|null parameters (name => value) that should be used to obtain the current sort directions
      * and to create new sort URLs. If not set, `$_GET` will be used instead.
      *
      * In order to add hash to all links use `array_merge($_GET, ['#' => 'my-hash'])`.
@@ -181,7 +181,7 @@ class Sort extends BaseObject
      */
     public $params;
     /**
-     * @var \yii\web\UrlManager the URL manager used for creating sort URLs. If not set,
+     * @var \yii\web\UrlManager|null the URL manager used for creating sort URLs. If not set,
      * the `urlManager` application component will be used.
      */
     public $urlManager;
@@ -305,8 +305,8 @@ class Sort extends BaseObject
      * @param string $param the value of the [[sortParam]].
      * @return array the valid sort attributes.
      * @since 2.0.12
-     * @see $separator for the attribute name separator.
-     * @see $sortParam
+     * @see separator for the attribute name separator.
+     * @see sortParam
      */
     protected function parseSortParam($param)
     {
@@ -438,14 +438,25 @@ class Sort extends BaseObject
         $definition = $this->attributes[$attribute];
         $directions = $this->getAttributeOrders();
         if (isset($directions[$attribute])) {
-            $direction = $directions[$attribute] === SORT_DESC ? SORT_ASC : SORT_DESC;
+            if ($this->enableMultiSort) {
+                if ($directions[$attribute] === SORT_ASC) {
+                    $direction = SORT_DESC;
+                } else {
+                    $direction = null;
+                }
+            } else {
+                $direction = $directions[$attribute] === SORT_DESC ? SORT_ASC : SORT_DESC;
+            }
+
             unset($directions[$attribute]);
         } else {
             $direction = isset($definition['default']) ? $definition['default'] : SORT_ASC;
         }
 
         if ($this->enableMultiSort) {
-            $directions = array_merge([$attribute => $direction], $directions);
+            if ($direction !== null) {
+                $directions = array_merge([$attribute => $direction], $directions);
+            }
         } else {
             $directions = [$attribute => $direction];
         }

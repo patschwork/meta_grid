@@ -7,7 +7,7 @@ use yii\web\View;
 /**
  * @inheritdoc
  */
-class Tabs extends \yii\bootstrap\Tabs
+class Tabs extends \yii\bootstrap4\Tabs
 {
     /**
      * Register assetBundle

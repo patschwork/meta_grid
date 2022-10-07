@@ -3,7 +3,7 @@
 # Instllation or update meta#grid
 # on every OS
 # Base helper library
-# v1.6
+# v1.7
 
 import os
 import subprocess
@@ -27,7 +27,7 @@ import time
 from xml.dom import minidom
 
 def myVersion():
-    return "1.6"
+    return "1.7"
 
 def bla(msg, action=None, withLooging=True, logfilepath="", logfile=""):
     colorama.init()
@@ -39,7 +39,7 @@ def bla(msg, action=None, withLooging=True, logfilepath="", logfile=""):
         cprint(msg, 'red', 'on_grey')
     elif (action=="subheader"):
         color='blue'
-        if (is_windows):
+        if ((is_windows())):
             color='cyan'
         cprint(msg, color)
     elif (action=="error"):
@@ -54,7 +54,7 @@ def bla(msg, action=None, withLooging=True, logfilepath="", logfile=""):
         cprint(msg, color='yellow', on_color=None, attrs=['bold'])
     elif (action=="endOfScript"):
         color='grey'
-        if (is_windows):
+        if ((is_windows())):
             color='green'
         cprint(msg, color, 'on_yellow', attrs=['bold'])
     else:
@@ -253,7 +253,7 @@ def get_input_color(msg, default_value="", init_value="", no_input_just_inform_u
         msg_to_print = msg_to_print + colored(" [" + default_value + "]", 'green') + ""
     if (init_value != "") & (init_value != default_value):
         color='blue'
-        if (is_windows):
+        if (is_windows()):
             color='cyan'
         msg_to_print = msg_to_print + colored(" (Inital value: " + init_value + ")", color) + ""
     if (user_option_search_file is not None and not no_input_just_inform_user):
@@ -303,7 +303,7 @@ def intro_get_input_color():
     msg = colored("Setting", None, attrs=['bold'])
     msg = msg + colored(" [" + "Last setting -> \"Type Enter\" to choose" + "]", 'green', attrs=['bold']) + ""
     color='blue'
-    if (is_windows):
+    if (is_windows()):
         color='cyan'
     msg = msg + colored(" (Inital value: " + "This is the orginal value. Copy & Paste to use again." + ")", color, attrs=['bold']) + ""
     print(msg)
@@ -491,10 +491,19 @@ def get_php_version(phpExe):
     return out1[0]
 
 def check_if_php_version_is_ok(installed_php_version, minimun_php_version_needed):
-    return (version.parse(installed_php_version) > version.parse(minimun_php_version_needed))
+    return (version.parse(installed_php_version) >= version.parse(minimun_php_version_needed))
 
-def yii_check_requirements(phpExe, frontendfilesforlder):
-    p = subprocess.Popen([phpExe, os.path.join(frontendfilesforlder, "requirements.php")], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+def yii_check_requirements(phpExe, frontendfilesfolder):
+    p = subprocess.Popen([phpExe, os.path.join(frontendfilesfolder, "requirements.php")], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out=p.communicate()[0]
+    out1 = out.splitlines()
+    return out1
+
+def yii_metagrid_register_roles(phpExe, frontendfilesfolder):
+    yiicmd = "yii"
+    if (is_windows()):
+        yiicmd = "yii.bat"
+    p = subprocess.Popen([phpExe, yiicmd, "metagrid/register-roles"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=frontendfilesfolder)
     out=p.communicate()[0]
     out1 = out.splitlines()
     return out1

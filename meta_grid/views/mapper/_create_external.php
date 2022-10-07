@@ -6,7 +6,7 @@ use yii\helpers\ArrayHelper;
 use app\models\VAllObjectsUnion;
 use yii\helpers\Url;				// Patrick, 2016-01-17
 use kartik\depdrop\DepDrop;			// Patrick, 2016-01-17
-use yii\bootstrap\Dropdown;
+use yii\bootstrap4\Dropdown;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\MapObject2Object */

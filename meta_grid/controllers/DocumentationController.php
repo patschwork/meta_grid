@@ -103,21 +103,12 @@ class DocumentationController extends Controller
 		return null;
 	}
 	
-	private function registerControllerRole()
+	public function registerControllerRole()
 	{
-	
-		$this->createRole("global-view", "Role", "May view all objectstypes", "isNotAGuest", null, null);
-		$newAuthorRole = $this->createRole("author", "Role", "May edit all objecttypes", "isNotAGuest", null, null);
-		if (!is_null($newAuthorRole))
-		{
-			Yii::$app->authManager->addChild($newAuthorRole, Yii::$app->authManager->getRole("global-view"));
-		}
-	
-		$newRoleName = 'view' ."-" . Yii::$app->controller->id;
-		$this->createRole($newRoleName, "Perm", "May only view objecttype " . Yii::$app->controller->id, "isNotAGuest", "global-view", null);
+		$metagrid_role_management = new \vendor\meta_grid\helper\Rolemanagement();
+		$metagrid_role_management->registerControllerRole(Yii::$app->controller->id);
 	}
-	
-	
+		
     /**
      * Collects the object information and fills private array variable.
      * @param ActiveQuery $modelQuery

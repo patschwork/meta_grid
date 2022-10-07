@@ -1,8 +1,8 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
+ * @link https://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license https://www.yiiframework.com/license/
  */
 
 namespace yii\console\widgets;
@@ -40,8 +40,8 @@ use yii\helpers\Console;
  *     ],
  * ]);
  *
- * @property-write string $listPrefix List prefix. This property is write-only.
- * @property-write int $screenWidth Screen width. This property is write-only.
+ * @property-write string $listPrefix List prefix.
+ * @property-write int $screenWidth Screen width.
  *
  * @author Daniel Gomez Pan <pana_1990@hotmail.com>
  * @since 2.0.13

@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', $this->title);
 
         if ($beta_Features_enabled !== 1)
         {
-            echo yii\bootstrap\Alert::widget([
+            echo yii\bootstrap4\Alert::widget([
                 'options' => [
                         'class' => 'alert-warning',
                 ],
@@ -68,7 +68,7 @@ else
 		$fk_object_type_id=$searchModel->find()->select(['fk_object_type_id'])->one()->fk_object_type_id;
 		if ($session->hasFlash('perspective_filter_for_' . $fk_object_type_id))
 		{	
-			echo yii\bootstrap\Alert::widget([
+			echo yii\bootstrap4\Alert::widget([
 					'options' => [
 									'class' => 'alert-info',
 					],
@@ -79,7 +79,7 @@ else
 	
 	if ($session->hasFlash('deleteError'))
 	{	
-		echo yii\bootstrap\Alert::widget([
+		echo yii\bootstrap4\Alert::widget([
 				'options' => [
 					'class' => 'alert alert-danger alert-dismissable',
 				],

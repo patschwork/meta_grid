@@ -16,7 +16,7 @@
     "require": {
         "php": ">=5.4.0",
         "yiisoft/yii2": "*",
-        "yiisoft/yii2-bootstrap": "*",
+        "yiisoft/yii2-bootstrap" : "~2.0.6", "yiisoft/yii2-bootstrap4" : "^2.0.8",
         "yiisoft/yii2-swiftmailer": "*",
         "kartik-v/yii2-widget-depdrop": "@dev",
         "yiidoc/yii2-redactor": "*",
@@ -32,20 +32,25 @@
         "conquer/codemirror": "*",
         "2amigos/yii2-usuario": "~1.0",
         "yiisoft/yii2-shell": "^2.0",
-        "friendsofphp/php-cs-fixer": "2.16.0",
-        "php-cs-fixer/diff": "1.3",
         "symfony/console": "3.4.17",
         "bluezed/yii2-float-thead": "*",
-        "yii2tech/csv-grid": "^1.0"
+        "yii2tech/csv-grid": "^1.0",
+        "hail812/yii2-adminlte3": "~1.1",
+        "xtetis/yii2-bootstrap4-glyphicons": "@dev"
     },
     "require-dev": {
+        "friendsofphp/php-cs-fixer": "*",
+        "php-cs-fixer/diff": "*",
         "yiisoft/yii2-codeception": "*",
         "yiisoft/yii2-debug": "*",
         "yiisoft/yii2-gii": "*",
         "yiisoft/yii2-faker": "*"
     },
     "config": {
-        "process-timeout": 1800
+        "process-timeout": 1800,
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true
+        }
     },
     "scripts": {
         "post-create-project-cmd": [
@@ -74,6 +79,10 @@
         {
             "type": "composer",
             "url": "https://asset-packagist.org"
+        },
+        {
+            "type": "git",
+            "url": "https://xtetis@bitbucket.org/xtetis/php-yii-ext-bootstrap4-glyphicons.git"
         }
     ]
 }

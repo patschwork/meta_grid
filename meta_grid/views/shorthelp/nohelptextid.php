@@ -10,7 +10,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', $this->title);
 <div class="shorthelp-index">
 
 <?php
-	echo yii\bootstrap\Alert::widget([
+	echo yii\bootstrap4\Alert::widget([
 					'options' => [
 							'class' => 'alert-danger',
 					],

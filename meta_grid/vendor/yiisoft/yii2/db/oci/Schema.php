@@ -1,8 +1,8 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
+ * @link https://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license https://www.yiiframework.com/license/
  */
 
 namespace yii\db\oci;
@@ -25,7 +25,7 @@ use yii\helpers\ArrayHelper;
  * Schema is the class for retrieving metadata from an Oracle database.
  *
  * @property-read string $lastInsertID The row ID of the last row inserted, or the last value retrieved from
- * the sequence object. This property is read-only.
+ * the sequence object.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
@@ -372,7 +372,7 @@ SQL;
 
     /**
      * @Overrides method in class 'Schema'
-     * @see https://secure.php.net/manual/en/function.PDO-lastInsertId.php -> Oracle does not support this
+     * @see https://www.php.net/manual/en/function.PDO-lastInsertId.php -> Oracle does not support this
      *
      * Returns the ID of the last inserted row or sequence value.
      * @param string $sequenceName name of the sequence object (required by some DBMS)
@@ -411,17 +411,17 @@ SQL;
         $c->phpType = $this->getColumnPhpType($c);
 
         if (!$c->isPrimaryKey) {
-            if (stripos($column['DATA_DEFAULT'], 'timestamp') !== false) {
+            if (stripos((string) $column['DATA_DEFAULT'], 'timestamp') !== false) {
                 $c->defaultValue = null;
             } else {
-                $defaultValue = $column['DATA_DEFAULT'];
+                $defaultValue = (string) $column['DATA_DEFAULT'];
                 if ($c->type === 'timestamp' && $defaultValue === 'CURRENT_TIMESTAMP') {
                     $c->defaultValue = new Expression('CURRENT_TIMESTAMP');
                 } else {
                     if ($defaultValue !== null) {
                         if (
                             strlen($defaultValue) > 2
-                            && strpos($defaultValue, "'") === 0
+                            && strncmp($defaultValue, "'", 1) === 0
                             && substr($defaultValue, -1) === "'"
                         ) {
                             $defaultValue = substr($defaultValue, 1, -1);
@@ -594,9 +594,9 @@ SQL;
      */
     protected function extractColumnSize($column, $dbType, $precision, $scale, $length)
     {
-        $column->size = trim($length) === '' ? null : (int) $length;
-        $column->precision = trim($precision) === '' ? null : (int) $precision;
-        $column->scale = trim($scale) === '' ? null : (int) $scale;
+        $column->size = trim((string) $length) === '' ? null : (int) $length;
+        $column->precision = trim((string) $precision) === '' ? null : (int) $precision;
+        $column->scale = trim((string) $scale) === '' ? null : (int) $scale;
     }
 
     /**

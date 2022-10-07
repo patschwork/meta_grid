@@ -1,10 +1,59 @@
 Change Log: `yii2-krajee-base`
 ==============================
 
+## Version 3.0.5
+
+**Date:** 01-Jun-2022
+
+- (enh #119): Allow translations to work better when widget is extended (new widget property sourcePath).
+New property `sourcePath` added to `WidgetTrait` and used in `Widget` and `InputWidget`.
+```php
+/**
+ * @var string directory path to the original widget source. If not set, will default to the working directory for
+ * the current widget's class. Setting this property can be useful in specific cases, like when you are extending
+ * the Krajee widget with your own custom namespaced class. In that case, set this property to the original Krajee
+ * Widget Base path. Yii path alias parsing is supported (using `@` symbols). For example:
+ * ~~~
+ * // your custom extended widget
+ * namespace myapp\widgets;
+ * class MyDateRangePicker extends kartik\daterange\DateRangePicker {
+ *     // directly set the property to the original Krajee base widget directory
+ *     // you can use Yii path aliases
+ *     public $sourcePath = '@vendor/kartik-v/yii2-date-range/src';
+ * }
+ *
+ * // Alternatively you can also override this property while rendering the widget
+ * // view.php: where widget is rendered
+ * use myapp\widgets\MyDateRangePicker;
+ *
+ * echo MyDateRangePicker::widget([
+ *     'name' => 'custom',
+ *     'sourcePath' => '@vendor/kartik-v/yii2-date-range/src'
+ * ]);
+ * ~~~
+ */
+public $sourcePath;
+```
+ 
+## Version 3.0.4
+
+**Date:** 26-Feb-2022
+
+- (enh #118): Correct `substr` function use and add new `strncmp` method.
+- Enhance PHP Documentation.
+
+## Version 3.0.3
+
+**Date:** 26-Feb-2022
+
+- New class `Lib` for PHP internal base methods (for addressing NULL params deprecation in PHP versions >= v8.1).
+- Enhance & standardize php docs for new website https://docs.krajee.com.
+
 ## Version 3.0.2
 
-**Date:** _under development_
+**Date:** 10-Jan-2022
 
+- Enhance & standardize php docs for new website https://docs.krajee.com.
 - (enh #116): Enhance dependency exception messaging for `getDropdownClass`.
 - (enh #115): Fix code for older PHP version support.
 - (enh #114): Enhancements to HTML 5 input CSS.
@@ -56,7 +105,7 @@ Change Log: `yii2-krajee-base`
 **Date:** 26-Nov-2018
 
 - (enh #104): Allow Bootstrap Asset Bundle dependency to be configurable.
-  - New property `bsDependencyEnabled` in `kartik\base\AssetBundle` (Note that all Krajee extension asset bundles based on bootstrap styles extend this class). The property `bsDependencyEnabled` defaults to `true` whereby based on the `bsVersion`, the asset bundle dependency is set with one of `yii\bootstrap\BootstrapAsset` or `yii\bootstrap4\BootstrapAsset`. If one needs custom control and load their own bootstrap assets - set this property to `false` via yii2 asset manager component in your yii2 application config.
+  - New property `bsDependencyEnabled` in `kartik\base\AssetBundle` (Note that all Krajee extension asset bundles based on bootstrap styles extend this class). The property `bsDependencyEnabled` defaults to `true` whereby based on the `bsVersion`, the asset bundle dependency is set with one of `yii\bootstrap4\BootstrapAsset` or `yii\bootstrap4\BootstrapAsset`. If one needs custom control and load their own bootstrap assets - set this property to `false` via yii2 asset manager component in your yii2 application config.
 
 ## Version 2.0.1
 

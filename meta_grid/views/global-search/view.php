@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 
 // {... Beginn mit Tab Kommentierung pro Object
 // 		autogeneriert ueber gii/CRUD
-use yii\bootstrap\Tabs;
+use yii\bootstrap4\Tabs;
 use yii\data\ActiveDataProvider;
 // Kommentierung pro Object ...}
 

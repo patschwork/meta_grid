@@ -4,8 +4,10 @@ namespace vendor\meta_grid\helper;
 
 // use vendor\meta_grid\helper\Configs;
 
+use app\models\VTag2ObjectList;
 use Yii;
 use yii\web\User;
+use app\models\VTagsOptGroup;
 
 /**
  * Description of Helper
@@ -356,4 +358,26 @@ class RBACHelper
         }
         return $matrix;
     }
+
+	public function getAllTagsTheUserCanSee($user_id = NULL)
+	{
+        if (!\Yii::$app->user->isGuest)
+        {
+            $user_id = $user_id == NULL ? Yii::$app->user->id : $user_id;
+            $permProjectsCanSeeByUserId = array();
+            if (!\Yii::$app->user->isGuest)
+            {
+                $permProjectsCanSeeByUserId = Yii::$app->User->identity->getPermProjectsCanSeeByUserId($user_id);
+            }
+            
+            $VTagsOptGroup_Model = VTag2ObjectList::find()
+                ->select(["fk_tag_id", "tag_name", "optgroup"])
+                ->distinct()
+                ->asArray()
+                ->all()
+                ;
+            return $VTagsOptGroup_Model;
+        }
+        return NULL;
+	}
 }

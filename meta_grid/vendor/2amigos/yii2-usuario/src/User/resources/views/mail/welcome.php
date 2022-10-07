@@ -44,5 +44,19 @@ use yii\helpers\Html;
 <?php endif ?>
 
 <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6; font-weight: normal; margin: 0 0 10px; padding: 0;">
-    <?= Yii::t('usuario', 'If you did not make this request you can ignore this email') ?>.
+    A password reset mail will be sent to you. Please set a safe password.
+</p>
+
+<p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6; font-weight: normal; margin: 0 0 10px; padding: 0;">
+    <b>Note:</b>
+    <i>
+    You can use this instance of Meta#Grid for free.
+    Although we care about the best user experience, there is no warranty or service level agreement in using the free service.
+
+    In case you need support, consulting or a premium instance of Meta#Grid please do not hesitate to send us a message via the contact form. 
+
+    Have fun.
+    <br><br>
+    <b>By using this this instance you accept this conditions.</b>
+    </i> 
 </p>

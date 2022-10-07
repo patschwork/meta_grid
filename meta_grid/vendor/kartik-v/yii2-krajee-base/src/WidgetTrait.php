@@ -3,8 +3,8 @@
 /**
  * @package   yii2-krajee-base
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
- * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2021
- * @version   3.0.2
+ * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2022
+ * @version   3.0.5
  */
 
 namespace kartik\base;
@@ -19,36 +19,57 @@ use yii\web\View;
 /**
  * WidgetTrait manages all methods used by Krajee widgets and input widgets.
  *
- * @property array $options
- *
  * @method View getView()
+ * @property string|false $baseSourcePath Get parsed base source path based on [[sourcePath]] setting. If [[sourcePath]]
+ * is not set, it will return the current working directory of this widget class.
  *
  * @author Kartik Visweswaran <kartikv2@gmail.com>
  */
 trait WidgetTrait
 {
-    use BootstrapTrait;
-
     /**
-     * @var string the module identifier if this widget is part of a module. If not set, the module identifier will
-     * be auto derived based on the \yii\base\Module::getInstance method. This can be useful, if you are setting
+     * @var string the module identifier if this widget is part of a module.
+     *
+     * If not set, the module identifier will be auto derived based on the \yii\base\Module::getInstance method. This can be useful, if you are setting
      * multiple module identifiers for the same module in your Yii configuration file. To specify children or grand
      * children modules you can specify the module identifiers relative to the parent module (e.g. `admin/content`).
      */
     public $moduleId;
 
     /**
+     * @var string directory path to the original widget source. If not set, will default to the working directory for
+     * the current widget's class. Setting this property can be useful in specific cases, like when you are extending
+     * the Krajee widget with your own custom namespaced class. In that case, set this property to the original Krajee
+     * Widget Base path. Yii path alias parsing is supported (using `@` symbols). For example:
+     *
+     * ```php
+     * // your custom extended widget
+     * namespace myapp\widgets;
+     * class MyDateRangePicker extends kartik\daterange\DateRangePicker {
+     *     // directly set the property to the original Krajee base widget directory
+     *     // you can use Yii path aliases
+     *     public $sourcePath = '@vendor/kartik-v/yii2-date-range/src';
+     * }
+     *
+     * // Alternatively you can also override this property while rendering the widget
+     * // view.php: where widget is rendered
+     * use myapp\widgets\MyDateRangePicker;
+     *
+     * echo MyDateRangePicker::widget([
+     *     'name' => 'custom',
+     *     'sourcePath' => '@vendor/kartik-v/yii2-date-range/src'
+     * ]);
+     * ```
+     */
+    public $sourcePath;
+
+    /**
      * @var boolean prevent duplication of pjax containers when browser back & forward buttons are pressed.
+     *
      * - If this property is not set, it will be defaulted from Yii::$app->params['pjaxDuplicationFix'].
      * - If `Yii::$app->params['pjaxDuplicationFix']` is not set, then this property will default to `true`.
      */
     public $pjaxDuplicationFix;
-
-    /**
-     * @var boolean enable pop state fix for pjax container on press of browser back & forward buttons.
-     * - DEPRECATED since v3.0.2 and replaced with [[pjaxDuplicationFix]]
-     */
-    public $enablePopStateFix = false;
 
     /**
      * @var string the plugin name
@@ -61,7 +82,9 @@ trait WidgetTrait
     public $pluginDestroyJs;
 
     /**
-     * @var array widget JQuery events. You must define events in `event-name => event-function` format. For example:
+     * @var array widget JQuery events.
+     *
+     * You must define events in `event-name => event-function` format. For example:
      *
      * ~~~
      * pluginEvents = [
@@ -78,7 +101,7 @@ trait WidgetTrait
     public $pluginOptions = [];
 
     /**
-     * @var array widget plugin options.
+     * @var array default plugin options for the widget
      */
     public $defaultPluginOptions = [];
 
@@ -88,14 +111,16 @@ trait WidgetTrait
     public $defaultOptions = [];
 
     /**
-     * @var string the identifier for the PJAX widget container if the editable widget is to be rendered inside a PJAX
-     * container. This will ensure the PopoverX plugin is initialized correctly after a PJAX request is completed.
+     * @var string the identifier for the PJAX widget container if the widget is to be rendered inside a PJAX container.
+     *
+     * This will ensure the any jQuery plugin using the widget is initialized correctly after a PJAX request is completed.
      * If this is not set, no re-initialization will be done for pjax.
      */
     public $pjaxContainerId;
 
     /**
      * @var integer the position where the client JS hash variables for the input widget will be loaded.
+     *
      * Defaults to `View::POS_HEAD`. This can be set to `View::POS_READY` for specific scenarios like when
      * rendering the widget via `renderAjax`.
      */
@@ -178,12 +203,14 @@ trait WidgetTrait
     }
 
     /**
-     * Generates a hashed variable to store the pluginOptions. The following special data attributes will also be setup
-     * for the input widget, that can be accessed through javascript :
+     * Generates a hashed variable to store the pluginOptions.
      *
-     * - 'data-krajee-{name}' will store the hashed variable storing the plugin options. The `{name}` token will be
-     *   replaced with the plugin name (e.g. `select2`, ``typeahead etc.). This fixes
-     *   [issue #6](https://github.com/kartik-v/yii2-krajee-base/issues/6).
+     * The following special data attributes will also be setup for the input widget, that can be accessed through javascript :
+     *
+     * - `data-krajee-{name}` will store the hashed variable storing the plugin options. The `{name}` token will be
+     *   replaced with the plugin name (e.g. `select2`, `typeahead` etc.).
+     *
+     * @see https://github.com/kartik-v/yii2-krajee-base/issues/6
      *
      * @param string $name the name of the plugin
      */
@@ -306,5 +333,16 @@ trait WidgetTrait
             $script = "setTimeout(function(){ {$js} }, 100);";
             $view->registerJs("{$pjax}.off('{$evComplete}').on('{$evComplete}',function(){ {$script} });");
         }
+    }
+
+    /**
+     * Get parsed base source path based on [[sourcePath]] setting. If [[sourcePath]] is not set, it will return the
+     * current working directory of this widget class.
+     *
+     * @return string|false
+     */
+    public function getBaseSourcePath()
+    {
+        return isset($this->sourcePath) ? Yii::getAlias($this->sourcePath) : Config::getCurrentDir($this);
     }
 }

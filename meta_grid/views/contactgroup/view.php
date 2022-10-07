@@ -2,13 +2,8 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
-
-
-// {... Beginn mit Tab Kommentierung pro Object
-// 		autogeneriert ueber gii/CRUD
-use yii\bootstrap\Tabs;
+use yii\bootstrap4\Tabs;
 use yii\data\ActiveDataProvider;
-// Kommentierung pro Object ...}
 
 use vendor\meta_grid\mermaid_js_asset\MermaidJSAsset;
 MermaidJSAsset::register($this);
@@ -19,11 +14,19 @@ MermaidJSAsset::register($this);
 
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Contact Groups'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$bc = (new \vendor\meta_grid\helper\Utils())->breadcrumb_project_or_client($model);
+if (!is_null($bc)) $this->params['breadcrumbs'][] = $bc;
+// $this->params['breadcrumbs'][] = $this->title;
+
+// Prevent loading bootstrap.css v3.4.1 (see T212)
+\Yii::$app->assetManager->bundles['yii\\bootstrap\\BootstrapAsset'] = [
+    'css' => [],
+    'js' => []
+];
 ?>
 <div class="contact-group-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h3><?= Html::encode($this->title) ?></h3>
 
     <p>
         <?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('create-contactgroup')  ? Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) : "" ?>
@@ -47,7 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'fk_object_type_id',
             [
              'label' => Yii::t('app', 'Client'),
-             'value' =>              	$model->fk_client_id == "" ? $model->fk_client_id : $model->fkClient->name
+             'value' =>         	    $model->fk_client_id == "" ? $model->fk_client_id : ($model->fkClient === NULL ? Yii::t('app', "Can't lookup the {relFieldname} name (for id {this_id})", ['relFieldname' => 'fkClient', 'this_id' => $model->fk_client_id]) : $model->fkClient->name)
             ],
             'name:ntext',
             'description:html',

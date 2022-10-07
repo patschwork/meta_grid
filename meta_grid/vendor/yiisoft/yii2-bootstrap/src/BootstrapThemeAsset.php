@@ -22,6 +22,6 @@ class BootstrapThemeAsset extends AssetBundle
         'css/bootstrap-theme.css',
     ];
     public $depends = [
-        'yii\bootstrap\BootstrapAsset',
+        'yii\bootstrap4\BootstrapAsset',
     ];
 }

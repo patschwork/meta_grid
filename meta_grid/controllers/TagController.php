@@ -224,7 +224,7 @@ class TagController extends \app\controllers\base\TagController
 
 			if (strpos($errMsg, "Integrity constraint violation")) $errMsg = Yii::t('yii',"The object {errMsgAdd} is still referenced by other objects.", ['errMsgAdd' => $errMsgAdd]);
 			Yii::$app->session->setFlash('deleteError', Yii::t('yii','Object can\'t be deleted: ') . $errMsg);
-			return $this->redirect(Url::previous());  // Url::remember() is set in index-view
+			return $this->redirect(\yii\helpers\Url::previous(Yii::$app->controller->id."/INDEX"));  // Url::remember() is set in index-view
 		}
 	}
 	

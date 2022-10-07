@@ -8,7 +8,7 @@ use yii\helpers\Url;				// Patrick, 2016-01-17
 use yii\helpers\Json;				// Patrick, 2016-01-17
 use kartik\depdrop\DepDrop;			// Patrick, 2016-01-17
 use kartik\select2\Select2;
-use yii\bootstrap\Modal;
+use yii\bootstrap4\Modal;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\MapObject2Object */

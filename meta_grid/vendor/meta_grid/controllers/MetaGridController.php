@@ -7,7 +7,6 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use Da\User\Filter\AccessRuleFilter;
 use yii\filters\AccessControl;
-use yii\helpers\Url;
 
 class MetaGridController extends Controller
 {
@@ -57,81 +56,10 @@ class MetaGridController extends Controller
         ];
     }
 
-    private function createRole($newRoleOrPermName, $authType, $description, $ruleName, $childRole, $childPerm)
-    {
-    	$auth = Yii::$app->authManager;
-    	$checkRole = $auth->getRole($newRoleOrPermName);
-    	$checkPerm = $auth->getPermission($newRoleOrPermName);
-		$flashMessages = "";
-    	if ((is_null($checkRole) && $authType==="Role") || (is_null($checkPerm) && $authType==="Perm"))
-    	{
-    		if ($authType==="Role")
-    		{
-				$newAuthObj = $auth->createRole($newRoleOrPermName);
-    		}
-    		else 
-    		{
-				if ($authType==="Perm")
-    			{
-					$newAuthObj = $auth->createPermission($newRoleOrPermName);
-    			}
-    			else 
-    			{
-					throw "No supported authType";
-    			}
-    		}
-			$flashMessages .= Yii::t('app',"New {authType} created: {newRoleOrPermName}", ['authType' => $authType, 'newRoleOrPermName' => $newRoleOrPermName]) . "<br>";
-			$this->flashMessages .= $flashMessages;
-			Yii::warning(Yii::t('app',"New {authType} created: {newRoleOrPermName}", ['authType' => $authType, 'newRoleOrPermName' => $newRoleOrPermName]), 'New role created');
-    		$newAuthObj->ruleName = $ruleName;
-    		if (!is_null($description))
-    		{
-    			$newAuthObj->description = $description;
-    		}
-    	
-    		$auth->add($newAuthObj);
-
-    	    if (!is_null($childRole))
-    		{	
-    			$auth->addChild($auth->getRole($childRole), $newAuthObj);
-    		}
-
-    	    if (!is_null($childPerm))
-    		{	
-    			$auth->addChild($auth->getRole($childPerm), $newAuthObj);
-    		}
-    		return $newAuthObj;
-    	}
-    	return null; 
-    }
-    
-	protected function registerControllerRole()
+	public function registerControllerRole()
 	{
-		$this->flashMessages = "";
-		$this->createRole("global-view", "Role", "May view all objectstypes", "isNotAGuest", null, null);
-		$this->createRole("global-create", "Role", "May create all objectstypes", "isNotAGuest", null, null);
-		$this->createRole("global-delete", "Role", "May delete all objectstypes", "isNotAGuest", null, null);
-		$newAuthorRole = $this->createRole("author", "Role", "May edit all objecttypes", "isNotAGuest", null, null);		
-		if (!is_null($newAuthorRole))
-		{			
-			Yii::$app->authManager->addChild($newAuthorRole, Yii::$app->authManager->getRole("global-view"));
-			Yii::$app->authManager->addChild($newAuthorRole, Yii::$app->authManager->getRole("global-create"));
-			Yii::$app->authManager->addChild($newAuthorRole, Yii::$app->authManager->getRole("global-delete"));
-		}
-
-		$newRoleName = 'view' ."-" . Yii::$app->controller->id;
-		$this->createRole($newRoleName, "Perm", "May only view objecttype " . Yii::$app->controller->id, "isNotAGuest", "global-view", null);
-		
-		$newRoleName = 'create' ."-" . Yii::$app->controller->id;
-		$this->createRole($newRoleName, "Perm", "May only create objecttype " . Yii::$app->controller->id, "isNotAGuest", "global-create", null);
-		
-		$newRoleName = 'delete' ."-" . Yii::$app->controller->id;
-		$this->createRole($newRoleName, "Perm", "May only delete objecttype " . Yii::$app->controller->id, "isNotAGuest", "global-delete", null);
-		if ($this->flashMessages !== "")
-		{
-			Yii::$app->session->setFlash('new_role_created', $this->flashMessages);
-			$this->flashMessages = "";
-		}
+		$metagrid_role_management = new \vendor\meta_grid\helper\Rolemanagement();
+		$metagrid_role_management->registerControllerRole($controllerId = Yii::$app->controller->id, $withFlashmessage = true);
 	}
 
     /**
@@ -170,7 +98,7 @@ class MetaGridController extends Controller
 
 			if (strpos($errMsg, "Integrity constraint violation")) $errMsg = Yii::t('yii',"The object {errMsgAdd} is still referenced by other objects.", ['errMsgAdd' => $errMsgAdd]);
 			Yii::$app->session->setFlash('deleteError', Yii::t('yii','Object can\'t be deleted: ') . $errMsg);
-			return $this->redirect(Url::previous());  // Url::remember() is set in index-view
+			return $this->redirect(\yii\helpers\Url::previous(Yii::$app->controller->id."/INDEX"));  // Url::remember() is set in index-view
 		}
 
     }

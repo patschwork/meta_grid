@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000121/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000121" context="language">
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		UPDATE language_translate
+			SET "translation" = 'Patterns'
+		WHERE id IN (SELECT id FROM language_source WHERE message='Attributes')
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		UPDATE language_translate
+			SET "translation" = 'Pattern'
+		WHERE id IN (SELECT id FROM language_source WHERE message='Attribute')
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		UPDATE language_translate
+			SET "translation" = 'Datenbank'
+		WHERE id IN (SELECT id FROM language_source WHERE message='Database')
+		AND "language" LIKE 'de-DE'
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_source (category, message, id)
+		SELECT 'app' AS category, 'Databases' AS message, (SELECT MAX(id)+1 FROM language_source) AS id
+		WHERE 0=(SELECT COUNT(id) FROM language_source WHERE message='Databases')
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_translate("language", "translation", id)
+		SELECT 'de-DE' AS "language", 'Datenbanken' AS "translation", (SELECT id FROM language_source WHERE message='Databases') AS id
+		WHERE 0=(SELECT COUNT(id) FROM language_translate WHERE "translation"='Datenbanken' AND "language"='de-DE')
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		UPDATE language_translate
+			SET "translation" = 'Datenbank'
+		WHERE "language" = 'de-DE'
+		AND "translation" = 'Datenpool'
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_source (category, message, id)
+		SELECT 'app' AS category, 'Tables/Fields' AS message, (SELECT MAX(id)+1 FROM language_source) AS id
+		WHERE 0=(SELECT COUNT(id) FROM language_source WHERE message='Tables/Fields')
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_translate("language", "translation", id)
+		SELECT 'de-DE' AS "language", 'Tabellen/Felder' AS "translation", (SELECT id FROM language_source WHERE message='Tables/Fields') AS id
+		WHERE 0=(SELECT COUNT(id) FROM language_translate WHERE "translation"='Tabellen/Felder' AND "language"='de-DE')
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		UPDATE language_translate
+			SET "translation" = 'Tabelle'
+		WHERE "language" = 'de-DE'
+		AND "translation" = 'Datenkontainer'
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_source (category, message, id)
+		SELECT 'app' AS category, 'Sources' AS message, (SELECT MAX(id)+1 FROM language_source) AS id
+		WHERE 0=(SELECT COUNT(id) FROM language_source WHERE message='Sources')
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_translate("language", "translation", id)
+		SELECT 'de-DE' AS "language", 'Datenquellen' AS "translation", (SELECT id FROM language_source WHERE message='Sources') AS id
+		WHERE 0=(SELECT COUNT(id) FROM language_translate WHERE "translation"='Datenquellen' AND "language"='de-DE')
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		UPDATE language_translate
+			SET "translation" = 'Datenquelle'
+		WHERE "language" = 'de-DE'
+		AND "translation" = 'Quellsysteme'
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_source (category, message, id)
+		SELECT 'app' AS category, 'Contactgroups' AS message, (SELECT MAX(id)+1 FROM language_source) AS id
+		WHERE 0=(SELECT COUNT(id) FROM language_source WHERE message='Contactgroups')
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_translate("language", "translation", id)
+		SELECT 'de-DE' AS "language", 'Kontaktgruppen' AS "translation", (SELECT id FROM language_source WHERE message='Contactgroups') AS id
+		WHERE 0=(SELECT COUNT(id) FROM language_translate WHERE "translation"='Kontaktgruppen' AND "language"='de-DE')
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_translate("language", "translation", id)
+		SELECT 'de-DE' AS "language", 'Kontaktgruppen' AS "translation", (SELECT id FROM language_source WHERE message='Contactgroups') AS id
+		WHERE 0=(SELECT COUNT(*) FROM language_translate WHERE id IN (SELECT id FROM language_source WHERE message='Contactgroups'))
+		;
+		]]>		
+		</sql>		
+		
+		<comment>
+		<![CDATA[
+		Updates/new translations
+		Used objects:
+            language_source
+            language_translate
+		Phabricator tasks:
+			T259
+        ]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

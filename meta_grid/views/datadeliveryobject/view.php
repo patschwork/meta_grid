@@ -2,13 +2,8 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
-
-
-// {... Beginn mit Tab Kommentierung pro Object
-// 		autogeneriert ueber gii/CRUD
-use yii\bootstrap\Tabs;
+use yii\bootstrap4\Tabs;
 use yii\data\ActiveDataProvider;
-// Kommentierung pro Object ...}
 
 use vendor\meta_grid\mermaid_js_asset\MermaidJSAsset;
 MermaidJSAsset::register($this);
@@ -19,11 +14,19 @@ MermaidJSAsset::register($this);
 
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Data Delivery Objects'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$bc = (new \vendor\meta_grid\helper\Utils())->breadcrumb_project_or_client($model);
+if (!is_null($bc)) $this->params['breadcrumbs'][] = $bc;
+// $this->params['breadcrumbs'][] = $this->title;
+
+// Prevent loading bootstrap.css v3.4.1 (see T212)
+\Yii::$app->assetManager->bundles['yii\\bootstrap\\BootstrapAsset'] = [
+    'css' => [],
+    'js' => []
+];
 ?>
 <div class="data-delivery-object-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h3><?= Html::encode($this->title) ?></h3>
 
     <p>
         <?= Yii::$app->user->identity->isAdmin || Yii::$app->User->can('create-datadeliveryobject')  ? Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) : "" ?>
@@ -61,25 +64,25 @@ $TagsWidget = \vendor\meta_grid\tag_select\TagSelectWidget::widget(
             'fk_object_type_id',
             [
              'label' => Yii::t('app', 'Client'),
-             'value' =>              		$model->fk_project_id == "" ? $model->fk_project_id : $model->fkProject->fkClient->name
+             'value' =>              		    $model->fk_project_id == "" ? $model->fk_project_id : ($model->fkProject->fkClient === NULL ? Yii::t('app', "Can't lookup the client name (for project {fk_project_id})", ['fk_project_id' => $model->fk_project_id]) : $model->fkProject->fkClient->name)
             ],
             [
              'label' => Yii::t('app', 'Project'),
-             'value' =>              	$model->fk_project_id == "" ? $model->fk_project_id : $model->fkProject->name
+             'value' =>         	    $model->fk_project_id == "" ? $model->fk_project_id : ($model->fkProject === NULL ? Yii::t('app', "Can't lookup the {relFieldname} name (for id {this_id})", ['relFieldname' => 'fkProject', 'this_id' => $model->fk_project_id]) : $model->fkProject->name)
             ],
             'name:ntext',
             'description:html',
             [
              'label' => Yii::t('app', 'Tool'),
-             'value' =>              	$model->fk_tool_id == "" ? $model->fk_tool_id : $model->fkTool->tool_name
+             'value' =>         	    $model->fk_tool_id == "" ? $model->fk_tool_id : ($model->fkTool === NULL ? Yii::t('app', "Can't lookup the {relFieldname} name (for id {this_id})", ['relFieldname' => 'fkTool', 'this_id' => $model->fk_tool_id]) : $model->fkTool->tool_name)
             ],
             [
              'label' => Yii::t('app', 'Data Delivery Type'),
-             'value' =>              	$model->fk_data_delivery_type_id == "" ? $model->fk_data_delivery_type_id : $model->fkDataDeliveryType->name
+             'value' =>         	    $model->fk_data_delivery_type_id == "" ? $model->fk_data_delivery_type_id : ($model->fkDataDeliveryType === NULL ? Yii::t('app', "Can't lookup the {relFieldname} name (for id {this_id})", ['relFieldname' => 'fkDataDeliveryType', 'this_id' => $model->fk_data_delivery_type_id]) : $model->fkDataDeliveryType->name)
             ],
             [
              'label' => Yii::t('app', 'Contact Group As Data Owner'),
-             'value' =>              	$model->fk_contact_group_id_as_data_owner == "" ? $model->fk_contact_group_id_as_data_owner : $model->fkContactGroupIdAsDataOwner->name
+             'value' =>         	    $model->fk_contact_group_id_as_data_owner == "" ? $model->fk_contact_group_id_as_data_owner : ($model->fkContactGroupIdAsDataOwner === NULL ? Yii::t('app', "Can't lookup the {relFieldname} name (for id {this_id})", ['relFieldname' => 'fkContactGroupIdAsDataOwner', 'this_id' => $model->fk_contact_group_id_as_data_owner]) : $model->fkContactGroupIdAsDataOwner->name)
             ],
         ],
     ]) ?>

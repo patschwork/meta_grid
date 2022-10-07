@@ -18,12 +18,27 @@ class AppAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
+        [
+            'href' => 'icons/favicon-32x32.png',
+            'rel' => 'icon',
+            'sizes' => '32x32',
+        ],
+        [
+            'href' => 'icons/android-chrome-192x192.png',
+            'rel' => 'icon',
+            'sizes' => '192x192',
+        ],
+        [
+            'href' => 'icons/apple-touch-icon.png',
+            'rel' => 'apple-touch-icon-precomposed',
+        ],
         'css/site.css',
     ];
     public $js = [
     ];
     public $depends = [
         'yii\web\YiiAsset',
-        'yii\bootstrap\BootstrapAsset',
+        'yii\bootstrap4\BootstrapAsset',
+        'xtetis\bootstrap4glyphicons\assets\GlyphiconAsset',
     ];
 }

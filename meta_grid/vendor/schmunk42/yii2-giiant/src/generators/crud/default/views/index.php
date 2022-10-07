@@ -158,7 +158,7 @@ PHP;
             <?php endforeach; ?>
 
             <?= "<?= \n" ?>
-            \yii\bootstrap\ButtonDropdown::widget(
+            \yii\bootstrap4\ButtonDropdown::widget(
             [
             'id' => 'giiant-relations',
             'encodeLabel' => false,

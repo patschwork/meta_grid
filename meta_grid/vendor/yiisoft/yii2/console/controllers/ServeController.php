@@ -1,8 +1,8 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
+ * @link https://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license https://www.yiiframework.com/license/
  */
 
 namespace yii\console\controllers;
@@ -37,7 +37,7 @@ class ServeController extends Controller
     public $docroot = '@app/web';
     /**
      * @var string path or [path alias](guide:concept-aliases) to router script.
-     * See https://secure.php.net/manual/en/features.commandline.webserver.php
+     * See https://www.php.net/manual/en/features.commandline.webserver.php
      */
     public $router;
 

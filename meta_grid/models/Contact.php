@@ -24,10 +24,15 @@ class Contact extends \app\models\base\Contact
     // http://www.yiiframework.com/wiki/621/filter-sort-by-calculated-related-fields-in-gridview-yii-2-0/
     /* Getter for client name */
     public function getClientName() {
-//     	return "Test getClientName";
     	return $this->fkClient->name;
     }
- 
+	
+	// Only for beeing im sync with other models. Useful for showing the name in breadcrumbs
+    public function getName()
+    {
+		return $this->givenname . " " . $this->surname;
+    }
+
     public static function findOne($condition)
     {
     	$model=static::findByCondition($condition)->one();

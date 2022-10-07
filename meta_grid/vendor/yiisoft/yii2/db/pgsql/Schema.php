@@ -1,8 +1,8 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
+ * @link https://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license https://www.yiiframework.com/license/
  */
 
 namespace yii\db\pgsql;
@@ -44,7 +44,7 @@ class Schema extends \yii\db\Schema implements ConstraintFinderInterface
     /**
      * @var array mapping from physical column types (keys) to abstract
      * column types (values)
-     * @see http://www.postgresql.org/docs/current/static/datatype.html#DATATYPE-TABLE
+     * @see https://www.postgresql.org/docs/current/datatype.html#DATATYPE-TABLE
      */
     public $typeMap = [
         'bit' => self::TYPE_INTEGER,
@@ -339,7 +339,7 @@ SQL;
         $tableSchema = $this->quoteValue($table->schemaName);
 
         //We need to extract the constraints de hard way since:
-        //http://www.postgresql.org/message-id/26677.1086673982@sss.pgh.pa.us
+        //https://www.postgresql.org/message-id/26677.1086673982@sss.pgh.pa.us
 
         $sql = <<<SQL
 select
@@ -443,7 +443,7 @@ SQL;
                 $row = array_change_key_case($row, CASE_LOWER);
             }
             $column = $row['columnname'];
-            if (strpos($column, '"') === 0) {
+            if (strncmp($column, '"', 1) === 0) {
                 // postgres will quote names that are not lowercase-only
                 // https://github.com/yiisoft/yii2/issues/10613
                 $column = substr($column, 1, -1);

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # Instllation or update meta#grid
 # on every OS
-# v1.6
+# v1.7
 
 import base_lib
 import shutil
@@ -538,6 +538,10 @@ if (behaviour==const_inst_mode_update):
             if "default_value" in kettleJobParameterList_new[key]:
                 msg = key + " (Default value: " + kettleJobParameterList_new[key]["default_value"] + ")"
             bla(msg=msg, withLooging=True, wait=False)
+
+# Run yii metagrid/register-roles
+bla("- Register Meta#Grid permissions/roles", "header", False)
+res = base_lib.yii_metagrid_register_roles(phpExe, folder_Frontend)
 
 bla("# End of process #", "endOfScript", True)
 if (base_lib.is_windows()):

@@ -2,17 +2,15 @@
 <h1>
     <a href="https://github.com/mkoryak/floatThead/releases">jquery.floatThead</a>
     <a href="https://unpkg.com/floatthead/dist/jquery.floatThead.min.js"><img
-            src="http://img.badgesize.io/https://unpkg.com/floatthead/dist/jquery.floatThead.min.js?compression=gzip&style=flat-square"
-            alt="Gzip Size"></a>
-    <a href="https://www.npmjs.com/package/floatthead"><img src="https://img.shields.io/npm/v/floatthead.svg?style=flat-square"
-                                                       alt="NPM Version"></a>
+            src="http://img.badgesize.io/https://unpkg.com/floatthead/dist/jquery.floatThead.min.js?compression=gzip&style=flat-square"></a>
+    <a href="https://www.npmjs.com/package/floatthead"><img src="https://img.shields.io/npm/v/floatthead.svg?style=flat-square"></a>
     <a href="https://github.com/mkoryak/floatThead/blob/master/LICENSE"><img
-            src="https://img.shields.io/npm/l/floatthead.svg?style=flat-square" alt="License"></a>
+            src="https://img.shields.io/npm/l/floatthead.svg?style=flat-square"></a>
 </h1>
 </p>
 
 
-[![woot](http://giant.gfycat.com/AnyGloriousAlpaca.gif "or just click")](http://mkoryak.github.io/floatThead/)
+[![gif showing plugin in action](https://thumbs.gfycat.com/AnyGloriousAlpaca-size_restricted.gif)](http://mkoryak.github.io/floatThead/)
 
 ## Documentation & Examples: http://mkoryak.github.io/floatThead/
 
@@ -28,7 +26,7 @@ npm install floatthead
 bower install floatThead
 ```
 #### Download code
-[Latest Release (zip)](https://github.com/mkoryak/floatThead/archive/2.1.3.zip)
+[Latest Release (zip)](https://github.com/mkoryak/floatThead/archive/2.2.3.zip)
 
 #### Via CDN
 [https://cdnjs.com/libraries/floatthead/](https://cdnjs.com/libraries/floatthead/)    
@@ -52,6 +50,18 @@ bower install floatThead
 [angularjs directive](https://github.com/brandon-barker/angular-floatThead) by @brandon-barker
 
 [yii2 framework wrapper](https://github.com/bluezed/yii2-floatThead) by @bluezed
+
+# Why not just use `position:sticky`?
+---------
+You probably should! This plugin was created years before that existed. There are still a few reasons why you might want to use this plugin:  
+
+- Your code runs in the real world, where [some browsers](https://caniuse.com/css-sticky) don't support `position: sticky`.
+- Any kind of non-standard scroll parent scenario, where the thing that you scroll with is not supported by `position: sticky`. 
+  - Your table's scroll parent isn't the body, but the body is what scrolls and you can't change this.
+  - Your table scrolls horizontally within a container, but vertically within the page. 
+- Your sticky `top` position is dynamic, or you want to know when the header becomes sticky and you don't want to write code to do this.
+- You don't want to learn these newfangled CSS things, you want a proven solution that works and uses jQuery, the greatest thing ever!
+
 
 # Things this plugin does:
 ---------
@@ -82,7 +92,7 @@ If you use css and html best practices, this plugin will work. If you are stuck 
 
 How to get help with the floatThead
 ------------
-All issues should be reported through github. Coffee/Beer donations are welcome ;)
+All issues should be reported through github.
 
 Requirements:
 -------------
@@ -102,30 +112,22 @@ Change Log
 
 ## Who is using floatThead ?
 
-### [Around 128K hits on guthub code search](https://github.com/search?q=floatThead&ref=reposearch&type=Code&utf8=%E2%9C%93)
+### [Ctrl O](https://ctrlo.com)
+- Ctrl O provides simple and innovative products to help an organization's business processes. Linkspace, its flagship product, helps share information between teams and individuals, in a simple and effective manner.
 
 ### [WheresTheGig.com](https://WheresTheGig.com) 
 - A free service for the musical community 
 
 ### [Google](https://www.youtube.com/watch?v=dQw4w9WgXcQ) 
 - Internally, I happen to know...
+ 
+### [tld-list.com](https://tld-list.com/)
+- The first table you see.
 
 ### [Samsung](https://github.com/Samsung/iotjscode/blob/3d4de15ea32d27dce5885b2c8c9e3a783c846311/www/scripts/app/main.js#L234)
 - For the internet of things!
 
-### [compat-table](https://github.com/kangax/compat-table/) 
-- https://github.com/kangax/compat-table/blob/gh-pages/jquery.floatThead.min.js
-- [online site](http://kangax.github.io/compat-table/es6/) (see floatThead in action here)
-
-### [netdisco](http://netdisco.org)
-- http://sourceforge.net/p/netdisco/netdisco-ng/ci/213352d54ee8e71cbca5ae2c1c75696800c4216b/
-
-### [pylyglot](https://github.com/omaciel/pylyglot)
-- https://github.com/omaciel/pylyglot/tree/master/pylyglot/static/js
-
-### [django-sql-explorer](https://github.com/groveco/django-sql-explorer)
-- https://github.com/groveco/django-sql-explorer#dependencies
-
+### [Around 153,000 hits on github code search](https://github.com/search?q=floatThead&ref=reposearch&type=Code&utf8=%E2%9C%93)
 
 License
 -------

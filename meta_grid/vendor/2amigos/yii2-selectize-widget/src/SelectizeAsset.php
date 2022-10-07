@@ -25,7 +25,7 @@ class SelectizeAsset extends AssetBundle
         'js/standalone/selectize.js',
     ];
     public $depends = [
-        'yii\bootstrap\BootstrapAsset',
+        'yii\bootstrap4\BootstrapAsset',
         'yii\web\JqueryAsset',
     ];
 }

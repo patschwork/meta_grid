@@ -1,6 +1,25 @@
 Yii Framework 2 gii extension Change Log
 ========================================
 
+2.2.5 September 04, 2022
+------------------------
+
+- Ehn #489: Added support for the `::class` constant in model generator via the `useClassConstant` setting (rhertogh)
+- Bug #500: Fix missing namespace in CRUD index template (mohamed-nazim)
+- Bug #502: Setting `skipOnEmpty` to fix "trim(): Passing null to parameter" in `generators/model/Generator.php` (rhertogh)
+
+
+2.2.4 December 30, 2021
+-----------------------
+
+- Bug #467: Fix view `generators/crud/default/controller` (WinterSilence, cjrf)
+- Bug #476: Fix stucking datalist options in form generator (WinterSilence)
+- Bug #484: Add parent's labels and hints, fix rule for attribute `moduleClass` in module generator (WinterSilence)
+- Bug #486: Update `assets/js/bs4-native.min.js` to latest version (WinterSilence)
+- Bug #488: Fix `ActionColumn::$urlCreator` in index template of CRUD generator (WinterSilence)
+- Enh #485: Add validation rules for `enableI18N` and `messageCategory` to Generator (WinterSilence)
+
+
 2.2.3 August 09, 2021
 ---------------------
 

@@ -1,8 +1,8 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
+ * @link https://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license https://www.yiiframework.com/license/
  */
 
 namespace yii\db;
@@ -39,8 +39,8 @@ trait QueryTrait
     /**
      * @var array|null how to sort the query results. This is used to construct the ORDER BY clause in a SQL statement.
      * The array keys are the columns to be sorted by, and the array values are the corresponding sort directions which
-     * can be either [SORT_ASC](https://secure.php.net/manual/en/array.constants.php#constant.sort-asc)
-     * or [SORT_DESC](https://secure.php.net/manual/en/array.constants.php#constant.sort-desc).
+     * can be either [SORT_ASC](https://www.php.net/manual/en/array.constants.php#constant.sort-asc)
+     * or [SORT_DESC](https://www.php.net/manual/en/array.constants.php#constant.sort-desc).
      * The array may also contain [[ExpressionInterface]] objects. If that is the case, the expressions
      * will be converted into strings without any change.
      */

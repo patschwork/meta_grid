@@ -30,6 +30,7 @@ class TranslateManagerAsset extends AssetBundle
      */
     public $depends = [
         'yii\web\YiiAsset',
-        'yii\bootstrap\BootstrapAsset',
+        'yii\bootstrap4\BootstrapAsset',
+        'xtetis\bootstrap4glyphicons\assets\GlyphiconAsset',
     ];
 }

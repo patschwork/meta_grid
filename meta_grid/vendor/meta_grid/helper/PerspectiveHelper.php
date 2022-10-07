@@ -2,6 +2,7 @@
 namespace vendor\meta_grid\helper;
 use Yii;
 use yii\helpers\VarDumper;
+use yii\helpers\Html;
 
 class PerspectiveHelper
 {
@@ -110,6 +111,31 @@ class PerspectiveHelper
 		}
 		
 		return $navBarItems;		
+	}
+
+	public static function getReadyToUseNavDropDownElementsAdminLTE3()
+	{
+		$returnValue = "";
+		$langList = PerspectiveHelper::getLanguageList();
+		yii\helpers\Url::remember();
+
+		$mainItemName = strtoupper("Perspective");
+		$returnValue .= '<li class="nav-item dropdown">';
+		$returnValue .= '<a id="'. $mainItemName . 'SubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">' . $mainItemName . '</a>';
+		$returnValue .= '<ul aria-labelledby="' . $mainItemName . 'SubMenu1" class="dropdown-menu border-0 shadow">';
+		
+		foreach($langList as $languageItem)
+		{
+			
+			$returnValue .= '<li>';
+			$label = $languageItem->name . (Yii::$app->language == $languageItem->language_id ? ' <span style="color: #80ced6;" class="glyphicon glyphicon-ok-sign"></span>' : "");
+			$url = ['/site/language', 'language' => $languageItem->language_id,];
+			$returnValue .= Html::a($label, $url, ['data-method' => 'post', 'class' => 'dropdown-item']);
+			$returnValue .= '</li>';
+		}
+		$returnValue .= '</ul>';
+		$returnValue .= '</li>';
+		return $returnValue;		
 	}
 	
 	public static function SearchModelFilter($SearchModelClassInstance)

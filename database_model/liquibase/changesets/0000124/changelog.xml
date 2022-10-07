@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000124/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000124" context="language">
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+        INSERT INTO language_translate("language", "translation", id)
+        SELECT 'en-US' AS "language", 'ETL Jobs' AS "translation", (SELECT id FROM language_source WHERE message='Data Transfer Processes') AS id
+        WHERE 0=(SELECT COUNT(id) FROM language_translate WHERE "translation"='ETL Jobs' AND "language"='en-US')
+		;
+		]]>		
+		</sql>		
+		
+		<comment>
+		<![CDATA[
+		Updates/new translations
+		Used objects:
+            language_translate
+		Phabricator tasks:
+			T259
+        ]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

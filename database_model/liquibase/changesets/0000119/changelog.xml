@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000119/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000119" context="">
+		<createView replaceIfExists="true" viewName="v_tag_2_object_list">
+		<![CDATA[
+SELECT
+     mo2t.id
+    ,mo2t.ref_fk_object_id
+    ,mo2t.ref_fk_object_type_id
+    ,vaou.object_type_name  AS object_type_name
+    ,vaou.name AS object_name
+    ,mo2t.fk_tag_id
+    ,tag.name AS tag_name
+    ,REPLACE(vaou.object_type_name, '_', '') || '/' || 'view' || '&id=' || mo2t.ref_fk_object_id AS "action"
+    ,tag.fk_project_id
+    ,tag.fk_user_id
+    ,tag.optgroup
+    ,REPLACE(vaou.object_type_name, '_', '') AS "controllername"
+FROM
+    map_object_2_tag mo2t
+LEFT JOIN v_All_Objects_Union vaou ON 1=1
+   AND vaou.fk_object_type_id  = mo2t.ref_fk_object_type_id 
+   AND vaou.id  = mo2t.ref_fk_object_id 
+LEFT JOIN v_tagsOptGroup tag ON 1=1
+   AND tag.id = mo2t.fk_tag_id 
+ORDER BY
+    tag.name
+   ,vaou.object_type_name
+		]]>
+		</createView>
+
+		<comment>
+		<![CDATA[
+		Used objects:
+			v_tag_2_object_list
+		Phabricator tasks:
+			T226
+			T236
+		]]>	
+		</comment>
+</changeSet>
+</databaseChangeLog>

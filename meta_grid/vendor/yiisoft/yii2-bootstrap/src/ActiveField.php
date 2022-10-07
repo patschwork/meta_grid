@@ -48,7 +48,7 @@ use yii\helpers\ArrayHelper;
  * Example:
  *
  * ```php
- * use yii\bootstrap\ActiveForm;
+ * use yii\bootstrap4\ActiveForm;
  *
  * $form = ActiveForm::begin(['layout' => 'horizontal']);
  *
@@ -82,7 +82,7 @@ use yii\helpers\ArrayHelper;
  * ActiveForm::end();
  * ```
  *
- * @see \yii\bootstrap\ActiveForm
+ * @see \yii\bootstrap4\ActiveForm
  * @see http://getbootstrap.com/css/#forms
  *
  * @author Michael Härtl <haertl.mike@gmail.com>

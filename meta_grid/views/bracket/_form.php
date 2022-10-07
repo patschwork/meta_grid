@@ -1,9 +1,19 @@
 		
 <?php
+// Prevent loading bootstrap.css v3.4.1 (see T212)
+\Yii::$app->assetManager->bundles['yii\\bootstrap\\BootstrapAsset'] = [
+    'css' => [],
+    'js' => []
+];
+?>
+<?php
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use wbraganca\dynamicform\DynamicFormWidget; 
+use wbraganca\dynamicform\DynamicFormWidget; use yii\widgets\Pjax;
+use yii\bootstrap4\Modal;
+use yii\helpers\Url;
+
 /* @var $this yii\web\View */
 /* @var $model app\models\Bracket */
 /* @var $form yii\widgets\ActiveForm */
@@ -12,33 +22,42 @@ use wbraganca\dynamicform\DynamicFormWidget;
 <div class="bracket-form">
 
     <?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
-<!--  	// automatisch auskommentiert ueber gii/CRUD    <?= $form->field($model, 'uuid') ?>  -->
+<!--  	// auto commented via gii/CRUD    <?= $form->field($model, 'uuid') ?>  -->
 
-<!--  	// automatisch auskommentiert ueber gii/CRUD    <?= $form->field($model, 'fk_object_type_id')->textInput() ?>  -->
+<!--  	// auto commented via gii/CRUD    <?= $form->field($model, 'fk_object_type_id')->textInput() ?>  -->
 
 	<?php
-		// autogeneriert ueber gii/CRUD
-		echo $form->field($model, 'fk_project_id')->dropDownList($projectList, ['id'=>'name']);
-	?>
- <!--  	// automatisch auskommentiert ueber gii/CRUD    <?= $form->field($model, 'fk_project_id')->textInput() ?>  -->
+		// auto-generated via gii/CRUD
+		Pjax::begin(['id'=>'id-pjax-bracket-form_fk_project_id', 'timeout' => false, 'enablePushState' => false]);
+		echo $form->field($model, 'fk_project_id', ['template' => '<label class="control-label">{label}</label><div class="input-group">{input}<span class="input-group-btn">'.Html::button('+', [
+			'value' => Url::to('index.php?r=project/create&isfrommodal=true&modalparent=id-pjax-bracket-form_fk_project_id&refreshfield=name__fk_project_id')
+			, 'class' => 'btn btn-primary'
+			, 'id' => 'modalButtonCreate__fk_project_id'
+			, 'hidden' => !Yii::$app->User->can('create-' . 'project')
+		]).'</span></div>'])->dropDownList($projectList, ['id'=>'name__fk_project_id']);
+		Pjax::end();
+ 	?>
+ <!--  	// auto commented via gii/CRUD    <?= $form->field($model, 'fk_project_id')->textInput() ?>  -->
 
     <?= $form->field($model, 'name') ?>
 
 	<?php
 		echo $form->field($model, 'description')->widget(\yii\redactor\widgets\Redactor::className());	?>
- <!--  	// automatisch auskommentiert ueber gii/CRUD    <?= $form->field($model, 'description') ?>  -->
+ <!--  	// auto commented via gii/CRUD    <?= $form->field($model, 'description') ?>  -->
 
 	<?php
 		// autogeneriert ueber gii/CRUD
 		echo $form->field($model, 'fk_attribute_id')->widget(\vendor\meta_grid\attribute_select\AttributeSelectWidget::className());
 	?>
- <!--  	// automatisch auskommentiert ueber gii/CRUD    <?= $form->field($model, 'fk_attribute_id')->textInput() ?>  -->
+ <!--  	// auto commented via gii/CRUD    <?= $form->field($model, 'fk_attribute_id')->textInput() ?>  -->
 
 	<?php
-		// autogeneriert ueber gii/CRUD
+		// auto-generated via gii/CRUD
+		Pjax::begin(['id'=>'id-pjax-bracket-form_fk_object_type_id_as_searchFilter', 'timeout' => false, 'enablePushState' => false]);
 		echo $form->field($model, 'fk_object_type_id_as_searchFilter')->dropDownList($object_type_as_searchFilterList, ['id'=>'name', 'options' => [ $model->fk_object_type_id_as_searchFilter => ['selected ' => true]]]);
-	?>
- <!--  	// automatisch auskommentiert ueber gii/CRUD    <?= $form->field($model, 'fk_object_type_id_as_searchFilter')->textInput() ?>  -->
+		Pjax::end();
+ 	?>
+ <!--  	// auto commented via gii/CRUD    <?= $form->field($model, 'fk_object_type_id_as_searchFilter')->textInput() ?>  -->
 
 
 	<div class="row">
@@ -96,3 +115,67 @@ use wbraganca\dynamicform\DynamicFormWidget;
 
     <?php ActiveForm::end(); ?>
 </div>
+
+<?php Modal::begin([
+	'id'     => 'modalCreate',
+	'size'   => 'modal-lg'
+]);
+echo "<div id='modalContent'>Nothing to show</div>";
+Modal::end();
+
+$script1 = <<< JS
+$(function(){
+	$('#modalButtonCreate__fk_project_id').click(function() {
+		$('#modalCreate').modal('show')
+		.find('#modalContent')
+		.load($(this).attr('value'));
+	});
+	$('#modalButtonCreate__fk_object_type_id_as_searchFilter').click(function() {
+		$('#modalCreate').modal('show')
+		.find('#modalContent')
+		.load($(this).attr('value'));
+	});
+
+	$('#modalCreate').on('hidden.bs.modal', function () {
+			$('#modalCreate').find('#modalContent').html("Nothing to show");
+	})
+});
+JS;
+$this->registerJS($script1);
+
+
+	?>
+
+<?php $script2 = <<< JS
+$('form#{$model->formName()}').on('beforeSubmit', function(e){
+    var \$form = $(this);
+    $.post(
+        \$form.attr("action"), //serialize Yii2 form 
+        \$form.serialize()
+    )
+    .done(function(result){
+        result = JSON.parse(result);
+        if(result.status == 'Success'){
+            $(\$form).trigger("reset");
+            $(document).find('#modalCreate').modal('hide');
+            // reload with updated content (new entry)
+            $.pjax.reload({container:'§§§_1'});
+            $(document).on('ready pjax:success', function(){
+                // auto-select created entry
+                $(document).find("select#§§§_2").val(result.message).trigger("change");
+            });
+        }else{
+            $(\$form).trigger("reset");
+            $("#message").html(result.message);
+        }
+    })
+    .fail(function(){
+        console.log("server error");
+    });
+    return false;
+});
+JS;
+$script2 = str_replace('§§§_1', '#'.$modalparent, $script2);
+$script2 = str_replace('§§§_2', $refreshfield, $script2);
+$this->registerJS($script2);
+?>

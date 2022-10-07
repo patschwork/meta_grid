@@ -8,7 +8,7 @@
 namespace schmunk42\giiant\generators\crud\callbacks\devgroup;
 
 use dmstr\modules\widgets\helpers\StringFormatter;
-use yii\bootstrap\Collapse;
+use yii\bootstrap4\Collapse;
 
 class Jsoneditor
 {

@@ -22,17 +22,21 @@ class Attribute extends \app\models\base\Attribute
 		{
 			if (strstr($value, '@##', true) != "")
 			{
-				$e = explode('@##',$value);
+				try {
+					$e = explode('@##',$value);
 				 
-				$objectdisplay = explode("|",$e[0])[0];
-				$linkview = explode(" - ",$objectdisplay)[0];
-				$linktooltip = explode(" - ",$objectdisplay)[1];
-				$objecttype = explode("|",$e[0])[1];
-				$objectid = explode(";",explode("|",$e[0])[2])[0];
-	
-				$link = Yii::$app->urlManager->createUrl ( str_replace("_","",$objecttype) )."/"."view&id=" . $objectid;
-	
-				$f_new[$key] = $link.'" target=\'_blank\' title="'.$linktooltip.'">'.$linkview.'</a>'.$e[1];
+					$objectdisplay = explode("|",$e[0])[0];
+					$linkview = explode(" - ",$objectdisplay)[0];
+					$linktooltip = explode(" - ",$objectdisplay)[1];
+					$objecttype = explode("|",$e[0])[1];
+					$objectid = explode(";",explode("|",$e[0])[2])[0];
+		
+					$link = Yii::$app->urlManager->createUrl ( str_replace("_","",$objecttype) )."/"."view&id=" . $objectid;
+		
+					$f_new[$key] = $link.'" target=\'_blank\' title="'.$linktooltip.'">'.$linkview.'</a>'.$e[1];
+				} catch (\Throwable $th) {
+					return $this->formula;
+				}
 			}
 			else
 			{

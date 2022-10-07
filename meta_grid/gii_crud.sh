@@ -98,3 +98,7 @@ php yii gii/crud --overwrite=$override --interactive=$interactive --controllerCl
 export controller=Url
 export model=Url
 php yii gii/crud --overwrite=$override --interactive=$interactive --controllerClass=app\\controllers\\${controller}Controller --enableI18N=1 --enablePjax=1 --modelClass=app\\models\\${model} --searchModelClass=app\\models\\${model}Search --template=myCrud --appconfig=config/console.php
+
+# export controller=Mappingqualifier
+# export model=MappingQualifier
+# php yii gii/crud --overwrite=$override --interactive=$interactive --controllerClass=app\\controllers\\${controller}Controller --enableI18N=1 --enablePjax=1 --modelClass=app\\models\\${model} --searchModelClass=app\\models\\${model}Search --template=myCrud --appconfig=config/console.php

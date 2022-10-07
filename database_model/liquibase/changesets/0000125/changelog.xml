@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000125/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000125" context="language">
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_source (category, message, id)
+		SELECT 'app' AS category, 'Import via Copy & Paste' AS message, (SELECT MAX(id)+1 FROM language_source) AS id
+		WHERE 0=(SELECT COUNT(id) FROM language_source WHERE message='Import via Copy & Paste')
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_translate("language", "translation", id)
+		SELECT 'de-DE' AS "language", 'Import via Kopieren & Einfügen' AS "translation", (SELECT id FROM language_source WHERE message='Import via Copy & Paste') AS id
+		WHERE 0=(SELECT COUNT(id) FROM language_translate WHERE "translation"='Import via Kopieren & Einfügen' AND "language"='de-DE')
+		UNION ALL 
+		SELECT 'de-MS_SSRS' AS "language", 'Import via Kopieren & Einfügen' AS "translation", (SELECT id FROM language_source WHERE message='Import via Copy & Paste') AS id
+		WHERE 0=(SELECT COUNT(id) FROM language_translate WHERE "translation"='Import via Kopieren & Einfügen' AND "language"='de-MS_SSRS')
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_source (category, message, id)
+		SELECT 'app' AS category, 'Export all tables as CSV' AS message, (SELECT MAX(id)+1 FROM language_source) AS id
+		WHERE 0=(SELECT COUNT(id) FROM language_source WHERE message='Export all tables as CSV')
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_translate("language", "translation", id)
+		SELECT 'de-DE' AS "language", 'Alle Tabellen als CSV exportieren' AS "translation", (SELECT id FROM language_source WHERE message='Export all tables as CSV') AS id
+		WHERE 0=(SELECT COUNT(id) FROM language_translate WHERE "translation"='Alle Tabellen als CSV exportieren' AND "language"='de-DE')
+		UNION ALL 
+		SELECT 'de-MS_SSRS' AS "language", 'Alle Datasets (und Tabellen) als CSV exportieren' AS "translation", (SELECT id FROM language_source WHERE message='Export all tables as CSV') AS id
+		WHERE 0=(SELECT COUNT(id) FROM language_translate WHERE "translation"='Alle Datasets (und Tabellen) als CSV exportieren' AND "language"='de-MS_SSRS')
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_source (category, message, id)
+		SELECT 'app' AS category, 'Export all tables with fields as CSV' AS message, (SELECT MAX(id)+1 FROM language_source) AS id
+		WHERE 0=(SELECT COUNT(id) FROM language_source WHERE message='Export all tables with fields as CSV')
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_translate("language", "translation", id)
+		SELECT 'de-DE' AS "language", 'Alle Tabellen mit Feldern als CSV exportieren' AS "translation", (SELECT id FROM language_source WHERE message='Export all tables with fields as CSV') AS id
+		WHERE 0=(SELECT COUNT(id) FROM language_translate WHERE "translation"='Alle Tabellen mit Feldern als CSV exportieren' AND "language"='de-DE')
+		UNION ALL 
+		SELECT 'de-MS_SSRS' AS "language", 'Alle Datasets (und Tabellen) mit Feldern als CSV exportieren' AS "translation", (SELECT id FROM language_source WHERE message='Export all tables with fields as CSV') AS id
+		WHERE 0=(SELECT COUNT(id) FROM language_translate WHERE "translation"='Alle Datasets (und Tabellen) mit Feldern als CSV exportieren' AND "language"='de-MS_SSRS')
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_source (category, message, id)
+		SELECT 'app' AS category, 'Export all keyfigures as XML' AS message, (SELECT MAX(id)+1 FROM language_source) AS id
+		WHERE 0=(SELECT COUNT(id) FROM language_source WHERE message='Export all keyfigures as XML')
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_translate("language", "translation", id)
+		SELECT 'de-DE' AS "language", 'Alle Kennzahlen als XML exportieren' AS "translation", (SELECT id FROM language_source WHERE message='Export all keyfigures as XML') AS id
+		WHERE 0=(SELECT COUNT(id) FROM language_translate WHERE "translation"='Alle Kennzahlen als XML exportieren' AND "language"='de-DE')
+		UNION ALL 
+		SELECT 'de-MS_SSRS' AS "language", 'Alle Kennzahlen als XML exportieren' AS "translation", (SELECT id FROM language_source WHERE message='Export all keyfigures as XML') AS id
+		WHERE 0=(SELECT COUNT(id) FROM language_translate WHERE "translation"='Alle Kennzahlen als XML exportieren' AND "language"='de-MS_SSRS')
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_source (category, message, id)
+		SELECT 'app' AS category, 'Export all keyfigures as JSON' AS message, (SELECT MAX(id)+1 FROM language_source) AS id
+		WHERE 0=(SELECT COUNT(id) FROM language_source WHERE message='Export all keyfigures as JSON')
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_translate("language", "translation", id)
+		SELECT 'de-DE' AS "language", 'Alle Kennzahlen als JSON exportieren' AS "translation", (SELECT id FROM language_source WHERE message='Export all keyfigures as JSON') AS id
+		WHERE 0=(SELECT COUNT(id) FROM language_translate WHERE "translation"='Alle Kennzahlen als JSON exportieren' AND "language"='de-DE')
+		UNION ALL 
+		SELECT 'de-MS_SSRS' AS "language", 'Alle Kennzahlen als JSON exportieren' AS "translation", (SELECT id FROM language_source WHERE message='Export all keyfigures as JSON') AS id
+		WHERE 0=(SELECT COUNT(id) FROM language_translate WHERE "translation"='Alle Kennzahlen als JSON exportieren' AND "language"='de-MS_SSRS')
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		UPDATE language_translate 
+			SET "translation" = 'Tabelle und Felder aktualisieren'
+		WHERE "translation" = 'Aktualisiere Datenkontainer und Attribute'
+		;
+		]]>		
+		</sql>		
+		
+		<comment>
+		<![CDATA[
+		Updates/new translations
+		Used objects:
+            language_translate
+		Phabricator tasks:
+			T259, T260
+        ]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

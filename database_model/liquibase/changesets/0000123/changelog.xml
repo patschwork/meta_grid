@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000123/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000123" context="language">
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		UPDATE language_translate 
+			SET "translation" = 'Report'
+		WHERE "translation" = 'Datenauslieferungsobjekt'
+		;
+		]]>		
+		</sql>		
+		
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		UPDATE language_translate 
+			SET "translation" = 'ETL Jobs'
+		WHERE "translation" = 'Datentransferprozesse'
+		;
+		]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_translate("language", "translation", id)
+		SELECT 'en-US' AS "language", 'Patterns' AS "translation", (SELECT id FROM language_source WHERE message='Attributes') AS id
+		WHERE 0=(SELECT COUNT(id) FROM language_translate WHERE "translation"='Patterns' AND "language"='en-US')
+		;
+		]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_translate("language", "translation", id)
+		SELECT 'en-US' AS "language", 'Reports' AS "translation", (SELECT id FROM language_source WHERE message='Data Delivery Objects') AS id
+		WHERE 0=(SELECT COUNT(id) FROM language_translate WHERE "translation"='Reports' AND "language"='en-US')
+		;
+		]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_translate("language", "translation", id)
+		SELECT 'en-US' AS "language", 'Databases' AS "translation", (SELECT id FROM language_source WHERE message='Db Databases') AS id
+		WHERE 0=(SELECT COUNT(id) FROM language_translate WHERE "translation"='Databases' AND "language"='en-US')
+		;
+		]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false">
+		<![CDATA[
+		INSERT INTO language_translate("language", "translation", id)
+		SELECT 'en-US' AS "language", 'Tables' AS "translation", (SELECT id FROM language_source WHERE message='Db Tables') AS id
+		WHERE 0=(SELECT COUNT(id) FROM language_translate WHERE "translation"='Tables' AND "language"='en-US')
+		;
+		]]>		
+		</sql>
+		
+		<comment>
+		<![CDATA[
+		Updates/new translations
+		Used objects:
+            language_translate
+		Phabricator tasks:
+			T259
+        ]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

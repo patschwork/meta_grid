@@ -11,7 +11,6 @@ use yii\grid\GridView;
 use yii\helpers\ArrayHelper; 
 use kartik\select2\Select2; 
 use vendor\meta_grid\helper\RBACHelper;
-use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ToolTypeSearch */
@@ -19,10 +18,18 @@ use yii\helpers\Url;
 
 $this->title = Yii::t('app', 'Tool Types');
 $this->params['breadcrumbs'][] = Yii::t('app', $this->title);
+
+// Prevent loading bootstrap.css v3.4.1 (see T212)
+\Yii::$app->assetManager->bundles['yii\\bootstrap\\BootstrapAsset'] = [
+    'css' => [],
+    'js' => []
+];
+
 ?>
 <div class="tool-type-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h3><?= Html::encode($this->title) ?></h3>
+
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
 <?php
@@ -51,7 +58,7 @@ else
 		$fk_object_type_id=$searchModel->find()->select(['fk_object_type_id'])->one()->fk_object_type_id;
 		if ($session->hasFlash('perspective_filter_for_' . $fk_object_type_id))
 		{	
-			echo yii\bootstrap\Alert::widget([
+			echo yii\bootstrap4\Alert::widget([
 					'options' => [
 									'class' => 'alert-info',
 					],
@@ -62,7 +69,7 @@ else
 	
 	if ($session->hasFlash('deleteError'))
 	{	
-		echo yii\bootstrap\Alert::widget([
+		echo yii\bootstrap4\Alert::widget([
 				'options' => [
 					'class' => 'alert alert-danger alert-dismissable',
 				],
@@ -70,7 +77,7 @@ else
 		]);
 	}
 
-	Url::remember();
+	\yii\helpers\Url::remember($url = '', $name = Yii::$app->controller->id."/INDEX");
 	?>
 	    <?= GridView::widget([
 		'tableOptions' => ['id' => 'grid-view-tool-type', 'class' => 'table table-striped table-bordered'],
@@ -81,6 +88,7 @@ else
 			'prevPageLabel' => '<span class="glyphicon glyphicon-chevron-left"></span>',
 			'nextPageLabel' => '<span class="glyphicon glyphicon-chevron-right"></span>',
 			'maxButtonCount' => 15,
+			'class' => 'yii\bootstrap4\LinkPager'
 		],
 		'layout' => "{pager}\n{summary}{items}\n{pager}",
        	'rowOptions' => function ($model, $key, $index, $grid) {

@@ -106,83 +106,46 @@ class ProjectController extends Controller
         ];
     }
 
-    private function createRole($newRoleOrPermName, $authType, $description, $ruleName, $childRole, $childPerm)
-    {
-    	$auth = Yii::$app->authManager;
-    	$checkRole = $auth->getRole($newRoleOrPermName);
-    	$checkPerm = $auth->getPermission($newRoleOrPermName);
-    	if ((is_null($checkRole) && $authType==="Role") || (is_null($checkPerm) && $authType==="Perm"))
-    	{
-    		if ($authType==="Role")
-    		{
-    			$newAuthObj = $auth->createRole($newRoleOrPermName);
-    		}
-    		else 
-    		{
-    			if ($authType==="Perm")
-    			{
-    				$newAuthObj = $auth->createPermission($newRoleOrPermName);
-    			}
-    			else 
-    			{
-    				throw "No supported authType";
-    			}
-    		}
-    		$newAuthObj->ruleName = $ruleName;
-    		if (!is_null($description))
-    		{
-    			$newAuthObj->description = $description;
-    		}
-    	
-    		$auth->add($newAuthObj);
-
-    	    if (!is_null($childRole))
-    		{	
-    			$auth->addChild($auth->getRole($childRole), $newAuthObj);
-    		}
-
-    	    if (!is_null($childPerm))
-    		{	
-    			$auth->addChild($auth->getRole($childPerm), $newAuthObj);
-    		}
-    		return $newAuthObj;
-    	}
-    	return null; 
-    }
-    
-	private function registerControllerRole()
+	public function registerControllerRole()
 	{
-
-		$this->createRole("global-view", "Role", "May view all objectstypes", "isNotAGuest", null, null);
-		$this->createRole("global-create", "Role", "May create all objectstypes", "isNotAGuest", null, null);
-		$this->createRole("global-delete", "Role", "May delete all objectstypes", "isNotAGuest", null, null);
-		$newAuthorRole = $this->createRole("author", "Role", "May edit all objecttypes", "isNotAGuest", null, null);		
-		if (!is_null($newAuthorRole))
-		{			
-			Yii::$app->authManager->addChild($newAuthorRole, Yii::$app->authManager->getRole("global-view"));
-			Yii::$app->authManager->addChild($newAuthorRole, Yii::$app->authManager->getRole("global-create"));
-			Yii::$app->authManager->addChild($newAuthorRole, Yii::$app->authManager->getRole("global-delete"));
-		}
-
-		$newRoleName = 'view' ."-" . Yii::$app->controller->id;
-		$this->createRole($newRoleName, "Perm", "May only view objecttype " . Yii::$app->controller->id, "isNotAGuest", "global-view", null);
-		
-		$newRoleName = 'create' ."-" . Yii::$app->controller->id;
-		$this->createRole($newRoleName, "Perm", "May only create objecttype " . Yii::$app->controller->id, "isNotAGuest", "global-create", null);
-		
-		$newRoleName = 'delete' ."-" . Yii::$app->controller->id;
-		$this->createRole($newRoleName, "Perm", "May only delete objecttype " . Yii::$app->controller->id, "isNotAGuest", "global-delete", null);
+		$metagrid_role_management = new \vendor\meta_grid\helper\Rolemanagement();
+		$metagrid_role_management->registerControllerRole(Yii::$app->controller->id);
 	}
     
 
-	private function createProjectPermissions()
+	private function createProjectPermissions($named_project_id = NULL, $named_project_name = NULL, $named_client_name = NULL)
 	{
+		$result1 = false;
+		$result2 = false;
+		if ($named_project_id !== NULL && $named_project_name !== NULL && $named_client_name !== NULL)
+		{
+			$auth = Yii::$app->authManager;
+			$newRoleOrPermName="project-".$named_project_id."-read";
+			$checkPerm = $auth->getPermission($newRoleOrPermName);
+			if (is_null($checkPerm)) {
+				$newAuthObj = $auth->createPermission($newRoleOrPermName);
+				$newAuthObj->ruleName = "isNotAGuest";
+				$newAuthObj->description = "Read-Permission for project " . $named_project_name . " (" . $named_client_name . ")";
+				$newAuthObj->data = ['id' => $named_project_id, 'dataaccessfilter' => 'project', 'right' => 'read'];
+				$result1 = $auth->add($newAuthObj);
+			}
+			$auth = Yii::$app->authManager;
+			$newRoleOrPermName="project-".$named_project_id."-write";
+			$checkPerm = $auth->getPermission($newRoleOrPermName);
+			if (is_null($checkPerm)) {
+				$newAuthObj = $auth->createPermission($newRoleOrPermName);
+				$newAuthObj->description = "Read-Permission for project " . $named_project_name . " (" . $named_client_name . ")";
+				$newAuthObj->ruleName = "isNotAGuest";
+				$newAuthObj->data = ['id' => $named_project_id, 'dataaccessfilter' => 'project', 'right' => 'write'];
+				$result2 = $auth->add($newAuthObj);
+			}
+			return $result1 && $result2;
+		}
+
 		$projectModel = new Project();
 		$projects = $projectModel::find()->all();
 		foreach($projects as $project)
 		{
-			// $clientList[$client->id] = $client->name;
-
 			$auth = Yii::$app->authManager;
 			$newRoleOrPermName="project-".$project->id."-read";
 			$checkPerm = $auth->getPermission($newRoleOrPermName);
@@ -191,7 +154,7 @@ class ProjectController extends Controller
 				$newAuthObj->ruleName = "isNotAGuest";
 				$newAuthObj->description = "Read-Permission for project " . $project->name . " (" . $project->fkClient->name . ")";
 				$newAuthObj->data = ['id' => $project->id, 'dataaccessfilter' => 'project', 'right' => 'read'];
-				$auth->add($newAuthObj);
+				$result1 = $auth->add($newAuthObj);
 			}
 			$auth = Yii::$app->authManager;
 			$newRoleOrPermName="project-".$project->id."-write";
@@ -201,9 +164,10 @@ class ProjectController extends Controller
 				$newAuthObj->description = "Read-Permission for project " . $project->name . " (" . $project->fkClient->name . ")";
 				$newAuthObj->ruleName = "isNotAGuest";
 				$newAuthObj->data = ['id' => $project->id, 'dataaccessfilter' => 'project', 'right' => 'write'];
-				$auth->add($newAuthObj);
+				$result2 = $auth->add($newAuthObj);
 			}
 		}
+		return $result1 && $result2;
 	}
 
 	public function actionCreateprojectpermissions()
@@ -256,7 +220,7 @@ class ProjectController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($isfrommodal = false, $modalparent = "", $refreshfield = "")
     {
 				
 		$model = new Project();
@@ -269,17 +233,23 @@ class ProjectController extends Controller
     	}    
 			
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			$this->createProjectPermissions();
+			$this->createProjectPermissions($model->id, $model->name, $model->fkClient->name);
 			$userId = Yii::$app->User->Id;
 			$this->addPermissionToUser($model->id, $userId);	
-        	return $this->redirect(['view', 'id' => $model->id]);
+ 	
+			if ($isfrommodal) {echo json_encode(['status' => 'Success', 'message' => $model->id]);}
+			else {return $this->redirect(['view', 'id' => $model->id]);}
+
         } else {
-            return $this->render('create', [
+			$params = [
                 'model' => $model,
                 'clientList' => $this->getClientList(),		// autogeneriert ueber gii/CRUD
 'object_persistence_methodList' => $this->getObjectPersistenceMethodList(),		// autogeneriert ueber gii/CRUD
 'datamanagement_processList' => $this->getDatamanagementProcessList(),		// autogeneriert ueber gii/CRUD
-            ]);
+				'modalparent'                   => $modalparent,
+				'refreshfield'                  => $refreshfield,				
+            ];
+			return Yii::$app->request->isAjax ? $this->renderAjax('create', $params) : $this->render('create', $params);
         }
     }
 
@@ -307,6 +277,8 @@ class ProjectController extends Controller
                 'clientList' => $this->getClientList(),		// autogeneriert ueber gii/CRUD
 'object_persistence_methodList' => $this->getObjectPersistenceMethodList(),		// autogeneriert ueber gii/CRUD
 'datamanagement_processList' => $this->getDatamanagementProcessList(),		// autogeneriert ueber gii/CRUD
+				'modalparent'                   => '',
+				'refreshfield'                  => '',
             ]);
         }
 		    }
@@ -325,7 +297,7 @@ class ProjectController extends Controller
 		try {
 			$model = $this->findModel($id);
 			$model->delete();
-			return $this->redirect(Url::previous());
+			return $this->redirect(\yii\helpers\Url::previous(Yii::$app->controller->id."/INDEX"));
 		} catch (\Exception $e) {
 			$model->addError(null, $e->getMessage());
 			$errMsg = $e->getMessage();
@@ -335,7 +307,7 @@ class ProjectController extends Controller
 
 			if (strpos($errMsg, "Integrity constraint violation")) $errMsg = Yii::t('yii',"The object {errMsgAdd} is still referenced by other objects.", ['errMsgAdd' => $errMsgAdd]);
 			Yii::$app->session->setFlash('deleteError', Yii::t('yii','Object can\'t be deleted: ') . $errMsg);
-			return $this->redirect(Url::previous());  // Url::remember() is set in index-view
+			return $this->redirect(\yii\helpers\Url::previous(Yii::$app->controller->id."/INDEX"));  // Url::remember() is set in index-view
 		}
 
     }

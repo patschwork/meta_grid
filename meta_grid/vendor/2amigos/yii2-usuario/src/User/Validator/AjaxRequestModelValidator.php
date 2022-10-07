@@ -14,7 +14,7 @@ namespace Da\User\Validator;
 use Da\User\Contracts\ValidatorInterface;
 use Yii;
 use yii\base\Model;
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap4\ActiveForm;
 use yii\web\Response;
 
 class AjaxRequestModelValidator implements ValidatorInterface

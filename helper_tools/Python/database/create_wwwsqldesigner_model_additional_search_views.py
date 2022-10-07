@@ -3,7 +3,7 @@ import sys
 import string
 from sys import platform as _platform
 from xml.dom import minidom
-from macpath import split, join
+# from macpath import split, join
 
 print('%s %s' % (sys.executable or sys.platform, sys.version))
 
@@ -12,8 +12,8 @@ wwwsqldesignermodelfile = "../../../database_model/wwwsqldesigner/wwwsqldesigner
 output = "liquibase" # sql or liquibase
 replaceIfExists = True
 folderForYii2ModelClasses = "../../../frontend/yii/basic/models"
-## filterOnSpecificDbObject = "map_object_2_object" # Table
-filterOnSpecificDbObject = "" # Table
+filterOnSpecificDbObject = "mapping_qualifier" # Table
+# filterOnSpecificDbObject = "" # Table
 
 isLinuxOrDarwin = False
 if _platform == "linux" or _platform == "linux2":
@@ -25,9 +25,9 @@ if isLinuxOrDarwin == True:
     wwwsqldesignermodelfile = wwwsqldesignermodelfile.replace("\\","/")
 
 if (os.path.isfile(wwwsqldesignermodelfile)):
-    print ""
+    print("")
 else:
-    print "File not found"
+    print("File not found")
     exit
 
 def GetNewViewName(tablename):
@@ -48,7 +48,7 @@ def yii2_id2camel(identificator, separator = '-'):
     s_uc = []
     for w in s:
         s_uc.append(string.capwords(w))
-    t_uc = string.join(s_uc,"")
+    t_uc = "".join(s_uc)
     return t_uc
 #     return string.capwords(split(' ', join(separator, identificator).replace(" ", "")
 
@@ -82,8 +82,8 @@ for s in itemlist:
             liquibaseReplaceIfExists="false"
         print("<!-- Those views are automatically generated with a python helper tool: /helper_tools/Python/database/create_wwwsqldesigner_model_additional_search_views.py -->")
         print("<createView replaceIfExists=\"%s\" viewName=\"%s\">" % (liquibaseReplaceIfExists, newViewName))
-        print "<![CDATA["
-    print "SELECT"
+        print("<![CDATA[")
+    print("SELECT")
     rowcounter = 0
     rows=s.getElementsByTagName('row')
     countRows = len(rows)
@@ -136,9 +136,9 @@ if output=="liquibase":
         newViewName = GetNewViewName(tablename)
         if tablename=="app_config":
             continue
-        print "\t" + newViewName
+        print("\t" + newViewName)
     print("Phabricator tasks:")
-    print "\t" + "T64"
+    print("\t" + "T64")
     print("]]>")
     print("</comment>")
 

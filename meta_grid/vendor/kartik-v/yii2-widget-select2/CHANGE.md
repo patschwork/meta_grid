@@ -1,10 +1,21 @@
 Change Log: `yii2-widget-select2`
 =================================
 
+## Version 2.2.4
+
+**Date:** 29-Aug-2022
+
+- (bug #350): Some options do not work when `hashVarLoadPosition` is `View::POS_READY`.
+- (enh #348): Standardize Krajee theme for each BS version & other style enhancements.
+
 ## Version 2.2.3
 
-**Date:** _under development_
+**Date:** 04-Mar-2022
 
+- (enh #345): Create new theme krajee-bs5 for Bootstrap 5.x.
+- (enh #344): Match language for toggleAll message.
+- (enh #343): Enhance search field auto focus for jQuery 3.6.0.
+- (enh #342): Replace null coalescing operator for BC for PHP 5.x.
 - (enh #340): Enhance Krajee theme for better BSv4.x and BSv5.x support.
 - (enh #339): Enhance Krajee theme to support BSv5.x floating labels.
 

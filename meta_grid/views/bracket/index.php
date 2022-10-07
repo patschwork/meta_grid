@@ -11,7 +11,6 @@ use yii\grid\GridView;
 use yii\helpers\ArrayHelper; 
 use kartik\select2\Select2; 
 use vendor\meta_grid\helper\RBACHelper;
-use yii\helpers\Url;
 use app\models\VBracketSearchinterface;
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\BracketSearch */
@@ -19,10 +18,18 @@ use app\models\VBracketSearchinterface;
 
 $this->title = Yii::t('app', 'Brackets');
 $this->params['breadcrumbs'][] = Yii::t('app', $this->title);
+
+// Prevent loading bootstrap.css v3.4.1 (see T212)
+\Yii::$app->assetManager->bundles['yii\\bootstrap\\BootstrapAsset'] = [
+    'css' => [],
+    'js' => []
+];
+
 ?>
 <div class="bracket-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h3><?= Html::encode($this->title) ?></h3>
+
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
 <?php
@@ -51,7 +58,7 @@ else
 		$fk_object_type_id=$searchModel->find()->select(['fk_object_type_id'])->one()->fk_object_type_id;
 		if ($session->hasFlash('perspective_filter_for_' . $fk_object_type_id))
 		{	
-			echo yii\bootstrap\Alert::widget([
+			echo yii\bootstrap4\Alert::widget([
 					'options' => [
 									'class' => 'alert-info',
 					],
@@ -62,7 +69,7 @@ else
 	
 	if ($session->hasFlash('deleteError'))
 	{	
-		echo yii\bootstrap\Alert::widget([
+		echo yii\bootstrap4\Alert::widget([
 				'options' => [
 					'class' => 'alert alert-danger alert-dismissable',
 				],
@@ -70,7 +77,7 @@ else
 		]);
 	}
 
-	Url::remember();
+	\yii\helpers\Url::remember($url = '', $name = Yii::$app->controller->id."/INDEX");
 	?>
 	    <?= GridView::widget([
 		'tableOptions' => ['id' => 'grid-view-bracket', 'class' => 'table table-striped table-bordered'],
@@ -81,6 +88,7 @@ else
 			'prevPageLabel' => '<span class="glyphicon glyphicon-chevron-left"></span>',
 			'nextPageLabel' => '<span class="glyphicon glyphicon-chevron-right"></span>',
 			'maxButtonCount' => 15,
+			'class' => 'yii\bootstrap4\LinkPager'
 		],
 		'layout' => "{pager}\n{summary}{items}\n{pager}",
        	'rowOptions' => function ($model, $key, $index, $grid) {
@@ -106,7 +114,7 @@ else
             [
              'label' => Yii::t('app', 'Client'),
              'value' => function($model) {
-             		return $model->fk_project_id == "" ? $model->fk_project_id : $model->fkProject->fkClient->name;
+             		return $model->fk_project_id == "" ? $model->fk_project_id : ($model->fkProject->fkClient === NULL ? Yii::t('app', "Can't lookup the client name (for project {fk_project_id})", ['fk_project_id' => $model->fk_project_id]) : $model->fkProject->fkClient->name);
              		},
              		'filter' => Select2::widget([
              				'model' => $searchModel,
@@ -117,11 +125,14 @@ else
              						'allowClear' => true
              				],
              		]),
+			'contentOptions' => function ($model, $key, $index, $column) {
+			     return $model->fkProject->fkClient === NULL ? ['style' => 'color: red'] : [];
+			 },
             ],
             [
              'label' => Yii::t('app', 'Project'),
              'value' => function($model) {
-             		return $model->fk_project_id == "" ? $model->fk_project_id : (isset($_GET["searchShow"]) ? $model->fkProject->name . ' [' . $model->fk_project_id . ']' : $model->fkProject->name);
+             		return $model->fk_project_id == "" ? $model->fk_project_id : (isset($_GET["searchShow"]) ? $model->fkProject->name . ' [' . $model->fk_project_id . ']' : ($model->fkProject=== NULL ? Yii::t('app', "Can't lookup the {relFieldname} name (for id {this_id})", ['relFieldname' => 'fkProject', 'this_id' => $model->fk_project_id]) : $model->fkProject->name));
              		},
             'filter' => Select2::widget([
             		'model' => $searchModel,
@@ -132,13 +143,16 @@ else
             				'allowClear' => true
             		],
 			]),
+			'contentOptions' => function ($model, $key, $index, $column) {
+			     return $model->fkProject === NULL ? ['style' => 'color: red'] : [];
+			 },
             ],
             'name:ntext',
             'description:html',
             [
              'label' => Yii::t('app', 'Attribute'),
              'value' => function($model) {
-             		return $model->fk_attribute_id == "" ? $model->fk_attribute_id : (isset($_GET["searchShow"]) ? $model->fkAttribute->name . ' [' . $model->fk_attribute_id . ']' : $model->fkAttribute->name);
+             		return $model->fk_attribute_id == "" ? $model->fk_attribute_id : (isset($_GET["searchShow"]) ? $model->fkAttribute->name . ' [' . $model->fk_attribute_id . ']' : ($model->fkAttribute=== NULL ? Yii::t('app', "Can't lookup the {relFieldname} name (for id {this_id})", ['relFieldname' => 'fkAttribute', 'this_id' => $model->fk_attribute_id]) : $model->fkAttribute->name));
              		},
             'filter' => Select2::widget([
             		'model' => $searchModel,
@@ -149,11 +163,14 @@ else
             				'allowClear' => true
             		],
 			]),
+			'contentOptions' => function ($model, $key, $index, $column) {
+			     return $model->fkAttribute === NULL ? ['style' => 'color: red'] : [];
+			 },
             ],
             [
              'label' => Yii::t('app', 'Object Type As Search Filter'),
              'value' => function($model) {
-             		return $model->fk_object_type_id_as_searchFilter == "" ? $model->fk_object_type_id_as_searchFilter : (isset($_GET["searchShow"]) ? $model->fkObjectTypeIdAsSearchFilter->name . ' [' . $model->fk_object_type_id_as_searchFilter . ']' : $model->fkObjectTypeIdAsSearchFilter->name);
+             		return $model->fk_object_type_id_as_searchFilter == "" ? $model->fk_object_type_id_as_searchFilter : (isset($_GET["searchShow"]) ? $model->fkObjectTypeIdAsSearchFilter->name . ' [' . $model->fk_object_type_id_as_searchFilter . ']' : ($model->fkObjectTypeIdAsSearchFilter=== NULL ? Yii::t('app', "Can't lookup the {relFieldname} name (for id {this_id})", ['relFieldname' => 'fkObjectTypeIdAsSearchFilter', 'this_id' => $model->fk_object_type_id_as_searchFilter]) : $model->fkObjectTypeIdAsSearchFilter->name));
              		},
             'filter' => Select2::widget([
             		'model' => $searchModel,
@@ -164,6 +181,9 @@ else
             				'allowClear' => true
             		],
 			]),
+			'contentOptions' => function ($model, $key, $index, $column) {
+			     return $model->fkObjectTypeIdAsSearchFilter === NULL ? ['style' => 'color: red'] : [];
+			 },
             ],
         ],
     ]); ?>

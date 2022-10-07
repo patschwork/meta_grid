@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="bracket-create">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h3><?= Html::encode($this->title) ?></h3>
 
     <?= $this->render('_form', [
         'model' => $model,
@@ -25,6 +25,8 @@ $this->params['breadcrumbs'][] = $this->title;
 'object_persistence_methodList' => $object_persistence_methodList,		// autogeneriert ueber gii/CRUD
 'datamanagement_processList' => $datamanagement_processList,		// autogeneriert ueber gii/CRUD
 					'modelsBracketSearchPattern' => isset($modelsBracketSearchPattern) ? $modelsBracketSearchPattern : null,
-			]) ?>
+				'modalparent'                   => $modalparent,
+		'refreshfield'                  => $refreshfield,
+	]) ?>
 
 </div>

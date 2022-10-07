@@ -9,6 +9,7 @@ use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
 use yii\web\Cookie;
+use yii\helpers\Url;
 
 class SiteController extends Controller
 {
@@ -17,10 +18,10 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout'],
+                'only' => ['logout', 'contact'],
                 'rules' => [
                     [
-                        'actions' => ['logout'],
+                        'actions' => ['logout', 'contact'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -84,6 +85,7 @@ class SiteController extends Controller
 
             return $this->refresh();
         } else {
+            $model->email = \Yii::$app->user->identity->email;
             return $this->render('contact', [
                 'model' => $model,
             ]);
@@ -108,7 +110,8 @@ class SiteController extends Controller
     	Yii::$app->response->cookies->add($languageCookie);
 		$this->setFlashForPerspectiveFilters();
 
-    	return $this->goHome();
+    	// return $this->goHome();
+        return $this->redirect(Url::previous());
     }
     
 	

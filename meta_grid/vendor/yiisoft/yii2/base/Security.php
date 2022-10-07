@@ -1,8 +1,8 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
+ * @link https://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license https://www.yiiframework.com/license/
  */
 
 namespace yii\base;
@@ -55,12 +55,12 @@ class Security extends Component
     ];
     /**
      * @var string Hash algorithm for key derivation. Recommend sha256, sha384 or sha512.
-     * @see [hash_algos()](https://secure.php.net/manual/en/function.hash-algos.php)
+     * @see [hash_algos()](https://www.php.net/manual/en/function.hash-algos.php)
      */
     public $kdfHash = 'sha256';
     /**
      * @var string Hash algorithm for message authentication. Recommend sha256, sha384 or sha512.
-     * @see [hash_algos()](https://secure.php.net/manual/en/function.hash-algos.php)
+     * @see [hash_algos()](https://www.php.net/manual/en/function.hash-algos.php)
      */
     public $macHash = 'sha256';
     /**
@@ -146,7 +146,7 @@ class Security extends Component
      * to hash input or output data.
      * @param string $data the data to encrypt
      * @param string $inputKey the input to use for encryption and authentication
-     * @param string $info optional context and application specific information, see [[hkdf()]]
+     * @param string|null $info optional context and application specific information, see [[hkdf()]]
      * @return string the encrypted data as byte string
      * @see decryptByKey()
      * @see encryptByPassword()
@@ -172,7 +172,7 @@ class Security extends Component
      * Verifies and decrypts data encrypted with [[encryptByKey()]].
      * @param string $data the encrypted data to decrypt
      * @param string $inputKey the input to use for encryption and authentication
-     * @param string $info optional context and application specific information, see [[hkdf()]]
+     * @param string|null $info optional context and application specific information, see [[hkdf()]]
      * @return bool|string the decrypted data or false on authentication failure
      * @see encryptByKey()
      */
@@ -286,8 +286,8 @@ class Security extends Component
      * Recommend use one of the SHA-2 hash algorithms: sha224, sha256, sha384 or sha512.
      * @param string $algo a hash algorithm supported by `hash_hmac()`, e.g. 'SHA-256'
      * @param string $inputKey the source key
-     * @param string $salt the random salt
-     * @param string $info optional info to bind the derived key material to application-
+     * @param string|null $salt the random salt
+     * @param string|null $info optional info to bind the derived key material to application-
      * and context-specific information, e.g. a user ID or API version, see
      * [RFC 5869](https://tools.ietf.org/html/rfc5869)
      * @param int $length length of the output key in bytes. If 0, the output key is
@@ -298,7 +298,7 @@ class Security extends Component
     public function hkdf($algo, $inputKey, $salt = null, $info = null, $length = 0)
     {
         if (function_exists('hash_hkdf')) {
-            $outputKey = hash_hkdf($algo, $inputKey, $length, $info, $salt);
+            $outputKey = hash_hkdf((string)$algo, (string)$inputKey, $length, (string)$info, (string)$salt);
             if ($outputKey === false) {
                 throw new InvalidArgumentException('Invalid parameters to hash_hkdf()');
             }
@@ -340,7 +340,7 @@ class Security extends Component
 
     /**
      * Derives a key from the given password using the standard PBKDF2 algorithm.
-     * Implements HKDF2 specified in [RFC 2898](http://tools.ietf.org/html/rfc2898#section-5.2)
+     * Implements HKDF2 specified in [RFC 2898](https://datatracker.ietf.org/doc/html/rfc2898#section-5.2)
      * Recommend use one of the SHA-2 hash algorithms: sha224, sha256, sha384 or sha512.
      * @param string $algo a hash algorithm supported by `hash_hmac()`, e.g. 'SHA-256'
      * @param string $password the source password
@@ -529,7 +529,7 @@ class Security extends Component
      * ```
      *
      * @param string $password The password to be hashed.
-     * @param int $cost Cost parameter used by the Blowfish hash algorithm.
+     * @param int|null $cost Cost parameter used by the Blowfish hash algorithm.
      * The higher the value of cost,
      * the longer it takes to generate the hash and to verify a password against it. Higher cost
      * therefore slows down a brute-force attack. For best protection against brute-force attacks,
@@ -537,7 +537,7 @@ class Security extends Component
      * compute the hash doubles for every increment by one of $cost.
      * @return string The password hash string. When [[passwordHashStrategy]] is set to 'crypt',
      * the output is always 60 ASCII characters, when set to 'password_hash' the output length
-     * might increase in future versions of PHP (https://secure.php.net/manual/en/function.password-hash.php)
+     * might increase in future versions of PHP (https://www.php.net/manual/en/function.password-hash.php)
      * @throws Exception on bad password parameter or cost parameter.
      * @see validatePassword()
      */
@@ -599,7 +599,7 @@ class Security extends Component
     /**
      * Generates a salt that can be used to generate a password hash.
      *
-     * The PHP [crypt()](https://secure.php.net/manual/en/function.crypt.php) built-in function
+     * The PHP [crypt()](https://www.php.net/manual/en/function.crypt.php) built-in function
      * requires, for the Blowfish hash algorithm, a salt string in a specific format:
      * "$2a$", "$2x$" or "$2y$", a two digit cost parameter, "$", and 22 characters
      * from the alphabet "./0-9A-Za-z".
@@ -627,7 +627,7 @@ class Security extends Component
 
     /**
      * Performs string comparison using timing attack resistant approach.
-     * @see http://codereview.stackexchange.com/questions/13512
+     * @see https://codereview.stackexchange.com/q/13512
      * @param string $expected string to compare.
      * @param string $actual user-supplied string.
      * @return bool whether strings are equal.

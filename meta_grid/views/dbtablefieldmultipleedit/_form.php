@@ -16,6 +16,14 @@ use kartik\depdrop\DepDrop;			// Patrick, 2020-03-21
 /* @var $this yii\web\View */
 /* @var $model app\models\Bracket */
 /* @var $form yii\widgets\ActiveForm */
+
+
+
+// Prevent loading bootstrap.css v3.4.1 (see T212)
+\Yii::$app->assetManager->bundles['yii\\bootstrap\\BootstrapAsset'] = [
+    'css' => [],
+    'js' => []
+];
 ?>
 
 
@@ -71,8 +79,8 @@ use kartik\depdrop\DepDrop;			// Patrick, 2020-03-21
 
 	<div class="row">
 	
-		<div class="panel panel-default">
-	        <div class="panel-body">
+		<div class="card" style="width: 100%; margin: 10px;">
+	        <div class="card-body">
 	             <?php DynamicFormWidget::begin([
 	                'widgetContainer' => 'dynamicform_wrapper', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
 	                'widgetBody' => '.container-items', // required: css class selector
@@ -90,29 +98,29 @@ use kartik\depdrop\DepDrop;			// Patrick, 2020-03-21
 	                ],
 	            ]); ?>
 	
-	<button type="button" class="add-item btn btn-success btn-sm pull-right"><i class="glyphicon glyphicon-plus"></i><?= Yii::t('app', 'Add field') ?> </button>	
-	<div class="panel-heading">
+	<button type="button" class="add-item btn btn-success btn-sm float-right"><i class="glyphicon glyphicon-plus"></i><?= Yii::t('app', 'Add field') ?> </button>	
+	<div class="card-heading">
 		<h4><i class="glyphicon glyphicon-th-list"></i> <?= Yii::t('app', 'Fields') ?>
 		</h4>
 	</div>
 
 
-        <div class="panel-body">
+        <div class="card-body">
             <div class="container-items"><!-- widgetBody -->
 
 	            <?php foreach ($modelsDbTableField as $i => $modelDbTableField): ?>
 					<a class="anchor" id="<?= $modelDbTableField->id ?>"></a>
-	                <div class="item panel panel-default"><!-- widgetBody -->
+	                <div class="item card card-default"><!-- widgetBody -->
 	                    <?php
-							//     name="panel_heading_name" 
+							//     name="card_heading_name" 
 							// and name="field_details_h3_name" 
 							// are needed for JS @web/js/dbtablefieldmultipleedit.js
 						?>
-						<div class="panel-heading" name="panel_heading_name" id="phn_<?= $modelDbTableField->id ?>">
-						<h3 class="panel-title pull-left" name="field_details_h3_name"><?= Yii::t('app', 'Field details') ?></h3>
+						<div class="card-heading" name="panel_heading_name" id="phn_<?= $modelDbTableField->id ?>">
+						<h3 class="card-title float-left" name="field_details_h3_name"><?= Yii::t('app', 'Field details') ?></h3>
 
 
-						<div class="pull-right">
+						<div class="float-right">
 								<?php
 									echo Html::a(Yii::t('app', 'Add') . "  " . '<i class="glyphicon glyphicon-comment"></i>', ['objectcomment/createexternal', 'ref_fk_object_id' => $modelDbTableField->id, 'ref_fk_object_type_id' => $modelDbTableField->fk_object_type_id],['name' => 'btnCreateNewComment', 'class' => 'btn btn-primary btn-xs', 'id' => 'btnCreateNewComment' . $modelDbTableField->id], 
 									[
@@ -127,7 +135,7 @@ use kartik\depdrop\DepDrop;			// Patrick, 2020-03-21
 	                        </div>
 	                        <div class="clearfix"></div>
 	                    </div>
-	                    <div class="panel-body">
+	                    <div class="card-body">
 	                        <?php
 	                            // necessary for update action.
 	                            if (! $modelDbTableField->isNewRecord) {

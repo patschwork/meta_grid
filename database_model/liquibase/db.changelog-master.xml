@@ -147,4 +147,13 @@
   <include relativeToChangelogFile="true" file="changesets/0000114/changelog.xml"/>  <!-- SQL ALTER TABLE | data_delivery_object_log -->
   <include relativeToChangelogFile="true" file="changesets/0000115/changelog.xml"/>  <!-- SQL INSERT | language_source;language_translate -->
   <include relativeToChangelogFile="true" file="changesets/0000116/changelog.xml"/>  <!-- SQL INSERT | language_source;language_translate -->
+  <include relativeToChangelogFile="true" file="changesets/0000117/changelog.xml"/>  <!-- SQL UPDATE | language_source -->
+  <include relativeToChangelogFile="true" file="changesets/0000118/changelog.xml"/>  <!-- Create view | v_tag_2_object_list -->
+  <include relativeToChangelogFile="true" file="changesets/0000119/changelog.xml"/>  <!-- Update view | v_tag_2_object_list -->
+  <include relativeToChangelogFile="true" file="changesets/0000120/changelog.xml"/>  <!-- Update view | v_tag_2_object_list -->
+  <include relativeToChangelogFile="true" file="changesets/0000121/changelog.xml"/>  <!-- SQL INSERT AND UPDATE | language_source;language_translate -->
+  <include relativeToChangelogFile="true" file="changesets/0000122/changelog.xml"/>  <!-- SQL INSERT | language_translate -->
+  <include relativeToChangelogFile="true" file="changesets/0000123/changelog.xml"/>  <!-- SQL INSERT AND UPDATE | language_translate -->
+  <include relativeToChangelogFile="true" file="changesets/0000124/changelog.xml"/>  <!-- SQL INSERT | language_translate -->
+  <include relativeToChangelogFile="true" file="changesets/0000125/changelog.xml"/>  <!-- SQL INSERT AND UPDATE | language_source;language_translate -->
 </databaseChangeLog> 

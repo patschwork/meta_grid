@@ -14,8 +14,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="bracket-update">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <?= $this->render('_form', [
         'modelDbTable' => $modelDbTable, 
     //    'object_typeList' => $object_typeList,		// autogeneriert ueber gii/CRUD

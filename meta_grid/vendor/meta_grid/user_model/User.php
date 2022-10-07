@@ -114,6 +114,36 @@ class User extends \Da\User\Model\User
         return $arrCanEdit;
 	}
 
+	/**
+	 * Description of function getPermObjectTypesCanViewByUserId
+	 *
+	 * @author meta#grid (Patrick Schmitz)
+	 * @since 3.0
+	 * 
+	 * @param $user_id: If not given or NULL on call, then the current user will be used. If user is of status "guest" an empty array is returned
+	 * 
+	 * @return array(key = autoincrement, value = Permission (without prefix "view-"))
+	 */
+	public function getPermObjectTypesCanViewByUserId($user_id = NULL)
+	{
+		$prefix = "view-";
+		$strip_prefix_on_result = true; // remove prefix in result array e.g. view-keyfigure to keyfigure
+
+		$auth = Yii::$app->authManager;
+		$user_id = $user_id == NULL ? Yii::$app->user->id : $user_id;
+		$userPerms = $auth->getPermissionsByUser($user_id);
+		$arrCanView = array();
+		foreach($userPerms as $key => $perm)
+		{
+			if (substr($perm->name,0,strlen($prefix)) === $prefix)
+			{
+				if ($strip_prefix_on_result) {array_push($arrCanView, substr($perm->name,strlen($prefix),strlen($perm->name)));}
+				else {array_push($arrCanView, $perm->name);}
+			}
+		} 
+		return $arrCanView;
+	}
+
 	// { ... phabricator-task: T80
 	public function rules()
 	{

@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="sourcesystem-create">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h3><?= Html::encode($this->title) ?></h3>
 
     <?= $this->render('_form', [
         'model' => $model,
@@ -24,6 +24,8 @@ $this->params['breadcrumbs'][] = $this->title;
 'deleted_statusList' => $deleted_statusList,		// autogeneriert ueber gii/CRUD
 'object_persistence_methodList' => $object_persistence_methodList,		// autogeneriert ueber gii/CRUD
 'datamanagement_processList' => $datamanagement_processList,		// autogeneriert ueber gii/CRUD
-					]) ?>
+						'modalparent'                   => $modalparent,
+		'refreshfield'                  => $refreshfield,
+	]) ?>
 
 </div>

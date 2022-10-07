@@ -12,11 +12,11 @@ use yii\base\InvalidConfigException;
 /**
  * ToggleButtonGroup allows rendering form inputs Checkbox/Radio toggle button groups.
  *
- * You can use this widget in an [[yii\bootstrap\ActiveForm|ActiveForm]] using the [[yii\widgets\ActiveField::widget()|widget()]]
+ * You can use this widget in an [[yii\bootstrap4\ActiveForm|ActiveForm]] using the [[yii\widgets\ActiveField::widget()|widget()]]
  * method, for example like this:
  *
  * ```php
- * <?= $form->field($model, 'item_id')->widget(\yii\bootstrap\ToggleButtonGroup::classname(), [
+ * <?= $form->field($model, 'item_id')->widget(\yii\bootstrap4\ToggleButtonGroup::classname(), [
  *     // configure additional widget properties here
  * ]) ?>
  * ```

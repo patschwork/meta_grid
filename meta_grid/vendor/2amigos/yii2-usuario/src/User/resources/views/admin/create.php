@@ -9,8 +9,8 @@
  * the LICENSE file that was distributed with this source code.
  */
 
-use yii\bootstrap\ActiveForm;
-use yii\bootstrap\Nav;
+use yii\bootstrap4\ActiveForm;
+use yii\bootstrap4\Nav;
 use yii\helpers\Html;
 
 /**
