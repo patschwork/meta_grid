@@ -5,7 +5,7 @@ use yii\helpers\Url;
     <!-- Brand Logo -->
     <a href="<?= Yii::$app->homeUrl ?>" class="brand-link">
         <!-- <img src="<?=$assetDir?>/img/AdminLTELogo.png" alt="Meta#Grid Logo" class="brand-image img-circle elevation-3" style="opacity: .8"> -->
-        <img src="<?=Url::to('@web/icons/android-chrome-192x192.png')?>" alt="Meta#Grid Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+        <img src="<?=Url::to('@web/images/android-chrome-192x192.png')?>" alt="Meta#Grid Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
         <span class="brand-text font-weight-light">Meta#Grid</span>
     </a>
 

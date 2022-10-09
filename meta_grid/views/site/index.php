@@ -109,7 +109,7 @@ function hideMeSomeDays()
                     $m2 = Yii::t('app', 'The data catalog for everybody!');
                     echo "<h1 style=\"font-size: 350%; color: #2D2E2F;\">$m1</h1>";
                     ?>
-                <img src="icons/animation_BlackAndHighlightColorHex1_jgg7729z.gif">
+                <img src="images/animation_BlackAndHighlightColorHex1_jgg7729z.gif">
                 </br>
                 <?= "<h2 style=\"font-size: 325%; color: #2D2E2F;\">$m2</h2>"; ?>
                 </br>
