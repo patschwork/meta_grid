@@ -1,12 +1,17 @@
 ![meta#grid logo](https://blog.meta-grid.com/wp-content/uploads/2022/06/base_logo_transparent_background.png)
 
-# meta#grid
-meta#grid is a meta data tooling/framework for BI and data warehousing.
+# Meta#Grid
+Meta#Grid is a meta data tooling/framework for BI and data warehousing.
 
 # Details / Features
-See more details at https://blog.meta-grid.com
+See more details at https://meta-grid.com
 
-## Installation
+# Installation
+
+## docker
+Go to https://github.com/Meta-Grid/docker/ and follow the guide.
+
+## The "classic" way
 1. Clone the repo or download the zip. 
 On Linux e.g. /opt/meta_grid
 On Windows e.g. C:\Xampp\htdocs\meta_grid
