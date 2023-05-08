@@ -6,6 +6,10 @@ Meta#Grid is a meta data tooling/framework for BI and data warehousing.
 # Details / Features
 See more details at https://meta-grid.com
 
+# Docs
+
+[Read the docs](https://docs.meta-grid.com/)
+
 # Installation
 
 ## docker
