@@ -10,6 +10,10 @@ See more details at https://meta-grid.com
 
 [Read the docs](https://docs.meta-grid.com/)
 
+## Getting started
+
+https://docs.meta-grid.com/#/page/administration%2Fgetting%20started
+
 # Installation
 
 ## docker
