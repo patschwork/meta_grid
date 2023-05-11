@@ -10,6 +10,10 @@ See more details at https://meta-grid.com
 
 [Read the docs](https://docs.meta-grid.com/)
 
+# Demo
+
+A public playground is [here](https://demo.meta-grid.com/). Try it out ;-)
+
 ## Getting started
 
 https://docs.meta-grid.com/#/page/administration%2Fgetting%20started
