@@ -434,7 +434,7 @@ class ImportstagedbtableController extends Controller
 							$AnyTooltypeIdAsDatabase = ToolType::find()->where(["like", "UPPER(name)", "DATABASE"])->orWhere(["like", "UPPER(name)", strtoupper(Yii::t("app","Database"))])->one();
 							if ($AnyTooltypeIdAsDatabase !== NULL)
 							{
-								$AnyToolDatabaseId = Tool::find()->where(["fk_tooltype_id" => $AnyTooltypeIdAsDatabase->id])->one();
+								$AnyToolDatabaseId = Tool::find()->where(["fk_tool_type_id" => $AnyTooltypeIdAsDatabase->id])->one();
 							}
 							else
 							{
