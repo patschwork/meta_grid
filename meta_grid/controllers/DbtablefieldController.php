@@ -350,6 +350,7 @@ class DbtablefieldController extends Controller
 			['attribute' => 'is_BusinessKey'],
 			['attribute' => 'is_GDPR_relevant'],
 			['attribute' => 'databaseInfoFromLocation'],
+			['attribute' => 'schemaInfoFromLocation'],
 			['attribute' => 'db_table_name'],
 			['attribute' => 'deleted_status_name'],
 			['attribute' => 'comments'],

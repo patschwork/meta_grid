@@ -9,7 +9,7 @@ use Yii;
  *
  * @property integer $id
  * @property string $uuid
-* @property integer $fk_object_type_id
+ * @property integer $fk_object_type_id
  * @property integer $fk_project_id
  * @property integer $fk_client_id
  * @property string $project_name
@@ -24,6 +24,7 @@ use Yii;
  * @property integer $fk_deleted_status_id
  * @property string $deleted_status_name
  * @property string $databaseInfoFromLocation
+ * @property string $schemaInfoFromLocation
  * @property string $comments
  * @property string $mappings
  * @property string $session
@@ -52,7 +53,7 @@ class ExportFileDbTableResult extends \yii\db\ActiveRecord
     {
         return [
             [['id', 'fk_object_type_id', 'fk_project_id', 'fk_client_id', 'fk_db_table_context_id', 'fk_db_table_type_id', 'fk_deleted_status_id', 'fk_object_persistence_method_id', 'fk_datamanagement_process_id'], 'integer'],
-            [['uuid', 'location', 'databaseInfoFromLocation', 'comments', 'mappings'], 'string'],
+            [['uuid', 'location', 'databaseInfoFromLocation', 'schemaInfoFromLocation', 'comments', 'mappings'], 'string'],
             [['_created_datetime'], 'safe'],
             [['project_name', 'client_name', 'name', 'db_table_context_name', 'db_table_type_name', 'deleted_status_name'], 'string', 'max' => 250],
             [['description'], 'string', 'max' => 4000],
@@ -85,6 +86,7 @@ class ExportFileDbTableResult extends \yii\db\ActiveRecord
             'fk_deleted_status_id' => Yii::t('app', 'Fk Deleted Status ID'),
             'deleted_status_name' => Yii::t('app', 'Deleted Status Name'),
             'databaseInfoFromLocation' => Yii::t('app', 'Database Info From Location'),
+            'schemaInfoFromLocation' => Yii::t('app', 'Schema Info From Location'),
             'comments' => Yii::t('app', 'Comments'),
             'mappings' => Yii::t('app', 'Mappings'),
             'session' => Yii::t('app', 'Session'),

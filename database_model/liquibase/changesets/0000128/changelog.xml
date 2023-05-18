@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000128/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000128" context="db_table">
+
+		<sql splitStatements="true">
+		<![CDATA[
+		ALTER TABLE export_file_db_table_result ADD COLUMN schemaInfoFromLocation TEXT;
+		]]>
+		</sql>
+
+		<sql splitStatements="true">
+		<![CDATA[
+		ALTER TABLE export_file_db_table_field_result ADD COLUMN schemaInfoFromLocation TEXT;
+		]]>
+		</sql>
+		
+		<comment>
+		<![CDATA[
+		Add new fields schemaInfoFromLocation to tables export_file_db_table_result and export_file_db_table_field_result.
+		Used objects:
+			export_file_db_table_result
+			export_file_db_table_field_result
+		Phabricator tasks:
+			T277
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

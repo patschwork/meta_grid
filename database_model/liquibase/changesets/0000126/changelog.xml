@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000126/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000126" context="db_table">
+		<createView replaceIfExists="true" viewName="v_db_table_SearchInterface">
+		<![CDATA[
+WITH RECURSIVE split(seq, word, str, id, fk_project_id, location) AS (
+    SELECT 0, '.', location||'.',id,fk_project_id,location
+    FROM db_table_cte 
+    WHERE 1=1 
+    AND location LIKE '%.%.%'
+    UNION ALL SELECT
+        seq+1,
+        substr(str, 0, instr(str, '.')),
+        substr(str, instr(str, '.')+1),
+        id,
+        fk_project_id,
+        location
+    FROM split WHERE str != ''
+)
+,db_table_cte AS 
+(
+    SELECT * FROM db_table
+)
+SELECT
+        db_table.id
+        ,IFNULL(db_table.uuid, '') AS uuid
+        ,db_table.fk_object_type_id
+        ,project.fk_client_id
+        ,IFNULL(project.name, '') AS project_name
+        ,IFNULL(client.name, '') AS client_name
+        ,db_table.fk_project_id
+        ,IFNULL(db_table.name, '') AS name
+        ,IFNULL(db_table.description, '') AS description
+        ,IFNULL(db_table.location, '') AS location
+        ,db_table.fk_db_table_context_id
+        ,db_table.fk_db_table_type_id
+        ,db_table.fk_deleted_status_id
+        ,db_table.fk_object_persistence_method_id
+        ,db_table.fk_datamanagement_process_id
+        ,IFNULL(db_table.source_definition, '') AS source_definition
+        ,IFNULL(db_table.source_comment, '') AS source_comment
+        ,CASE WHEN (LENGTH(db_table.location) - LENGTH(REPLACE(db_table.location, '"."', ''))) / LENGTH('"."')>=2 THEN REPLACE(SUBSTR(db_table.location ,1, INSTR(db_table.location,'.')-1),'"','') ELSE '' END AS databaseInfoFromLocation
+        ,CASE WHEN (LENGTH(db_table.location) - LENGTH(REPLACE(db_table.location, '"."', ''))) / LENGTH('"."')>=2 THEN REPLACE(location_schema_extract.word, '"', '') ELSE '' END AS schemaInfoFromLocation
+    FROM db_table_cte db_table
+    LEFT JOIN project ON project.id = db_table.fk_project_id
+    LEFT JOIN client ON client.id = project.fk_client_id
+    LEFT JOIN split location_schema_extract ON location_schema_extract.id = db_table.id AND location_schema_extract.seq=2
+		]]>
+		</createView>
+		
+		<comment>
+		<![CDATA[
+		Updated view
+		Used objects:
+            v_db_table_SearchInterface
+		Phabricator tasks:
+			T277
+        ]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

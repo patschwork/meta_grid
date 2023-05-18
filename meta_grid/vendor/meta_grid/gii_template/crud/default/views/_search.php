@@ -36,6 +36,7 @@ foreach ($generator->getColumnNames() as $attribute) {
 if ($generator->modelClass==="app\models\DbTableField")
 {
     echo "    <?= " . "\$form->field(\$model, 'databaseInfoFromLocation')" . " ?>\n\n";
+    echo "    <?= " . "\$form->field(\$model, 'schemaInfoFromLocation')" . " ?>\n\n";
 }
 ?>
     <div class="form-group">

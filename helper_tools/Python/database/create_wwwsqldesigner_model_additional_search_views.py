@@ -109,6 +109,7 @@ for s in itemlist:
         if countRows==rowcounter:
             if (tablename == "db_table" or tablename == "db_table_field"):
                 print("\t%sCASE WHEN (LENGTH(db_table.location) - LENGTH(REPLACE(db_table.location, '\".\"', ''))) / LENGTH('\".\"')>=2 THEN REPLACE(SUBSTR(db_table.location ,1, INSTR(db_table.location,'.')-1),'\"','') ELSE '' END AS databaseInfoFromLocation" % (leadingComma))
+                print("\t%s-- schemaInfoFromLocation TODO" % (leadingComma))
             #print("\t%s%s_log.log_datetime" % (leadingComma,tablename))
             print("FROM " + tablename)
             #print("LEFT JOIN %s_log ON %s_log.uuid = %s.uuid" % (tablename,tablename,tablename))

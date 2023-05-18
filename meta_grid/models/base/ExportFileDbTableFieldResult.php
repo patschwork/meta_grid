@@ -23,6 +23,7 @@ use Yii;
  * @property boolean $is_BusinessKey
  * @property boolean $is_GDPR_relevant
  * @property string $databaseInfoFromLocation
+ * @property string $schemaInfoFromLocation
  * @property string $db_table_name
  * @property integer $fk_deleted_status_id
  * @property string $deleted_status_name
@@ -49,7 +50,7 @@ class ExportFileDbTableFieldResult extends \yii\db\ActiveRecord
     {
         return [
             [['id', 'fk_object_type_id', 'fk_client_id', 'fk_project_id', 'fk_db_table_id', 'fk_deleted_status_id'], 'integer'],
-            [['uuid', 'databaseInfoFromLocation', 'comments', 'mappings'], 'string'],
+            [['uuid', 'databaseInfoFromLocation', 'schemaInfoFromLocation', 'comments', 'mappings'], 'string'],
             [['is_PrimaryKey', 'is_BusinessKey', 'is_GDPR_relevant'], 'boolean'],
             [['_created_datetime'], 'safe'],
             [['project_name', 'client_name', 'name', 'datatype', 'db_table_name', 'deleted_status_name'], 'string', 'max' => 250],
@@ -80,6 +81,7 @@ class ExportFileDbTableFieldResult extends \yii\db\ActiveRecord
             'is_BusinessKey' => Yii::t('app', 'Is  Business Key'),
             'is_GDPR_relevant' => Yii::t('app', 'Is  Gdpr Relevant'),
             'databaseInfoFromLocation' => Yii::t('app', 'Database Info From Location'),
+            'schemaInfoFromLocation' => Yii::t('app', 'Schema Info From Location'),
             'db_table_name' => Yii::t('app', 'Db Table Name'),
             'fk_deleted_status_id' => Yii::t('app', 'Fk Deleted Status ID'),
             'deleted_status_name' => Yii::t('app', 'Deleted Status Name'),

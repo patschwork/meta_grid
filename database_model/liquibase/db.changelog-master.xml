@@ -156,4 +156,7 @@
   <include relativeToChangelogFile="true" file="changesets/0000123/changelog.xml"/>  <!-- SQL INSERT AND UPDATE | language_translate -->
   <include relativeToChangelogFile="true" file="changesets/0000124/changelog.xml"/>  <!-- SQL INSERT | language_translate -->
   <include relativeToChangelogFile="true" file="changesets/0000125/changelog.xml"/>  <!-- SQL INSERT AND UPDATE | language_source;language_translate -->
+  <include relativeToChangelogFile="true" file="changesets/0000126/changelog.xml"/>  <!-- Update view | v_db_table_SearchInterface -->
+  <include relativeToChangelogFile="true" file="changesets/0000127/changelog.xml"/>  <!-- Update view | v_db_table_field_SearchInterface -->
+  <include relativeToChangelogFile="true" file="changesets/0000128/changelog.xml"/>  <!-- SQL ALTER TABLE | export_file_db_table_result;export_file_db_table_field_result -->
 </databaseChangeLog> 

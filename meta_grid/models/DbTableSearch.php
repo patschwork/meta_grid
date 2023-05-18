@@ -21,7 +21,7 @@ class DbTableSearch extends VDbTableSearchinterface
             [['id', 'fk_object_type_id', 'fk_project_id', 'fk_db_table_context_id', 'fk_db_table_type_id', 'fk_deleted_status_id', 'fk_object_persistence_method_id', 'fk_datamanagement_process_id'], 'integer'],
             [['uuid', 'name', 'description', 'location', 'source_definition', 'source_comment'], 'safe'],
             [['fk_client_id'], 'integer'],
-            [['databaseInfoFromLocation'], 'safe'],
+            [['databaseInfoFromLocation','schemaInfoFromLocation'], 'safe'],
         ];
     }
 
@@ -82,6 +82,7 @@ class DbTableSearch extends VDbTableSearchinterface
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
             ->andFilterWhere(['like', 'databaseInfoFromLocation', $this->databaseInfoFromLocation])
+            ->andFilterWhere(['like', 'schemaInfoFromLocation', $this->schemaInfoFromLocation])
             ->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['like', 'description', $this->description])
             ->andFilterWhere(['like', 'location', $this->location])

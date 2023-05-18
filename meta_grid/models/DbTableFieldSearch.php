@@ -22,7 +22,7 @@ class DbTableFieldSearch extends VDbTableFieldSearchinterface
             [['uuid', 'name', 'description', 'datatype', 'bulk_load_checksum', 'source_definition', 'source_comment'], 'safe'],
             [['is_PrimaryKey', 'is_BusinessKey', 'is_GDPR_relevant'], 'boolean'],
             [['fk_client_id'], 'integer'],
-            [['databaseInfoFromLocation'], 'safe'],
+            [['databaseInfoFromLocation','schemaInfoFromLocation'], 'safe'],
         ];
     }
 
@@ -85,6 +85,7 @@ class DbTableFieldSearch extends VDbTableFieldSearchinterface
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
             ->andFilterWhere(['like', 'databaseInfoFromLocation', $this->databaseInfoFromLocation])
+            ->andFilterWhere(['like', 'schemaInfoFromLocation', $this->schemaInfoFromLocation])
             ->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['like', 'description', $this->description])
             ->andFilterWhere(['like', 'datatype', $this->datatype])

@@ -2,12 +2,14 @@
 # -*- coding: utf-8 -*-
 # Instllation or update meta#grid
 # on every OS
-# v1.7
+# v1.8
 
 import base_lib
 import shutil
 import os
 import datetime
+import sys
+import argparse
 
 debug=0
 simulate_alternate_folder=False
@@ -25,12 +27,12 @@ git_repo_zip_url = "https://github.com/patschwork/meta_grid/archive/master.zip"
 min_php_version = "7.0"
 max_php_version = "8.1.2" # Upper version limit for PHP (depends on the used Yii2 framework)
 used_rdbms = const_sqlite
-folderfile_Database = "../../../dwh_meta.sqlite"
-folder_Frontend = "../../../frontend/yii/basic"
-folder_Bulkimport = "../../../bulk_import/kettle"
-liquibasePathExe = "/opt/meta_grid/tools/liquibase/liquibase"
-kitchenPathExe = "/opt/meta_grid/tools/pdi/kitchen.sh"
-pythonExe = "python"
+folderfile_Database = "/opt/meta_grid/db/dwh_meta.sqlite"
+folder_Frontend = "/opt/meta_grid/frontend"
+folder_Bulkimport = "/opt/meta_grid/bulkimport"
+liquibasePathExe = "/opt/meta_grid/3rd_party_tools/liquibase/liquibase"
+kitchenPathExe = "/opt/meta_grid/3rd_party_tools/data-integration/kitchen.sh"
+pythonExe = "python3"
 phpExe = "php"
 kettleMajorJobFilename = "run_import.kjb"
 metagridMajorFrontendFilename = "gii_crud.sh"
@@ -53,6 +55,7 @@ param_extract_repo_zip = True
 param_create_db_backup = True
 param_create_frontend_backup = True
 param_create_bulkimport_backup = True
+param_use_unattended_mode = False
 
 if (param_download_repo_zip):
     param_makeClone=False
@@ -63,10 +66,29 @@ if (param_remove_folder_WorkingDir):
 
 ## ###################################################
 
+argParser = argparse.ArgumentParser()
+argParser.add_argument("-u", "--use-unattended-mode", action='store_true', help="All defaults (or last settings) are used.")
+argParser.add_argument("-m", "--mode", choices=['install', 'update'], help="Installation or Update")
+argParser.add_argument("-initdb", "--initial_db", choices=['clean', 'demo'], default=None, help="When mode=installation, which initial database shall be used? Default is clean")
+
+args = argParser.parse_args()
+
+if ((vars(args)["use_unattended_mode"]) and (vars(args)["mode"] is None)):
+    argParser.error('The --use_unattended_mode argument requires the --mode argument!')
+
+if ((not vars(args)["use_unattended_mode"]) and (vars(args)["mode"] is not None)):
+    argParser.error('The --mode argument is only required when the --use_unattended_mode is used!')
+
+
+## ###################################################
+
 def bla(msg, action=None, withLooging=True, wait=False):
     base_lib.bla(msg, action, withLooging, logfilepath, logfile)
     if (wait):
-        dummy = raw_input("")
+        if (int(sys.version_info[0]) >= 3):
+            dummy = input("")
+        else:
+            dummy = raw_input("")
 
 if (param_make_screen_clear):
     base_lib.clear()
@@ -85,7 +107,6 @@ ini_user_settings_path = os.path.join(dirPath,"install_settings.ini")
 
 bla("meta#grid Installation/Update (v" + base_lib.myVersion() + ")", "intro", False)
 bla("--------------------------------------", "intro", False)
-bla("(currently only Update possible)", "intro", False)
 print("\r\n")
 
 version_check = base_lib.check_if_a_newer_version_is_available()
@@ -95,27 +116,102 @@ if version_check:
     print("\r\n")
 
 bla("- Check if filesystem is writeable by the process", "header", False)
-if (base_lib.check_file_writable("dummyFolder") == False):
+if (base_lib.check_filefolder_writable("dummyFolder") == False):
     errMsg="Can't write to the filesystem! Abort."
     bla(errMsg, "error", False, True)
     raise Exception(errMsg)
     exit()
 
-
-
-
-
 # ###################### BEGIN -> Get inputs from user {...
 
 base_lib.intro_get_input_color()
 
-# not yet choosable, but...
-dummy=base_lib.get_input_color("[I]nstallation or [U]pdate", "Update", "U", no_input_just_inform_user=True)
+# if args.use_unattended_mode:
+
+suggestion = "U"
+
+if args.use_unattended_mode:
+    param_use_unattended_mode = True
+    if args.mode=="update":
+        behaviour=const_inst_mode_update
+    else:
+        behaviour=const_inst_mode_installation
+        suggestion = "I"
+    base_lib.bla(msg="use_unattended_mode with mode={}".format(behaviour), action="warning")
+
+if not os.path.isfile(ini_user_settings_path):
+    if args.use_unattended_mode:
+        if args.mode=="update":
+            base_lib.bla(msg="use_unattended_mode with mode=update can only run, if a valid install_settings.ini exists", action="error")
+            sys.exit(1)
+
+    base_lib.bla("No previous installation settings found. Do you want to start the installation?")
+    suggestion = "I"
+
+input_valid = False
+while not input_valid:
+    suggestion=base_lib.get_input_color(msg="[I]nstallation or [U]pdate", default_value=suggestion, init_value=suggestion, no_input_just_inform_user=param_use_unattended_mode).upper()
+    if suggestion in ["U", "I"]:
+        input_valid=True
+if suggestion=="I":
+    param_use_unattended_mode = True # is also True when -> behaviour==const_inst_mode_installation
+    if param_use_unattended_mode:
+        behaviour=const_inst_mode_installation
+
+if behaviour==const_inst_mode_installation:
+
+    ioc = base_lib.get_installation_os_candidate()
+    if ioc[0] not in ["ubuntu"]:
+        if not args.use_unattended_mode:
+            bla(msg="The install mode currently only supports Ubuntu Linux and derivates.\nYou can try to continue the installation process, but unfortunately it might fail and abort with errors.", action="warning")
+            bla(msg="To continue press any key.", action="", wait=True)
+
+    # no backups if installation
+    param_create_db_backup=False
+    param_create_frontend_backup=False
+    param_create_bulkimport_backup=False
+
+    input_valid = False
+    if args.initial_db=="clean":
+        default_value="1"
+    else:
+        default_value="2"
+
+    # Do not ask for the database content if arg is in use_unattended_mode. If nothing is given, use clean.
+    if args.use_unattended_mode:
+        do_not_prompt=True
+        if args.initial_db is None:
+            default_value="1"
+    else:
+        do_not_prompt=False        
+
+    while not input_valid:
+        clean_or_demo_db_input=base_lib.get_input_color(msg="[1] Clean or [2] demo database?", default_value=default_value, init_value="2", no_input_just_inform_user=do_not_prompt)
+        if clean_or_demo_db_input in ["1", "2"]:
+            if clean_or_demo_db_input=="1":
+                clean_or_demo_db="clean"
+            else:
+                clean_or_demo_db="demo"
+            input_valid=True
+
+    import base_installations as bi
+    result = bi.before_update_todos(clean_or_demo_db=clean_or_demo_db)
+    if not result:
+        errMsg="There has been error during the Installation process. Abort."
+        bla(errMsg, "error", False, True)
+        exit()
+
+if behaviour==const_inst_mode_update:
+    if not base_lib.is_user_admin():
+        bla(msg="The current user may not have enough privileges to write to all places.\nPlease consider to re-start with adminstrative rights.", action="warning", withLooging=True, wait=False)
+        if not param_use_unattended_mode:
+            bla(msg="To continue press any key.", action="", withLooging=True, wait=True)
+
 
 section="meta_grid_source"
 if (param_download_repo_zip):
     actual_value=base_lib.get_user_settings(ini_user_settings_path, section, 'git_repo_zip_url', git_repo_zip_url)
-    git_repo_zip_url=base_lib.get_input_color("URL for GitHub zip release file", actual_value, git_repo_zip_url)
+    git_repo_zip_url=base_lib.get_input_color("URL for GitHub zip release file", actual_value, git_repo_zip_url, no_input_just_inform_user=param_use_unattended_mode)
     base_lib.set_user_settings(ini_user_settings_path, section, 'git_repo_zip_url', git_repo_zip_url)
 else:
     actual_value=base_lib.get_user_settings(ini_user_settings_path, section, 'git_repo_url', git_repo_url)
@@ -125,36 +221,50 @@ else:
 if (used_rdbms == const_sqlite):
     section="current_installation"
     actual_value=base_lib.get_user_settings(ini_user_settings_path, section, 'folderfile_Database', folderfile_Database)
-    folderfile_Database=base_lib.get_input_color("File location for the SQLite database file", actual_value, user_option_search_file=os.path.basename(folderfile_Database))
+    folderfile_Database=base_lib.get_input_color("File location for the SQLite database file", actual_value, user_option_search_file=os.path.basename(folderfile_Database), no_input_just_inform_user=param_use_unattended_mode)
     base_lib.set_user_settings(ini_user_settings_path, section, 'folderfile_Database', folderfile_Database)
 
 section="current_installation"
 actual_value=base_lib.get_user_settings(ini_user_settings_path, section, 'folder_Frontend', folder_Frontend)
-folder_Frontend=base_lib.get_input_color("Folder location for the frontend files", actual_value, folder_Frontend, user_option_search_file=metagridMajorFrontendFilename, use_path_of_search_result=True)
+folder_Frontend=base_lib.get_input_color("Folder location for the frontend files", actual_value, folder_Frontend, user_option_search_file=metagridMajorFrontendFilename, use_path_of_search_result=True, no_input_just_inform_user=param_use_unattended_mode)
 base_lib.set_user_settings(ini_user_settings_path, section, 'folder_Frontend', folder_Frontend)
 
 actual_value=base_lib.get_user_settings(ini_user_settings_path, section, 'folder_Bulkimport', folder_Bulkimport)
-folder_Bulkimport=base_lib.get_input_color("Folder location for the bulkimport files", actual_value, folder_Bulkimport, user_option_search_file=kettleMajorJobFilename, use_path_of_search_result=True)
+folder_Bulkimport=base_lib.get_input_color("Folder location for the bulkimport files", actual_value, folder_Bulkimport, user_option_search_file=kettleMajorJobFilename, use_path_of_search_result=True, no_input_just_inform_user=param_use_unattended_mode)
 base_lib.set_user_settings(ini_user_settings_path, section, 'folder_Bulkimport', folder_Bulkimport)
 
 section="tools"
-actual_value=base_lib.get_user_settings(ini_user_settings_path, section, 'liquibasePathExe', liquibasePathExe)
-liquibasePathExe=base_lib.get_input_color("Path to LiquiBase installation", actual_value, liquibasePathExe, user_option_search_file=os.path.basename(liquibasePathExe))
-base_lib.set_user_settings(ini_user_settings_path, section, 'liquibasePathExe', liquibasePathExe)
-
-section="tools"
 actual_value=base_lib.get_user_settings(ini_user_settings_path, section, 'pythonExe', pythonExe)
-pythonExe=base_lib.get_input_color("Path to Python executable", actual_value, pythonExe)
+pythonExe=base_lib.get_input_color("Path to Python executable", actual_value, pythonExe, no_input_just_inform_user=param_use_unattended_mode)
 base_lib.set_user_settings(ini_user_settings_path, section, 'pythonExe', pythonExe)
 
 section="tools"
 actual_value=base_lib.get_user_settings(ini_user_settings_path, section, 'phpExe', phpExe)
-phpExe=base_lib.get_input_color("Path to PHP executable", actual_value, phpExe, user_option_search_file=os.path.basename(phpExe))
+phpExe=base_lib.get_input_color("Path to PHP executable", actual_value, phpExe, user_option_search_file=os.path.basename(phpExe), no_input_just_inform_user=param_use_unattended_mode)
 base_lib.set_user_settings(ini_user_settings_path, section, 'phpExe', phpExe)
+
+# Check if Java is found, else prompt
+try:
+    actual_value=base_lib.get_user_settings(ini_user_settings_path, section, 'javaexe', "java")
+    result, resmsg = base_lib.is_tool_executable(actual_value, ini_user_settings_path, section, 'javaexe', 'Java')    
+    if not result:
+        actual_value=base_lib.get_user_settings(ini_user_settings_path, section, 'javaexe', "java")
+        phpExe=base_lib.get_input_color("Path to Java executable", actual_value, "java", user_option_search_file=os.path.basename("java"), no_input_just_inform_user=param_use_unattended_mode)
+        base_lib.set_user_settings(ini_user_settings_path, section, 'javaexe', "java")
+
+        raise Exception(resmsg)
+except Exception as e:
+    bla(str(e), "error", True, True)
+    exit()
+
+section="tools"
+actual_value=base_lib.get_user_settings(ini_user_settings_path, section, 'liquibasePathExe', liquibasePathExe)
+liquibasePathExe=base_lib.get_input_color("Path to LiquiBase installation", actual_value, liquibasePathExe, user_option_search_file=os.path.basename(liquibasePathExe), no_input_just_inform_user=param_use_unattended_mode)
+base_lib.set_user_settings(ini_user_settings_path, section, 'liquibasePathExe', liquibasePathExe)
 
 section="tools"
 actual_value=base_lib.get_user_settings(ini_user_settings_path, section, 'kitchenPathExe', kitchenPathExe)
-kitchenPathExe=base_lib.get_input_color("Path to Pentaho Data Integration (kitchen.sh) executable", actual_value, user_option_search_file=os.path.basename(kitchenPathExe))
+kitchenPathExe=base_lib.get_input_color("Path to Pentaho Data Integration (kitchen.sh) executable", actual_value, user_option_search_file=os.path.basename(kitchenPathExe), no_input_just_inform_user=param_use_unattended_mode)
 base_lib.set_user_settings(ini_user_settings_path, section, 'kitchenPathExe', kitchenPathExe)
 
 # ###################### END -> Get inputs from user ...}
@@ -169,21 +279,9 @@ if (returnVal != None):
 
 # Check if PHP is found
 try:
-    if (not os.path.exists(phpExe)):
-        if (not base_lib.is_windows()):
-            # on Linux or MAC OS we can try "which php"...
-            which_result = base_lib.which_executable(phpExe)
-            if not which_result:
-                raise Exception("PHP executable (" + phpExe + ") not found! Installatation/Update not completed!")
-            else:
-                phpExe = which_result[0] # OK, replace the value
-                if (not os.path.exists(phpExe)):
-                    raise Exception("PHP executable (" + phpExe + ") not found! Installatation/Update not completed!")
-                else:
-                    base_lib.set_user_settings(ini_user_settings_path, section, 'phpExe', phpExe) # overwrite for the next start
-                    pass
-        else:
-            raise Exception("PHP executable (" + phpExe + ") not found! Installatation/Update not completed!")
+    result, resmsg = base_lib.is_tool_executable(phpExe, ini_user_settings_path, section, 'phpExe', 'PHP')
+    if not result:
+        raise Exception(resmsg)
 except Exception as e:
     bla(str(e), "error", True, True)
     exit()
@@ -412,21 +510,24 @@ copylist = os.listdir(folder_Fresh_frontend)
 if (behaviour==const_inst_mode_update):
     bla("- - Do not copy config folder (update mode) - removed from the copylist", "subheader", False)
     copylist.remove('config')
+    bla("- - Do not copy runtime folder (update mode) - removed from the copylist", "subheader", False)
+    copylist.remove('runtime')
 
 base_lib.writeOutputLog(logfilepath, logfile, "Frontend copylist: " + "\r\n" + "---------------------------------------------")
 base_lib.writeOutputLog(logfilepath, logfile, "\r\n" + base_lib.listToString(copylist) + "---------------------------------------------")
 
 bla("- Copy frontend files", "header", False)
 try:
-    for element in copylist:   
+    for element in copylist:
         abspath_frontend = base_lib.getFilePathRelativeScriptPath(os.path.dirname(folder_Frontend), os.path.basename(folder_Frontend)) 
+        if not base_lib.check_filefolder_writable(fnm=abspath_frontend, checkfolder=True):
+            raise Exception("The folder or file '{}' was not writeable.\nIf you used this installation process, folder permission was changed so that the webserver can use the files. In this case, re-run with admin rights".format(os.path.join(abspath_frontend, element)))
         base_lib.copyFilesAndFolder(os.path.join(folder_Fresh_frontend, element), abspath_frontend)
     bla("Successful: Frontend files copied", "OK", True)
 except Exception as e:
     errMsg="Error on copying files! You should consider to restore a backup (see zip-file above). Installatation/Update not completed!"
-    bla(str(e), "error", True)
-    bla(errMsg, "error", True, True)
-    raise Exception(errMsg)
+    bla(str(e), "error", True) # exception message
+    bla(errMsg, "error", True, True) # user defined message
     exit()
 
 # Copy the new bulkimport files
@@ -449,6 +550,21 @@ except Exception as e:
     bla(errMsg, "error", True, True)
     raise Exception(errMsg)
 
+# the only reason to copy this file (db.changelog-master.xml), is for checking in the frontend and avoid error messages (so that _working can safely be deleted)
+abs_folderfile_Fresh_LQB_Changelog = base_lib.getFilePathRelativeScriptPath(os.path.dirname(folderfile_Fresh_LQB_Changelog), os.path.basename(folderfile_Fresh_LQB_Changelog))
+bla("- Copy database changelog file", "header", False)
+try:
+    # Fallback, if ini-setting not found (old updates): os.path.dirname(folderfile_Database)
+    folder_MGDatabaseChangelog=base_lib.get_user_settings(ini_user_settings_path, "current_installation", 'folder_metagrid_database_changelog', os.path.dirname(folderfile_Database))
+    shutil.copy(abs_folderfile_Fresh_LQB_Changelog, folder_MGDatabaseChangelog)
+    bla("Successful: Database changelog file copied", "OK", True)
+except Exception as e:
+    errMsg="Error on copying files! You should consider to restore a backup (see zip-file above). Installatation/Update not completed!"
+    bla(str(e), "error", True)
+    bla(errMsg, "error", True, True)
+    raise Exception(errMsg)
+
+
 # Clean up <folder_Frontend>/web/assets
 folder_Frontend_web_assets = os.path.join(folder_Frontend, "web", "assets")
 bla("- Cleanup folder " + folder_Frontend_web_assets, "header", False)
@@ -465,7 +581,7 @@ if os.path.exists(folder_Frontend_web_assets) & os.path.isdir(folder_Frontend_we
 # Prepare LiquiBase deployment
 bla("- Create config file for LiquiBase database deployment", "header", False)
 dynConfigIni = os.path.join(folder_WorkingDir,"deploy_config_LQB_" + DATETIMENOW + ".ini")
-abs_folderfile_Fresh_LQB_Changelog = base_lib.getFilePathRelativeScriptPath(os.path.dirname(folderfile_Fresh_LQB_Changelog), os.path.basename(folderfile_Fresh_LQB_Changelog))
+
 
 # simulate to an alternate folder
 if (simulate_alternate_folder):
@@ -491,6 +607,10 @@ except Exception as e:
     exit()
 
 try:
+    javaexe=base_lib.get_user_settings(ini_user_settings_path, "tools", 'javaexe', "")
+    if (javaexe != ""):
+        java_home = os.path.sep.join((javaexe.split(os.path.sep)[:-2]))
+        os.environ["JAVA_HOME"] = java_home
     os.environ["JAVA_OPTS"] = "-Duser.language=en"
     returnVal=base_lib.LQB_exec(pythonExe=pythonExe, folderfile_Fresh_LQB_DeploymentTool=folderfile_Fresh_LQB_DeploymentTool, envkey="LQB_" + DATETIMENOW, configpath=base_lib.getFilePathRelativeScriptPath(folder_WorkingDir,''))
     if ("Liquibase Update Successful" in returnVal):
@@ -543,6 +663,22 @@ if (behaviour==const_inst_mode_update):
 bla("- Register Meta#Grid permissions/roles", "header", False)
 res = base_lib.yii_metagrid_register_roles(phpExe, folder_Frontend)
 
+if behaviour==const_inst_mode_installation:
+    import base_installations as bi
+    ret, errmsg = bi.after_update_todos()
+    if not ret:
+        if errmsg is not None:
+            base_lib.bla(msg=errmsg, action="error")
+
+
 bla("# End of process #", "endOfScript", True)
+
+if behaviour==const_inst_mode_installation:
+    base_lib.bla(msg="Installation complete.", action="OK")
+    base_lib.bla(msg="You can open the application with: ")
+    base_lib.bla(msg="\thttp://localhost/meta_grid", action="header")
+    base_lib.bla(msg="Initial credentials are:")
+    base_lib.bla(msg="\tUser: admin | Password: admin", action="header")
+
 if (base_lib.is_windows()):
     dummy = raw_input()

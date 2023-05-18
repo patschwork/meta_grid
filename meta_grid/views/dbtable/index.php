@@ -171,6 +171,19 @@ else
             		],
                  ]),
             ],
+            [
+             'label' => Yii::t('app', 'Schema'),
+             'attribute' => 'schemaInfoFromLocation',
+            'filter' => Select2::widget([
+            		'model' => $searchModel,
+            		'attribute' => 'schemaInfoFromLocation',
+            		'data' => ArrayHelper::map(app\models\VDbTableSearchinterface::find()->asArray()->all(), 'schemaInfoFromLocation', 'schemaInfoFromLocation'),
+            		'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_schemaInfoFromLocation'],
+            		'pluginOptions' => [
+            				'allowClear' => true
+            		],
+                 ]),
+            ],
             'name:ntext',
             [
              'label' => Yii::t('app', 'Db Table Context'),

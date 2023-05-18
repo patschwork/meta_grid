@@ -21,10 +21,13 @@ class VDbTableFieldSearchinterface extends \app\models\DbTableField
     {
         return array('id');
     }
-	// { ... phabricator-task: T59
+	// { ... phabricator-task: T59, T277
     public function attributeLabels() {
     
-        $addionalLabels = array('databaseInfoFromLocation' => Yii::t('app', 'Database'));
+        $addionalLabels = array(
+            'databaseInfoFromLocation' => Yii::t('app', 'Database'),
+            'schemaInfoFromLocation' => Yii::t('app', 'Schema')
+        );
         return array_merge(parent::attributeLabels(), $addionalLabels);
     }
     // ...}

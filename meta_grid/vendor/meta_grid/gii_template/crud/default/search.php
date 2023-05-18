@@ -36,6 +36,7 @@ if ($modelClass === "DbTable" || $modelClass === "DbTableField")
     $add_databaseInfoFromLocation = true;
     $searchFor = '$query->andFilterWhere([\'like\', \'uuid\', $this->uuid])';
     $replaceWith = $searchFor . "\n" . str_repeat(' ', 12) . '->andFilterWhere([\'like\', \'databaseInfoFromLocation\', $this->databaseInfoFromLocation])';
+    $replaceWith .= "\n" . str_repeat(' ', 12) . '->andFilterWhere([\'like\', \'schemaInfoFromLocation\', $this->schemaInfoFromLocation])';
     $searchConditions[1] = str_replace($searchFor, $replaceWith, $searchConditions[1]);
 }
 
@@ -63,7 +64,7 @@ class <?= $searchModelClass ?> extends <?= $searchInterfaceModelClassName ?>
     public function rules()
     {
         return [
-            <?= implode(",\n            ", $rules) . ($add_fk_client_id ? ",\n". str_repeat(' ', 12) . "[['fk_client_id'], 'integer']" : '') . ($add_databaseInfoFromLocation ? ",\n". str_repeat(' ', 12) . "[['databaseInfoFromLocation'], 'safe']" : '') ?>,
+            <?= implode(",\n            ", $rules) . ($add_fk_client_id ? ",\n". str_repeat(' ', 12) . "[['fk_client_id'], 'integer']" : '') . ($add_databaseInfoFromLocation ? ",\n". str_repeat(' ', 12) . "[['databaseInfoFromLocation','schemaInfoFromLocation'], 'safe']" : '') ?>,
         ];
     }
 

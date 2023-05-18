@@ -19,7 +19,7 @@ class ExportFileDbTableFieldResultSearch extends ExportFileDbTableFieldResult
     {
         return [
             [['id', 'fk_object_type_id', 'fk_client_id', 'fk_project_id', 'fk_db_table_id', 'fk_deleted_status_id', '_auto_id'], 'integer'],
-            [['uuid', 'project_name', 'client_name', 'name', 'description', 'datatype', 'bulk_load_checksum', 'databaseInfoFromLocation', 'db_table_name', 'deleted_status_name', 'comments', 'mappings', 'session', '_created_datetime'], 'safe'],
+            [['uuid', 'project_name', 'client_name', 'name', 'description', 'datatype', 'bulk_load_checksum', 'databaseInfoFromLocation', 'schemaInfoFromLocation', 'db_table_name', 'deleted_status_name', 'comments', 'mappings', 'session', '_created_datetime'], 'safe'],
             [['is_PrimaryKey', 'is_BusinessKey', 'is_GDPR_relevant'], 'boolean'],
             [['fk_client_id'], 'integer'],
         ];
@@ -91,6 +91,7 @@ class ExportFileDbTableFieldResultSearch extends ExportFileDbTableFieldResult
             ->andFilterWhere(['like', 'datatype', $this->datatype])
             ->andFilterWhere(['like', 'bulk_load_checksum', $this->bulk_load_checksum])
             ->andFilterWhere(['like', 'databaseInfoFromLocation', $this->databaseInfoFromLocation])
+            ->andFilterWhere(['like', 'schemaInfoFromLocation', $this->schemaInfoFromLocation])
             ->andFilterWhere(['like', 'db_table_name', $this->db_table_name])
             ->andFilterWhere(['like', 'deleted_status_name', $this->deleted_status_name])
             ->andFilterWhere(['like', 'comments', $this->comments])

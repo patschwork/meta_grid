@@ -907,6 +907,7 @@ if (count($pks) === 1) {
 			['attribute' => 'is_BusinessKey'],
 			['attribute' => 'is_GDPR_relevant'],
 			['attribute' => 'databaseInfoFromLocation'],
+			['attribute' => 'schemaInfoFromLocation'],
 			['attribute' => 'db_table_name'],
 			['attribute' => 'deleted_status_name'],
 			['attribute' => 'comments'],
@@ -1609,6 +1610,7 @@ Parameter: overwrite_description_if_existing_differs=, default=Y : If there desc
 			['attribute' => 'db_table_type_name'],
 			['attribute' => 'deleted_status_name'],
 			['attribute' => 'databaseInfoFromLocation'],
+			['attribute' => 'schemaInfoFromLocation'],
 			['attribute' => 'mappings'],
 			['attribute' => 'comments'],
 		];

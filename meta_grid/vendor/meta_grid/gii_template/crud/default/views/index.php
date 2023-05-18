@@ -413,7 +413,7 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
         	if ($column->name=="comment") $fieldFormat = ":html";
         }
         
-        // { ... phabricator-task: T23
+        // { ... phabricator-task: T23, T277
 			if ($column->name=="name" && ($generator->modelClass=="app\models\DbTable" || $generator->modelClass=="app\models\DbTableField"))
 			{
 				$useGenCode = 1;
@@ -426,6 +426,20 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
 				$genCode .= "            		'attribute' => 'databaseInfoFromLocation',\n";
 				$genCode .= "            		'data' => ArrayHelper::map(app\models\VDbTable" . ($generator->modelClass=="app\models\DbTableField" ? "Field" : "") . "Searchinterface::find()->asArray()->all(), 'databaseInfoFromLocation', 'databaseInfoFromLocation'),\n";
 				$genCode .= "            		'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_databaseInfoFromLocation'],\n";
+				$genCode .= "            		'pluginOptions' => [\n";
+				$genCode .= "            				'allowClear' => true\n";
+				$genCode .= "            		],\n";
+				$genCode .= "                 ]),\n";
+				$genCode .= "            ],\n";
+				
+				$genCode .= "            [\n";
+				$genCode .= "             'label' => Yii::t('app', 'Schema'),\n";
+				$genCode .= "             'attribute' => 'schemaInfoFromLocation',\n";
+				$genCode .= "            'filter' => Select2::widget([\n";
+				$genCode .= "            		'model' => \$searchModel,\n";
+				$genCode .= "            		'attribute' => 'schemaInfoFromLocation',\n";
+				$genCode .= "            		'data' => ArrayHelper::map(app\models\VDbTable" . ($generator->modelClass=="app\models\DbTableField" ? "Field" : "") . "Searchinterface::find()->asArray()->all(), 'schemaInfoFromLocation', 'schemaInfoFromLocation'),\n";
+				$genCode .= "            		'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_schemaInfoFromLocation'],\n";
 				$genCode .= "            		'pluginOptions' => [\n";
 				$genCode .= "            				'allowClear' => true\n";
 				$genCode .= "            		],\n";

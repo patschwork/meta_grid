@@ -3,32 +3,41 @@
 # Instllation or update meta#grid
 # on every OS
 # Base helper library
-# v1.7
+# v1.8
 
 import os
 import subprocess
 import zipfile
 import shutil
 import errno
-from distutils.dir_util import copy_tree
-import ConfigParser
+import sys
+from distutils_local.dir_util import copy_tree
+if (int(sys.version_info[0]) >= 3):
+    import configparser as ConfigParser
+else:
+    import ConfigParser
 from termcolor import colored
 from termcolor import cprint
 import datetime
-import urllib2
+if (int(sys.version_info[0]) >= 3):
+    from urllib.request import urlopen
+else:
+    from urllib2 import urlopen
 import colorama
 # from lastversion import lastversion
 import json
 from packaging import version
 import string
 import re
-import sys
 import time
 from xml.dom import minidom
+import ctypes
 
+# That gives the version of the Installer/Updater
 def myVersion():
-    return "1.7"
+    return "1.8"
 
+# Print messages in different color (with, or without logging)
 def bla(msg, action=None, withLooging=True, logfilepath="", logfile=""):
     colorama.init()
     if (action=="intro"):
@@ -64,14 +73,15 @@ def bla(msg, action=None, withLooging=True, logfilepath="", logfile=""):
         writeOutputLog(logfilepath, logfile, msg)
 
 # Credits to: https://www.novixys.com/blog/python-check-file-can-read-write/
-def check_file_writable(fnm):
+def check_filefolder_writable(fnm, checkfolder=False):
     if os.path.exists(fnm):
         # path exists
         if os.path.isfile(fnm): # is it a file or a dir?
             # also works when file is a link and the target is writable
             return os.access(fnm, os.W_OK)
         else:
-            return False # path is a dir, so cannot write as a file
+            if not checkfolder:
+                return False # path is a dir, so cannot write as a file
     # target does not exist, check perms on parent dir
     pdir = os.path.dirname(fnm)
     if not pdir: pdir = '.'
@@ -89,22 +99,24 @@ def writeOutputLog(logpath, logfile, msg, timestamp=True):
     myFile.write(msg + "\r\n")
     myFile.close()
 
-def checkIfGitIsInstalled():
+# Check, if a tool is found/executable. Returns True if executable, and False if not
+def checkIfToolIsExecutable(exec):
     returnValue=False
     try:
         # pipe output to /dev/null for silence
         null = open(os.devnull, "w")
-        subprocess.Popen("git", stdout=null, stderr=null)
+        subprocess.Popen(exec, stdout=null, stderr=null)
         null.close()
-        returnValue=True
-    
+        returnValue=True    
     except OSError:
-        print("git not found")
         returnValue=False
     return returnValue
 
 def gitCloneToPath(repo_url, path_to_clone):
-    p = subprocess.Popen(["git", "clone", repo_url, path_to_clone], stdout=subprocess.PIPE)
+    if (int(sys.version_info[0]) >= 3):
+        p = subprocess.Popen(["git", "clone", repo_url, path_to_clone], stdout=subprocess.PIPE, text=True)
+    else:
+        p = subprocess.Popen(["git", "clone", repo_url, path_to_clone], stdout=subprocess.PIPE)
     # return p.communicate()[0]
     out=p.communicate()[0]
     return out
@@ -172,7 +184,10 @@ def createLQBConfigDeployIniFile(cfgFile, liquibasePathExe, liquibaseChangeLogFi
     if os.path.exists(cfgFile):
         os.unlink(cfgFile)
     cfgfile = open(cfgFile,'w')
-    Config = ConfigParser.SafeConfigParser()
+    if (int(sys.version_info[0]) >= 3):
+        Config = ConfigParser.ConfigParser()
+    else:
+        Config = ConfigParser.SafeConfigParser()
     Config.add_section('liquibase')
     Config.add_section('sqlite')
     Config.add_section('environment')
@@ -195,7 +210,10 @@ def createLQBConfigDeployIniFile(cfgFile, liquibasePathExe, liquibaseChangeLogFi
     cfgfile.close()
 
 def LQB_exec(pythonExe, folderfile_Fresh_LQB_DeploymentTool, envkey, configpath):
-    p = subprocess.Popen([pythonExe, folderfile_Fresh_LQB_DeploymentTool, envkey, configpath], stdout=subprocess.PIPE)
+    if (int(sys.version_info[0]) >= 3):
+        p = subprocess.Popen([pythonExe, folderfile_Fresh_LQB_DeploymentTool, envkey, configpath], stdout=subprocess.PIPE, text=True)
+    else:
+        p = subprocess.Popen([pythonExe, folderfile_Fresh_LQB_DeploymentTool, envkey, configpath], stdout=subprocess.PIPE)
     out=p.communicate()[0]
     return out
 
@@ -209,9 +227,9 @@ def clear():
     else: 
         _ = os.system('clear') 
 
-def download_file(url, download_to):
+def download_file_simple(url, download_to):
     try:
-        filedata = urllib2.urlopen(url)
+        filedata = urlopen(url)
         datatowrite = filedata.read()
         with open(download_to, 'wb') as f:
             f.write(datatowrite)
@@ -220,6 +238,48 @@ def download_file(url, download_to):
         else:
             raise Exception("Error on download_file. File doesn't exists.")
     except:
+        return False
+
+# Credits: https://www.alpharithms.com/progress-bars-for-python-downloads-580122/
+def download_file(url, download_to):
+    # Fallback if Python version below 3.7
+    if ((int(sys.version_info[0]) < 3) or ((int(sys.version_info[0]) >= 3) and (int(sys.version_info[1]) < 7))):
+        return download_file_simple(url, download_to)
+    
+    import importlib.util
+    requests_spec = importlib.util.find_spec("requests")
+    found = requests_spec is not None
+    if found:
+        import requests
+    else:
+        return download_file_simple(url, download_to)
+
+    from tqdm.auto import tqdm
+
+    try:
+        # make an HTTP request within a context manager
+        with requests.get(url, stream=True, allow_redirects=True) as r:
+            
+            # check header to get content length, in bytes
+            headers = r.headers
+            if 'Content-Length' in headers:
+                total_length = int(r.headers.get("Content-Length"))
+            else:
+                total_length = 99999
+            
+            # implement progress bar via tqdm
+            with tqdm.wrapattr(r.raw, "read", total=total_length, desc="")as raw:
+            
+                # save the output to a file
+                # with open(f"{os.path.basename(r.url)}", 'wb')as output:
+                with open(download_to, 'wb')as output:
+                    shutil.copyfileobj(raw, output)
+        if (os.path.exists(download_to)):
+            return True
+        else:
+            raise Exception("Error on download_file. File doesn't exists.")
+    except Exception as e:
+        print(str(e))
         return False
 
 # Credit to: https://thispointer.com/python-how-to-unzip-a-file-extract-single-multiple-or-all-files-from-a-zip-archive/
@@ -241,7 +301,10 @@ def get_input(msg, default_value=""):
         msg = msg + " [" + default_value + "]: "
     else:
         msg = msg + ": "
-    r_input = raw_input(msg)
+    if (int(sys.version_info[0]) >= 3):
+        r_input = input(msg)
+    else:
+        r_input = raw_input(msg)
     if (r_input == ""):
         r_input = default_value
     return r_input
@@ -261,7 +324,10 @@ def get_input_color(msg, default_value="", init_value="", no_input_just_inform_u
         msg_to_print = msg_to_print + colored(" {To search for the file: '" + user_option_search_file + "' please type 'F'}", color) + ""
     msg_to_print = msg_to_print + ": "
     if (not no_input_just_inform_user):
-        r_input = raw_input(msg_to_print)
+        if (int(sys.version_info[0]) >= 3):
+            r_input = input(msg_to_print)
+        else:
+            r_input = raw_input(msg_to_print)
         if (r_input == ""):
             r_input = default_value
         if (r_input.upper() == "F"):
@@ -280,7 +346,10 @@ def get_input_color(msg, default_value="", init_value="", no_input_just_inform_u
             choose = ""
             release = False
             while (not release):
-                choose = raw_input("Choose an option: ")
+                if (int(sys.version_info[0]) >= 3):
+                    choose = input("Choose an option: ")
+                else:
+                    choose = raw_input("Choose an option: ")
                 if (RepresentsInt(choose)):
                     choose_int = int(choose)
                 else:
@@ -294,7 +363,7 @@ def get_input_color(msg, default_value="", init_value="", no_input_just_inform_u
             print(colored("-> " + found_files[choose_int], 'green'))
             r_input = found_files[choose_int]
     else:
-        print(msg) + default_value
+        print("{}: {}".format(msg, str(default_value)))
         r_input = default_value
     return r_input
 
@@ -309,7 +378,10 @@ def intro_get_input_color():
     print(msg)
 
 def get_user_settings(cfgFile, section, key, default_if_key_not_exists=""):
-    config=ConfigParser.SafeConfigParser()
+    if (int(sys.version_info[0]) >= 3):
+        config = ConfigParser.ConfigParser()
+    else:
+        config = ConfigParser.SafeConfigParser()
     config.read(cfgFile)
     if (not config.has_section(section)):
         return default_if_key_not_exists
@@ -318,12 +390,15 @@ def get_user_settings(cfgFile, section, key, default_if_key_not_exists=""):
     return config.get(section,key)
 
 def set_user_settings(cfgFile, section, key, value):
-    config=ConfigParser.SafeConfigParser()
+    if (int(sys.version_info[0]) >= 3):
+        config = ConfigParser.ConfigParser()
+    else:
+        config = ConfigParser.SafeConfigParser()
     config.read(cfgFile)
     if (not config.has_section(section)):
         config.add_section(section)
     config.set(section,key,value)
-    with open(cfgFile, 'wb') as configfile:
+    with open(cfgFile, 'w') as configfile:
         config.write(configfile)
 
 def is_windows(): 
@@ -337,7 +412,7 @@ def check_if_a_newer_version_is_available():
     # latest_version = lastversion.has_update(repo="https://github.com/patschwork/meta_grid_install_update", current_version='1.2')
     # return latest_version
     url = "http://httpbin.org/get"
-    response = urllib2.urlopen("https://api.github.com/repos/patschwork/meta_grid_install_update/releases/latest")
+    response = urlopen("https://api.github.com/repos/patschwork/meta_grid_install_update/releases/latest")
     data = response.read()
     values = json.loads(data)
     aval_version = values.get("tag_name")
@@ -349,7 +424,10 @@ def check_if_a_newer_version_is_available():
 
 # Calls the Java process of kitchen.sh/Kitchen.bat via sys command and parses the outcome
 def get_kettle_job_parameter(kitchenPathExe, paramKitchenFile):
-    p = subprocess.Popen([kitchenPathExe, paramKitchenFile, "-listparam"], stdout=subprocess.PIPE, stderr=subprocess.PIPE) # no bla bla java from Pentaho...
+    if (int(sys.version_info[0]) >= 3):
+        p = subprocess.Popen([kitchenPathExe, paramKitchenFile, "-listparam"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) # no bla bla java from Pentaho...
+    else:
+        p = subprocess.Popen([kitchenPathExe, paramKitchenFile, "-listparam"], stdout=subprocess.PIPE, stderr=subprocess.PIPE) # no bla bla java from Pentaho...
     out=p.communicate()[0]
     kettleJobParameterList = {}
     out1 = out.splitlines()
@@ -476,16 +554,11 @@ def RepresentsInt(s):
     except ValueError:
         return False
 
-def which_executable(executable):
-    p = subprocess.Popen(["which", executable], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    out=p.communicate()[0]
-    result_which_executable = {}
-    out1 = out.splitlines()
-    result_which_executable = out1
-    return result_which_executable
-
 def get_php_version(phpExe):
-    p = subprocess.Popen([phpExe, "-r", """echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION.'.'.PHP_RELEASE_VERSION;"""], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if (int(sys.version_info[0]) >= 3):
+        p = subprocess.Popen([phpExe, "-r", """echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION.'.'.PHP_RELEASE_VERSION;"""], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    else:
+        p = subprocess.Popen([phpExe, "-r", """echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION.'.'.PHP_RELEASE_VERSION;"""], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out=p.communicate()[0]
     out1 = out.splitlines()
     return out1[0]
@@ -494,7 +567,10 @@ def check_if_php_version_is_ok(installed_php_version, minimun_php_version_needed
     return (version.parse(installed_php_version) >= version.parse(minimun_php_version_needed))
 
 def yii_check_requirements(phpExe, frontendfilesfolder):
-    p = subprocess.Popen([phpExe, os.path.join(frontendfilesfolder, "requirements.php")], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if (int(sys.version_info[0]) >= 3):
+        p = subprocess.Popen([phpExe, os.path.join(frontendfilesfolder, "requirements.php")], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    else:
+        p = subprocess.Popen([phpExe, os.path.join(frontendfilesfolder, "requirements.php")], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out=p.communicate()[0]
     out1 = out.splitlines()
     return out1
@@ -503,7 +579,83 @@ def yii_metagrid_register_roles(phpExe, frontendfilesfolder):
     yiicmd = "yii"
     if (is_windows()):
         yiicmd = "yii.bat"
-    p = subprocess.Popen([phpExe, yiicmd, "metagrid/register-roles"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=frontendfilesfolder)
+    if (int(sys.version_info[0]) >= 3):
+        p = subprocess.Popen([phpExe, yiicmd, "metagrid/register-roles"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=frontendfilesfolder, text=True)
+    else:
+        p = subprocess.Popen([phpExe, yiicmd, "metagrid/register-roles"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=frontendfilesfolder)
     out=p.communicate()[0]
     out1 = out.splitlines()
     return out1
+
+# Check, which path of the installation shall be gone
+def get_installation_os_candidate():
+    import platform
+    plf=platform.version().lower()
+    if ('ubuntu' in plf):
+        return "ubuntu",""
+    # We assume, that if apt-get is found, some derivate of Ubuntu... ;-)
+    if checkIfToolIsExecutable("apt-get"):
+        return "ubuntu",""
+    if ('darwin' in plf):
+        if ('arm64' in plf):
+            return "mac","silicon"
+        else:
+            return "mac","intel"
+    return None
+
+# Check, if Git cli is found. Returns True if executable, and False if not
+def checkIfGitIsInstalled():
+    return checkIfToolIsExecutable("git")
+
+def which_executable(executable):
+    if (int(sys.version_info[0]) >= 3):
+        p = subprocess.Popen(["which", executable], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    else:
+        p = subprocess.Popen(["which", executable], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out=p.communicate()[0]
+    result_which_executable = {}
+    out1 = out.splitlines()
+    result_which_executable = out1
+    return result_which_executable
+
+# Additional method of checking, if a tool exists. In the case of *nix OS, which is used to find out the path
+def is_tool_executable(executable, ini_user_settings_path, section, item, toolname):
+    if (not os.path.exists(executable)):
+        if (not is_windows()):
+            # on Linux or MAC OS we can try "which php"...
+            which_result = which_executable(executable)
+            if item.lower()=='javaexe' and get_installation_os_candidate()[0]=="mac": # on MAC there is maybe the pseudo java cli with the hint to download Java... 
+                which_result = False
+            if not which_result:
+                return False, "{} executable ({}) not found! Installatation/Update not completed!".format(toolname, executable)
+            else:
+                executable = which_result[0] # OK, replace the value
+                if (not os.path.exists(executable)):
+                    return False, "{} executable ({}) not found! Installatation/Update not completed!".format(toolname, executable)
+                else:
+                    set_user_settings(ini_user_settings_path, section, item, executable) # overwrite for the next start
+                    return True, None
+        else:
+            return False, "{} executable ({}) not found! Installatation/Update not completed!".format(toolname, executable)
+    return True, None
+
+# Credits: https://stackoverflow.com/a/43172958
+def is_user_admin():
+    # type: () -> bool
+    """Return True if user has admin privileges.
+
+    Raises:
+        AdminStateUnknownError if user privileges cannot be determined.
+    """
+    try:
+        return os.getuid() == 0
+    except AttributeError:
+        pass
+    try:
+        return ctypes.windll.shell32.IsUserAnAdmin() == 1
+    except AttributeError:
+        raise AdminStateUnknownError
+
+class AdminStateUnknownError(Exception):
+    """Cannot determine whether the user is an admin."""
+    pass

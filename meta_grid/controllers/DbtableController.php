@@ -401,6 +401,7 @@ class DbtableController extends Controller
 			['attribute' => 'db_table_type_name'],
 			['attribute' => 'deleted_status_name'],
 			['attribute' => 'databaseInfoFromLocation'],
+			['attribute' => 'schemaInfoFromLocation'],
 			['attribute' => 'mappings'],
 			['attribute' => 'comments'],
 		];
