@@ -199,6 +199,7 @@ class DbtableController extends Controller
             'model' => $this->findModel($id),
 		'SQLSelectStatement' => $this->buildSQLSelectStatement($id),
 		'sameTableList' => $this->sameTableList($id),
+		'same_name' => $this->get_same_name($id),
 			        ]);
 		}
 
@@ -535,6 +536,18 @@ class DbtableController extends Controller
 			}
 		}
 		return null;
+	}
+
+	public function get_same_name($id)
+    {
+		$model = $this->findModel($id);
+		$model_name = $model->name;
+
+		$searchModel = DbTable::find()
+			->where(['name' => $model_name])
+			->andFilterWhere(['<>','id',$id])
+			->all();
+		return $searchModel;
 	}
 
 }
