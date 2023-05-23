@@ -118,11 +118,50 @@ $TagsWidget = \vendor\meta_grid\tag_select\TagSelectWidget::widget(
 					'value' => function ($model) {
 						return Html::a($model->location, ['dbtable/view', 'id' => $model->id], ['class' => 'btn btn-default']);
 					},
+					'headerOptions' => ['style' => 'width:40%'],
 					'format' => 'raw'
 				],
 			],
 		]);
 	
+
+
+		$provider2 = new yii\data\ArrayDataProvider([
+			'allModels' => $same_name,
+			'pagination' => [
+				'pageSize' => 10,
+			],
+			'sort' => [
+				'attributes' => ['id'],
+			],
+		]);
+
+		$same_name_grid = yii\grid\GridView::widget([
+			'dataProvider' => $provider2,
+			'columns' => [
+				'id',
+				[
+					'label' => Yii::t('app', 'Project'),
+					'value' => function ($model) {
+						return $model->fkProject->name;
+					},
+					'headerOptions' => ['style' => 'width:40%'],
+				],				
+				[
+					'label' => Yii::t('app','Same name'),
+					'value' => function ($model) {
+						$title = $model->location;
+						if (trim($title) === "") $title = $model->name;
+						return Html::a($title, ['dbtable/view', 'id' => $model->id], ['class' => 'btn btn-default']);
+					},
+					'headerOptions' => ['style' => 'width:40%'],
+					'format' => 'raw'
+				],
+			],
+		]);
+		
+
+
 			
 			// {... Kommentierung pro Object
 		// 		autogeneriert ueber gii/CRUD
@@ -198,6 +237,15 @@ $TagsWidget = \vendor\meta_grid\tag_select\TagSelectWidget::widget(
 					'options' => ['id' => 'tabSQLExmaple'],  // important for shortcut
 					'headerOptions' => [
 						'class'=> $SQLSelectStatement === "" ? 'disabled' : ""
+						]
+				],
+				[
+					'label' => Yii::t('app', 'Same name'),
+					'content' => $same_name_grid,
+					'active' => false,
+					'options' => ['id' => 'tabSameName'],  // important for shortcut
+					'headerOptions' => [
+						'class'=> false ? 'disabled' : ""
 						]
 				],
 		],
