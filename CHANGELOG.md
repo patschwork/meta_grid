@@ -1,12 +1,12 @@
 # 3.0.2
 
-- List ob Tables with the same name as new tab
+- List of Tables with the same name as new tab
 
 ----------------------------------------------------------------------------------------------------
 
 # 3.0.1
 
-- Schema/dataset name also in Tables view
+- Schema/dataset name also in Tables index grid
 
 ----------------------------------------------------------------------------------------------------
 
