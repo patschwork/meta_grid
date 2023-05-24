@@ -1,3 +1,15 @@
+# 3.0.2
+
+- List ob Tables with the same name as new tab
+
+----------------------------------------------------------------------------------------------------
+
+# 3.0.1
+
+- Schema/dataset name also in Tables view
+
+----------------------------------------------------------------------------------------------------
+
 # 3.0
 New UI and UX, updated Yii2-Framework and components, several bugfixes
 - [T211]                    Update to Yii2 v2.0.45
