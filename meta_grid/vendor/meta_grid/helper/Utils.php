@@ -50,14 +50,14 @@ class Utils
         if ($key=="dbtablefield_memory_limit") $default_value=1024;
 	     
         $res_arr = ((new Query())->from('app_config')->select(['valueSTRING', 'valueINT'])->where(["key" => $key])->one());      
-
-        $valueSTRING = $res_arr['valueSTRING'];
-        $valueINT = $res_arr['valueINT'];
-
-        if (! $res_arr)
+     
+	if (! $res_arr)
         {
             return $default_value;
         }
+	
+        $valueSTRING = $res_arr['valueSTRING'];
+        $valueINT = $res_arr['valueINT'];
 
         if ((is_null($valueSTRING) ||  $valueSTRING === "" || empty($valueSTRING)) && (is_null($valueINT)))
         {
