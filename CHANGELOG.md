@@ -1,3 +1,9 @@
+# 3.0.3
+
+- Memory and execution time limits config added
+
+----------------------------------------------------------------------------------------------------
+
 # 3.0.2
 
 - List of Tables with the same name as new tab
