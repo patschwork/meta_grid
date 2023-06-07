@@ -46,7 +46,9 @@ class Utils
         if ($key=="import_processing_memory_limit") $default_value=1024;
         if ($key=="mapper_createext_time_limit") $default_value=2000;
         if ($key=="mapper_createext_memory_limit") $default_value=1024;
-
+        if ($key=="dbtablefield_time_limit") $default_value=2000;
+        if ($key=="dbtablefield_memory_limit") $default_value=1024;
+	     
         $res_arr = ((new Query())->from('app_config')->select(['valueSTRING', 'valueINT'])->where(["key" => $key])->one());      
 
         $valueSTRING = $res_arr['valueSTRING'];
