@@ -43,7 +43,6 @@ use app\models\Objectcomment;
 use app\models\ObjectType;
 use app\models\Url;
 
-
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\MapObject2ObjectSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -59,6 +58,11 @@ use app\models\Url;
     <?php 
 
 		echo Html::a(Yii::t('app', 'Create new mapping'), ['mapper/createexternal', 'ref_fk_object_id' => $dataProvider->query->where["filter_ref_fk_object_id"], 'ref_fk_object_type_id' => $dataProvider->query->where["filter_ref_fk_object_type_id"]],['class' => 'btn btn-primary'], [
+		'data' => [
+		'method' => 'post',
+		],
+		]);		
+		echo Html::a(Yii::t('app', 'Create new mapping-v2'), ['mapper-v2/index', 'from_object_id' => $dataProvider->query->where["filter_ref_fk_object_id"], 'from_object_type_id' => $dataProvider->query->where["filter_ref_fk_object_type_id"], "from_url" => yii\helpers\BaseUrl::current()],['class' => 'btn btn-primary'], [
 		'data' => [
 		'method' => 'post',
 		],

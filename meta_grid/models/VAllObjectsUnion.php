@@ -64,4 +64,20 @@ class VAllObjectsUnion extends \app\models\base\VAllObjectsUnion
     	return null;
     		
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFkProject()
+    {
+        return $this->hasOne(\app\models\Project::className(), ['id' => 'fk_project_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFkClient()
+    {
+        return $this->hasOne(\app\models\Client::className(), ['id' => 'fk_client_id']);
+    }
 }

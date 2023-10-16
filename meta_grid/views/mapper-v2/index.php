@@ -10,11 +10,13 @@ use app\models\Client;
 use app\models\VAllObjectsUnion;
 use app\models\Objectcomment;
 use app\models\ObjectType;
+use Symfony\Component\VarDumper\VarDumper;
+use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\GlobalSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
-$this->title = Yii::t('app', 'Search');
+$this->title = Yii::t('app', 'Mapping');
 // $this->params['breadcrumbs'][] = $this->title;
 
 // Prevent loading bootstrap.css v3.4.1 (see T212)
@@ -23,16 +25,55 @@ $this->title = Yii::t('app', 'Search');
     'js' => []
 ];
 ?>
-?>
-
 <div class="vall-objects-union-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
+	
+
+
+	<?php
+	$session = Yii::$app->session;
+	$session->set('already_mapped_listkey', $already_mapped_listkey);
+
+	echo Html::a(Yii::t('app', 'Back to source'), $from_url, ['class' => 'btn btn-primary'], [
+	]);
+	?>
+	
+    <h2><?= Html::encode(Yii::t('app', 'From:')) ?></h2>
+	<?= DetailView::widget([
+        'model' => $from_model,
+        'attributes' => [
+            // 'id',
+            // 'fk_object_type_id',
+            'name:ntext',
+            'object_type_name:ntext',
+            [
+             'label' => 'Client',
+             'value' =>              	$from_model->fk_project_id == "" ? $from_model->fk_project_id : $from_model->fkProject->fkClient->name
+            ],
+            [
+             'label' => Yii::t('app', 'Project'),
+             'value' =>              	$from_model->fk_project_id == "" ? $from_model->fk_project_id : $from_model->fkProject->name
+            ],
+        ],
+    ]) ?>
+
+<h2><?= Html::encode(Yii::t('app', 'To:')) ?></h2>
 
 <?php
-echo $this->render('_search', ['model' =>$searchModel]);
+
+echo $this->render('_search', ['model' =>$searchModel, 'from_model' => $from_model]);
 ?>
-	    <?= GridView::widget([
+		<?php // {... mapperv2 ?>
+		<?=Html::beginForm(['processselected'],'post');?>
+		<?=Html::submitButton(Yii::t('app','Add mapping'), ['class' => 'btn btn-success']);?>
+		<?php // ...} ?>
+
+		<?=Html::hiddenInput($name="from_id", $value=$from_model->id);?>
+		<?=Html::hiddenInput($name="from_fk_object_type_id", $value=$from_model->fk_object_type_id);?>
+		
+	    <?php
+		echo GridView::widget([
         'dataProvider' => $dataProvider,
 		'pager' => [
 			'firstPageLabel' => '<span class="glyphicon glyphicon-chevron-left"></span><span class="glyphicon glyphicon-chevron-left"></span>',
@@ -42,16 +83,15 @@ echo $this->render('_search', ['model' =>$searchModel]);
 			'maxButtonCount' => 15,
 		],
 		'layout' => "{pager}\n{summary}{items}\n{pager}",
-       	// 'rowOptions' => function ($model, $key, $index, $grid) {
-       		// $controller = Yii::$app->controller->id;
-       		// return [
-       				// 'ondblclick' => 'location.href="'
-       				// . Yii::$app->urlManager->createUrl([$controller . '/view','id'=>$key])
-       				// . '"',
-       		// ];
-       	// },    
         'filterModel' => $searchModel,
         'columns' => [
+			// {... mapperv2 
+			[
+				'class' => 'yii\grid\CheckboxColumn', 'checkboxOptions' => function($model) {
+					  return ['value' => $model->listkey];
+				  },
+			], 
+			// ...} 
             [
 				// erzeugt einen Link zu dem Mappingobjekt
 				// siehe auch: http://www.yiiframework.com/forum/index.php/topic/49595-how-to-change-buttons-in-actioncolumn/
@@ -98,6 +138,18 @@ echo $this->render('_search', ['model' =>$searchModel]);
         	['class' => 'yii\grid\SerialColumn'],
             'name:html',
 			[
+				'header' => '<i class="fa fa-fw fa-info">',
+				'value' => function($model) {
+					$session = Yii::$app->session;
+					$already_mapped_listkey = $session->get('already_mapped_listkey');					
+
+					if (array_key_exists($model->listkey, $already_mapped_listkey))
+					{return Yii::t('app', $already_mapped_listkey[$model->listkey]);}
+					else
+					{return "";}
+					},				
+			],
+			[
 			    'label' => Yii::t('app', 'object_type_name'),
 				'filter' => Select2::widget([
 						'model' => $searchModel,
@@ -136,8 +188,7 @@ echo $this->render('_search', ['model' =>$searchModel]);
             [
              'label' => Yii::t('app', 'Project'),
              'value' => function($model) {
-             		// return $model->fk_project_id == "" ? $model->fk_project_id : (isset($_GET["searchShow"]) ? $model->fkProject->name . ' [' . $model->fk_project_id . ']' : $model->fkProject->name);
-             		return $model->fk_project_id;
+					 return $model->fk_project_id == "" ? $model->fk_project_id : $model->fkProject->name . " (" . $model->fkProject->fkClient->name .")";
              		},
             'filter' => Select2::widget([
             		'model' => $searchModel,
@@ -151,5 +202,9 @@ echo $this->render('_search', ['model' =>$searchModel]);
             ],
         ],
     ]); ?>
-	
+
+	<?php // {... mapperv2 ?>
+	<?= Html::endForm();?> 
+	<?php // ...} ?>
+
 </div>
