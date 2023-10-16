@@ -23,7 +23,6 @@ $this->title = Yii::t('app', 'Search');
     'js' => []
 ];
 ?>
-?>
 
 <div class="vall-objects-union-index">
 

@@ -157,10 +157,15 @@ class GlobalSearchController extends Controller
      * Lists all VAllObjectsUnion models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($search_term="")
     {
+		$qParmas = Yii::$app->request->queryParams;
+		if ($search_term!=="")
+		{
+			$qParmas["GlobalSearch"]["name"] = $search_term;
+		}
         $searchModel = new GlobalSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search($qParmas);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
