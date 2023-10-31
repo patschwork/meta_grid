@@ -51,7 +51,7 @@ class DbTable extends \app\models\base\DbTable
 					'in','fk_project_id', $permProjectsCanSee
 	        ]);
     	}
-		return $obj;
+		return $obj->limit(9999);
     }    
     
     public static function findBySql($sql, $params = [])

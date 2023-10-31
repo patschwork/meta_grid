@@ -10,4 +10,11 @@ return [
     'on afterOpen' => function($event) {
        $event->sender->createCommand("PRAGMA foreign_keys = ON")->execute();
         },
+        
+    'enableSchemaCache' => true,
+    'schemaCacheDuration' => 3600,
+    'schemaCache' => 'cache',
+
+    'enableQueryCache'=>true,
+    'queryCacheDuration'=>3600,
 ];

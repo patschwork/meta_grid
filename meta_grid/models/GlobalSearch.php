@@ -42,7 +42,11 @@ class GlobalSearch extends VAllObjectsUnion
      */
     public function search($params)
     {
-		$query = VAllObjectsUnion::find();        
+        $dependency = new \yii\caching\DbDependency();
+        $dependency->sql="SELECT max(log_datetime) FROM v_LastChangesLog_List";
+        
+
+		$query = VAllObjectsUnion::find()->cache(NULL, $dependency);        
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
 			        'pagination' => [

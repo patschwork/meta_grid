@@ -30,6 +30,9 @@ $this->title = Yii::t('app', 'Search');
 
 <?php
 echo $this->render('_search', ['model' =>$searchModel]);
+
+$dependency = new yii\caching\DbDependency();
+$dependency->sql="SELECT max(log_datetime) FROM v_LastChangesLog_List";
 ?>
 	    <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -101,7 +104,7 @@ echo $this->render('_search', ['model' =>$searchModel]);
 				'filter' => Select2::widget([
 						'model' => $searchModel,
 						'attribute' => 'object_type_name',
-						'data' => ArrayHelper::map(VAllObjectsUnion::find()->asArray()->all(), 'object_type_name', 'object_type_name'),
+						'data' => ArrayHelper::map(VAllObjectsUnion::find()->cache(NULL, $dependency)->asArray()->all(), 'object_type_name', 'object_type_name'),
 						'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_object_type_name'],
 						'pluginOptions' => [
 								'allowClear' => true,
@@ -132,22 +135,21 @@ echo $this->render('_search', ['model' =>$searchModel]);
 			]),
             ],            
 */
-            [
-             'label' => Yii::t('app', 'Project'),
-             'value' => function($model) {
-             		// return $model->fk_project_id == "" ? $model->fk_project_id : (isset($_GET["searchShow"]) ? $model->fkProject->name . ' [' . $model->fk_project_id . ']' : $model->fkProject->name);
-             		return $model->fk_project_id;
-             		},
-            'filter' => Select2::widget([
-            		'model' => $searchModel,
-            		'attribute' => 'fk_project_id',
-            		'data' => ArrayHelper::map(app\models\Project::find()->asArray()->all(), 'id', 'name'),
-            		'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_fkProject'],
-            		'pluginOptions' => [
-            				'allowClear' => true
-            		],
+			[
+				'label' => Yii::t('app', 'Project'),
+				'value' => function($model) {
+						return $model->fk_project_id == "" ? $model->fk_project_id : $model->fkProject->name . " (" . $model->fkProject->fkClient->name .")";
+						},
+			'filter' => Select2::widget([
+					'model' => $searchModel,
+					'attribute' => 'fk_project_id',
+					'data' => ArrayHelper::map(app\models\Project::find()->asArray()->all(), 'id', 'name'),
+					'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_fkProject'],
+					'pluginOptions' => [
+							'allowClear' => true
+					],
 			]),
-            ],
+			],
         ],
     ]); ?>
 	

@@ -73,6 +73,9 @@ echo $this->render('_search', ['model' =>$searchModel, 'from_model' => $from_mod
 		<?=Html::hiddenInput($name="from_fk_object_type_id", $value=$from_model->fk_object_type_id);?>
 		
 	    <?php
+		$dependency = new yii\caching\DbDependency();
+		$dependency->sql="SELECT max(log_datetime) FROM v_LastChangesLog_List";
+				
 		echo GridView::widget([
         'dataProvider' => $dataProvider,
 		'pager' => [
@@ -154,7 +157,7 @@ echo $this->render('_search', ['model' =>$searchModel, 'from_model' => $from_mod
 				'filter' => Select2::widget([
 						'model' => $searchModel,
 						'attribute' => 'object_type_name',
-						'data' => ArrayHelper::map(VAllObjectsUnion::find()->asArray()->all(), 'object_type_name', 'object_type_name'),
+						'data' => ArrayHelper::map(VAllObjectsUnion::find()->cache(NULL, $dependency)->asArray()->all(), 'object_type_name', 'object_type_name'),
 						'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_object_type_name'],
 						'pluginOptions' => [
 								'allowClear' => true,

@@ -21,9 +21,9 @@ use app\models\VAllObjectsUnion;
 
     <?php 
 	echo $form->field($model, 'name')->label("");
-
-	echo $form->field($model, 'object_type_name')->checkboxList(ArrayHelper::map(VAllObjectsUnion::find()->asArray()->all(), 'object_type_name', 'object_type_name'))->label("Filter object types");
-	
+    $dependency = new yii\caching\DbDependency();
+    $dependency->sql="SELECT max(log_datetime) FROM v_LastChangesLog_List";
+	echo $form->field($model, 'object_type_name')->checkboxList(ArrayHelper::map(VAllObjectsUnion::find()->cache(NULL, $dependency)->asArray()->all(), 'object_type_name', 'object_type_name'))->label("Filter object types");	
 	
     // echo $form->field($model, 'object_type_name');
 
