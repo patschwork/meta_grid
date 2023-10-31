@@ -48,14 +48,14 @@ class Utils
         if ($key=="mapper_createext_memory_limit") $default_value=1024;
         if ($key=="dbtablefield_time_limit") $default_value=2000;
         if ($key=="dbtablefield_memory_limit") $default_value=1024;
-	     
+
         $res_arr = ((new Query())->from('app_config')->select(['valueSTRING', 'valueINT'])->where(["key" => $key])->one());      
-     
-	if (! $res_arr)
+
+        if (! $res_arr)
         {
             return $default_value;
         }
-	
+
         $valueSTRING = $res_arr['valueSTRING'];
         $valueINT = $res_arr['valueINT'];
 
@@ -506,7 +506,10 @@ class Utils
                 $permProjectsCanSeeByUserId = Yii::$app->User->identity->getPermProjectsCanSeeByUserId($user_id);
             }
             
-            $VTagsOptGroup_Model = VTag2ObjectList::find()
+            $dependency = new \yii\caching\DbDependency();
+            $dependency->sql="SELECT max(log_datetime) FROM map_object_2_tag_log";
+    
+            $VTagsOptGroup_Model = VTag2ObjectList::find()->cache(NULL, $dependency)
             ->select(["fk_tag_id", "tag_name", "COUNT(*) AS cnt"])
             ->where(["fk_user_id"=>$user_id])
             ->orWhere(["optgroup"=>0])
