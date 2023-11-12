@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000134/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000134" context="postgreql_compatible">
+
+		<createView replaceIfExists="true" viewName="v_Bracket_Definitions">
+        <![CDATA[
+    SELECT 
+         BRA.*
+        ,DBF.db_table_name                  AS db_table_name
+        ,DBF.db_table_field_name            AS db_table_field_name
+        ,DBF.db_table_field_id              AS db_table_field_id
+        ,DBF.db_table_field_fk_object_type_id   AS db_table_field_fk_object_type_id
+        ,ATT.name                           AS attribute_name
+        ,ATT.id                         AS attribute_id
+        ,ATT.fk_object_type_id              AS attribute_fk_object_type_id
+        ,DBF.db_table_id                        AS db_table_id
+    FROM 
+    (
+        SELECT 
+             BSP.searchPattern                  AS bracket_searchPattern
+            ,B.name                         AS bracket_name
+            ,B.description                      AS bracket_description
+            ,B.fk_attribute_id                  AS bracket_fk_attribute_id
+            ,B.fk_object_type_id_as_searchFilter 
+            ,B.fk_project_id                    AS bracket_fk_project_id
+            ,BSP.fk_bracket_id
+        FROM 
+            bracket_searchPattern BSP
+        LEFT JOIN bracket B ON
+            B.id=BSP.fk_bracket_id
+    ) BRA
+    LEFT JOIN
+    (
+        SELECT 
+             F.id                           AS db_table_field_id
+            ,F.name                         AS db_table_field_name
+            ,F.fk_object_type_id                AS db_table_field_fk_object_type_id
+            ,F.fk_project_id                    AS db_table_fk_project_id
+            ,T.name                         AS db_table_name
+            ,T.id                                   AS db_table_id
+        FROM 
+            db_table_field F
+        LEFT JOIN
+            db_table T ON
+                T.id=F.fk_db_table_id
+    ) DBF ON
+        DBF.db_table_field_name LIKE BRA.bracket_searchPattern
+            AND
+        DBF.db_table_field_fk_object_type_id=COALESCE(BRA.fk_object_type_id_as_searchFilter,DBF.db_table_field_fk_object_type_id)
+            AND
+        DBF.db_table_fk_project_id=BRA.bracket_fk_project_id
+    LEFT JOIN attribute ATT ON
+        ATT.id=BRA.bracket_fk_attribute_id
+            AND
+        ATT.fk_project_id=BRA.bracket_fk_project_id
+    ;
+        ]]>
+		</createView>		
+		<comment>
+		<![CDATA[
+		Works for SQLite and PostreSQL.
+		Used objects:
+			v_Bracket_Definitions
+		Phabricator tasks:
+			-
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

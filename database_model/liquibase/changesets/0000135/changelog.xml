@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000135/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000135" context="postgreql_compatible">
+
+		<sql dbms="postgresql">
+		<![CDATA[
+CREATE OR REPLACE FUNCTION instr(fullstring text, searchstring TEXT) RETURNS integer AS $$
+        BEGIN
+            RETURN POSITION(searchstring IN fullstring);
+        END;
+$$ LANGUAGE plpgsql;
+        ]]>
+		</sql>		
+		<comment>
+		<![CDATA[
+		Memes the function from SQLite in PostgreSQl.
+		Used objects:
+			instr
+		Phabricator tasks:
+			-
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

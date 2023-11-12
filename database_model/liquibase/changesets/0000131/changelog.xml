@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000131/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000131" context="postgreql_compatible">
+
+		<createView replaceIfExists="true" viewName="v_datatypes_Lookup">
+        <![CDATA[
+    SELECT 
+        DISTINCT
+            datatype 
+    FROM db_table_field dtf
+    UNION
+    SELECT * FROM
+    (
+        SELECT 'INTEGER' AS datatype
+            UNION
+        SELECT 'DATETIME' AS datatype
+            UNION
+        SELECT 'BOOLEAN' AS datatype
+            UNION
+        SELECT 'DATE' AS datatype
+            UNION
+        SELECT 'TIME' AS datatype
+            UNION
+        SELECT 'BIT' AS datatype
+            UNION
+        SELECT 'TIMESTAMP' AS datatype
+            UNION
+        SELECT 'NVARCHAR(255)' AS datatype
+            UNION
+        SELECT 'NVARCHAR(4000)' AS datatype
+            UNION
+        SELECT 'VARCHAR(8000)' AS datatype
+            UNION
+        SELECT 'VARCHAR(100)' AS datatype
+            UNION
+        SELECT 'VARCHAR(50)' AS datatype
+            UNION
+        SELECT 'VARCHAR(1)' AS datatype
+            UNION
+        SELECT 'DATETIME2' AS datatype
+            UNION
+        SELECT 'NUMERIC(18,2)' AS datatype
+            UNION
+        SELECT 'CURRENCY' AS datatype
+    ) sq01;
+        ]]>
+		</createView>		
+		<comment>
+		<![CDATA[
+		Works for SQLite and PostreSQL.
+		Used objects:
+			v_datatypes_Lookup
+		Phabricator tasks:
+			-
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

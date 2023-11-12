@@ -1,0 +1,560 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000140/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000140" context="">
+
+		<createView replaceIfExists="true" viewName="v_All_Objects_Union">
+        <![CDATA[
+SELECT 
+        sq01.id
+       ,sq01.fk_object_type_id
+       ,sq01.name AS name
+       ,sq01.object_type_name
+       ,sq01.listvalue_1
+       ,sq01.listvalue_2
+       ,sq01.listkey
+       ,sq01.fk_client_id
+       ,sq01.fk_project_id
+       ,listvalue_1 || ' [' || COALESCE(COALESCE(p.name,c.name),'') || ']' AS listvalue_1_with_client_or_project
+       ,listvalue_2 || ' [' || COALESCE(COALESCE(p.name,c.name),'') || ']' AS listvalue_2_with_client_or_project
+       ,sq01.description
+       ,sq01.detail_1_name
+       ,sq01.detail_1_content
+       ,sq01.detail_2_name
+       ,sq01.detail_2_content
+       ,sq01.detail_3_name
+       ,sq01.detail_3_content
+       ,sq01.detail_4_name
+       ,sq01.detail_4_content
+       ,sq01.detail_5_name
+       ,sq01.detail_5_content
+    FROM (
+        SELECT 
+             obj.id
+            ,obj.fk_object_type_id
+            ,obj.NAME
+            ,object_type.NAME AS object_type_name
+            ,obj.NAME || ' - ' || object_type.NAME AS listvalue_1
+            ,object_type.NAME || ' - ' || obj.NAME AS listvalue_2
+            ,CAST(obj.id AS varchar(10)) || ';' || CAST(obj.fk_object_type_id AS varchar(10)) AS listkey
+            ,NULL AS fk_client_id
+            ,obj.fk_project_id
+            ,obj.description AS description
+            ,NULL AS detail_1_name
+            ,NULL AS detail_1_content
+            ,NULL AS detail_2_name
+            ,NULL AS detail_2_content
+            ,NULL AS detail_3_name
+            ,NULL AS detail_3_content
+            ,NULL AS detail_4_name
+            ,NULL AS detail_4_content
+            ,NULL AS detail_5_name
+            ,NULL AS detail_5_content
+        FROM sourcesystem obj
+        LEFT JOIN object_type ON object_type.id = obj.fk_object_type_id
+            UNION
+        SELECT 
+             obj.id
+            ,obj.fk_object_type_id
+            ,obj.NAME
+            ,object_type.NAME AS object_type_name
+            ,obj.NAME || ' - ' || object_type.NAME AS listvalue_1
+            ,object_type.NAME || ' - ' || obj.NAME AS listvalue_2
+            ,CAST(obj.id AS varchar(10)) || ';' || CAST(obj.fk_object_type_id AS varchar(10)) AS listkey
+            ,NULL AS fk_client_id
+            ,obj.fk_project_id
+            ,obj.description AS description
+            ,NULL AS detail_1_name
+            ,NULL AS detail_1_content
+            ,NULL AS detail_2_name
+            ,NULL AS detail_2_content
+            ,NULL AS detail_3_name
+            ,NULL AS detail_3_content
+            ,NULL AS detail_4_name
+            ,NULL AS detail_4_content
+            ,NULL AS detail_5_name
+            ,NULL AS detail_5_content
+        FROM glossary obj
+        LEFT JOIN object_type ON object_type.id = obj.fk_object_type_id
+            UNION
+        SELECT 
+             obj.id
+            ,obj.fk_object_type_id
+            ,obj.COMMENT
+            ,object_type.NAME AS object_type_name
+            ,obj.COMMENT || ' - ' || object_type.NAME AS listvalue_1
+            ,object_type.NAME || ' - ' || obj.COMMENT AS listvalue_2
+            ,CAST(obj.id AS varchar(10)) || ';' || CAST(obj.fk_object_type_id AS varchar(10)) AS listkey
+            ,CAST(CASE
+                WHEN sourcesystem.fk_project_id IS NOT NULL THEN sourcesystem.fk_project_id
+                WHEN glossary.fk_project_id IS NOT NULL THEN glossary.fk_project_id
+                WHEN data_delivery_object.fk_project_id IS NOT NULL THEN data_delivery_object.fk_project_id
+                WHEN db_database.fk_project_id IS NOT NULL THEN db_database.fk_project_id
+                WHEN db_table.fk_project_id IS NOT NULL THEN db_table.fk_project_id
+                WHEN db_table_field.fk_project_id IS NOT NULL THEN db_table_field.fk_project_id
+                WHEN scheduling.fk_project_id IS NOT NULL THEN scheduling.fk_project_id
+                WHEN keyfigure.fk_project_id IS NOT NULL THEN keyfigure.fk_project_id
+                WHEN db_table_context.fk_project_id IS NOT NULL THEN db_table_context.fk_project_id
+                WHEN parameter.fk_project_id IS NOT NULL THEN parameter.fk_project_id
+                WHEN attribute.fk_project_id IS NOT NULL THEN attribute.fk_project_id
+                WHEN data_transfer_process.fk_project_id IS NOT NULL THEN data_transfer_process.fk_project_id
+                WHEN url.fk_project_id IS NOT NULL THEN url.fk_project_id
+                ELSE NULL END AS VARCHAR(10)) AS fk_project_id
+            ,CASE
+                WHEN contact_group.fk_client_id IS NOT NULL THEN contact_group.fk_client_id
+                WHEN contact.fk_client_id IS NOT NULL THEN contact.fk_client_id
+                ELSE NULL END AS fk_client_id
+            ,NULL AS description
+            ,NULL AS detail_1_name
+            ,NULL AS detail_1_content
+            ,NULL AS detail_2_name
+            ,NULL AS detail_2_content
+            ,NULL AS detail_3_name
+            ,NULL AS detail_3_content
+            ,NULL AS detail_4_name
+            ,NULL AS detail_4_content
+            ,NULL AS detail_5_name
+            ,NULL AS detail_5_content
+        FROM object_comment obj
+        LEFT JOIN object_type ON object_type.id = obj.fk_object_type_id
+        LEFT JOIN sourcesystem ON sourcesystem.fk_object_type_id=obj.ref_fk_object_type_id AND sourcesystem.id=obj.ref_fk_object_id
+        LEFT JOIN glossary ON glossary.fk_object_type_id=obj.ref_fk_object_type_id AND glossary.id=obj.ref_fk_object_id
+        LEFT JOIN data_delivery_object ON data_delivery_object.fk_object_type_id=obj.ref_fk_object_type_id AND data_delivery_object.id=obj.ref_fk_object_id
+        LEFT JOIN db_database ON db_database.fk_object_type_id=obj.ref_fk_object_type_id AND db_database.id=obj.ref_fk_object_id
+        LEFT JOIN db_table ON db_table.fk_object_type_id=obj.ref_fk_object_type_id AND db_table.id=obj.ref_fk_object_id
+        LEFT JOIN db_table_field ON db_table_field.fk_object_type_id=obj.ref_fk_object_type_id AND db_table_field.id=obj.ref_fk_object_id
+        LEFT JOIN scheduling ON scheduling.fk_object_type_id=obj.ref_fk_object_type_id AND scheduling.id=obj.ref_fk_object_id
+        LEFT JOIN keyfigure ON keyfigure.fk_object_type_id=obj.ref_fk_object_type_id AND keyfigure.id=obj.ref_fk_object_id
+        LEFT JOIN db_table_context ON db_table_context.fk_object_type_id=obj.ref_fk_object_type_id AND db_table_context.id=obj.ref_fk_object_id
+        LEFT JOIN parameter ON parameter.fk_object_type_id=obj.ref_fk_object_type_id AND parameter.id=obj.ref_fk_object_id
+        LEFT JOIN attribute ON attribute.fk_object_type_id=obj.ref_fk_object_type_id AND attribute.id=obj.ref_fk_object_id
+        LEFT JOIN data_transfer_process ON data_transfer_process.fk_object_type_id=obj.ref_fk_object_type_id AND data_transfer_process.id=obj.ref_fk_object_id
+        LEFT JOIN contact_group ON contact_group.fk_object_type_id=obj.ref_fk_object_type_id AND contact_group.id=obj.ref_fk_object_id
+        LEFT JOIN contact ON contact.fk_object_type_id=obj.ref_fk_object_type_id AND contact.id=obj.ref_fk_object_id
+        LEFT JOIN url ON url.fk_object_type_id=obj.ref_fk_object_type_id AND url.id=obj.ref_fk_object_id
+            UNION
+        SELECT 
+             obj.id
+            ,obj.fk_object_type_id
+            ,obj.name
+            ,object_type.NAME AS object_type_name
+            ,obj.name || ' - ' || object_type.NAME || ' ('|| data_delivery_type.name || ')' AS listvalue_1
+            ,object_type.NAME || ' ('|| data_delivery_type.name || ')' || ' - ' || obj.name AS listvalue_2
+            ,CAST(obj.id AS varchar(10)) || ';' || CAST(obj.fk_object_type_id AS varchar(10)) AS listkey
+            ,NULL AS fk_client_id
+            ,obj.fk_project_id
+            ,obj.description AS description
+            ,'data_delivery_type.name' AS detail_1_name
+            ,CAST(data_delivery_type.name AS VARCHAR(1000)) AS detail_1_content
+            ,NULL AS detail_2_name
+            ,NULL AS detail_2_content
+            ,NULL AS detail_3_name
+            ,NULL AS detail_3_content
+            ,NULL AS detail_4_name
+            ,NULL AS detail_4_content
+            ,NULL AS detail_5_name
+            ,NULL AS detail_5_content
+        FROM data_delivery_object obj
+        LEFT JOIN object_type ON object_type.id = obj.fk_object_type_id
+        LEFT JOIN data_delivery_type ON data_delivery_type.id=obj.fk_data_delivery_type_id
+            UNION
+        SELECT 
+             obj.id
+            ,obj.fk_object_type_id
+            ,obj.name
+            ,object_type.NAME AS object_type_name
+            ,obj.name || ' - ' || object_type.NAME AS listvalue_1
+            ,object_type.NAME || ' - ' || obj.name AS listvalue_2
+            ,CAST(obj.id AS varchar(10)) || ';' || CAST(obj.fk_object_type_id AS varchar(10)) AS listkey
+            ,NULL AS fk_client_id
+            ,obj.fk_project_id
+            ,obj.description AS description
+            ,NULL AS detail_1_name
+            ,NULL AS detail_1_content
+            ,NULL AS detail_2_name
+            ,NULL AS detail_2_content
+            ,NULL AS detail_3_name
+            ,NULL AS detail_3_content
+            ,NULL AS detail_4_name
+            ,NULL AS detail_4_content
+            ,NULL AS detail_5_name
+            ,NULL AS detail_5_content
+        FROM db_database obj
+        LEFT JOIN object_type ON object_type.id = obj.fk_object_type_id
+            UNION
+        SELECT 
+             obj.id
+            ,obj.fk_object_type_id
+            ,obj.name
+            ,object_type.NAME AS object_type_name
+            ,obj.name 
+                || ' - ' 
+                || object_type.NAME 
+                || CASE WHEN COALESCE(db_table_type.name,'')
+                || COALESCE(db_table_context.name,'')<>'' THEN ' (' ELSE '' END 
+                || COALESCE(db_table_type.name,'') 
+                || CASE WHEN COALESCE(db_table_type.name,'')='' OR COALESCE(db_table_context.name,'')='' THEN  '' ELSE '/' END 
+                || COALESCE(db_table_context.name,'') 
+                || CASE WHEN COALESCE(db_table_type.name,'')
+                || COALESCE(db_table_context.name,'')<>'' THEN ')' ELSE '' END 
+                || CASE WHEN COALESCE(obj.location,'')<>'' THEN ' | ' || obj.location ELSE '' END                  
+              AS listvalue_1
+            ,object_type.NAME 
+                || CASE WHEN COALESCE(db_table_type.name,'')
+                || COALESCE(db_table_context.name,'')<>'' THEN ' (' ELSE '' END 
+                || COALESCE(db_table_type.name,'') 
+                || CASE WHEN COALESCE(db_table_type.name,'')='' OR COALESCE(db_table_context.name,'')='' THEN  '' ELSE '/' END 
+                || COALESCE(db_table_context.name,'') 
+                || CASE WHEN COALESCE(db_table_type.name,'')
+                || COALESCE(db_table_context.name,'')<>'' THEN ')' ELSE '' END 
+                || ' - ' 
+                || obj.name 
+              AS listvalue_2
+            ,CAST(obj.id AS varchar(10)) || ';' || CAST(obj.fk_object_type_id AS varchar(10)) AS listkey
+            ,NULL AS fk_client_id
+            ,obj.fk_project_id
+            ,obj.description AS description
+            ,'location' AS detail_1_name
+            ,CAST(location AS VARCHAR(1000)) AS detail_1_content
+            ,'db_table_context.name' AS detail_2_name
+            ,CAST(db_table_context.name AS VARCHAR(1000)) AS detail_2_content
+            ,'db_table_type.name' AS detail_3_name
+            ,CAST(db_table_type.name AS VARCHAR(1000))  AS detail_3_content
+            ,NULL AS detail_4_name
+            ,NULL AS detail_4_content
+            ,NULL AS detail_5_name
+            ,NULL AS detail_5_content
+        FROM db_table obj
+        LEFT JOIN object_type ON object_type.id = obj.fk_object_type_id
+        LEFT JOIN db_table_type ON db_table_type.id=obj.fk_db_table_type_id
+        LEFT JOIN db_table_context ON db_table_context.id=obj.fk_db_table_context_id
+            UNION
+        SELECT 
+             obj.id
+            ,obj.fk_object_type_id
+            ,obj.name
+            ,object_type.NAME AS object_type_name
+            ,obj.name || ' (db_table: ' || COALESCE(db_table.name,'-') || ')' || ' - ' || object_type.NAME AS listvalue_1
+            ,object_type.NAME || ' - ' || obj.name || ' (db_table: ' || COALESCE(db_table.name,'-') || ')' AS listvalue_2
+            ,CAST(obj.id AS varchar(10)) || ';' || CAST(obj.fk_object_type_id AS varchar(10)) AS listkey
+            ,NULL AS fk_client_id
+            ,obj.fk_project_id
+            ,obj.description AS description
+            ,NULL AS detail_1_name
+            ,NULL AS detail_1_content
+            ,NULL AS detail_2_name
+            ,NULL AS detail_2_content
+            ,NULL AS detail_3_name
+            ,NULL AS detail_3_content
+            ,NULL AS detail_4_name
+            ,NULL AS detail_4_content
+            ,NULL AS detail_5_name
+            ,NULL AS detail_5_content
+        FROM db_table_field obj
+        LEFT JOIN object_type ON object_type.id = obj.fk_object_type_id
+        LEFT JOIN db_table ON db_table.id = obj.fk_db_table_id
+            UNION
+        SELECT 
+             obj.id
+            ,obj.fk_object_type_id
+            ,obj.name
+            ,object_type.NAME AS object_type_name
+            ,obj.name || ' - ' || object_type.NAME AS listvalue_1
+            ,object_type.NAME || ' - ' || obj.name AS listvalue_2
+            ,CAST(obj.id AS varchar(10)) || ';' || CAST(obj.fk_object_type_id AS varchar(10)) AS listkey
+            ,NULL AS fk_client_id
+            ,obj.fk_project_id
+            ,obj.description AS description
+            ,NULL AS detail_1_name
+            ,NULL AS detail_1_content
+            ,NULL AS detail_2_name
+            ,NULL AS detail_2_content
+            ,NULL AS detail_3_name
+            ,NULL AS detail_3_content
+            ,NULL AS detail_4_name
+            ,NULL AS detail_4_content
+            ,NULL AS detail_5_name
+            ,NULL AS detail_5_content
+        FROM scheduling obj
+        LEFT JOIN object_type ON object_type.id = obj.fk_object_type_id
+            UNION
+        SELECT 
+             obj.id
+            ,obj.fk_object_type_id
+            ,obj.name
+            ,object_type.NAME AS object_type_name
+            ,obj.name || ' - ' || object_type.NAME AS listvalue_1
+            ,object_type.NAME || ' - ' || obj.name AS listvalue_2
+            ,CAST(obj.id AS varchar(10)) || ';' || CAST(obj.fk_object_type_id AS varchar(10)) AS listkey
+            ,NULL AS fk_client_id
+            ,obj.fk_project_id
+            ,obj.description AS description
+            ,NULL AS detail_1_name
+            ,NULL AS detail_1_content
+            ,NULL AS detail_2_name
+            ,NULL AS detail_2_content
+            ,NULL AS detail_3_name
+            ,NULL AS detail_3_content
+            ,NULL AS detail_4_name
+            ,NULL AS detail_4_content
+            ,NULL AS detail_5_name
+            ,NULL AS detail_5_content
+        FROM keyfigure obj
+        LEFT JOIN object_type ON object_type.id = obj.fk_object_type_id
+            UNION
+        SELECT 
+             obj.id
+            ,obj.fk_object_type_id
+            ,obj.name
+            ,object_type.NAME AS object_type_name
+            ,obj.name || ' - ' || object_type.NAME AS listvalue_1
+            ,object_type.NAME || ' - ' || obj.name AS listvalue_2
+            ,CAST(obj.id AS varchar(10)) || ';' || CAST(obj.fk_object_type_id AS varchar(10)) AS listkey
+            ,NULL AS fk_client_id
+            ,obj.fk_project_id
+            ,obj.description AS description
+            ,NULL AS detail_1_name
+            ,NULL AS detail_1_content
+            ,NULL AS detail_2_name
+            ,NULL AS detail_2_content
+            ,NULL AS detail_3_name
+            ,NULL AS detail_3_content
+            ,NULL AS detail_4_name
+            ,NULL AS detail_4_content
+            ,NULL AS detail_5_name
+            ,NULL AS detail_5_content
+        FROM db_table_context obj
+        LEFT JOIN object_type ON object_type.id = obj.fk_object_type_id
+            UNION
+        SELECT 
+             obj.id
+            ,obj.fk_object_type_id
+            ,obj.name
+            ,object_type.NAME AS object_type_name
+            ,obj.name || ' - ' || object_type.NAME AS listvalue_1
+            ,object_type.NAME || ' - ' || obj.name AS listvalue_2
+            ,CAST(obj.id AS varchar(10)) || ';' || CAST(obj.fk_object_type_id AS varchar(10)) AS listkey
+            ,NULL AS fk_client_id
+            ,obj.fk_project_id
+            ,obj.description AS description
+            ,NULL AS detail_1_name
+            ,NULL AS detail_1_content
+            ,NULL AS detail_2_name
+            ,NULL AS detail_2_content
+            ,NULL AS detail_3_name
+            ,NULL AS detail_3_content
+            ,NULL AS detail_4_name
+            ,NULL AS detail_4_content
+            ,NULL AS detail_5_name
+            ,NULL AS detail_5_content
+        FROM parameter obj
+        LEFT JOIN object_type ON object_type.id = obj.fk_object_type_id
+            UNION
+        SELECT 
+             obj.id
+            ,obj.fk_object_type_id
+            ,obj.name
+            ,object_type.NAME AS object_type_name
+            ,obj.name || ' - ' || object_type.NAME AS listvalue_1
+            ,object_type.NAME || ' - ' || obj.name AS listvalue_2
+            ,CAST(obj.id AS varchar(10)) || ';' || CAST(obj.fk_object_type_id AS varchar(10)) AS listkey
+            ,NULL AS fk_client_id
+            ,obj.fk_project_id
+            ,obj.description AS description
+            ,NULL AS detail_1_name
+            ,NULL AS detail_1_content
+            ,NULL AS detail_2_name
+            ,NULL AS detail_2_content
+            ,NULL AS detail_3_name
+            ,NULL AS detail_3_content
+            ,NULL AS detail_4_name
+            ,NULL AS detail_4_content
+            ,NULL AS detail_5_name
+            ,NULL AS detail_5_content
+        FROM attribute obj
+        LEFT JOIN object_type ON object_type.id = obj.fk_object_type_id
+            UNION
+        SELECT 
+             obj.id
+            ,obj.fk_object_type_id
+            ,obj.name
+            ,object_type.NAME AS object_type_name
+            ,obj.name 
+                || ' - ' 
+                || object_type.NAME 
+                || CASE WHEN COALESCE(data_transfer_type.name,'')<>'' THEN ' (' ELSE '' END 
+                || COALESCE(data_transfer_type.name,'') 
+                || CASE WHEN COALESCE(data_transfer_type.name,'')<>'' THEN ')' ELSE '' END 
+              AS listvalue_1
+            ,object_type.NAME 
+                || CASE WHEN COALESCE(data_transfer_type.name,'')<>'' THEN ' (' ELSE '' END 
+                || COALESCE(data_transfer_type.name,'') 
+                || CASE WHEN COALESCE(data_transfer_type.name,'')<>'' THEN ')' ELSE '' END 
+                || ' - ' 
+                || obj.name 
+              AS listvalue_2
+            ,CAST(obj.id AS varchar(10)) || ';' || CAST(obj.fk_object_type_id AS varchar(10)) AS listkey
+            ,NULL AS fk_client_id
+            ,obj.fk_project_id
+            ,obj.description AS description
+            ,NULL AS detail_1_name
+            ,NULL AS detail_1_content
+            ,NULL AS detail_2_name
+            ,NULL AS detail_2_content
+            ,NULL AS detail_3_name
+            ,NULL AS detail_3_content
+            ,NULL AS detail_4_name
+            ,NULL AS detail_4_content
+            ,NULL AS detail_5_name
+            ,NULL AS detail_5_content
+        FROM data_transfer_process obj
+        LEFT JOIN object_type ON object_type.id = obj.fk_object_type_id
+        LEFT JOIN data_transfer_type ON data_transfer_type.id = obj.fk_data_transfer_type_id
+        UNION
+        SELECT 
+             obj.id
+            ,obj.fk_object_type_id
+            ,obj.name
+            ,object_type.NAME AS object_type_name
+            ,obj.name || ' - ' || object_type.NAME AS listvalue_1
+            ,object_type.NAME || ' - ' || obj.name AS listvalue_2
+            ,CAST(obj.id AS varchar(10)) || ';' || CAST(obj.fk_object_type_id AS varchar(10)) AS listkey
+            ,NULL AS fk_client_id
+            ,obj.fk_project_id
+            ,obj.description AS description
+            ,NULL AS detail_1_name
+            ,NULL AS detail_1_content
+            ,NULL AS detail_2_name
+            ,NULL AS detail_2_content
+            ,NULL AS detail_3_name
+            ,NULL AS detail_3_content
+            ,NULL AS detail_4_name
+            ,NULL AS detail_4_content
+            ,NULL AS detail_5_name
+            ,NULL AS detail_5_content
+        FROM url obj
+        LEFT JOIN object_type ON object_type.id = obj.fk_object_type_id
+            UNION
+        SELECT 
+             obj.id
+            ,obj.fk_object_type_id
+            ,obj.name
+            ,object_type.NAME AS object_type_name
+            ,obj.name || ' - ' || object_type.NAME AS listvalue_1
+            ,object_type.NAME || ' - ' || obj.name AS listvalue_2
+            ,CAST(obj.id AS varchar(10)) || ';' || CAST(obj.fk_object_type_id AS varchar(10)) AS listkey
+            ,CAST(obj.fk_client_id AS VARCHAR(10)) AS fk_client_id
+            ,NULL AS fk_project_id
+            ,obj.description AS description
+            ,NULL AS detail_1_name
+            ,NULL AS detail_1_content
+            ,NULL AS detail_2_name
+            ,NULL AS detail_2_content
+            ,NULL AS detail_3_name
+            ,NULL AS detail_3_content
+            ,NULL AS detail_4_name
+            ,NULL AS detail_4_content
+            ,NULL AS detail_5_name
+            ,NULL AS detail_5_content
+        FROM contact_group obj
+        LEFT JOIN object_type ON object_type.id = obj.fk_object_type_id
+            UNION
+        SELECT 
+             obj.id
+            ,obj.fk_object_type_id
+            ,obj.surname || ' ' || obj.givenname AS name
+            ,object_type.NAME AS object_type_name
+            ,obj.surname || ' ' || obj.givenname || ' - ' || object_type.NAME AS listvalue_1
+            ,object_type.NAME || ' - ' || obj.surname || ' ' || obj.givenname AS listvalue_2
+            ,CAST(obj.id AS varchar(10)) || ';' || CAST(obj.fk_object_type_id AS varchar(10)) AS listkey
+            ,CAST(obj.fk_client_id AS VARCHAR(10)) AS fk_client_id
+            ,NULL AS fk_project_id
+            ,obj.description AS description
+            ,NULL AS detail_1_name
+            ,NULL AS detail_1_content
+            ,NULL AS detail_2_name
+            ,NULL AS detail_2_content
+            ,NULL AS detail_3_name
+            ,NULL AS detail_3_content
+            ,NULL AS detail_4_name
+            ,NULL AS detail_4_content
+            ,NULL AS detail_5_name
+            ,NULL AS detail_5_content
+        FROM contact obj
+        LEFT JOIN object_type ON object_type.id = obj.fk_object_type_id
+            UNION
+        SELECT 
+             obj.id
+            ,obj.fk_object_type_id
+            ,obj.name AS name
+            ,object_type.NAME AS object_type_name
+            ,COALESCE(attribute.name,'') || ' - ' || object_type.NAME AS listvalue_1
+            ,object_type.NAME || ' - ' || COALESCE(attribute.name,'') AS listvalue_2
+            ,CAST(obj.id AS varchar(10)) || ';' || CAST(obj.fk_object_type_id AS varchar(10)) AS listkey
+            ,NULL AS fk_client_id
+            ,obj.fk_project_id AS fk_project_id
+            ,obj.description AS description
+            ,NULL AS detail_1_name
+            ,NULL AS detail_1_content
+            ,NULL AS detail_2_name
+            ,NULL AS detail_2_content
+            ,NULL AS detail_3_name
+            ,NULL AS detail_3_content
+            ,NULL AS detail_4_name
+            ,NULL AS detail_4_content
+            ,NULL AS detail_5_name
+            ,NULL AS detail_5_content
+        FROM bracket obj
+        LEFT JOIN object_type ON object_type.id = obj.fk_object_type_id
+        LEFT JOIN attribute ON attribute.id = obj.fk_attribute_id 
+            UNION
+        SELECT 
+             obj.id
+            ,obj.fk_object_type_id
+            ,obj.searchPattern AS name
+            ,object_type.NAME AS object_type_name
+            ,COALESCE(bracket.name,'') || ' (' || obj.searchPattern || ')' || ' - ' || object_type.NAME AS listvalue_1
+            ,object_type.NAME || ' - ' || COALESCE(bracket.name,'') || ' (' || obj.searchPattern || ')' AS listvalue_2
+            ,CAST(obj.id AS varchar(10)) || ';' || CAST(obj.fk_object_type_id AS varchar(10)) AS listkey
+            ,NULL AS fk_client_id
+            ,bracket.fk_project_id AS fk_project_id
+            ,NULL AS description
+            ,NULL AS detail_1_name
+            ,NULL AS detail_1_content
+            ,NULL AS detail_2_name
+            ,NULL AS detail_2_content
+            ,NULL AS detail_3_name
+            ,NULL AS detail_3_content
+            ,NULL AS detail_4_name
+            ,NULL AS detail_4_content
+            ,NULL AS detail_5_name
+            ,NULL AS detail_5_content
+        FROM bracket_searchPattern obj
+        LEFT JOIN object_type ON object_type.id = obj.fk_object_type_id
+        LEFT JOIN bracket ON bracket.id = obj.fk_bracket_id
+    ) sq01
+    LEFT JOIN project p ON p.id=sq01.fk_project_id
+    LEFT JOIN client c ON CAST(c.id AS VARCHAR(10))=sq01.fk_client_id
+    ORDER BY fk_object_type_id
+;
+        ]]>
+		</createView>		
+		<comment>
+		<![CDATA[
+		Add description as field in view.
+		Used objects:
+			v_All_Objects_Union
+		Phabricator tasks:
+			T287
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

@@ -171,7 +171,9 @@ class MapperV2Controller extends Controller
      */
     protected function findModel($id, $fk_object_type_id)
     {
-        if (($model = VAllObjectsUnion::findOne(['id' => $id, 'fk_object_type_id' => $fk_object_type_id])) !== null) {
+		$dependency = new \yii\caching\DbDependency();
+		$dependency->sql="SELECT max(log_datetime) FROM v_LastChangesLog_List";
+        if (($model = VAllObjectsUnion::find()->where(['id' => $id, 'fk_object_type_id' => $fk_object_type_id])->cache(NULL, $dependency)->one()) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

@@ -160,4 +160,15 @@
   <include relativeToChangelogFile="true" file="changesets/0000127/changelog.xml"/>  <!-- Update view | v_db_table_field_SearchInterface -->
   <include relativeToChangelogFile="true" file="changesets/0000128/changelog.xml"/>  <!-- SQL ALTER TABLE | export_file_db_table_result;export_file_db_table_field_result -->
   <include relativeToChangelogFile="true" file="changesets/0000129/changelog.xml"/>  <!-- Update view | v_All_Objects_Union -->
+  <include relativeToChangelogFile="true" file="changesets/0000130/changelog.xml"/>  <!-- Update view | v_All_Mappings_Union -->
+  <include relativeToChangelogFile="true" file="changesets/0000131/changelog.xml"/>  <!-- Update view | v_datatypes_Lookup -->
+  <include relativeToChangelogFile="true" file="changesets/0000132/changelog.xml"/>  <!-- Update view | v_Project_Filter -->
+  <include relativeToChangelogFile="true" file="changesets/0000133/changelog.xml"/>  <!-- Update view | v_LastChangesLog_List -->
+  <include relativeToChangelogFile="true" file="changesets/0000134/changelog.xml"/>  <!-- Update view | v_Bracket_Definitions -->
+  <include relativeToChangelogFile="true" file="changesets/0000135/changelog.xml"/>  <!-- SQL CREATE FUNCTION (Postgres only) | instr -->
+  <include relativeToChangelogFile="true" file="changesets/0000136/changelog.xml"/>  <!-- Update view | v_tagsOptGroup -->
+  <include relativeToChangelogFile="true" file="changesets/0000137/changelog.xml"/>  <!-- Update view | v_import_stage_db_table_SearchInterface -->
+  <include relativeToChangelogFile="true" file="changesets/0000138/changelog.xml"/>  <!-- SQL ALTER TABLE (Postgres only) | app_config;v_db_table_SearchInterface;v_db_table_field_SearchInterface;db_table_field;v_Bracket_Definitions;v_bracket_SearchInterface;bracket_searchpattern;bracket -->
+  <include relativeToChangelogFile="true" file="changesets/0000139/changelog.xml"/>  <!-- Update view | v_All_Objects_Union -->
+  <include relativeToChangelogFile="true" file="changesets/0000140/changelog.xml"/>  <!-- Update view | v_All_Objects_Union -->
 </databaseChangeLog> 

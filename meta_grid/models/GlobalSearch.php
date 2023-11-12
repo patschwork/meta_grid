@@ -48,10 +48,11 @@ class GlobalSearch extends VAllObjectsUnion
 
 		$query = VAllObjectsUnion::find()->cache(NULL, $dependency);        
         $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-			        'pagination' => [
-						'pageSize' => 100,
-					]
+            'query' => $query->limit(1000),
+			        // 'pagination' => [
+					// 	'pageSize' => 100,
+					// ]
+                    'pagination' => false
         ]);
 
         $this->load($params);
@@ -71,22 +72,34 @@ class GlobalSearch extends VAllObjectsUnion
             return $dataProvider;
         }
 
-        
+        $search_term = '%'.str_replace("*", "%", $this->name).'%';        
+        $query->orFilterWhere(['like', 'name', $search_term, false])
+              ->orFilterWhere(['like', 'detail_1_content', $search_term, false])
+              ->orFilterWhere(['like', 'detail_2_content', $search_term, false])
+              ->orFilterWhere(['like', 'detail_3_content', $search_term, false])
+              ->orFilterWhere(['like', 'detail_4_content', $search_term, false])
+              ->orFilterWhere(['like', 'detail_5_content', $search_term, false])
+              ->orFilterWhere(['like', 'description', $search_term, false])
+            ;
+
+
         $query->andFilterWhere([
             'id' => $this->id,
             'fk_object_type_id' => $this->fk_object_type_id,
             'fk_project_id' => $this->fk_project_id,
         ]);
 
-        $query->andFilterWhere(['like', 'name', $this->name])
+
+        $query
             ->andFilterWhere(['like', 'listvalue_1', $this->listvalue_1])
             ->andFilterWhere(['like', 'listvalue_2', $this->listvalue_2])
             ->andFilterWhere(['like', 'listkey', $this->listkey])
-            ->andFilterWhere(['like', 'fk_client_id', $this->fk_client_id]);
+            ->andFilterWhere(['like', 'fk_client_id', $this->fk_client_id])
+            ;
 
 
         $query->andFilterWhere(['in', 'object_type_name', $this->object_type_name]);
-            
+        
         return $dataProvider;
     }
 }

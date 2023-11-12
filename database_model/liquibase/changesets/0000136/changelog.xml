@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000136/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000136" context="postgreql_compatible">
+
+		<createView replaceIfExists="true" viewName="v_tagsOptGroup">
+        <![CDATA[
+    SELECT 
+     *
+     ,CASE WHEN fk_project_id IS NULL AND fk_user_id IS NULL THEN 0 WHEN COALESCE(fk_project_id,-1)>0 THEN 1 WHEN COALESCE(fk_user_id,-1)>0 THEN 2 ELSE -1 END AS optgroup
+    FROM tag
+    ;
+        ]]>
+		</createView>		
+		<comment>
+		<![CDATA[
+		Works for SQLite and PostreSQL.
+		Used objects:
+			v_tagsOptGroup
+		Phabricator tasks:
+			-
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

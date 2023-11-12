@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000138/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000138" context="postgreql_compatible">
+
+		<sql dbms="postgresql">
+		<![CDATA[
+ALTER TABLE app_config
+  RENAME COLUMN valueint TO "valueINT";
+ALTER TABLE app_config
+  RENAME COLUMN valuestring TO "valueSTRING";
+ALTER VIEW "v_db_table_SearchInterface" 
+  RENAME COLUMN databaseInfoFromLocation TO "databaseInfoFromLocation";
+ALTER VIEW "v_db_table_SearchInterface" 
+  RENAME COLUMN schemaInfoFromLocation TO "schemaInfoFromLocation";
+ALTER VIEW "v_db_table_field_SearchInterface" 
+  RENAME COLUMN databaseInfoFromLocation TO "databaseInfoFromLocation";
+ALTER VIEW "v_db_table_field_SearchInterface" 
+  RENAME COLUMN schemaInfoFromLocation TO "schemaInfoFromLocation";
+ALTER TABLE db_table_field
+  RENAME COLUMN is_PrimaryKey TO "is_PrimaryKey";
+ALTER VIEW "v_Bracket_Definitions"
+  RENAME fk_object_type_id_as_searchFilter TO "fk_object_type_id_as_searchFilter";
+ALTER VIEW "v_bracket_SearchInterface"
+  RENAME fk_object_type_id_as_searchFilter TO "fk_object_type_id_as_searchFilter";
+ALTER TABLE bracket_searchpattern 
+  RENAME TO "bracket_searchPattern";
+ALTER TABLE "bracket"
+  RENAME fk_object_type_id_as_searchFilter TO "fk_object_type_id_as_searchFilter";
+
+
+ALTER TABLE "bracket_searchPattern" RENAME COLUMN searchpattern TO "searchPattern";
+        ]]>
+		</sql>		
+		<comment>
+		<![CDATA[
+		Case sensitive fields for PostgreSQl.
+		Used objects:
+			app_config
+			v_db_table_SearchInterface
+			v_db_table_field_SearchInterface
+			db_table_field
+			v_Bracket_Definitions
+			v_bracket_SearchInterface
+			bracket_searchpattern
+			bracket
+		Phabricator tasks:
+			-
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

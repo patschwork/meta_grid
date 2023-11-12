@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000133/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000133" context="postgreql_compatible">
+
+		<createView replaceIfExists="true" viewName="v_LastChangesLog_List">
+        <![CDATA[
+    SELECT
+         log_datetime
+        ,log_action
+        ,name
+        ,tablename
+        ,id
+    FROM
+    (
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'attribute_log' AS tablename FROM attribute_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'client_log' AS tablename FROM client_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'data_delivery_object_log' AS tablename FROM data_delivery_object_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'data_delivery_type_log' AS tablename FROM data_delivery_type_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'data_transfer_process_log' AS tablename FROM data_transfer_process_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'data_transfer_type_log' AS tablename FROM data_transfer_type_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'db_database_log' AS tablename FROM db_database_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'db_table_context_log' AS tablename FROM db_table_context_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'db_table_field_log' AS tablename FROM db_table_field_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'db_table_log' AS tablename FROM db_table_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'db_table_type_log' AS tablename FROM db_table_type_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'glossary_log' AS tablename FROM glossary_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'keyfigure_log' AS tablename FROM keyfigure_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,NULL AS name,'map_object_2_object_log' AS tablename FROM map_object_2_object_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,NULL AS name,'object_comment_log' AS tablename FROM object_comment_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,NULL AS name,'object_depends_on_log' AS tablename FROM object_depends_on_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'object_type_log' AS tablename FROM object_type_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'parameter_log' AS tablename FROM parameter_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'project_log' AS tablename FROM project_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'scheduling_log' AS tablename FROM scheduling_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'sourcesystem_log' AS tablename FROM sourcesystem_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,tool_name AS name,'tool_log' AS tablename FROM tool_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'tool_type_log' AS tablename FROM tool_type_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'contact_group_log' AS tablename FROM contact_group_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,surname AS name,'contact_log' AS tablename FROM contact_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'bracket_log' AS tablename FROM bracket_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,searchPattern AS name,'bracket_searchPattern_log' AS tablename FROM bracket_searchPattern_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name AS name,'url_log' AS tablename FROM url_log ORDER BY log_id DESC LIMIT 1) sq01
+    ) sq01
+    ORDER BY log_datetime DESC
+        ]]>
+		</createView>		
+		<comment>
+		<![CDATA[
+		Works for SQLite and PostreSQL.
+		Used objects:
+			v_LastChangesLog_List
+		Phabricator tasks:
+			-
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

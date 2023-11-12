@@ -139,7 +139,51 @@ echo $this->render('_search', ['model' =>$searchModel, 'from_model' => $from_mod
             ],    
         	
         	['class' => 'yii\grid\SerialColumn'],
-            'name:html',
+
+			[
+				'label' => Yii::t('app', 'name'),
+				'value' => function($model) {
+					$value = $model->name;
+					// $value = $model->name."<br>"."<small>".$model->detail_1_content."</small>";
+					if ($model->detail_1_content !== NULL)
+					{
+						$value .= "<br>"."<small>"."<b>".$model->detail_1_name.": "."</b>".$model->detail_1_content."</small>";
+					}
+					if ($model->detail_2_content !== NULL)
+					{
+						$value .= "<br>"."<small>"."<b>".$model->detail_2_name.": "."</b>".$model->detail_2_content."</small>";
+					}
+					if ($model->detail_3_content !== NULL)
+					{
+						$value .= "<br>"."<small>"."<b>".$model->detail_3_name.": "."</b>".$model->detail_3_content."</small>";
+					}
+					if ($model->detail_4_content !== NULL)
+					{
+						$value .= "<br>"."<small>"."<b>".$model->detail_4_name.": "."</b>".$model->detail_4_content."</small>";
+					}
+					if ($model->detail_5_content !== NULL)
+					{
+						$value .= "<br>"."<small>"."<b>".$model->detail_5_name.": "."</b>".$model->detail_5_content."</small>";
+					}
+
+					return $value;
+					},
+				'format' => 'html',
+                'contentOptions' => function($model) {
+                    // needs to be closure because of title
+					if (($model->description !== NULL) && ($model->description !== '(Added via Bulk Import)'))
+					{
+                    return [
+                        'class' => 'cell-with-tooltip',
+                        'data-toggle' => 'tooltip',
+                        'data-placement' => 'top', // top, bottom, left, right
+                        'data-container' => 'body', // to prevent breaking table on hover
+                        // 'title' => strip_tags($data->description),
+                        'title' => "<b><i>".Yii::t('app', 'Description')."</i></b>:<br>".$model->description, // use html
+					];
+					} else return [];
+                }
+			],
 			[
 				'header' => '<i class="fa fa-fw fa-info">',
 				'value' => function($model) {
@@ -157,7 +201,7 @@ echo $this->render('_search', ['model' =>$searchModel, 'from_model' => $from_mod
 				'filter' => Select2::widget([
 						'model' => $searchModel,
 						'attribute' => 'object_type_name',
-						'data' => ArrayHelper::map(VAllObjectsUnion::find()->cache(NULL, $dependency)->asArray()->all(), 'object_type_name', 'object_type_name'),
+						'data' => ArrayHelper::map(VAllObjectsUnion::find()->select(['object_type_name'])->distinct()->cache(NULL, $dependency)->asArray()->all(), 'object_type_name', 'object_type_name'),
 						'options' => ['placeholder' => Yii::t('app', 'Select ...'), 'id' =>'select2_object_type_name'],
 						'pluginOptions' => [
 								'allowClear' => true,
@@ -211,3 +255,16 @@ echo $this->render('_search', ['model' =>$searchModel, 'from_model' => $from_mod
 	<?php // ...} ?>
 
 </div>
+<?php 
+$js = <<<SCRIPT
+/* To initialize BS3 tooltips set this below */
+$(function () { 
+   $('body').tooltip({
+    selector: '[data-toggle="tooltip"]',
+        html:true
+    });
+});
+SCRIPT;
+// Register tooltip/popover initialization javascript
+$this->registerJs ( $js );
+?>

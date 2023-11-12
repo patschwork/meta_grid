@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000132/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000132" context="postgreql_compatible">
+
+		<createView replaceIfExists="true" viewName="v_Project_Filter">
+        <![CDATA[
+    SELECT valueINT AS id FROM app_config WHERE key='project_filter'
+    UNION
+    SELECT CAST(id AS VARCHAR(10)) AS id FROM project WHERE (SELECT COUNT(valueINT) FROM app_config WHERE key='project_filter')=0      
+	;
+        ]]>
+		</createView>		
+		<comment>
+		<![CDATA[
+		Works for SQLite and PostreSQL.
+		Used objects:
+			v_datatypes_Lookup
+		Phabricator tasks:
+			-
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>
