@@ -370,9 +370,13 @@ class RBACHelper
                 $permProjectsCanSeeByUserId = Yii::$app->User->identity->getPermProjectsCanSeeByUserId($user_id);
             }
             
+            $dependency = new \yii\caching\DbDependency();
+            $dependency->sql="SELECT max(log_datetime) FROM map_object_2_tag_log";
+
             $VTagsOptGroup_Model = VTag2ObjectList::find()
                 ->select(["fk_tag_id", "tag_name", "optgroup"])
                 ->distinct()
+                ->cache(NULL, $dependency)
                 ->asArray()
                 ->all()
                 ;
