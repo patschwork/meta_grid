@@ -54,9 +54,16 @@ use yii\helpers\Html;
     Although we care about the best user experience, there is no warranty or service level agreement in using the free service.
 
     In case you need support, consulting or a premium instance of Meta#Grid please do not hesitate to send us a message via the contact form. 
-
-    Have fun.
+    <br>
+    Have fun 🙂
     <br><br>
     <b>By using this this instance you accept this conditions.</b>
     </i> 
+    <br><br>
+    <b>Useful Links:</b>
+    <i>Homepage:</i><a href="https://meta-grid.com">Meta-Grid Homepage (https://meta-grid.com)</a>
+    <i>Docs:</i><a href="https://docs.meta-grid.com">Docs (https://docs.meta-grid.com)</a>
+    <i>Report issues or errors:</i><a href="https://github.com/Meta-Grid/meta-grid/issues">GitHub Issues (https://github.com/Meta-Grid/meta-grid/issues)</a>
+
+    
 </p>
