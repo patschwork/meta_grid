@@ -55,15 +55,18 @@ use yii\helpers\Html;
 
     In case you need support, consulting or a premium instance of Meta#Grid please do not hesitate to send us a message via the contact form. 
     <br>
-    Have fun 🙂
+    Have fun &#128522;
     <br><br>
     <b>By using this this instance you accept this conditions.</b>
     </i> 
     <br><br>
     <b>Useful Links:</b><br>
-    <i>Homepage:</i><a href="https://meta-grid.com">Meta-Grid Homepage (https://meta-grid.com)</a><br>
-    <i>Docs:</i><a href="https://docs.meta-grid.com">Docs (https://docs.meta-grid.com)</a><br>
-    <i>Report issues or errors:</i><a href="https://github.com/Meta-Grid/meta-grid/issues">GitHub Issues (https://github.com/Meta-Grid/meta-grid/issues)</a><br>
-
+    <i>Homepage:</i> <a href="https://meta-grid.com">Meta-Grid Homepage (https://meta-grid.com)</a><br>
+    <i>Docs:</i> <a href="https://docs.meta-grid.com">Docs (https://docs.meta-grid.com)</a><br>
+    <i>Report issues or errors:</i> <a href="https://github.com/Meta-Grid/meta-grid/issues">GitHub Issues (https://github.com/Meta-Grid/meta-grid/issues)</a><br>
+    <br><br>
+    <b>Social media:</b><br>    
+    <a href="https://www.instagram.com/meta__grid"><i>Follow on Instagram</i></a><br>
+    
     
 </p>
