@@ -171,4 +171,5 @@
   <include relativeToChangelogFile="true" file="changesets/0000138/changelog.xml"/>  <!-- SQL ALTER TABLE (Postgres only) | app_config;v_db_table_SearchInterface;v_db_table_field_SearchInterface;db_table_field;v_Bracket_Definitions;v_bracket_SearchInterface;bracket_searchpattern;bracket -->
   <include relativeToChangelogFile="true" file="changesets/0000139/changelog.xml"/>  <!-- Update view | v_All_Objects_Union -->
   <include relativeToChangelogFile="true" file="changesets/0000140/changelog.xml"/>  <!-- Update view | v_All_Objects_Union -->
+  <include relativeToChangelogFile="true" file="changesets/0000141/changelog.xml"/>  <!-- Update view | v_All_Objects_Union -->
 </databaseChangeLog> 
