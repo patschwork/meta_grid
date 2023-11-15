@@ -1,3 +1,12 @@
+# 3.0.4
+
+- Caching
+- Optimized Global Search
+- New mapping tool (mapper-v2)
+- Minor bugfixes
+
+----------------------------------------------------------------------------------------------------
+
 # 3.0.3
 
 - Memory and execution time limits config added
