@@ -72,15 +72,7 @@ class GlobalSearch extends VAllObjectsUnion
             return $dataProvider;
         }
 
-        $search_term = '%'.str_replace("*", "%", $this->name).'%';        
-        $query->orFilterWhere(['like', 'name', $search_term, false])
-              ->orFilterWhere(['like', 'detail_1_content', $search_term, false])
-              ->orFilterWhere(['like', 'detail_2_content', $search_term, false])
-              ->orFilterWhere(['like', 'detail_3_content', $search_term, false])
-              ->orFilterWhere(['like', 'detail_4_content', $search_term, false])
-              ->orFilterWhere(['like', 'detail_5_content', $search_term, false])
-              ->orFilterWhere(['like', 'description', $search_term, false])
-            ;
+
 
 
         $query->andFilterWhere([
@@ -99,7 +91,20 @@ class GlobalSearch extends VAllObjectsUnion
 
 
         $query->andFilterWhere(['in', 'object_type_name', $this->object_type_name]);
-        
+
+        $search_term = '%'.str_replace("*", "%", $this->name).'%';        
+        $query->andWhere(
+            ['or',
+                    ['like', 'name', $search_term, false],
+                    ['like', 'detail_1_content', $search_term, false],
+                    ['like', 'detail_2_content', $search_term, false],
+                    ['like', 'detail_3_content', $search_term, false],
+                    ['like', 'detail_4_content', $search_term, false],
+                    ['like', 'detail_5_content', $search_term, false],
+                    ['like', 'description', $search_term, false]
+            ]
+        );
+
         return $dataProvider;
     }
 }
