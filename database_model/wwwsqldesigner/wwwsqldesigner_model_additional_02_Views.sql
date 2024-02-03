@@ -1,7 +1,7 @@
 -- View for all objekts
-	DROP VIEW v_All_Objects_Union;
-	CREATE VIEW v_All_Objects_Union AS
-    SELECT 
+DROP VIEW "v_All_Objects_Union";
+CREATE VIEW "v_All_Objects_Union" AS
+SELECT 
         sq01.id
        ,sq01.fk_object_type_id
        ,sq01.name AS name
@@ -11,8 +11,8 @@
        ,sq01.listkey
        ,sq01.fk_client_id
        ,sq01.fk_project_id
-       ,listvalue_1 || ' [' || IFNULL(IFNULL(p.name,c.name),'') || ']' AS listvalue_1_with_client_or_project
-       ,listvalue_2 || ' [' || IFNULL(IFNULL(p.name,c.name),'') || ']' AS listvalue_2_with_client_or_project 
+       ,listvalue_1 || ' [' || COALESCE(COALESCE(p.name,c.name),'') || ']' AS listvalue_1_with_client_or_project
+       ,listvalue_2 || ' [' || COALESCE(COALESCE(p.name,c.name),'') || ']' AS listvalue_2_with_client_or_project 
     FROM (
         SELECT 
              obj.id
@@ -48,7 +48,7 @@
             ,obj.COMMENT || ' - ' || object_type.NAME AS listvalue_1
             ,object_type.NAME || ' - ' || obj.COMMENT AS listvalue_2
             ,CAST(obj.id AS varchar(10)) || ';' || CAST(obj.fk_object_type_id AS varchar(10)) AS listkey
-            ,CASE
+            ,CAST(CASE
                 WHEN sourcesystem.fk_project_id IS NOT NULL THEN sourcesystem.fk_project_id
                 WHEN glossary.fk_project_id IS NOT NULL THEN glossary.fk_project_id
                 WHEN data_delivery_object.fk_project_id IS NOT NULL THEN data_delivery_object.fk_project_id
@@ -62,7 +62,7 @@
                 WHEN attribute.fk_project_id IS NOT NULL THEN attribute.fk_project_id
                 WHEN data_transfer_process.fk_project_id IS NOT NULL THEN data_transfer_process.fk_project_id
                 WHEN url.fk_project_id IS NOT NULL THEN url.fk_project_id
-                ELSE NULL END AS fk_project_id
+                ELSE NULL END AS VARCHAR(10)) AS fk_project_id
             ,CASE
                 WHEN contact_group.fk_client_id IS NOT NULL THEN contact_group.fk_client_id
                 WHEN contact.fk_client_id IS NOT NULL THEN contact.fk_client_id
@@ -120,22 +120,22 @@
             ,obj.name 
                 || ' - ' 
                 || object_type.NAME 
-                || CASE WHEN IFNULL(db_table_type.name,'')
-                || IFNULL(db_table_context.name,'')<>'' THEN ' (' ELSE '' END 
-                || IFNULL(db_table_type.name,'') 
-                || CASE WHEN IFNULL(db_table_type.name,'')='' OR IFNULL(db_table_context.name,'')='' THEN  '' ELSE '/' END 
-                || IFNULL(db_table_context.name,'') 
-                || CASE WHEN IFNULL(db_table_type.name,'')
-                || IFNULL(db_table_context.name,'')<>'' THEN ')' ELSE '' END 
+                || CASE WHEN COALESCE(db_table_type.name,'')
+                || COALESCE(db_table_context.name,'')<>'' THEN ' (' ELSE '' END 
+                || COALESCE(db_table_type.name,'') 
+                || CASE WHEN COALESCE(db_table_type.name,'')='' OR COALESCE(db_table_context.name,'')='' THEN  '' ELSE '/' END 
+                || COALESCE(db_table_context.name,'') 
+                || CASE WHEN COALESCE(db_table_type.name,'')
+                || COALESCE(db_table_context.name,'')<>'' THEN ')' ELSE '' END 
               AS listvalue_1
             ,object_type.NAME 
-                || CASE WHEN IFNULL(db_table_type.name,'')
-                || IFNULL(db_table_context.name,'')<>'' THEN ' (' ELSE '' END 
-                || IFNULL(db_table_type.name,'') 
-                || CASE WHEN IFNULL(db_table_type.name,'')='' OR IFNULL(db_table_context.name,'')='' THEN  '' ELSE '/' END 
-                || IFNULL(db_table_context.name,'') 
-                || CASE WHEN IFNULL(db_table_type.name,'')
-                || IFNULL(db_table_context.name,'')<>'' THEN ')' ELSE '' END 
+                || CASE WHEN COALESCE(db_table_type.name,'')
+                || COALESCE(db_table_context.name,'')<>'' THEN ' (' ELSE '' END 
+                || COALESCE(db_table_type.name,'') 
+                || CASE WHEN COALESCE(db_table_type.name,'')='' OR COALESCE(db_table_context.name,'')='' THEN  '' ELSE '/' END 
+                || COALESCE(db_table_context.name,'') 
+                || CASE WHEN COALESCE(db_table_type.name,'')
+                || COALESCE(db_table_context.name,'')<>'' THEN ')' ELSE '' END 
                 || ' - ' 
                 || obj.name 
               AS listvalue_2
@@ -152,8 +152,8 @@
             ,obj.fk_object_type_id
             ,obj.name
             ,object_type.NAME AS object_type_name
-            ,obj.name || ' (db_table: ' || IFNULL(db_table.name,'-') || ')' || ' - ' || object_type.NAME AS listvalue_1
-            ,object_type.NAME || ' - ' || obj.name || ' (db_table: ' || IFNULL(db_table.name,'-') || ')' AS listvalue_2
+            ,obj.name || ' (db_table: ' || COALESCE(db_table.name,'-') || ')' || ' - ' || object_type.NAME AS listvalue_1
+            ,object_type.NAME || ' - ' || obj.name || ' (db_table: ' || COALESCE(db_table.name,'-') || ')' AS listvalue_2
             ,CAST(obj.id AS varchar(10)) || ';' || CAST(obj.fk_object_type_id AS varchar(10)) AS listkey
             ,NULL AS fk_client_id
             ,obj.fk_project_id
@@ -234,14 +234,14 @@
             ,obj.name 
                 || ' - ' 
                 || object_type.NAME 
-                || CASE WHEN IFNULL(data_transfer_type.name,'')<>'' THEN ' (' ELSE '' END 
-                || IFNULL(data_transfer_type.name,'') 
-                || CASE WHEN IFNULL(data_transfer_type.name,'')<>'' THEN ')' ELSE '' END 
+                || CASE WHEN COALESCE(data_transfer_type.name,'')<>'' THEN ' (' ELSE '' END 
+                || COALESCE(data_transfer_type.name,'') 
+                || CASE WHEN COALESCE(data_transfer_type.name,'')<>'' THEN ')' ELSE '' END 
               AS listvalue_1
             ,object_type.NAME 
-                || CASE WHEN IFNULL(data_transfer_type.name,'')<>'' THEN ' (' ELSE '' END 
-                || IFNULL(data_transfer_type.name,'') 
-                || CASE WHEN IFNULL(data_transfer_type.name,'')<>'' THEN ')' ELSE '' END 
+                || CASE WHEN COALESCE(data_transfer_type.name,'')<>'' THEN ' (' ELSE '' END 
+                || COALESCE(data_transfer_type.name,'') 
+                || CASE WHEN COALESCE(data_transfer_type.name,'')<>'' THEN ')' ELSE '' END 
                 || ' - ' 
                 || obj.name 
               AS listvalue_2
@@ -273,7 +273,7 @@
             ,obj.name || ' - ' || object_type.NAME AS listvalue_1
             ,object_type.NAME || ' - ' || obj.name AS listvalue_2
             ,CAST(obj.id AS varchar(10)) || ';' || CAST(obj.fk_object_type_id AS varchar(10)) AS listkey
-            ,obj.fk_client_id
+            ,CAST(obj.fk_client_id AS VARCHAR(10)) AS fk_client_id
             ,NULL AS fk_project_id
         FROM contact_group obj
         LEFT JOIN object_type ON object_type.id = obj.fk_object_type_id
@@ -286,7 +286,7 @@
             ,obj.surname || ' ' || obj.givenname || ' - ' || object_type.NAME AS listvalue_1
             ,object_type.NAME || ' - ' || obj.surname || ' ' || obj.givenname AS listvalue_2
             ,CAST(obj.id AS varchar(10)) || ';' || CAST(obj.fk_object_type_id AS varchar(10)) AS listkey
-            ,obj.fk_client_id
+            ,CAST(obj.fk_client_id AS VARCHAR(10)) AS fk_client_id
             ,NULL AS fk_project_id
         FROM contact obj
         LEFT JOIN object_type ON object_type.id = obj.fk_object_type_id
@@ -296,8 +296,8 @@
             ,obj.fk_object_type_id
             ,obj.name AS name
             ,object_type.NAME AS object_type_name
-            ,IFNULL(attribute.name,'') || ' - ' || object_type.NAME AS listvalue_1
-            ,object_type.NAME || ' - ' || IFNULL(attribute.name,'') AS listvalue_2
+            ,COALESCE(attribute.name,'') || ' - ' || object_type.NAME AS listvalue_1
+            ,object_type.NAME || ' - ' || COALESCE(attribute.name,'') AS listvalue_2
             ,CAST(obj.id AS varchar(10)) || ';' || CAST(obj.fk_object_type_id AS varchar(10)) AS listkey
             ,NULL AS fk_client_id
             ,obj.fk_project_id AS fk_project_id
@@ -310,8 +310,8 @@
             ,obj.fk_object_type_id
             ,obj.searchPattern AS name
             ,object_type.NAME AS object_type_name
-            ,IFNULL(bracket.name,'') || ' (' || obj.searchPattern || ')' || ' - ' || object_type.NAME AS listvalue_1
-            ,object_type.NAME || ' - ' || IFNULL(bracket.name,'') || ' (' || obj.searchPattern || ')' AS listvalue_2
+            ,COALESCE(bracket.name,'') || ' (' || obj.searchPattern || ')' || ' - ' || object_type.NAME AS listvalue_1
+            ,object_type.NAME || ' - ' || COALESCE(bracket.name,'') || ' (' || obj.searchPattern || ')' AS listvalue_2
             ,CAST(obj.id AS varchar(10)) || ';' || CAST(obj.fk_object_type_id AS varchar(10)) AS listkey
             ,NULL AS fk_client_id
             ,bracket.fk_project_id AS fk_project_id
@@ -320,302 +320,303 @@
         LEFT JOIN bracket ON bracket.id = obj.fk_bracket_id
     ) sq01
     LEFT JOIN project p ON p.id=sq01.fk_project_id
-    LEFT JOIN client c ON c.id=sq01.fk_client_id
+    LEFT JOIN client c ON CAST(c.id AS VARCHAR(10))=sq01.fk_client_id
     ORDER BY fk_object_type_id;
 	
 -- View for all mappings
-	DROP VIEW v_All_Mappings_Union;
-	CREATE VIEW v_All_Mappings_Union AS 
-	WITH cte_v_All_Objects_Union AS
-	(
-	  SELECT 
-				 v_All_Objects_Union.listvalue_1
-				,v_All_Objects_Union.listvalue_2
-				,v_All_Objects_Union.name
-				,v_All_Objects_Union.object_type_name
-				,v_All_Objects_Union.listkey
-				,v_All_Objects_Union.id
-				,v_All_Objects_Union.fk_object_type_id
-				,v_All_Objects_Union.fk_client_id
-				,v_All_Objects_Union.fk_project_id
-	  FROM v_All_Objects_Union
-	)
-	,
-	cte_map_object_2_object AS
-	(
-		SELECT 			
-			 ref_fk_object_id_1
-			,ref_fk_object_type_id_1
-			,ref_fk_object_id_2
-			,ref_fk_object_type_id_2
-			,ref_fk_object_id_1  
-			,id
-		FROM map_object_2_object
-	)
-	  SELECT  *
-		FROM
-		(
-			SELECT 
-				 '->' 							AS connectiondirection
-				,v_All_Objects_Union.listvalue_1
-				,v_All_Objects_Union.listvalue_2
-				,v_All_Objects_Union.name
-				,v_All_Objects_Union.object_type_name
-				,v_All_Objects_Union.listkey
-				,ref_fk_object_id_1
-				,ref_fk_object_type_id_1
-				,ref_fk_object_id_2
-				,ref_fk_object_type_id_2
-				,ref_fk_object_id_1 			AS filter_ref_fk_object_id
-				,ref_fk_object_type_id_1 		AS filter_ref_fk_object_type_id
-				,parent.ref_fk_object_id_parent
-				,parent.ref_fk_object_type_id_parent
-				,parentAttr.name				AS parentAttr_name
-				,parentAttr.object_type_name	AS parentAttr_object_type_name
-				,child.ref_fk_object_id_child	
-				,child.ref_fk_object_type_id_child
-				,childAttr.name 				AS childAttr_name
-				,childAttr.object_type_name		AS childAttr_object_type_name
-				,map_object_2_object.id
-				,v_All_Objects_Union.fk_client_id
-				,v_All_Objects_Union.fk_project_id
-			FROM cte_map_object_2_object map_object_2_object
-			LEFT JOIN cte_v_All_Objects_Union v_All_Objects_Union
-				ON v_All_Objects_Union.id							=	map_object_2_object.ref_fk_object_id_2 
-				AND v_All_Objects_Union.fk_object_type_id			=	map_object_2_object.ref_fk_object_type_id_2
+DROP VIEW "v_All_Mappings_Union";
+CREATE VIEW "v_All_Mappings_Union" AS 
+WITH cte_v_All_Objects_Union AS
+    (
+      SELECT 
+                 v_All_Objects_Union.listvalue_1
+                ,v_All_Objects_Union.listvalue_2
+                ,v_All_Objects_Union.name
+                ,v_All_Objects_Union.object_type_name
+                ,v_All_Objects_Union.listkey
+                ,v_All_Objects_Union.id
+                ,v_All_Objects_Union.fk_object_type_id
+                ,v_All_Objects_Union.fk_client_id
+                ,v_All_Objects_Union.fk_project_id
+      FROM v_All_Objects_Union
+    )
+    ,
+    cte_map_object_2_object AS
+    (
+        SELECT          
+             ref_fk_object_id_1
+            ,ref_fk_object_type_id_1
+            ,ref_fk_object_id_2
+            ,ref_fk_object_type_id_2
+            ,id
+        FROM map_object_2_object
+    )
+      SELECT  *
+        FROM
+        (
+            SELECT 
+                 '->'                           AS connectiondirection
+                ,v_All_Objects_Union.listvalue_1
+                ,v_All_Objects_Union.listvalue_2
+                ,v_All_Objects_Union.name
+                ,v_All_Objects_Union.object_type_name
+                ,v_All_Objects_Union.listkey
+                ,ref_fk_object_id_1
+                ,ref_fk_object_type_id_1
+                ,ref_fk_object_id_2
+                ,ref_fk_object_type_id_2
+                ,ref_fk_object_id_1             AS filter_ref_fk_object_id
+                ,ref_fk_object_type_id_1        AS filter_ref_fk_object_type_id
+                ,parent.ref_fk_object_id_parent
+                ,parent.ref_fk_object_type_id_parent
+                ,parentAttr.name                AS parentAttr_name
+                ,parentAttr.object_type_name    AS parentAttr_object_type_name
+                ,child.ref_fk_object_id_child   
+                ,child.ref_fk_object_type_id_child
+                ,childAttr.name                 AS childAttr_name
+                ,childAttr.object_type_name     AS childAttr_object_type_name
+                ,map_object_2_object.id
+                ,v_All_Objects_Union.fk_client_id
+                ,v_All_Objects_Union.fk_project_id
+            FROM cte_map_object_2_object map_object_2_object
+            LEFT JOIN cte_v_All_Objects_Union v_All_Objects_Union
+                ON v_All_Objects_Union.id                           =   map_object_2_object.ref_fk_object_id_2 
+                AND v_All_Objects_Union.fk_object_type_id           =   map_object_2_object.ref_fk_object_type_id_2
 
-			LEFT JOIN object_depends_on parent
-				ON parent.ref_fk_object_id_parent					=	map_object_2_object.ref_fk_object_id_2 
-				AND parent.ref_fk_object_type_id_parent				=	map_object_2_object.ref_fk_object_type_id_2
-			LEFT JOIN cte_v_All_Objects_Union parentAttr
-				ON parentAttr.id									=	parent.ref_fk_object_id_parent 
-				AND parentAttr.fk_object_type_id					=	parent.ref_fk_object_type_id_parent
+            LEFT JOIN object_depends_on parent
+                ON parent.ref_fk_object_id_parent                   =   map_object_2_object.ref_fk_object_id_2 
+                AND parent.ref_fk_object_type_id_parent             =   map_object_2_object.ref_fk_object_type_id_2
+            LEFT JOIN cte_v_All_Objects_Union parentAttr
+                ON parentAttr.id                                    =   parent.ref_fk_object_id_parent 
+                AND parentAttr.fk_object_type_id                    =   parent.ref_fk_object_type_id_parent
 
-			LEFT JOIN object_depends_on child
-				ON child.ref_fk_object_id_child						=	map_object_2_object.ref_fk_object_id_2 
-				AND child.ref_fk_object_type_id_child				=	map_object_2_object.ref_fk_object_type_id_2
-			LEFT JOIN cte_v_All_Objects_Union childAttr
-				ON childAttr.id										=	child.ref_fk_object_id_parent 
-				AND childAttr.fk_object_type_id						=	child.ref_fk_object_type_id_parent
-		UNION
-			SELECT 
-				 '<-' 							AS connectiondirection
-				,v_All_Objects_Union.listvalue_1
-				,v_All_Objects_Union.listvalue_2
-				,v_All_Objects_Union.name
-				,v_All_Objects_Union.object_type_name
-				,v_All_Objects_Union.listkey
-				,ref_fk_object_id_1
-				,ref_fk_object_type_id_1
-				,ref_fk_object_id_2
-				,ref_fk_object_type_id_2
-				,ref_fk_object_id_2 			AS filter_ref_fk_object_id
-				,ref_fk_object_type_id_2 		AS filter_ref_fk_object_type_id
-				,parent.ref_fk_object_id_parent
-				,parent.ref_fk_object_type_id_parent
-				,parentAttr.name
-				,parentAttr.object_type_name
-				,child.ref_fk_object_id_child
-				,child.ref_fk_object_type_id_child
-				,childAttr.name 				AS childAttr_name
-				,childAttr.object_type_name		AS childAttr_object_type_name
-				,map_object_2_object.id
-				,v_All_Objects_Union.fk_client_id
-				,v_All_Objects_Union.fk_project_id
-			FROM cte_map_object_2_object map_object_2_object
-			LEFT JOIN cte_v_All_Objects_Union v_All_Objects_Union 
-				ON v_All_Objects_Union.id							=	map_object_2_object.ref_fk_object_id_1 
-				AND v_All_Objects_Union.fk_object_type_id			=	map_object_2_object.ref_fk_object_type_id_1
+            LEFT JOIN object_depends_on child
+                ON child.ref_fk_object_id_child                     =   map_object_2_object.ref_fk_object_id_2 
+                AND child.ref_fk_object_type_id_child               =   map_object_2_object.ref_fk_object_type_id_2
+            LEFT JOIN cte_v_All_Objects_Union childAttr
+                ON childAttr.id                                     =   child.ref_fk_object_id_parent 
+                AND childAttr.fk_object_type_id                     =   child.ref_fk_object_type_id_parent
+        UNION
+            SELECT 
+                 '<-'                           AS connectiondirection
+                ,v_All_Objects_Union.listvalue_1
+                ,v_All_Objects_Union.listvalue_2
+                ,v_All_Objects_Union.name
+                ,v_All_Objects_Union.object_type_name
+                ,v_All_Objects_Union.listkey
+                ,ref_fk_object_id_1
+                ,ref_fk_object_type_id_1
+                ,ref_fk_object_id_2
+                ,ref_fk_object_type_id_2
+                ,ref_fk_object_id_2             AS filter_ref_fk_object_id
+                ,ref_fk_object_type_id_2        AS filter_ref_fk_object_type_id
+                ,parent.ref_fk_object_id_parent
+                ,parent.ref_fk_object_type_id_parent
+                ,parentAttr.name
+                ,parentAttr.object_type_name
+                ,child.ref_fk_object_id_child
+                ,child.ref_fk_object_type_id_child
+                ,childAttr.name                 AS childAttr_name
+                ,childAttr.object_type_name     AS childAttr_object_type_name
+                ,map_object_2_object.id
+                ,v_All_Objects_Union.fk_client_id
+                ,v_All_Objects_Union.fk_project_id
+            FROM cte_map_object_2_object map_object_2_object
+            LEFT JOIN cte_v_All_Objects_Union v_All_Objects_Union 
+                ON v_All_Objects_Union.id                           =   map_object_2_object.ref_fk_object_id_1 
+                AND v_All_Objects_Union.fk_object_type_id           =   map_object_2_object.ref_fk_object_type_id_1
 
-			LEFT JOIN object_depends_on parent
-				ON parent.ref_fk_object_id_parent					=	map_object_2_object.ref_fk_object_id_1 
-				AND parent.ref_fk_object_type_id_parent				=	map_object_2_object.ref_fk_object_type_id_1
-			LEFT JOIN cte_v_All_Objects_Union parentAttr
-				ON parentAttr.id									=	parent.ref_fk_object_id_parent 
-				AND parentAttr.fk_object_type_id					=	parent.ref_fk_object_type_id_parent
+            LEFT JOIN object_depends_on parent
+                ON parent.ref_fk_object_id_parent                   =   map_object_2_object.ref_fk_object_id_1 
+                AND parent.ref_fk_object_type_id_parent             =   map_object_2_object.ref_fk_object_type_id_1
+            LEFT JOIN cte_v_All_Objects_Union parentAttr
+                ON parentAttr.id                                    =   parent.ref_fk_object_id_parent 
+                AND parentAttr.fk_object_type_id                    =   parent.ref_fk_object_type_id_parent
 
-			LEFT JOIN object_depends_on child
-				ON child.ref_fk_object_id_child						=	map_object_2_object.ref_fk_object_id_1 
-				AND child.ref_fk_object_type_id_child				=	map_object_2_object.ref_fk_object_type_id_1
-			LEFT JOIN cte_v_All_Objects_Union childAttr
-				ON childAttr.id										=	child.ref_fk_object_id_parent 
-				AND childAttr.fk_object_type_id						=	child.ref_fk_object_type_id_parent
-		) AS un;
+            LEFT JOIN object_depends_on child
+                ON child.ref_fk_object_id_child                     =   map_object_2_object.ref_fk_object_id_1 
+                AND child.ref_fk_object_type_id_child               =   map_object_2_object.ref_fk_object_type_id_1
+            LEFT JOIN cte_v_All_Objects_Union childAttr
+                ON childAttr.id                                     =   child.ref_fk_object_id_parent 
+                AND childAttr.fk_object_type_id                     =   child.ref_fk_object_type_id_parent
+        ) AS un;
 
 -- View for a lookup to all available datatypes
-	DROP VIEW v_datatypes_Lookup;
-	CREATE VIEW v_datatypes_Lookup AS 
-	SELECT 
-		DISTINCT
-			datatype 
-	FROM db_table_field dtf
-	UNION
-	SELECT * FROM
-	(
-		SELECT 'INTEGER' AS datatype
-			UNION
-		SELECT 'DATETIME' AS datatype
-			UNION
-		SELECT 'BOOLEAN' AS datatype
-			UNION
-		SELECT 'DATE' AS datatype
-			UNION
-		SELECT 'TIME' AS datatype
-			UNION
-		SELECT 'BIT' AS datatype
-			UNION
-		SELECT 'TIMESTAMP' AS datatype
-			UNION
-		SELECT 'NVARCHAR(255)' AS datatype
-			UNION
-		SELECT 'NVARCHAR(4000)' AS datatype
-			UNION
-		SELECT 'VARCHAR(8000)' AS datatype
-			UNION
-		SELECT 'VARCHAR(100)' AS datatype
-			UNION
-		SELECT 'VARCHAR(50)' AS datatype
-			UNION
-		SELECT 'VARCHAR(1)' AS datatype
-			UNION
-		SELECT 'DATETIME2' AS datatype
-			UNION
-		SELECT 'NUMERIC(18,2)' AS datatype
-			UNION
-		SELECT 'CURRENCY' AS datatype
-	);
+	DROP VIEW "v_datatypes_Lookup";
+	CREATE VIEW "v_datatypes_Lookup" AS 
+    SELECT 
+        DISTINCT
+            datatype 
+    FROM db_table_field dtf
+    UNION
+    SELECT * FROM
+    (
+        SELECT 'INTEGER' AS datatype
+            UNION
+        SELECT 'DATETIME' AS datatype
+            UNION
+        SELECT 'BOOLEAN' AS datatype
+            UNION
+        SELECT 'DATE' AS datatype
+            UNION
+        SELECT 'TIME' AS datatype
+            UNION
+        SELECT 'BIT' AS datatype
+            UNION
+        SELECT 'TIMESTAMP' AS datatype
+            UNION
+        SELECT 'NVARCHAR(255)' AS datatype
+            UNION
+        SELECT 'NVARCHAR(4000)' AS datatype
+            UNION
+        SELECT 'VARCHAR(8000)' AS datatype
+            UNION
+        SELECT 'VARCHAR(100)' AS datatype
+            UNION
+        SELECT 'VARCHAR(50)' AS datatype
+            UNION
+        SELECT 'VARCHAR(1)' AS datatype
+            UNION
+        SELECT 'DATETIME2' AS datatype
+            UNION
+        SELECT 'NUMERIC(18,2)' AS datatype
+            UNION
+        SELECT 'CURRENCY' AS datatype
+    ) sq01;
 
 -- View to get a sight on all filteres projects
 	DROP VIEW v_Project_Filter;
 	CREATE VIEW v_Project_Filter
 	AS
-	SELECT valueINT AS id FROM app_config WHERE key='project_filter'
-	UNION
-	SELECT id FROM project WHERE (SELECT COUNT(valueINT) FROM app_config WHERE key='project_filter')=0		
+    SELECT valueINT AS id FROM app_config WHERE key='project_filter'
+    UNION
+    SELECT CAST(id AS VARCHAR(10)) AS id FROM project WHERE (SELECT COUNT(valueINT) FROM app_config WHERE key='project_filter')=0      
 	;
 
 -- View for a list of last changes from log tables
-	DROP VIEW v_LastChangesLog_List;
-	CREATE VIEW v_LastChangesLog_List AS
-	SELECT
-		 log_datetime
-		,log_action
-		,name
-		,tablename
-		,id
-	FROM
-	(
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'attribute_log' AS tablename FROM attribute_log ORDER BY log_id DESC LIMIT 1)
-		UNION 
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'client_log' AS tablename FROM client_log ORDER BY log_id DESC LIMIT 1)
-		UNION 
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'data_delivery_object_log' AS tablename FROM data_delivery_object_log ORDER BY log_id DESC LIMIT 1)
-		UNION 
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'data_delivery_type_log' AS tablename FROM data_delivery_type_log ORDER BY log_id DESC LIMIT 1)
-		UNION 
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'data_transfer_process_log' AS tablename FROM data_transfer_process_log ORDER BY log_id DESC LIMIT 1)
-		UNION 
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'data_transfer_type_log' AS tablename FROM data_transfer_type_log ORDER BY log_id DESC LIMIT 1)
-		UNION 
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'db_database_log' AS tablename FROM db_database_log ORDER BY log_id DESC LIMIT 1)
-		UNION 
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'db_table_context_log' AS tablename FROM db_table_context_log ORDER BY log_id DESC LIMIT 1)
-		UNION 
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'db_table_field_log' AS tablename FROM db_table_field_log ORDER BY log_id DESC LIMIT 1)
-		UNION 
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'db_table_log' AS tablename FROM db_table_log ORDER BY log_id DESC LIMIT 1)
-		UNION 
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'db_table_type_log' AS tablename FROM db_table_type_log ORDER BY log_id DESC LIMIT 1)
-		UNION 
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'glossary_log' AS tablename FROM glossary_log ORDER BY log_id DESC LIMIT 1)
-		UNION 
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'keyfigure_log' AS tablename FROM keyfigure_log ORDER BY log_id DESC LIMIT 1)
-		UNION 
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,NULL AS name,'map_object_2_object_log' AS tablename FROM map_object_2_object_log ORDER BY log_id DESC LIMIT 1)
-		UNION 
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,NULL AS name,'object_comment_log' AS tablename FROM object_comment_log ORDER BY log_id DESC LIMIT 1)
-		UNION 
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,NULL AS name,'object_depends_on_log' AS tablename FROM object_depends_on_log ORDER BY log_id DESC LIMIT 1)
-		UNION 
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'object_type_log' AS tablename FROM object_type_log ORDER BY log_id DESC LIMIT 1)
-		UNION 
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'parameter_log' AS tablename FROM parameter_log ORDER BY log_id DESC LIMIT 1)
-		UNION 
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'project_log' AS tablename FROM project_log ORDER BY log_id DESC LIMIT 1)
-		UNION 
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'scheduling_log' AS tablename FROM scheduling_log ORDER BY log_id DESC LIMIT 1)
-		UNION 
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'sourcesystem_log' AS tablename FROM sourcesystem_log ORDER BY log_id DESC LIMIT 1)
-		UNION 
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,tool_name AS name,'tool_log' AS tablename FROM tool_log ORDER BY log_id DESC LIMIT 1)
-		UNION 
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'tool_type_log' AS tablename FROM tool_type_log ORDER BY log_id DESC LIMIT 1)
-		UNION 
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'contact_group_log' AS tablename FROM contact_group_log ORDER BY log_id DESC LIMIT 1)
-		UNION 
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,surname AS name,'contact_log' AS tablename FROM contact_log ORDER BY log_id DESC LIMIT 1)
-		UNION 
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'bracket_log' AS tablename FROM bracket_log ORDER BY log_id DESC LIMIT 1)
-		UNION 
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,searchPattern AS name,'bracket_searchPattern_log' AS tablename FROM bracket_searchPattern_log ORDER BY log_id DESC LIMIT 1)
-		UNION 
-		SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name AS name,'url_log' AS tablename FROM url_log ORDER BY log_id DESC LIMIT 1)
-	) 
-	ORDER BY log_datetime DESC
+	DROP VIEW "v_LastChangesLog_List";
+	CREATE VIEW "v_LastChangesLog_List" AS
+    SELECT
+         log_datetime
+        ,log_action
+        ,name
+        ,tablename
+        ,id
+    FROM
+    (
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'attribute_log' AS tablename FROM attribute_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'client_log' AS tablename FROM client_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'data_delivery_object_log' AS tablename FROM data_delivery_object_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'data_delivery_type_log' AS tablename FROM data_delivery_type_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'data_transfer_process_log' AS tablename FROM data_transfer_process_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'data_transfer_type_log' AS tablename FROM data_transfer_type_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'db_database_log' AS tablename FROM db_database_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'db_table_context_log' AS tablename FROM db_table_context_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'db_table_field_log' AS tablename FROM db_table_field_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'db_table_log' AS tablename FROM db_table_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'db_table_type_log' AS tablename FROM db_table_type_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'glossary_log' AS tablename FROM glossary_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'keyfigure_log' AS tablename FROM keyfigure_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,NULL AS name,'map_object_2_object_log' AS tablename FROM map_object_2_object_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,NULL AS name,'object_comment_log' AS tablename FROM object_comment_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,NULL AS name,'object_depends_on_log' AS tablename FROM object_depends_on_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'object_type_log' AS tablename FROM object_type_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'parameter_log' AS tablename FROM parameter_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'project_log' AS tablename FROM project_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'scheduling_log' AS tablename FROM scheduling_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'sourcesystem_log' AS tablename FROM sourcesystem_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,tool_name AS name,'tool_log' AS tablename FROM tool_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'tool_type_log' AS tablename FROM tool_type_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'contact_group_log' AS tablename FROM contact_group_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,surname AS name,'contact_log' AS tablename FROM contact_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name,'bracket_log' AS tablename FROM bracket_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,searchPattern AS name,'bracket_searchPattern_log' AS tablename FROM bracket_searchPattern_log ORDER BY log_id DESC LIMIT 1) sq01
+        UNION 
+        SELECT * FROM (SELECT log_id,log_datetime,log_action,id,uuid,name AS name,'url_log' AS tablename FROM url_log ORDER BY log_id DESC LIMIT 1) sq01
+    ) sq01
+    ORDER BY log_datetime DESC
 
 -- View for bracket definitiones
-	DROP VIEW v_Bracket_Definitions;
-	CREATE VIEW v_Bracket_Definitions AS 
-	SELECT 
-		 BRA.*
-		,DBF.db_table_name					AS db_table_name
-		,DBF.db_table_field_name 			AS db_table_field_name
-		,DBF.db_table_field_id				AS db_table_field_id
-		,DBF.db_table_field_fk_object_type_id 	AS db_table_field_fk_object_type_id
-		,ATT.name							AS attribute_name
-		,ATT.id							AS attribute_id
-		,ATT.fk_object_type_id				AS attribute_fk_object_type_id
-		,DBF.db_table_id                        AS db_table_id
-	FROM 
-	(
-		SELECT 
-			 BSP.searchPattern					AS bracket_searchPattern
-			,B.name							AS bracket_name
-			,B.description						AS bracket_description
-			,B.fk_attribute_id					AS bracket_fk_attribute_id
-			,B.fk_object_type_id_as_searchFilter 
-			,B.fk_project_id					AS bracket_fk_project_id
-			,BSP.fk_bracket_id
-		FROM 
-			bracket_searchPattern BSP
-		LEFT JOIN bracket B ON
-			B.id=BSP.fk_bracket_id
-	) BRA
-	LEFT JOIN
-	(
-		SELECT 
-			 F.id							AS db_table_field_id
-			,F.name							AS db_table_field_name
-			,F.fk_object_type_id				AS db_table_field_fk_object_type_id
-			,F.fk_project_id					AS db_table_fk_project_id
-			,T.name							AS db_table_name
-			,T.id                                   AS db_table_id
-		FROM 
-			db_table_field F
-		LEFT JOIN
-			db_table T ON
-				T.id=F.fk_db_table_id
-	) DBF ON
-		DBF.db_table_field_name LIKE BRA.bracket_searchPattern
-			AND
-		DBF.db_table_field_fk_object_type_id=IFNULL(BRA.fk_object_type_id_as_searchFilter,DBF.db_table_field_fk_object_type_id)
-			AND
-		DBF.db_table_fk_project_id=BRA.bracket_fk_project_id
-	LEFT JOIN attribute ATT ON
-		ATT.id=BRA.bracket_fk_attribute_id
-			AND
-		ATT.fk_project_id=BRA.bracket_fk_project_id
-	;
+	DROP VIEW "v_Bracket_Definitions";
+	CREATE VIEW "v_Bracket_Definitions" AS 
+    SELECT 
+         BRA.*
+        ,DBF.db_table_name                  AS db_table_name
+        ,DBF.db_table_field_name            AS db_table_field_name
+        ,DBF.db_table_field_id              AS db_table_field_id
+        ,DBF.db_table_field_fk_object_type_id   AS db_table_field_fk_object_type_id
+        ,ATT.name                           AS attribute_name
+        ,ATT.id                         AS attribute_id
+        ,ATT.fk_object_type_id              AS attribute_fk_object_type_id
+        ,DBF.db_table_id                        AS db_table_id
+    FROM 
+    (
+        SELECT 
+             BSP.searchPattern                  AS bracket_searchPattern
+            ,B.name                         AS bracket_name
+            ,B.description                      AS bracket_description
+            ,B.fk_attribute_id                  AS bracket_fk_attribute_id
+            ,B.fk_object_type_id_as_searchFilter 
+            ,B.fk_project_id                    AS bracket_fk_project_id
+            ,BSP.fk_bracket_id
+        FROM 
+            bracket_searchPattern BSP
+        LEFT JOIN bracket B ON
+            B.id=BSP.fk_bracket_id
+    ) BRA
+    LEFT JOIN
+    (
+        SELECT 
+             F.id                           AS db_table_field_id
+            ,F.name                         AS db_table_field_name
+            ,F.fk_object_type_id                AS db_table_field_fk_object_type_id
+            ,F.fk_project_id                    AS db_table_fk_project_id
+            ,T.name                         AS db_table_name
+            ,T.id                                   AS db_table_id
+        FROM 
+            db_table_field F
+        LEFT JOIN
+            db_table T ON
+                T.id=F.fk_db_table_id
+    ) DBF ON
+        DBF.db_table_field_name LIKE BRA.bracket_searchPattern
+            AND
+        DBF.db_table_field_fk_object_type_id=COALESCE(BRA.fk_object_type_id_as_searchFilter,DBF.db_table_field_fk_object_type_id)
+            AND
+        DBF.db_table_fk_project_id=BRA.bracket_fk_project_id
+    LEFT JOIN attribute ATT ON
+        ATT.id=BRA.bracket_fk_attribute_id
+            AND
+        ATT.fk_project_id=BRA.bracket_fk_project_id
+    ;
+
+-- if PostgreSQL, make sure, that the function instr was deployed and is usable for below views
 
 -- View to show tables/views with same Schema and Name in different databases and/or projects
     DROP VIEW v_db_table_location_4_same_table_lookup
@@ -649,10 +650,10 @@
     ;
 
 -- View for tag grouping in frontend (selectize component)
-	DROP VIEW v_tagsOptGroup;	
-	CREATE VIEW v_tagsOptGroup AS
-	SELECT 
-	 *
-	 ,CASE WHEN fk_project_id IS NULL AND fk_user_id IS NULL THEN 0 WHEN IFNULL(fk_project_id,-1)>0 THEN 1 WHEN IFNULL(fk_user_id,-1)>0 THEN 2 ELSE -1 END AS optgroup
-	FROM tag
-	;
+	DROP VIEW "v_tagsOptGroup";	
+	CREATE VIEW "v_tagsOptGroup" AS
+    SELECT 
+     *
+     ,CASE WHEN fk_project_id IS NULL AND fk_user_id IS NULL THEN 0 WHEN COALESCE(fk_project_id,-1)>0 THEN 1 WHEN COALESCE(fk_user_id,-1)>0 THEN 2 ELSE -1 END AS optgroup
+    FROM tag
+    ;

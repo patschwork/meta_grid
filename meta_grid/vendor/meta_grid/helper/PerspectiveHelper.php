@@ -8,7 +8,7 @@ class PerspectiveHelper
 {
 	public static function getLanguageList()
 	{
-		$orderby = new \yii\db\Expression("CASE WHEN language_id='en-US' THEN 1 WHEN language_id=='de-DE' THEN 2 ELSE 99 END, name");
+		$orderby = new \yii\db\Expression("CASE WHEN language_id='en-US' THEN 1 WHEN language_id='de-DE' THEN 2 ELSE 99 END, name");
 		$languages = \lajax\translatemanager\models\Language::find()->where(["status" => 1])->orderBy($orderby)->all(); //->all();
 		
 		return $languages;

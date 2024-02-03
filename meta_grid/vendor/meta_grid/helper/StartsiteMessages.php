@@ -126,6 +126,7 @@ class StartsiteMessages
      */
     public function LiquiBaseVersion()
     {
+        $app_config_liquibase_changelog_master_filepath = "";
         try
         {
             $Utils = new \vendor\meta_grid\helper\Utils();
@@ -142,7 +143,8 @@ class StartsiteMessages
         
             // get last deployment from database
             $lastChangelogFileDeployedInDB = "";
-            $res = (new yii\db\Query())->select(['FILENAME'])->from('DATABASECHANGELOG')->orderBy("ORDEREXECUTED DESC")->limit(1)->one();
+            // $res = (new yii\db\Query())->select(['FILENAME'])->from('DATABASECHANGELOG')->orderBy("ORDEREXECUTED DESC")->limit(1)->one();
+            $res = (new yii\db\Query())->select(['filename'])->from('databasechangelog')->orderBy("orderexecuted DESC")->limit(1)->one();
             foreach($res as $key => $value ){
                 $lastChangelogFileDeployedInDB = $value;
                 // Example entry in table:   000036/changelog.xml

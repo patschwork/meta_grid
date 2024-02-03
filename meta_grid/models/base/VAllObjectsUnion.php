@@ -29,8 +29,6 @@ use Yii;
  * @property string|null $detail_4_content
  * @property string|null $detail_5_name
  * @property string|null $detail_5_content
- * @property int|null $fk_deleted_status_id
- * @property string|null $deleted_status_name
  */
 class VAllObjectsUnion extends \yii\db\ActiveRecord
 {
@@ -48,10 +46,10 @@ class VAllObjectsUnion extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'fk_object_type_id', 'fk_project_id', 'fk_deleted_status_id'], 'integer'],
+            [['id', 'fk_object_type_id', 'fk_project_id'], 'integer'],
             [['listvalue_1', 'listvalue_2', 'listkey', 'fk_client_id', 'listvalue_1_with_client_or_project', 'listvalue_2_with_client_or_project', 'description', 'detail_1_name', 'detail_1_content', 'detail_2_name', 'detail_2_content', 'detail_3_name', 'detail_3_content', 'detail_4_name', 'detail_4_content', 'detail_5_name', 'detail_5_content'], 'string'],
             [['name'], 'string', 'max' => 500],
-            [['object_type_name', 'deleted_status_name'], 'string', 'max' => 250],
+            [['object_type_name'], 'string', 'max' => 250],
         ];
     }
 
@@ -83,8 +81,6 @@ class VAllObjectsUnion extends \yii\db\ActiveRecord
             'detail_4_content' => Yii::t('app', 'Detail 4 Content'),
             'detail_5_name' => Yii::t('app', 'Detail 5 Name'),
             'detail_5_content' => Yii::t('app', 'Detail 5 Content'),
-            'fk_deleted_status_id' => Yii::t('app', 'Fk Deleted Status ID'),
-            'deleted_status_name' => Yii::t('app', 'Deleted Status Name'),
         ];
     }
 }

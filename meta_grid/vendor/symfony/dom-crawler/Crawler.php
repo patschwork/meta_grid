@@ -164,7 +164,12 @@ class Crawler extends \SplObjectStorage
     public function addHtmlContent($content, $charset = 'UTF-8')
     {
         $internalErrors = libxml_use_internal_errors(true);
-        $disableEntities = libxml_disable_entity_loader(true);
+        // ------------------------------------------------------------------------+
+        // $disableEntities = libxml_disable_entity_loader(true);               // |
+        if (\PHP_VERSION_ID < 80000) {                                          // |  EDITED, PATRICK
+            $disableEntities = libxml_disable_entity_loader(true);              // |
+        }                                                                       // |
+        // ------------------------------------------------------------------------+
 
         $dom = new \DOMDocument('1.0', $charset);
         $dom->validateOnParse = true;
@@ -184,7 +189,12 @@ class Crawler extends \SplObjectStorage
         }
 
         libxml_use_internal_errors($internalErrors);
-        libxml_disable_entity_loader($disableEntities);
+        // ------------------------------------------------------------------------+
+        // libxml_disable_entity_loader($disableEntities);                      // |
+        if (\PHP_VERSION_ID < 80000) {                                          // |  EDITED, PATRICK
+            libxml_disable_entity_loader($disableEntities);                     // |
+        }                                                                       // |
+        // ------------------------------------------------------------------------+
 
         $this->addDocument($dom);
 

@@ -3,7 +3,7 @@
 # Instllation or update meta#grid
 # on every OS
 # Base helper library
-# v1.8
+# v1.8.1
 
 import os
 import subprocess
@@ -35,7 +35,7 @@ import ctypes
 
 # That gives the version of the Installer/Updater
 def myVersion():
-    return "1.8"
+    return "1.8.1"
 
 # Print messages in different color (with, or without logging)
 def bla(msg, action=None, withLooging=True, logfilepath="", logfile=""):

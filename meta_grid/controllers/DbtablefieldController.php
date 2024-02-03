@@ -164,13 +164,12 @@ class DbtablefieldController extends Controller
      */
     public function actionIndex()
     {
-	    
-	$Utils = new \vendor\meta_grid\helper\Utils();
+		$Utils = new \vendor\meta_grid\helper\Utils();
         $app_config_import_processing_time_limit = $Utils->get_app_config("dbtablefield_time_limit");
-	$app_config_import_processing_memory_limit = $Utils->get_app_config("dbtablefield_memory_limit");
-	set_time_limit($app_config_import_processing_time_limit);
-	ini_set('memory_limit', $app_config_import_processing_memory_limit."M");
-	    
+		$app_config_import_processing_memory_limit = $Utils->get_app_config("dbtablefield_memory_limit");
+		set_time_limit($app_config_import_processing_time_limit);
+		ini_set('memory_limit', $app_config_import_processing_memory_limit."M");
+
         $searchModel = new DbTableFieldSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
