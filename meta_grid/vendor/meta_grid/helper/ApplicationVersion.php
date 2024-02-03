@@ -13,7 +13,7 @@ use Yii;
  */
 class ApplicationVersion
 {
-    static $applicationVersion                 = "3.0.3";
+    static $applicationVersion                 = "3.0.5";
     static $applicationName                    = "meta#grid";
     static $changelogfile_URL                  = "https://raw.githubusercontent.com/patschwork/meta_grid/master/CHANGELOG.md";
     static $cookie_name_changelog_md5          = "changelog_md5";
