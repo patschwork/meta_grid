@@ -1,3 +1,11 @@
+# 3.0.5
+
+- PostgreSQL as database backend available
+- Minor bugfixes
+- New unit tests
+
+----------------------------------------------------------------------------------------------------
+
 # 3.0.4
 
 - Caching
