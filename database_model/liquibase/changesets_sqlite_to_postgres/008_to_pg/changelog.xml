@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+		 logicalFilePath="008_to_pg/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="008_to_pg">
+
+        <sql dbms="postgresql">
+		<![CDATA[
+        INSERT INTO auth_rule
+		("name", "data", created_at, updated_at)
+		SELECT 
+			 'isNotAGuest' AS "name"
+		    ,decode('4F3A33313A22646D7374725C68656C706572735C41757468656E7469636174656452756C65223A333A7B733A343A226E616D65223B733A31313A2269734E6F74414775657374223B733A393A22637265617465644174223B4E3B733A393A22757064617465644174223B693A313531353633343937363B7D','hex') AS "data"
+			,NULL AS created_at
+			,NULL AS updated_at
+		WHERE 0=(SELECT COUNT(*) AS cnt FROM auth_rule)
+        ]]>
+		</sql>		
+		<rollback>
+			<sql dbms="postgresql">
+			<![CDATA[
+			DELETE FROM auth_rule WHERE "name"='isNotAGuest'
+			]]>
+			</sql>		
+		</rollback>
+		<comment>
+		<![CDATA[
+		Re-insert rule "isNotAGuest". Couldn't be migrated with pgloader.
+		Phabricator tasks:
+			T302
+		]]>
+		</comment>
+	</changeSet>
+</databaseChangeLog>

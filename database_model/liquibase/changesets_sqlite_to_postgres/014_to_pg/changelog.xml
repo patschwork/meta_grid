@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+		 
+		 logicalFilePath="014_to_pg/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="014_to_pg">
+      <sqlFile dbms="postgresql"
+        encoding="UTF-8"
+        endDelimiter="\n;"
+        path="01_create_function_trig_func_do_cleanup_queue.sql"
+        relativeToChangelogFile="true"
+        splitStatements="true"
+        stripComments="true"/>
+
+		<comment>
+		<![CDATA[
+		CREATE OR REPLACE FUNCTION trig_func_do_cleanup_queue.
+		Phabricator tasks:
+			T311
+		]]>
+		</comment>
+	</changeSet>
+</databaseChangeLog>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.7"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.7
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.7.xsd" 
+		 logicalFilePath="010_to_pg/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="010_to_pg">
+		<executeCommand executable="pip3"> 
+			<arg value="install"/>
+			<arg value="psycopg2-binary"/>
+		</executeCommand>
+		
+		<executeCommand executable="pip3"> 
+			<arg value="install"/>
+			<arg value="sqlalchemy"/>
+		</executeCommand>
+
+		<executeCommand executable="python3"> 
+			<arg value="../../../database_model/liquibase/changesets_sqlite_to_postgres/010_to_pg/call.py"/>
+			<!-- <arg value="-c"/> -->
+			<!-- <arg value="import os; f = open(os.path.join('/tmp/test.txt'), 'w');  f.write(os.getcwd())"/> -->
+		</executeCommand>
+
+		<comment>
+		<![CDATA[
+		Run pgloader: Transfer data from SQLite to PostgreSQL for auth_item_child and auth_item.
+		Phabricator tasks:
+			T303
+		]]>
+		</comment>
+	</changeSet>
+</databaseChangeLog>

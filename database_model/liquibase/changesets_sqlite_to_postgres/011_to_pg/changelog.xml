@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+		 logicalFilePath="011_to_pg/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="011_to_pg">
+
+		<dropView viewName="v_fk_columns_for_triggers"/>
+
+		<createView replaceIfExists="true" viewName="v_fk_columns_for_triggers">
+        <![CDATA[
+        WITH columns_list AS (
+         SELECT cl.table_name,
+            cl.column_name,
+            cl."isFK",
+            cl."FK_uuid_columnname",
+            cl."FK_tablename",
+                CASE
+                    WHEN t.table_name IS NULL THEN false
+                    ELSE true
+                END AS "FK_table_found"
+           FROM ( SELECT c.table_name,
+                    c.column_name,
+                        CASE
+                            WHEN c.column_name::name ~~ 'fk_%_id'::text THEN true
+                            WHEN c.column_name::name ~~ 'fk_%\_id_as\_%'::text THEN true
+                            ELSE false
+                        END AS "isFK",
+                        CASE
+                            WHEN c.column_name::name ~~ 'fk_%_id'::text THEN replace(c.column_name::text, '_id'::text, '_uuid'::text)
+                            WHEN c.column_name::name ~~ 'fk_%\_id_as\_%'::text THEN replace(c.column_name::text, '_id'::text, '_uuid'::text)
+                            ELSE NULL::text
+                        END AS "FK_uuid_columnname",
+                        CASE
+                            WHEN c.column_name::name ~~ 'fk_%_id'::text THEN replace(replace(c.column_name::text, 'fk_'::text, ''::text), '_id'::text, ''::text)
+                            WHEN c.column_name::name ~~ 'fk_%\_id_as\_%'::text THEN replace(split_part(c.column_name::text, '_id_as_'::text, 1), 'fk_'::text, ''::text)
+                            ELSE NULL::text
+                        END AS "FK_tablename"
+                   FROM information_schema.columns c) cl
+             LEFT JOIN information_schema.tables t ON 1 = 1 AND t.table_name::name = cl."FK_tablename"
+        ), subselect_check_if_uuid_field_exists AS (
+         SELECT columns_list.table_name,
+            columns_list.column_name,
+            columns_list."isFK",
+            columns_list."FK_uuid_columnname",
+            columns_list."FK_tablename",
+            columns_list."FK_table_found",
+                CASE
+                    WHEN (EXISTS ( SELECT c.table_catalog,
+                        c.table_schema,
+                        c.table_name,
+                        c.column_name,
+                        c.ordinal_position,
+                        c.column_default,
+                        c.is_nullable,
+                        c.data_type,
+                        c.character_maximum_length,
+                        c.character_octet_length,
+                        c.numeric_precision,
+                        c.numeric_precision_radix,
+                        c.numeric_scale,
+                        c.datetime_precision,
+                        c.interval_type,
+                        c.interval_precision,
+                        c.character_set_catalog,
+                        c.character_set_schema,
+                        c.character_set_name,
+                        c.collation_catalog,
+                        c.collation_schema,
+                        c.collation_name,
+                        c.domain_catalog,
+                        c.domain_schema,
+                        c.domain_name,
+                        c.udt_catalog,
+                        c.udt_schema,
+                        c.udt_name,
+                        c.scope_catalog,
+                        c.scope_schema,
+                        c.scope_name,
+                        c.maximum_cardinality,
+                        c.dtd_identifier,
+                        c.is_self_referencing,
+                        c.is_identity,
+                        c.identity_generation,
+                        c.identity_start,
+                        c.identity_increment,
+                        c.identity_maximum,
+                        c.identity_minimum,
+                        c.identity_cycle,
+                        c.is_generated,
+                        c.generation_expression,
+                        c.is_updatable
+                       FROM information_schema.columns c
+                      WHERE c.table_name::name = columns_list."FK_tablename" AND c.column_name::name = 'uuid'::name)) THEN true
+                    ELSE false
+                END AS table_has_uuid_field
+           FROM columns_list
+        ), subselect AS (
+         SELECT subselect_check_if_uuid_field_exists.table_name,
+            subselect_check_if_uuid_field_exists.column_name,
+            subselect_check_if_uuid_field_exists."isFK",
+            subselect_check_if_uuid_field_exists."FK_uuid_columnname",
+            subselect_check_if_uuid_field_exists."FK_tablename",
+            subselect_check_if_uuid_field_exists."FK_table_found",
+            subselect_check_if_uuid_field_exists.table_has_uuid_field,
+                CASE
+                    WHEN subselect_check_if_uuid_field_exists.table_has_uuid_field = true AND subselect_check_if_uuid_field_exists."FK_tablename" IS NOT NULL THEN concat('(SELECT uuid FROM ', quote_ident(subselect_check_if_uuid_field_exists."FK_tablename"), ' WHERE id=', '(SELECT ', subselect_check_if_uuid_field_exists.column_name, ' FROM ', quote_ident(subselect_check_if_uuid_field_exists.table_name), ' WHERE [id=?])) AS ', subselect_check_if_uuid_field_exists."FK_uuid_columnname")
+                    ELSE NULL::text
+                END AS uuid_subselect
+           FROM subselect_check_if_uuid_field_exists
+        )
+ SELECT table_name,
+    string_agg(quote_ident(column_name::text), ', '::text) AS columns,
+    string_agg(uuid_subselect, ', '::text) AS uuid_columns
+   FROM subselect
+  GROUP BY table_name
+  ;
+        ]]>
+		</createView>
+
+      	<sqlFile dbms="postgresql"
+        	encoding="UTF-8"
+        	endDelimiter="\n;"
+        	path="01_create_function_trig_func_log.sql"
+        	relativeToChangelogFile="true"
+        	splitStatements="true"
+        	stripComments="false"/>
+
+		<comment>
+		<![CDATA[
+		Update view v_fk_columns_for_triggers and update FUNCTION trig_func_log.
+		Phabricator tasks:
+			T315
+		]]>
+		</comment>
+	</changeSet>
+</databaseChangeLog>

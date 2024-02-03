@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+		 logicalFilePath="016_to_pg/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="016_to_pg">
+
+        <sql dbms="postgresql">
+		<![CDATA[
+        SELECT rollout_all_trigger_4_do_cleanup_queue();
+        ]]>
+		</sql>		
+		<rollback>
+			<sql dbms="postgresql">
+			<![CDATA[
+			SELECT remove_all_trigger_4_do_cleanup_queue();
+			]]>
+			</sql>		
+		</rollback>
+		<comment>
+		<![CDATA[
+		Do rollout for all tables and place trigger for do_cleanup_queue.
+		Phabricator tasks:
+			T313
+		]]>
+		</comment>
+	</changeSet>
+</databaseChangeLog>

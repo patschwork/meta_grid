@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/001_to_pg/changelog.xml"/>  <!-- Run sqlite_correct_not_null_default_null.py -->
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/002_to_pg/changelog.xml"/>  <!-- Run pgloader -->
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/003_to_pg/changelog.xml"/>  <!-- CREATE OR REPLACE FUNCTION qs_uuid_relations. CREATE OR REPLACE FUNCTION tbl_alter_uuid_default. Alter uuid fields. -->
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/004_to_pg/changelog.xml"/>  <!-- Run sqlite_views_ifnull_coalesce.py -->
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/005_to_pg/changelog.xml"/>  <!-- Run script to correct SERIAL columns -->
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/006_to_pg/changelog.xml"/>  <!-- Create view v_fk_columns_for_triggers. CREATE FUNCTION trig_func_log. CREATE FUNCTION rollout_trigger. CREATE FUNCTION remove_trigger. -->
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/007_to_pg/changelog.xml"/>  <!-- Do rollout for all tables and place trigger for logging. -->
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/008_to_pg/changelog.xml"/>  <!-- Re-insert rule "isNotAGuest". Couldn't be migrated with pgloader. -->
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/009_to_pg/changelog.xml"/>  <!-- TRUNCATE tables auth_item_child, auth_item -->
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/010_to_pg/changelog.xml"/>  <!-- Transfer data from SQLite to PostgreSQL for auth_item_child and auth_item -->
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/011_to_pg/changelog.xml"/>  <!-- Update view v_fk_columns_for_triggers. REPLACE FUNCTION trig_func_log. -->
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/012_to_pg/changelog.xml"/>  <!-- CREATE OR REPLACE FUNCTION TRIG_cleanup_queue_process_INSERT_func. -->
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/013_to_pg/changelog.xml"/>  <!-- CREATE OR REPLACE TRIGGER TRIG_cleanup_queue_process_INSERT. -->
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/014_to_pg/changelog.xml"/>  <!-- CREATE OR REPLACE FUNCTION trig_func_do_cleanup_queue. -->
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/015_to_pg/changelog.xml"/>  <!-- CREATE OR REPLACE FUNCTION rollout_all_trigger_4_do_cleanup_queue. CREATE OR REPLACE FUNCTION remove_all_trigger_4__do_cleanup_queue. -->
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/016_to_pg/changelog.xml"/>  <!-- Do rollout for all tables and place trigger for do_cleanup_queue. -->
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/017_to_pg/changelog.xml"/>  <!-- REPLACE FUNCTION trig_func_do_cleanup_queue. -->
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/018_to_pg/changelog.xml"/>  <!-- Take over databasechangelog from SQLite (in uppercase) into PostgreSQL. -->
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/019_to_pg/changelog.xml"/>  <!-- DROP TABLES DATABASECHANGELOG* from SQLite (in uppercase). -->
+</databaseChangeLog> 

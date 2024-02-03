@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.7"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.7
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.7.xsd" 
+		 logicalFilePath="001_to_pg/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="001_to_pg">
+		<executeCommand executable="pip3"> 
+			<arg value="install"/>
+			<arg value="pandas"/>
+		</executeCommand>
+
+		<executeCommand executable="python3"> 
+			<arg value="../database/sqlite_correct_not_null_default_null.py"/>
+		</executeCommand>
+
+		<comment>
+		<![CDATA[
+		Install pandas for Python. Run sqlite_correct_not_null_default_null.py.
+		Phabricator tasks:
+			T296
+		]]>
+		</comment>
+	</changeSet>
+</databaseChangeLog>

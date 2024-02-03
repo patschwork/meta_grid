@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+		 logicalFilePath="006_to_pg/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="006_to_pg">
+
+		<createView replaceIfExists="true" viewName="v_fk_columns_for_triggers">
+        <![CDATA[
+WITH columns_list AS (
+         SELECT cl.table_name,
+            cl.column_name,
+            cl."isFK",
+            cl."FK_uuid_columnname",
+            cl."FK_tablename",
+                CASE
+                    WHEN t.table_name IS NULL THEN false
+                    ELSE true
+                END AS "FK_table_found"
+           FROM ( SELECT c.table_name,
+                    c.column_name,
+                        CASE
+                            WHEN c.column_name::name ~~ 'fk_%_id'::text THEN true
+                            WHEN c.column_name::name ~~ 'fk_%\_id_as\_%'::text THEN true
+                            ELSE false
+                        END AS "isFK",
+                        CASE
+                            WHEN c.column_name::name ~~ 'fk_%_id'::text THEN replace(c.column_name::text, '_id'::text, '_uuid'::text)
+                            WHEN c.column_name::name ~~ 'fk_%\_id_as\_%'::text THEN replace(c.column_name::text, '_id'::text, '_uuid'::text)
+                            ELSE NULL::text
+                        END AS "FK_uuid_columnname",
+                        CASE
+                            WHEN c.column_name::name ~~ 'fk_%_id'::text THEN replace(replace(c.column_name::text, 'fk_'::text, ''::text), '_id'::text, ''::text)
+                            WHEN c.column_name::name ~~ 'fk_%\_id_as\_%'::text THEN replace(split_part(c.column_name::text, '_id_as_', 1)::text, 'fk_'::text, ''::text)
+                            ELSE NULL::text
+                        END AS "FK_tablename"                
+                   FROM information_schema.columns c) cl
+             LEFT JOIN information_schema.tables t ON 1 = 1 AND t.table_name::name = cl."FK_tablename"
+        ), subselect_check_if_uuid_field_exists AS (
+         SELECT columns_list.table_name,
+            columns_list.column_name,
+            columns_list."isFK",
+            columns_list."FK_uuid_columnname",
+            columns_list."FK_tablename",
+            columns_list."FK_table_found",
+                CASE
+                    WHEN EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS C WHERE C.TABLE_NAME = columns_list."FK_tablename" AND C.COLUMN_NAME='uuid') THEN true
+                    ELSE false
+                END AS table_has_uuid_field                
+           FROM columns_list
+        ), subselect AS
+        (
+            SELECT 
+                *,
+                CASE
+                    WHEN table_has_uuid_field=TRUE AND "FK_tablename" IS NOT NULL THEN concat('(SELECT uuid FROM ', "FK_tablename", ' WHERE id=', '(SELECT ', column_name, ' FROM ', table_name, ' WHERE [id=?])) AS ', "FK_uuid_columnname")
+                    ELSE NULL::text
+                END AS uuid_subselect
+            FROM subselect_check_if_uuid_field_exists
+        )
+ SELECT subselect.table_name,
+    string_agg(subselect.column_name::text, ', '::text) AS columns,
+    string_agg(subselect.uuid_subselect, ', '::text) AS uuid_columns
+   FROM subselect
+  GROUP BY subselect.table_name
+;
+		]]>
+		</createView>
+
+      	<sqlFile dbms="postgresql"
+        	encoding="UTF-8"
+        	endDelimiter="\n;"
+        	path="01_create_function_trig_func_log.sql"
+        	relativeToChangelogFile="true"
+        	splitStatements="true"
+        	stripComments="false"/>
+
+      	<sqlFile dbms="postgresql"
+        	encoding="UTF-8"
+        	endDelimiter="\n;"
+        	path="02_create_function_rollout_trigger.sql"
+        	relativeToChangelogFile="true"
+        	splitStatements="true"
+        	stripComments="false"/>
+
+      	<sqlFile dbms="postgresql"
+        	encoding="UTF-8"
+        	endDelimiter="\n;"
+        	path="03_create_funtion_remove_trigger.sql"
+        	relativeToChangelogFile="true"
+        	splitStatements="true"
+        	stripComments="false"/>
+
+        <rollback>
+			<sql dbms="postgresql">
+			<![CDATA[
+			DROP FUNCTION remove_trigger();
+            DROP FUNCTION rollout_trigger();
+            DROP FUNCTION trig_func_log();
+            DROP VIEW v_fk_columns_for_triggers;
+			]]>
+			</sql>		
+		</rollback>
+
+		<comment>
+		<![CDATA[
+		Create view v_fk_columns_for_triggers. CREATE FUNCTION trig_func_log. CREATE FUNCTION rollout_trigger. CREATE FUNCTION remove_trigger.
+		Phabricator tasks:
+			T297
+		]]>
+		</comment>
+	</changeSet>
+</databaseChangeLog>
