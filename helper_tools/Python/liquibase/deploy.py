@@ -87,9 +87,9 @@ dirPath = os.path.dirname(realPath)  # /home/user/test
 dirName = os.path.basename(dirPath) # test
 
 if (int(sys.version_info[0]) >= 3):
-    Config = ConfigParser.ConfigParser()
+    Config = ConfigParser.ConfigParser(os.environ)
 else:
-    Config = ConfigParser.SafeConfigParser()
+    Config = ConfigParser.SafeConfigParser(os.environ)
 # Config._interpolation = ConfigParser.ExtendedInterpolation()
 Config.read(getConfigFilePath(CONFIGFOLDER, ENVKEY))
 
@@ -101,6 +101,11 @@ liquibaseAction = Config.get("liquibase", "liquibaseAction")
 liquibaseActionValue = Config.get("liquibase", "liquibaseActionValue")
 sqliteBin = Config.get("sqlite", "sqliteBin")
 dbpath = Config.get("environment", "dbpath")
+dbuser = Config.get("environment", "dbuser", fallback='')
+dbpassword = Config.get("environment", "dbpassword", fallback='')
+liquibaseDatabaseChangeLogTableName=Config.get("liquibase", "liquibaseDatabaseChangeLogTableName", fallback='DATABASECHANGELOG')
+liquibaseDatabaseChangeLogLockTableName=Config.get("liquibase", "liquibaseDatabaseChangeLogLockTableName", fallback='DATABASECHANGELOGLOCK')
+
 liquibaseDriverUrlprefix = Config.get("environment", "liquibaseDriverUrlprefix")
 comment = Config.get("other", "comment")
 
@@ -123,6 +128,10 @@ printCurrentEnvSettings("liquibaseAction", liquibaseAction)
 printCurrentEnvSettings("liquibaseActionValue", liquibaseActionValue)
 printCurrentEnvSettings("sqliteBin", sqliteBin)
 printCurrentEnvSettings("dbpath", dbpath)
+printCurrentEnvSettings("dbuser", dbuser)
+# printCurrentEnvSettings("dbpassword", dbpassword)
+printCurrentEnvSettings("liquibaseDatabaseChangeLogTableName", liquibaseDatabaseChangeLogTableName)
+printCurrentEnvSettings("liquibaseDatabaseChangeLogLockTableName", liquibaseDatabaseChangeLogLockTableName)
 printCurrentEnvSettings("Absolute dbpath", getFilePathRelativeScriptPath(dbpath))
 printCurrentEnvSettings("liquibaseDriverUrlprefix", liquibaseDriverUrlprefix)
 printCurrentEnvSettings("comment", comment)
@@ -133,14 +142,29 @@ if liquibaseDriver == "org.sqlite.JDBC":
         raise Exception("SQLite File not found!")
         sys.exit(1)
 
-# exec liquibase
+# Liquibase parameter
+liquibase_parameter=[]
+liquibase_parameter.append(liquibasePathExe)
+liquibase_parameter.append("--driver=" + liquibaseDriver)
+liquibase_parameter.append("--databaseChangeLogTableName=" + liquibaseDatabaseChangeLogTableName)
+liquibase_parameter.append("--databaseChangeLogLockTableName=" + liquibaseDatabaseChangeLogLockTableName)
+liquibase_parameter.append("--changeLogFile=" + getFilePathRelativeScriptPath(liquibaseChangeLogFile))
+liquibase_parameter.append("--url=" + liquibaseDriverUrlprefix)
+# handling for databases with user and password
+if (dbuser != ""):
+    liquibase_parameter.append("--username=" + dbuser)
+if (dbpassword != ""):
+    liquibase_parameter.append("--password=" + dbpassword)
+liquibase_parameter.append(liquibaseAction)
+
+# exec liquibase command
 if liquibaseActionValue != "":
-    #subprocess.call([liquibasePathExe, "--driver=" + liquibaseDriver, "--changeLogFile=" + getFilePathRelativeScriptPath(liquibaseChangeLogFile), "--url=" + liquibaseDriverUrlprefix , liquibaseAction, liquibaseActionValue])
+    liquibase_parameter.append(liquibaseActionValue)
     try:
         try:
-            output = subprocess.check_output([liquibasePathExe, "--driver=" + liquibaseDriver, "--changeLogFile=" + getFilePathRelativeScriptPath(liquibaseChangeLogFile), "--url=" + liquibaseDriverUrlprefix , liquibaseAction, liquibaseActionValue], stderr=subprocess.STDOUT).decode()
+            output = subprocess.check_output(liquibase_parameter, stderr=subprocess.STDOUT).decode()
         except:
-            output = subprocess.check_output([liquibasePathExe, "--driver=" + liquibaseDriver, "--changeLogFile=" + getFilePathRelativeScriptPath(liquibaseChangeLogFile), "--url=" + liquibaseDriverUrlprefix , liquibaseAction, liquibaseActionValue], stderr=subprocess.STDOUT)     
+            output = subprocess.check_output(liquibase_parameter, stderr=subprocess.STDOUT)     
         success = True
     except subprocess.CalledProcessError as e:
         output = ""
@@ -152,12 +176,11 @@ if liquibaseActionValue != "":
     writeOutputLog(logfilepath, output)
     print(output)
 else:
-    #subprocess.call([liquibasePathExe, "--driver=" + liquibaseDriver, "--changeLogFile=" + getFilePathRelativeScriptPath(liquibaseChangeLogFile), "--url=" + liquibaseDriverUrlprefix , liquibaseAction])        
     try:
         try:
-            output = subprocess.check_output([liquibasePathExe, "--driver=" + liquibaseDriver, "--changeLogFile=" + getFilePathRelativeScriptPath(liquibaseChangeLogFile), "--url=" + liquibaseDriverUrlprefix , liquibaseAction], stderr=subprocess.STDOUT).decode()
+            output = subprocess.check_output(liquibase_parameter, stderr=subprocess.STDOUT).decode()
         except:
-            output = subprocess.check_output([liquibasePathExe, "--driver=" + liquibaseDriver, "--changeLogFile=" + getFilePathRelativeScriptPath(liquibaseChangeLogFile), "--url=" + liquibaseDriverUrlprefix , liquibaseAction], stderr=subprocess.STDOUT)
+            output = subprocess.check_output(liquibase_parameter, stderr=subprocess.STDOUT)
         success = True 
     except subprocess.CalledProcessError as e:
         try:
@@ -167,3 +190,15 @@ else:
         success = False
     writeOutputLog(logfilepath, output)
     print(output)
+
+if "Cannot find database driver: org.postgresql.Driver" in output:
+    from urllib.request import urlretrieve
+    jdbcdriver="postgresql-42.7.1.jar"
+    url = "https://jdbc.postgresql.org/download/" + jdbcdriver
+    download_path_temp = liquibasePathExe.split(os.sep)
+    download_path_temp[-1]='lib'
+    download_path_temp.append(jdbcdriver)
+    download_path=os.sep.join(download_path_temp)
+    urlretrieve(url, download_path)
+    print(f"Driver downloaded from {url} to {download_path}. Please try again." )
+    
