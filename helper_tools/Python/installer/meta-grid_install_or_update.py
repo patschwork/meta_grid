@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # Instllation or update meta#grid
 # on every OS
-# v1.8.1
+# v1.8.5
 
 import base_lib
 import shutil

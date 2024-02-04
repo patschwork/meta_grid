@@ -3,7 +3,7 @@
 # Instllation or update meta#grid
 # on every OS
 # Base helper library
-# v1.8.1
+# v1.8.5
 
 import os
 import subprocess
@@ -35,7 +35,7 @@ import ctypes
 
 # That gives the version of the Installer/Updater
 def myVersion():
-    return "1.8.1"
+    return "1.8.5"
 
 # Print messages in different color (with, or without logging)
 def bla(msg, action=None, withLooging=True, logfilepath="", logfile=""):
@@ -180,14 +180,14 @@ def cleanupFolderInside(path):
         for d in dirs:
             shutil.rmtree(os.path.join(root, d))
 
-def createLQBConfigDeployIniFile(cfgFile, liquibasePathExe, liquibaseChangeLogFile, dbpath, liquibaseDriver="org.sqlite.JDBC", liquibaseAction="migrate", liquibaseActionValue="", sqliteBin="", liquibaseDriverUrlprefix='jdbc:sqlite:%(dbpath)s', comment="Generated"):
+def createLQBConfigDeployIniFile(cfgFile, liquibasePathExe, liquibaseChangeLogFile, dbpath, liquibaseDriver="org.sqlite.JDBC", liquibaseAction="migrate", liquibaseActionValue="", sqliteBin="", liquibaseDriverUrlprefix='jdbc:sqlite:%(dbpath)s', comment="Generated", dbuser="", dbpassword=""):
     if os.path.exists(cfgFile):
         os.unlink(cfgFile)
     cfgfile = open(cfgFile,'w')
     if (int(sys.version_info[0]) >= 3):
-        Config = ConfigParser.ConfigParser()
+        Config = ConfigParser.ConfigParser(interpolation=None)
     else:
-        Config = ConfigParser.SafeConfigParser()
+        Config = ConfigParser.SafeConfigParser(interpolation=None)
     Config.add_section('liquibase')
     Config.add_section('sqlite')
     Config.add_section('environment')
@@ -203,6 +203,8 @@ def createLQBConfigDeployIniFile(cfgFile, liquibasePathExe, liquibaseChangeLogFi
     Config.set('sqlite','sqliteBin',sqliteBin)
 
     Config.set('environment','dbpath',dbpath)
+    Config.set('environment','dbuser',dbuser)
+    Config.set('environment','dbpassword',dbpassword)
     Config.set('environment','liquibaseDriverUrlprefix',liquibaseDriverUrlprefix)
 
     Config.set('other','comment',comment)
