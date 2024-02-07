@@ -180,7 +180,7 @@ def cleanupFolderInside(path):
         for d in dirs:
             shutil.rmtree(os.path.join(root, d))
 
-def createLQBConfigDeployIniFile(cfgFile, liquibasePathExe, liquibaseChangeLogFile, dbpath, liquibaseDriver="org.sqlite.JDBC", liquibaseAction="migrate", liquibaseActionValue="", sqliteBin="", liquibaseDriverUrlprefix='jdbc:sqlite:%(dbpath)s', comment="Generated", dbuser="", dbpassword=""):
+def createLQBConfigDeployIniFile(cfgFile, liquibasePathExe, liquibaseChangeLogFile, dbpath, liquibaseDriver="org.sqlite.JDBC", liquibaseAction="migrate", liquibaseActionValue="", sqliteBin="", liquibaseDriverUrlprefix='jdbc:sqlite:%(dbpath)s', comment="Generated", dbuser="", dbpassword="", additional_liquibase_parameter_section="additional_liquibase_parameter", additional_liquibase_parameter={}):
     if os.path.exists(cfgFile):
         os.unlink(cfgFile)
     cfgfile = open(cfgFile,'w')
@@ -208,6 +208,12 @@ def createLQBConfigDeployIniFile(cfgFile, liquibasePathExe, liquibaseChangeLogFi
     Config.set('environment','liquibaseDriverUrlprefix',liquibaseDriverUrlprefix)
 
     Config.set('other','comment',comment)
+    
+    if additional_liquibase_parameter!=dict():
+        Config.add_section(additional_liquibase_parameter_section)
+        for k, v in additional_liquibase_parameter.items():
+            Config.set(additional_liquibase_parameter_section, k, v)
+    
     Config.write(cfgfile)
     cfgfile.close()
 

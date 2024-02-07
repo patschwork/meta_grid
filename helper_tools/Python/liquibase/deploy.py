@@ -15,6 +15,10 @@ import datetime
 CONFIGFOLDER = ""
 DATETIMENOW = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
+DEBUG = False
+if os.getenv("LQB_DEBUG", "No")!="No":
+    DEBUG = True
+
 # Command Line Parameters will be detected here
 def cli_params():
     global ENVKEY
@@ -30,6 +34,16 @@ def cli_params():
         CONFIGFOLDER = sys.argv[2]
     except:
         print("CONFIGFOLDER not given. Using default")
+        
+    try:
+        param_DEBUG = sys.argv[3]
+        if param_DEBUG!="":
+            DEBUG = True
+    except:
+        pass
+
+if DEBUG:
+    print("DEBUG Mode = ON")
 
 def ConfigSectionMap(section):
     dict1 = {}
@@ -60,12 +74,23 @@ def printCurrentEnvSettings(prop, value):
 def getFilePathRelativeScriptPath(filepath):
     return os.path.abspath(os.path.join(dirPath, filepath))
 
+def getAdditionalLiquibaseParameter(Config, section='additional_liquibase_parameter'):
+    additional_liquibase_parameter_found = False
+    params = dict()
+    try:
+        params = dict(ConfigNoEnv.items(section))
+        additional_liquibase_parameter_found = True
+    except:
+        pass
+    if params==dict():
+        additional_liquibase_parameter_found = False
+    return additional_liquibase_parameter_found, params
 
 # if (int(sys.version_info[0]) < 3):
 #     print("You need Python 3 to run this script!")
 #     sys.exit(1)
 
-debug=0
+
 cli_params()
 
 if CONFIGFOLDER == "":
@@ -88,10 +113,14 @@ dirName = os.path.basename(dirPath) # test
 
 if (int(sys.version_info[0]) >= 3):
     Config = ConfigParser.ConfigParser(os.environ)
+    ConfigNoEnv = ConfigParser.ConfigParser(interpolation=None)
 else:
     Config = ConfigParser.SafeConfigParser(os.environ)
+    ConfigNoEnv = ConfigParser.SafeConfigParser(interpolation=None)
 # Config._interpolation = ConfigParser.ExtendedInterpolation()
 Config.read(getConfigFilePath(CONFIGFOLDER, ENVKEY))
+ConfigNoEnv.read(getConfigFilePath(CONFIGFOLDER, ENVKEY))
+
 
 # Get the settings
 liquibasePathExe = Config.get("liquibase", "liquibasePathExe")
@@ -155,41 +184,43 @@ if (dbuser != ""):
     liquibase_parameter.append("--username=" + dbuser)
 if (dbpassword != ""):
     liquibase_parameter.append("--password=" + dbpassword)
+if DEBUG:
+    liquibase_parameter.append("--logLevel=" + "FINE")
 liquibase_parameter.append(liquibaseAction)
 
-# exec liquibase command
 if liquibaseActionValue != "":
     liquibase_parameter.append(liquibaseActionValue)
+
+addi_params_found, addi_params = getAdditionalLiquibaseParameter(Config=ConfigNoEnv)
+if addi_params_found:
+    for parameter_key,parameter_value in addi_params.items():
+        liquibase_parameter.append(f"-D{parameter_key}={parameter_value}")
+
+# exec liquibase command
+try:
     try:
-        try:
-            output = subprocess.check_output(liquibase_parameter, stderr=subprocess.STDOUT).decode()
-        except:
-            output = subprocess.check_output(liquibase_parameter, stderr=subprocess.STDOUT)     
-        success = True
-    except subprocess.CalledProcessError as e:
-        output = ""
-        try:
-            output = e.output.decode()
-        except:
-            output = e.output
-        success = False
-    writeOutputLog(logfilepath, output)
-    print(output)
-else:
+        output = subprocess.check_output(liquibase_parameter, stderr=subprocess.STDOUT).decode()
+    except:
+        output = subprocess.check_output(liquibase_parameter, stderr=subprocess.STDOUT)     
+    success = True
+except subprocess.CalledProcessError as e:
+    output = ""
     try:
-        try:
-            output = subprocess.check_output(liquibase_parameter, stderr=subprocess.STDOUT).decode()
-        except:
-            output = subprocess.check_output(liquibase_parameter, stderr=subprocess.STDOUT)
-        success = True 
-    except subprocess.CalledProcessError as e:
-        try:
-            output = e.output.decode()
-        except:
-            output = e.output
-        success = False
-    writeOutputLog(logfilepath, output)
-    print(output)
+        output = e.output.decode()
+    except:
+        output = e.output
+    success = False
+writeOutputLog(logfilepath, output)
+print(output)
+
+if DEBUG:
+    print(f"""LiquiBase command:
+    {" ".join(liquibase_parameter)}
+    """)
+
+    print(f"""All config items from section 'additional_liquibase_parameter':
+    Parameter found: {addi_params_found}
+    Parameters: {addi_params}""")
 
 if "Cannot find database driver: org.postgresql.Driver" in output:
     from urllib.request import urlretrieve
@@ -202,3 +233,7 @@ if "Cannot find database driver: org.postgresql.Driver" in output:
     urlretrieve(url, download_path)
     print(f"Driver downloaded from {url} to {download_path}. Please try again." )
     
+if not success:
+    sys.exit(-1)
+else:
+    sys.exit(0)

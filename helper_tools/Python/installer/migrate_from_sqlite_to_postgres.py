@@ -150,6 +150,11 @@ base_lib.set_user_settings(ini_user_settings_path, "migration_sqlite_to_postgres
 base_lib.set_user_settings(ini_user_settings_path, "migration_sqlite_to_postgres", 'location_deploy_py', result["location_deploy.py"])
 
 
+# Change the working directory (where deploy.py is located)
+import os
+pathname_from_deploypy = os.path.dirname(os.path.abspath(result["location_deploy.py"]))
+os.chdir(pathname_from_deploypy)
+
 # Prepare LiquiBase deployment
 bla("- Create config file for LiquiBase database deployment", "header", False)
 lqb_ini_file = "deploy_config_LQB_sqlite_to_postgres_" + DATETIMENOW + ".ini"
@@ -170,7 +175,10 @@ try:
                                           liquibaseDriverUrlprefix=r'jdbc:postgresql:%(dbpath)s',
                                           comment="Generated for SQLite to PostgreSQL migration",
                                           dbuser=result["pg_user"],
-                                          dbpassword=result["pg_pwd"]
+                                          dbpassword=result["pg_pwd"],
+                                        #   additional_liquibase_parameter={
+                                        #       'path_to_database_helper_folder': 'test'
+                                        #   }
                                           )
     bla(msg="Successful: Created config file for LiquiBase deployment (" + dynConfigIni + ")", action="OK", withLooging=False)
 except Exception as e:

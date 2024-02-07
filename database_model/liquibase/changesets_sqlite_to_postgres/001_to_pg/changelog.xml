@@ -14,7 +14,7 @@
 		</executeCommand>
 
 		<executeCommand executable="python3"> 
-			<arg value="../database/sqlite_correct_not_null_default_null.py"/>
+			<arg value="../../../database_model/liquibase/changesets_sqlite_to_postgres/001_to_pg/sqlite_correct_not_null_default_null.py"/>
 		</executeCommand>
 
 		<comment>
