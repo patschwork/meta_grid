@@ -176,9 +176,10 @@ try:
                                           comment="Generated for SQLite to PostgreSQL migration",
                                           dbuser=result["pg_user"],
                                           dbpassword=result["pg_pwd"],
-                                        #   additional_liquibase_parameter={
-                                        #       'path_to_database_helper_folder': 'test'
-                                        #   }
+                                          additional_liquibase_parameter=
+                                            {
+                                              'changesets_sqlite_to_postgres_path': os.path.join(abs_folderfile_Fresh_LQB_Changelog, 'changesets_sqlite_to_postgres')
+                                            }
                                           )
     bla(msg="Successful: Created config file for LiquiBase deployment (" + dynConfigIni + ")", action="OK", withLooging=False)
 except Exception as e:

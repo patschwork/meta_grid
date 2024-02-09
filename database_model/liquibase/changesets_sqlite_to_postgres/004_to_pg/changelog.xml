@@ -11,14 +11,14 @@
 	<changeSet author="patrick_schmitz" id="004_to_pg">
 		<validCheckSum>ANY</validCheckSum>
 		<executeCommand executable="python3"> 
-			<arg value="../../../database_model/liquibase/changesets_sqlite_to_postgres/004_to_pg/sqlite_views_ifnull_coalesce.py"/>
+			<arg value="${changesets_sqlite_to_postgres_path}/004_to_pg/sqlite_views_ifnull_coalesce.py"/>
 		</executeCommand>
 
       	<sqlFile dbms="postgresql"
         	encoding="UTF-8"
         	endDelimiter="\n;"
-        	path="../../../database_model/liquibase/changesets_sqlite_to_postgres/004_to_pg/create_everything_for_all_views.sql"
-        	relativeToChangelogFile="false"
+        	path="create_everything_for_all_views.sql"
+        	relativeToChangelogFile="true"
         	splitStatements="false"
         	stripComments="false"/>
 
