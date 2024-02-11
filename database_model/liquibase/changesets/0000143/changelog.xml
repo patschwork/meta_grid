@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000143/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000143" context="postgreql_compatible">
+
+		<createView replaceIfExists="true" viewName="v_bracket_searchPattern_SearchInterface">
+        <![CDATA[
+        SELECT
+            bsp.id
+            ,IFNULL(bsp.uuid, '') AS uuid
+            ,bsp.fk_object_type_id
+            ,bsp.fk_bracket_id
+            ,IFNULL(bsp."searchPattern", '') AS "searchPattern"
+            ,bsp.fk_object_persistence_method_id
+            ,bsp.fk_datamanagement_process_id
+        FROM "bracket_searchPattern" bsp
+        ;
+        ]]>
+		</createView>		
+		<comment>
+		<![CDATA[
+		Quote fields with mixed lower and upper.
+		Used objects:
+			v_bracket_searchPattern_SearchInterface
+		Phabricator tasks:
+			T303
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

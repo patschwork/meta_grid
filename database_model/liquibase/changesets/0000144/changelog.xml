@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000144/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000144" context="postgreql_compatible">
+
+		<createView replaceIfExists="true" viewName="v_db_table_field_SearchInterface">
+        <![CDATA[
+WITH RECURSIVE split(seq, word, str, id, fk_project_id, location) AS (
+    SELECT 0, '.', location||'.',id,fk_project_id,location
+    FROM db_table_cte 
+    WHERE 1=1 
+    AND location LIKE '%.%.%'
+    UNION ALL SELECT
+        seq+1,
+        substr(str, 0, instr(str, '.')),
+        substr(str, instr(str, '.')+1),
+        id,
+        fk_project_id,
+        location
+    FROM split WHERE str != ''
+)
+,db_table_cte AS 
+(
+    SELECT * FROM db_table
+)
+SELECT
+         db_table_field.id
+        ,IFNULL(db_table_field.uuid, '') AS uuid
+        ,db_table_field.fk_object_type_id
+        ,project.fk_client_id
+        ,IFNULL(project.name, '') AS project_name
+        ,IFNULL(client.name, '') AS client_name
+        ,db_table_field.fk_project_id
+        ,IFNULL(db_table_field.name, '') AS name
+        ,IFNULL(db_table_field.description, '') AS description
+        ,db_table_field.fk_db_table_id
+        ,IFNULL(db_table_field.datatype, '') AS datatype
+        ,IFNULL(db_table_field.bulk_load_checksum, '') AS bulk_load_checksum
+        ,db_table_field.fk_deleted_status_id
+        ,db_table_field."is_PrimaryKey"
+        ,db_table_field."is_BusinessKey"
+        ,db_table_field."is_GDPR_relevant"
+        ,db_table_field.fk_object_persistence_method_id
+        ,db_table_field.fk_datamanagement_process_id
+        ,IFNULL(db_table_field.source_definition, '') AS source_definition
+        ,IFNULL(db_table_field.source_comment, '') AS source_comment
+        ,CASE WHEN (LENGTH(db_table.location) - LENGTH(REPLACE(db_table.location, '"."', ''))) / LENGTH('"."')>=2 THEN REPLACE(SUBSTR(db_table.location ,1, INSTR(db_table.location,'.')-1),'"','') ELSE '' END AS databaseInfoFromLocation
+        ,CASE WHEN (LENGTH(db_table.location) - LENGTH(REPLACE(db_table.location, '"."', ''))) / LENGTH('"."')>=2 THEN REPLACE(location_schema_extract.word, '"', '') ELSE '' END AS schemaInfoFromLocation
+    FROM db_table_field
+    LEFT JOIN project ON project.id = db_table_field.fk_project_id
+    LEFT JOIN client ON client.id = project.fk_client_id
+    LEFT JOIN db_table_cte db_table ON db_table.id = db_table_field.fk_db_table_id
+    LEFT JOIN split location_schema_extract ON location_schema_extract.id = db_table.id AND location_schema_extract.seq=2
+    ;
+        ]]>
+		</createView>		
+		<comment>
+		<![CDATA[
+		Quote fields with mixed lower and upper.
+		Used objects:
+			v_db_table_field_SearchInterface
+		Phabricator tasks:
+			T303
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

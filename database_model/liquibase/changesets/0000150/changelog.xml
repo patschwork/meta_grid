@@ -1,0 +1,704 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000150/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000150" context="postgreql_compatible">
+
+		<createView replaceIfExists="true" viewName="v_keyfigure_SearchInterface">
+        <![CDATA[
+		SELECT
+            keyfigure.id
+            ,COALESCE(CAST(keyfigure.uuid AS varchar(100)), '') AS uuid
+            ,keyfigure.fk_object_type_id
+            ,project.fk_client_id
+            ,COALESCE(project.name, '') AS project_name
+            ,COALESCE(client.name, '') AS client_name
+            ,keyfigure.fk_project_id
+            ,COALESCE(keyfigure.name, '') AS name
+            ,COALESCE(keyfigure.description, '') AS description
+            ,COALESCE(keyfigure.formula, '') AS formula
+            ,COALESCE(keyfigure.aggregation, '') AS aggregation
+            ,COALESCE(keyfigure.character, '') AS character
+            ,COALESCE(keyfigure.type, '') AS type
+            ,COALESCE(keyfigure.unit, '') AS unit
+            ,COALESCE(keyfigure.value_range, '') AS value_range
+            ,keyfigure.cumulation_possible
+            ,keyfigure.fk_deleted_status_id
+            ,keyfigure.fk_object_persistence_method_id
+            ,keyfigure.fk_datamanagement_process_id
+            ,COALESCE(keyfigure.source_definition, '') AS source_definition
+            ,COALESCE(keyfigure.source_definition_language, '') AS source_definition_language
+            ,COALESCE(keyfigure.source_comment, '') AS source_comment
+        FROM keyfigure
+        LEFT JOIN project ON project.id = keyfigure.fk_project_id
+        LEFT JOIN client ON client.id = project.fk_client_id
+		;
+        ]]>
+		</createView>			
+		
+		<createView replaceIfExists="true" viewName="v_object_type_SearchInterface">
+        <![CDATA[
+		SELECT
+            object_type.id
+            ,COALESCE(CAST(object_type.uuid AS varchar(100)), '') AS uuid
+            ,COALESCE(object_type.name, '') AS name
+        FROM object_type
+		;
+        ]]>
+		</createView>			
+
+		<createView replaceIfExists="true" viewName="v_client_SearchInterface">
+        <![CDATA[
+		SELECT
+            client.id
+            ,COALESCE(CAST(client.uuid AS varchar(100)), '') AS uuid
+            ,COALESCE(client.name, '') AS name
+            ,COALESCE(client.description, '') AS description
+            ,client.fk_object_persistence_method_id
+            ,client.fk_datamanagement_process_id
+        FROM client
+		;
+        ]]>
+		</createView>				
+
+		<createView replaceIfExists="true" viewName="v_project_SearchInterface">
+        <![CDATA[
+		SELECT
+            project.id
+            ,COALESCE(CAST(project.uuid AS varchar(100)), '') AS uuid
+            ,project.fk_client_id
+            ,COALESCE(project.name, '') AS name
+            ,COALESCE(project.description, '') AS description
+            ,project.fk_object_persistence_method_id
+            ,project.fk_datamanagement_process_id
+        FROM project
+		;
+        ]]>
+		</createView>					
+
+		<createView replaceIfExists="true" viewName="v_sourcesystem_SearchInterface">
+        <![CDATA[
+		SELECT
+            sourcesystem.id
+            ,COALESCE(CAST(sourcesystem.uuid AS varchar(100)), '') AS uuid
+            ,sourcesystem.fk_object_type_id
+            ,project.fk_client_id
+            ,COALESCE(project.name, '') AS project_name
+            ,COALESCE(client.name, '') AS client_name
+            ,sourcesystem.fk_project_id
+            ,COALESCE(sourcesystem.name, '') AS name
+            ,COALESCE(sourcesystem.description, '') AS description
+            ,sourcesystem.fk_contact_group_id_as_supporter
+            ,sourcesystem.fk_deleted_status_id
+            ,sourcesystem.fk_object_persistence_method_id
+            ,sourcesystem.fk_datamanagement_process_id
+        FROM sourcesystem
+        LEFT JOIN project ON project.id = sourcesystem.fk_project_id
+        LEFT JOIN client ON client.id = project.fk_client_id
+		;
+        ]]>
+		</createView>						
+
+		<createView replaceIfExists="true" viewName="v_data_delivery_object_SearchInterface">
+        <![CDATA[
+		SELECT
+            data_delivery_object.id
+            ,COALESCE(CAST(data_delivery_object.uuid AS varchar(100)), '') AS uuid
+            ,data_delivery_object.fk_object_type_id
+            ,project.fk_client_id
+            ,COALESCE(project.name, '') AS project_name
+            ,COALESCE(client.name, '') AS client_name
+            ,data_delivery_object.fk_project_id
+            ,COALESCE(data_delivery_object.name, '') AS name
+            ,COALESCE(data_delivery_object.description, '') AS description
+            ,data_delivery_object.fk_tool_id
+            ,data_delivery_object.fk_data_delivery_type_id
+            ,data_delivery_object.fk_contact_group_id_as_data_owner
+            ,data_delivery_object.fk_deleted_status_id
+            ,data_delivery_object.fk_object_persistence_method_id
+            ,data_delivery_object.fk_datamanagement_process_id
+            ,COALESCE(data_delivery_object.source_definition, '') AS source_definition
+            ,COALESCE(data_delivery_object.source_comment, '') AS source_comment
+        FROM data_delivery_object
+        LEFT JOIN project ON project.id = data_delivery_object.fk_project_id
+        LEFT JOIN client ON client.id = project.fk_client_id
+		;
+        ]]>
+		</createView>							
+
+		<createView replaceIfExists="true" viewName="v_map_object_2_object_SearchInterface">
+        <![CDATA[
+		SELECT
+            map_object_2_object.id
+            ,COALESCE(CAST(map_object_2_object.uuid AS varchar(100)), '') AS uuid
+            ,map_object_2_object.fk_mapping_qualifier_id
+            ,map_object_2_object.ref_fk_object_id_1
+            ,map_object_2_object.ref_fk_object_type_id_1
+            ,map_object_2_object.ref_fk_object_id_2
+            ,map_object_2_object.ref_fk_object_type_id_2
+            ,map_object_2_object.fk_object_persistence_method_id
+            ,map_object_2_object.fk_datamanagement_process_id
+        FROM map_object_2_object
+		;
+        ]]>
+		</createView>							
+
+		<createView replaceIfExists="true" viewName="v_tool_SearchInterface">
+        <![CDATA[
+        SELECT
+            tool.id
+            ,COALESCE(CAST(tool.uuid AS varchar(100)), '') AS uuid
+            ,tool.fk_tool_type_id
+            ,COALESCE(tool.tool_name, '') AS tool_name
+            ,COALESCE(tool.vendor, '') AS vendor
+            ,COALESCE(tool.version, '') AS version
+            ,COALESCE(tool.comment, '') AS comment
+            ,tool.fk_object_persistence_method_id
+            ,tool.fk_datamanagement_process_id
+        FROM tool
+        ;
+        ]]>
+		</createView>							
+
+		<createView replaceIfExists="true" viewName="v_object_depends_on_SearchInterface">
+        <![CDATA[
+        SELECT
+            object_depends_on.id
+            ,COALESCE(CAST(object_depends_on.uuid AS varchar(100)), '') AS uuid
+            ,object_depends_on.ref_fk_object_id_parent
+            ,object_depends_on.ref_fk_object_type_id_parent
+            ,object_depends_on.ref_fk_object_id_child
+            ,object_depends_on.ref_fk_object_type_id_child
+            ,object_depends_on.fk_object_persistence_method_id
+            ,object_depends_on.fk_datamanagement_process_id
+        FROM object_depends_on
+        ;
+        ]]>
+		</createView>							
+
+		<createView replaceIfExists="true" viewName="v_attribute_SearchInterface">
+        <![CDATA[
+        SELECT
+            attribute.id
+            ,COALESCE(CAST(attribute.uuid AS varchar(100)), '') AS uuid
+            ,attribute.fk_object_type_id
+            ,project.fk_client_id
+            ,COALESCE(project.name, '') AS project_name
+            ,COALESCE(client.name, '') AS client_name
+            ,attribute.fk_project_id
+            ,COALESCE(attribute.name, '') AS name
+            ,COALESCE(attribute.description, '') AS description
+            ,COALESCE(attribute.formula, '') AS formula
+            ,attribute.fk_object_persistence_method_id
+            ,attribute.fk_datamanagement_process_id
+        FROM attribute
+        LEFT JOIN project ON project.id = attribute.fk_project_id
+        LEFT JOIN client ON client.id = project.fk_client_id
+        ;
+        ]]>
+		</createView>							
+
+		<createView replaceIfExists="true" viewName="v_tool_type_SearchInterface">
+        <![CDATA[
+        SELECT
+            tool_type.id
+            ,COALESCE(CAST(tool_type.uuid AS varchar(100)), '') AS uuid
+            ,COALESCE(tool_type.name, '') AS name
+            ,COALESCE(tool_type.description, '') AS description
+            ,tool_type.fk_object_persistence_method_id
+            ,tool_type.fk_datamanagement_process_id
+        FROM tool_type
+        ;
+        ]]>
+		</createView>							
+
+		<createView replaceIfExists="true" viewName="v_db_table_context_SearchInterface">
+        <![CDATA[
+        SELECT
+            db_table_context.id
+            ,COALESCE(CAST(db_table_context.uuid AS varchar(100)), '') AS uuid
+            ,db_table_context.fk_object_type_id
+            ,project.fk_client_id
+            ,COALESCE(project.name, '') AS project_name
+            ,COALESCE(client.name, '') AS client_name
+            ,db_table_context.fk_project_id
+            ,COALESCE(db_table_context.name, '') AS name
+            ,COALESCE(db_table_context.description, '') AS description
+            ,COALESCE(db_table_context.prefix, '') AS prefix
+            ,db_table_context.fk_object_persistence_method_id
+            ,db_table_context.fk_datamanagement_process_id
+        FROM db_table_context
+        LEFT JOIN project ON project.id = db_table_context.fk_project_id
+        LEFT JOIN client ON client.id = project.fk_client_id
+        ;
+        ]]>
+		</createView>							
+
+		<createView replaceIfExists="true" viewName="v_db_database_SearchInterface">
+        <![CDATA[
+        SELECT
+            db_database.id
+            ,COALESCE(CAST(db_database.uuid AS varchar(100)), '') AS uuid
+            ,db_database.fk_object_type_id
+            ,project.fk_client_id
+            ,COALESCE(project.name, '') AS project_name
+            ,COALESCE(client.name, '') AS client_name
+            ,db_database.fk_project_id
+            ,COALESCE(db_database.name, '') AS name
+            ,COALESCE(db_database.description, '') AS description
+            ,db_database.fk_tool_id
+            ,db_database.fk_deleted_status_id
+            ,db_database.fk_object_persistence_method_id
+            ,db_database.fk_datamanagement_process_id
+            ,COALESCE(db_database.source_definition, '') AS source_definition
+            ,COALESCE(db_database.source_definition_language, '') AS source_definition_language
+            ,COALESCE(db_database.source_comment, '') AS source_comment
+        FROM db_database
+        LEFT JOIN project ON project.id = db_database.fk_project_id
+        LEFT JOIN client ON client.id = project.fk_client_id
+        ;
+        ]]>
+		</createView>							
+
+		<createView replaceIfExists="true" viewName="v_scheduling_SearchInterface">
+        <![CDATA[
+        SELECT
+            scheduling.id
+            ,COALESCE(CAST(scheduling.uuid AS varchar(100)), '') AS uuid
+            ,scheduling.fk_object_type_id
+            ,project.fk_client_id
+            ,COALESCE(project.name, '') AS project_name
+            ,COALESCE(client.name, '') AS client_name
+            ,scheduling.fk_project_id
+            ,COALESCE(scheduling.name, '') AS name
+            ,COALESCE(scheduling.description, '') AS description
+            ,scheduling.fk_tool_id
+            ,COALESCE(scheduling.scheduling_series, '') AS scheduling_series
+            ,scheduling.fk_deleted_status_id
+            ,scheduling.fk_object_persistence_method_id
+            ,scheduling.fk_datamanagement_process_id
+            ,COALESCE(scheduling.source_definition, '') AS source_definition
+            ,COALESCE(scheduling.source_definition_language, '') AS source_definition_language
+            ,COALESCE(scheduling.source_comment, '') AS source_comment
+        FROM scheduling
+        LEFT JOIN project ON project.id = scheduling.fk_project_id
+        LEFT JOIN client ON client.id = project.fk_client_id
+        ;
+        ]]>
+		</createView>							
+
+		<createView replaceIfExists="true" viewName="v_parameter_SearchInterface">
+        <![CDATA[
+        SELECT
+            parameter.id
+            ,COALESCE(CAST(parameter.uuid AS varchar(100)), '') AS uuid
+            ,parameter.fk_object_type_id
+            ,project.fk_client_id
+            ,COALESCE(project.name, '') AS project_name
+            ,COALESCE(client.name, '') AS client_name
+            ,parameter.fk_project_id
+            ,COALESCE(parameter.name, '') AS name
+            ,COALESCE(parameter.description, '') AS description
+            ,parameter.is_optional
+            ,COALESCE(parameter.default_value, '') AS default_value
+            ,COALESCE(parameter.datatype, '') AS datatype
+            ,COALESCE(parameter.range, '') AS range
+            ,parameter.fk_deleted_status_id
+            ,parameter.fk_object_persistence_method_id
+            ,parameter.fk_datamanagement_process_id
+            ,COALESCE(parameter.source_definition, '') AS source_definition
+            ,COALESCE(parameter.source_definition_language, '') AS source_definition_language
+            ,COALESCE(parameter.source_comment, '') AS source_comment
+        FROM parameter
+        LEFT JOIN project ON project.id = parameter.fk_project_id
+        LEFT JOIN client ON client.id = project.fk_client_id
+        ;
+        ]]>
+		</createView>							
+
+		<createView replaceIfExists="true" viewName="v_db_table_type_SearchInterface">
+        <![CDATA[
+        SELECT
+            db_table_type.id
+            ,COALESCE(CAST(db_table_type.uuid AS varchar(100)), '') AS uuid
+            ,COALESCE(db_table_type.name, '') AS name
+            ,COALESCE(db_table_type.description, '') AS description
+            ,db_table_type.fk_object_persistence_method_id
+            ,db_table_type.fk_datamanagement_process_id
+            ,COALESCE(db_table_type.source_definition_language, '') AS source_definition_language
+        FROM db_table_type
+        ;
+        ]]>
+		</createView>							
+
+		<createView replaceIfExists="true" viewName="v_object_comment_SearchInterface">
+        <![CDATA[
+        SELECT
+            object_comment.id
+            ,COALESCE(CAST(object_comment.uuid AS varchar(100)), '') AS uuid
+            ,object_comment.fk_object_type_id
+            ,object_comment.ref_fk_object_id
+            ,object_comment.ref_fk_object_type_id
+            ,COALESCE(object_comment.comment, '') AS comment
+            ,COALESCE(object_comment.created_at_datetime, '') AS created_at_datetime
+            ,object_comment.fk_object_persistence_method_id
+            ,object_comment.fk_datamanagement_process_id
+        FROM object_comment
+        ;
+        ]]>
+		</createView>							
+
+		<createView replaceIfExists="true" viewName="v_glossary_SearchInterface">
+        <![CDATA[
+        SELECT
+            glossary.id
+            ,COALESCE(CAST(glossary.uuid AS varchar(100)), '') AS uuid
+            ,glossary.fk_object_type_id
+            ,project.fk_client_id
+            ,COALESCE(project.name, '') AS project_name
+            ,COALESCE(client.name, '') AS client_name
+            ,glossary.fk_project_id
+            ,COALESCE(glossary.name, '') AS name
+            ,COALESCE(glossary.description, '') AS description
+            ,glossary.fk_object_persistence_method_id
+            ,glossary.fk_datamanagement_process_id
+        FROM glossary
+        LEFT JOIN project ON project.id = glossary.fk_project_id
+        LEFT JOIN client ON client.id = project.fk_client_id
+        ;
+        ]]>
+		</createView>							
+
+		<createView replaceIfExists="true" viewName="v_data_delivery_type_SearchInterface">
+        <![CDATA[
+        SELECT
+            data_delivery_type.id
+            ,COALESCE(CAST(data_delivery_type.uuid AS varchar(100)), '') AS uuid
+            ,COALESCE(data_delivery_type.name, '') AS name
+            ,COALESCE(data_delivery_type.description, '') AS description
+            ,data_delivery_type.fk_object_persistence_method_id
+            ,data_delivery_type.fk_datamanagement_process_id
+            ,COALESCE(data_delivery_type.source_definition_language, '') AS source_definition_language
+        FROM data_delivery_type
+        ;
+        ]]>
+		</createView>							
+
+		<createView replaceIfExists="true" viewName="v_data_transfer_process_SearchInterface">
+        <![CDATA[
+        SELECT
+            data_transfer_process.id
+            ,COALESCE(CAST(data_transfer_process.uuid AS varchar(100)), '') AS uuid
+            ,data_transfer_process.fk_object_type_id
+            ,project.fk_client_id
+            ,COALESCE(project.name, '') AS project_name
+            ,COALESCE(client.name, '') AS client_name
+            ,data_transfer_process.fk_project_id
+            ,COALESCE(data_transfer_process.name, '') AS name
+            ,COALESCE(data_transfer_process.description, '') AS description
+            ,data_transfer_process.fk_data_transfer_type_id
+            ,COALESCE(data_transfer_process.location, '') AS location
+            ,COALESCE(data_transfer_process.source_internal_object_id, '') AS source_internal_object_id
+            ,data_transfer_process.fk_deleted_status_id
+            ,data_transfer_process.fk_object_persistence_method_id
+            ,data_transfer_process.fk_datamanagement_process_id
+            ,COALESCE(data_transfer_process.source_definition, '') AS source_definition
+            ,COALESCE(data_transfer_process.source_comment, '') AS source_comment
+        FROM data_transfer_process
+        LEFT JOIN project ON project.id = data_transfer_process.fk_project_id
+        LEFT JOIN client ON client.id = project.fk_client_id
+        ;
+        ]]>
+		</createView>							
+
+		<createView replaceIfExists="true" viewName="v_data_transfer_type_SearchInterface">
+        <![CDATA[
+        SELECT
+            data_transfer_type.id
+            ,COALESCE(CAST(data_transfer_type.uuid AS varchar(100)), '') AS uuid
+            ,COALESCE(data_transfer_type.name, '') AS name
+            ,COALESCE(data_transfer_type.description, '') AS description
+            ,data_transfer_type.fk_object_persistence_method_id
+            ,data_transfer_type.fk_datamanagement_process_id
+            ,COALESCE(data_transfer_type.source_definition_language, '') AS source_definition_language
+        FROM data_transfer_type
+        ;
+        ]]>
+		</createView>							
+
+		<createView replaceIfExists="true" viewName="v_contact_group_SearchInterface">
+        <![CDATA[
+        SELECT
+            contact_group.id
+            ,COALESCE(CAST(contact_group.uuid AS varchar(100)), '') AS uuid
+            ,contact_group.fk_object_type_id
+            ,contact_group.fk_client_id
+            ,COALESCE(contact_group.name, '') AS name
+            ,COALESCE(contact_group.description, '') AS description
+            ,COALESCE(contact_group.short_name, '') AS short_name
+            ,contact_group.fk_deleted_status_id
+            ,contact_group.fk_object_persistence_method_id
+            ,contact_group.fk_datamanagement_process_id
+        FROM contact_group
+        ;
+        ]]>
+		</createView>							
+
+		<createView replaceIfExists="true" viewName="v_contact_SearchInterface">
+        <![CDATA[
+        SELECT
+            contact.id
+            ,COALESCE(CAST(contact.uuid AS varchar(100)), '') AS uuid
+            ,contact.fk_object_type_id
+            ,contact.fk_contact_group_id
+            ,contact.fk_client_id
+            ,COALESCE(contact.givenname, '') AS givenname
+            ,COALESCE(contact.surname, '') AS surname
+            ,COALESCE(contact.email, '') AS email
+            ,COALESCE(contact.phone, '') AS phone
+            ,COALESCE(contact.mobile, '') AS mobile
+            ,COALESCE(contact.ldap_cn, '') AS ldap_cn
+            ,COALESCE(contact.description, '') AS description
+            ,contact.fk_deleted_status_id
+            ,contact.fk_object_persistence_method_id
+            ,contact.fk_datamanagement_process_id
+        FROM contact
+        ;
+        ]]>
+		</createView>							
+
+		<createView replaceIfExists="true" viewName="v_url_SearchInterface">
+        <![CDATA[
+        SELECT
+            url.id
+            ,COALESCE(CAST(url.uuid AS varchar(100)), '') AS uuid
+            ,url.fk_object_type_id
+            ,project.fk_client_id
+            ,COALESCE(project.name, '') AS project_name
+            ,COALESCE(client.name, '') AS client_name
+            ,url.fk_project_id
+            ,COALESCE(url.name, '') AS name
+            ,COALESCE(url.description, '') AS description
+            ,COALESCE(url.url, '') AS url
+            ,url.fk_object_persistence_method_id
+            ,url.fk_datamanagement_process_id
+        FROM url
+        LEFT JOIN project ON project.id = url.fk_project_id
+        LEFT JOIN client ON client.id = project.fk_client_id
+        ;
+        ]]>
+		</createView>							
+
+		<createView replaceIfExists="true" viewName="v_object_persistence_method_SearchInterface">
+        <![CDATA[
+        SELECT
+            object_persistence_method.id
+            ,COALESCE(CAST(object_persistence_method.uuid AS varchar(100)), '') AS uuid
+            ,object_persistence_method.fk_object_type_id
+            ,COALESCE(object_persistence_method.name, '') AS name
+            ,COALESCE(object_persistence_method.description, '') AS description
+        FROM object_persistence_method
+        ;
+        ]]>
+		</createView>							
+
+		<createView replaceIfExists="true" viewName="v_datamanagement_process_SearchInterface">
+        <![CDATA[
+        SELECT
+            datamanagement_process.id
+            ,COALESCE(CAST(datamanagement_process.uuid AS varchar(100)), '') AS uuid
+            ,datamanagement_process.fk_object_type_id
+            ,COALESCE(datamanagement_process.name, '') AS name
+            ,COALESCE(datamanagement_process.description, '') AS description
+            ,COALESCE(datamanagement_process.tool, '') AS tool
+            ,COALESCE(datamanagement_process.tool_version, '') AS tool_version
+            ,COALESCE(datamanagement_process.routine, '') AS routine
+        FROM datamanagement_process
+        ;
+        ]]>
+		</createView>							
+
+		<createView replaceIfExists="true" viewName="v_bracket_SearchInterface">
+        <![CDATA[
+        SELECT
+            bracket.id
+            ,COALESCE(CAST(bracket.uuid AS varchar(100)), '') AS uuid
+            ,bracket.fk_object_type_id
+            ,project.fk_client_id
+            ,COALESCE(project.name, '') AS project_name
+            ,COALESCE(client.name, '') AS client_name
+            ,bracket.fk_project_id
+            ,COALESCE(bracket.name, '') AS name
+            ,COALESCE(bracket.description, '') AS description
+            ,bracket.fk_attribute_id
+            ,bracket."fk_object_type_id_as_searchFilter"
+            ,bracket.fk_object_persistence_method_id
+            ,bracket.fk_datamanagement_process_id
+        FROM bracket
+        LEFT JOIN project ON project.id = bracket.fk_project_id
+        LEFT JOIN client ON client.id = project.fk_client_id
+        ;
+        ]]>
+		</createView>							
+
+		<createView replaceIfExists="true" viewName="v_db_table_field_SearchInterface">
+        <![CDATA[
+        WITH RECURSIVE split(seq, word, str, id, fk_project_id, location) AS (
+            SELECT 0, '.', location||'.',id,fk_project_id,location
+            FROM db_table_cte 
+            WHERE 1=1 
+            AND location LIKE '%.%.%'
+            UNION ALL SELECT
+                seq+1,
+                substr(str, 0, instr(str, '.')),
+                substr(str, instr(str, '.')+1),
+                id,
+                fk_project_id,
+                location
+            FROM split WHERE str != ''
+        )
+        ,db_table_cte AS 
+        (
+            SELECT * FROM db_table
+        )
+        SELECT
+            db_table_field.id
+            ,COALESCE(CAST(db_table_field.uuid AS varchar(100)), '') AS uuid
+            ,db_table_field.fk_object_type_id
+            ,project.fk_client_id
+            ,COALESCE(project.name, '') AS project_name
+            ,COALESCE(client.name, '') AS client_name
+            ,db_table_field.fk_project_id
+            ,COALESCE(db_table_field.name, '') AS name
+            ,COALESCE(db_table_field.description, '') AS description
+            ,db_table_field.fk_db_table_id
+            ,COALESCE(db_table_field.datatype, '') AS datatype
+            ,COALESCE(db_table_field.bulk_load_checksum, '') AS bulk_load_checksum
+            ,db_table_field.fk_deleted_status_id
+            ,db_table_field."is_PrimaryKey"
+            ,db_table_field."is_BusinessKey"
+            ,db_table_field."is_GDPR_relevant"
+            ,db_table_field.fk_object_persistence_method_id
+            ,db_table_field.fk_datamanagement_process_id
+            ,COALESCE(db_table_field.source_definition, '') AS source_definition
+            ,COALESCE(db_table_field.source_comment, '') AS source_comment
+            ,CASE WHEN (LENGTH(db_table.location) - LENGTH(REPLACE(db_table.location, '"."', ''))) / LENGTH('"."')>=2 THEN REPLACE(SUBSTR(db_table.location ,1, INSTR(db_table.location,'.')-1),'"','') ELSE '' END AS databaseInfoFromLocation
+            ,CASE WHEN (LENGTH(db_table.location) - LENGTH(REPLACE(db_table.location, '"."', ''))) / LENGTH('"."')>=2 THEN REPLACE(location_schema_extract.word, '"', '') ELSE '' END AS schemaInfoFromLocation
+        FROM db_table_field
+        LEFT JOIN project ON project.id = db_table_field.fk_project_id
+        LEFT JOIN client ON client.id = project.fk_client_id
+        LEFT JOIN db_table_cte db_table ON db_table.id = db_table_field.fk_db_table_id
+        LEFT JOIN split location_schema_extract ON location_schema_extract.id = db_table.id AND location_schema_extract.seq=2
+        ;
+        ]]>
+		</createView>							
+
+		<createView replaceIfExists="true" viewName="v_bracket_searchPattern_SearchInterface">
+        <![CDATA[
+        SELECT
+            bsp.id
+            ,COALESCE(CAST(bsp.uuid AS varchar(100)), '') AS uuid
+            ,bsp.fk_object_type_id
+            ,bsp.fk_bracket_id
+            ,COALESCE(bsp."searchPattern", '') AS "searchPattern"
+            ,bsp.fk_object_persistence_method_id
+            ,bsp.fk_datamanagement_process_id
+        FROM "bracket_searchPattern" bsp
+        ;
+        ]]>
+		</createView>							
+
+		<createView replaceIfExists="true" viewName="v_db_table_SearchInterface">
+        <![CDATA[
+        WITH RECURSIVE split(seq, word, str, id, fk_project_id, location) AS (
+            SELECT 0, '.', location||'.',id,fk_project_id,location
+            FROM db_table_cte 
+            WHERE 1=1 
+            AND location LIKE '%.%.%'
+            UNION ALL SELECT
+                seq+1,
+                substr(str, 0, instr(str, '.')),
+                substr(str, instr(str, '.')+1),
+                id,
+                fk_project_id,
+                location
+            FROM split WHERE str != ''
+        )
+        ,db_table_cte AS 
+        (
+            SELECT * FROM db_table
+        )
+        SELECT
+            db_table.id
+            ,COALESCE(CAST(db_table.uuid AS varchar(100)), '') AS uuid
+            ,db_table.fk_object_type_id
+            ,project.fk_client_id
+            ,COALESCE(project.name, '') AS project_name
+            ,COALESCE(client.name, '') AS client_name
+            ,db_table.fk_project_id
+            ,COALESCE(db_table.name, '') AS name
+            ,COALESCE(db_table.description, '') AS description
+            ,COALESCE(db_table.location, '') AS location
+            ,db_table.fk_db_table_context_id
+            ,db_table.fk_db_table_type_id
+            ,db_table.fk_deleted_status_id
+            ,db_table.fk_object_persistence_method_id
+            ,db_table.fk_datamanagement_process_id
+            ,COALESCE(db_table.source_definition, '') AS source_definition
+            ,COALESCE(db_table.source_comment, '') AS source_comment
+            ,CASE WHEN (LENGTH(db_table.location) - LENGTH(REPLACE(db_table.location, '"."', ''))) / LENGTH('"."')>=2 THEN REPLACE(SUBSTR(db_table.location ,1, INSTR(db_table.location,'.')-1),'"','') ELSE '' END AS "databaseInfoFromLocation"
+            ,CASE WHEN (LENGTH(db_table.location) - LENGTH(REPLACE(db_table.location, '"."', ''))) / LENGTH('"."')>=2 THEN REPLACE(location_schema_extract.word, '"', '') ELSE '' END AS "schemaInfoFromLocation"
+        FROM db_table_cte db_table
+        LEFT JOIN project ON project.id = db_table.fk_project_id
+        LEFT JOIN client ON client.id = project.fk_client_id
+        LEFT JOIN split location_schema_extract ON location_schema_extract.id = db_table.id AND location_schema_extract.seq=2
+        ;
+        ]]>
+		</createView>
+		<comment>
+		<![CDATA[
+		CAST uuid fields.
+		Used objects:
+			v_keyfigure_SearchInterface
+			v_object_type_SearchInterface
+			v_client_SearchInterface
+			v_project_SearchInterface
+			v_sourcesystem_SearchInterface
+			v_data_delivery_object_SearchInterface
+			v_map_object_2_object_SearchInterface
+			v_tool_SearchInterface
+			v_object_depends_on_SearchInterface
+			v_attribute_SearchInterface
+			v_tool_type_SearchInterface
+			v_db_table_context_SearchInterface
+			v_db_database_SearchInterface
+			v_scheduling_SearchInterface
+			v_parameter_SearchInterface
+			v_db_table_type_SearchInterface
+			v_object_comment_SearchInterface
+			v_glossary_SearchInterface
+			v_data_delivery_type_SearchInterface
+			v_data_transfer_process_SearchInterface
+			v_data_transfer_type_SearchInterface
+			v_contact_group_SearchInterface
+			v_contact_SearchInterface
+			v_url_SearchInterface
+			v_object_persistence_method_SearchInterface
+			v_datamanagement_process_SearchInterface
+			v_bracket_SearchInterface
+			v_db_table_field_SearchInterface
+			v_bracket_searchPattern_SearchInterface
+			v_db_table_SearchInterface
+		Phabricator tasks:
+			T312
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

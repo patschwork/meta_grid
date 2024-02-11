@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000147/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000147" context="postgreql_compatible">
+
+		<createView replaceIfExists="true" viewName="v_import_stage_db_table_SearchInterface">
+        <![CDATA[
+        SELECT
+            import_stage_db_table.id
+            ,COALESCE(import_stage_db_table.client_name, '') AS client_name
+            ,COALESCE(import_stage_db_table.project_name, '') AS project_name
+            ,COALESCE(import_stage_db_table.db_table_name, '') AS db_table_name
+            ,COALESCE(import_stage_db_table.db_table_description, '') AS db_table_description
+            ,COALESCE(import_stage_db_table.db_table_field_name, '') AS db_table_field_name
+            ,COALESCE(import_stage_db_table.db_table_field_datatype, '') AS db_table_field_datatype
+            ,COALESCE(import_stage_db_table.db_table_field_description, '') AS db_table_field_description
+            ,COALESCE(import_stage_db_table.db_table_type_name, '') AS db_table_type_name
+            ,COALESCE(import_stage_db_table.db_table_context_name, '') AS db_table_context_name
+            ,COALESCE(import_stage_db_table.db_table_context_prefix, '') AS db_table_context_prefix
+            ,import_stage_db_table."isPrimaryKeyField"
+            ,import_stage_db_table."isForeignKeyField"
+            ,COALESCE(import_stage_db_table."foreignKey_table_name", '') AS foreignKey_table_name
+            ,COALESCE(import_stage_db_table."foreignKey_table_field_name", '') AS foreignKey_table_field_name
+            ,import_stage_db_table._import_state
+            ,import_stage_db_table._import_date
+            ,import_stage_db_table."is_BusinessKey"
+            ,import_stage_db_table."is_GDPR_relevant"
+            ,COALESCE(import_stage_db_table.location, '') AS location
+            ,COALESCE(import_stage_db_table.database_or_catalog, '') AS database_or_catalog
+            ,COALESCE(import_stage_db_table.schema, '') AS schema
+            ,project.fk_client_id
+            ,COALESCE(import_stage_db_table.fk_project_id, -1) AS fk_project_id
+            ,COALESCE(import_stage_db_table.fk_db_database_id, -1) AS fk_db_database_id
+            ,COALESCE(import_stage_db_table.column_default_value, '') AS column_default_value
+            ,import_stage_db_table.column_cant_be_null
+            ,COALESCE(import_stage_db_table.additional_field_1, '') AS additional_field_1
+            ,COALESCE(import_stage_db_table.additional_field_2, '') AS additional_field_2
+            ,COALESCE(import_stage_db_table.additional_field_3, '') AS additional_field_3
+            ,COALESCE(import_stage_db_table.additional_field_4, '') AS additional_field_4
+            ,COALESCE(import_stage_db_table.additional_field_5, '') AS additional_field_5
+            ,COALESCE(import_stage_db_table.additional_field_6, '') AS additional_field_6
+            ,COALESCE(import_stage_db_table.additional_field_7, '') AS additional_field_7
+            ,COALESCE(import_stage_db_table.additional_field_8, '') AS additional_field_8
+            ,COALESCE(import_stage_db_table.additional_field_9, '') AS additional_field_9
+        FROM import_stage_db_table
+        LEFT JOIN project ON project.id = import_stage_db_table.fk_project_id
+        LEFT JOIN client ON client.id = project.fk_client_id
+        ;
+        ]]>
+		</createView>		
+		<comment>
+		<![CDATA[
+		Quote fields with mixed lower and upper.
+		Used objects:
+			v_import_stage_db_table_SearchInterface
+		Phabricator tasks:
+			T303
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

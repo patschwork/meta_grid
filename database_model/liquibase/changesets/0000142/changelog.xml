@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000142/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000142" context="postgreql_compatible">
+
+		<createView replaceIfExists="true" viewName="v_bracket_SearchInterface">
+        <![CDATA[
+        SELECT
+            bracket.id
+            ,IFNULL(bracket.uuid, '') AS uuid
+            ,bracket.fk_object_type_id
+            ,project.fk_client_id
+            ,IFNULL(project.name, '') AS project_name
+            ,IFNULL(client.name, '') AS client_name
+            ,bracket.fk_project_id
+            ,IFNULL(bracket.name, '') AS name
+            ,IFNULL(bracket.description, '') AS description
+            ,bracket.fk_attribute_id
+            ,bracket."fk_object_type_id_as_searchFilter"
+            ,bracket.fk_object_persistence_method_id
+            ,bracket.fk_datamanagement_process_id
+        FROM bracket
+        LEFT JOIN project ON project.id = bracket.fk_project_id
+        LEFT JOIN client ON client.id = project.fk_client_id;
+        ]]>
+		</createView>		
+		<comment>
+		<![CDATA[
+		Quote fields with mixed lower and upper.
+		Used objects:
+			v_bracket_SearchInterface
+		Phabricator tasks:
+			T303
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

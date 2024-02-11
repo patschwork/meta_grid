@@ -151,7 +151,6 @@ base_lib.set_user_settings(ini_user_settings_path, "migration_sqlite_to_postgres
 
 
 # Change the working directory (where deploy.py is located)
-import os
 pathname_from_deploypy = os.path.dirname(os.path.abspath(result["location_deploy.py"]))
 os.chdir(pathname_from_deploypy)
 
@@ -162,6 +161,7 @@ dynConfigIni = os.path.join(folder_WorkingDir, lqb_ini_file)
 
 # abspath_db = base_lib.getFilePathRelativeScriptPath(os.path.dirname(folderfile_Database), os.path.basename(folderfile_Database))
 abs_folderfile_Fresh_LQB_Changelog = base_lib.getFilePathRelativeScriptPath(os.path.dirname(result["location_lqb_changelog"]), os.path.basename(result["location_lqb_changelog"]))
+pathname_from_LQB_Changelog = os.path.dirname(abs_folderfile_Fresh_LQB_Changelog)
 
 # Generate ini-file for the LiquiBase deployment
 try:
@@ -176,10 +176,9 @@ try:
                                           comment="Generated for SQLite to PostgreSQL migration",
                                           dbuser=result["pg_user"],
                                           dbpassword=result["pg_pwd"],
-                                          additional_liquibase_parameter=
-                                            {
-                                              'changesets_sqlite_to_postgres_path': os.path.join(abs_folderfile_Fresh_LQB_Changelog, 'changesets_sqlite_to_postgres')
-                                            }
+                                          additional_liquibase_parameter={
+                                              'changesets_sqlite_to_postgres_path': os.path.join(pathname_from_LQB_Changelog, 'changesets_sqlite_to_postgres')
+                                          }
                                           )
     bla(msg="Successful: Created config file for LiquiBase deployment (" + dynConfigIni + ")", action="OK", withLooging=False)
 except Exception as e:
