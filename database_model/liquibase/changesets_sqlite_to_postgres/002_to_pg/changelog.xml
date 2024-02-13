@@ -9,7 +9,7 @@
 
 	<changeSet author="patrick_schmitz" id="002_to_pg">
 		<executeCommand executable="python3"> 
-			<arg value="../../../database_model/liquibase/changesets_sqlite_to_postgres/002_to_pg/call.py"/>
+			<arg value="${changesets_sqlite_to_postgres_path}/002_to_pg/call.py"/>
 			<!-- <arg value="-c"/> -->
 			<!-- <arg value="import os; f = open(os.path.join('/tmp/test.txt'), 'w');  f.write(os.getcwd())"/> -->
 		</executeCommand>
