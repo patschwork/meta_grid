@@ -664,6 +664,53 @@ def is_user_admin():
     except AttributeError:
         raise AdminStateUnknownError
 
+def get_latest_databasechangelog_sqlite(database_file):
+    """
+    Gets the latest/newest changelog id from the table databasechangelog (SQLite)
+
+    Args:
+        database_file (string): Path to SQLite file
+        
+    Returns:
+        Latest ID as an integer
+    """
+    import sqlite3
+    conn = None
+    try:
+        conn = sqlite3.connect(database_file)
+    except Exception as e:
+        print(e)
+
+    cur = conn.cursor()
+    sql = f"""
+SELECT
+    ID,
+    CAST(SUBSTR(ID, (CASE WHEN LENGTH(ID)-5<0 THEN 1 ELSE LENGTH(ID)-5 END), LENGTH(ID)) AS INT) AS ID_integered,
+    AUTHOR,
+    FILENAME,
+    DATEEXECUTED,
+    ORDEREXECUTED,
+    EXECTYPE,
+    MD5SUM,
+    DESCRIPTION,
+    COMMENTS,
+    TAG,
+    LIQUIBASE,
+    CONTEXTS,
+    LABELS,
+    DEPLOYMENT_ID
+FROM
+    DATABASECHANGELOG
+ORDER BY
+    CAST(SUBSTR(ID, (CASE WHEN LENGTH(ID)-5<0 THEN 1 ELSE LENGTH(ID)-5 END), LENGTH(ID)) AS INT) DESC
+LIMIT 1
+    """
+    cur.execute(sql)
+    rows = cur.fetchall()
+    for row in rows:
+        return row[1]
+    return None
+
 class AdminStateUnknownError(Exception):
     """Cannot determine whether the user is an admin."""
     pass

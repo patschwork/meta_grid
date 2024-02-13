@@ -31,8 +31,11 @@ def inst_ubuntu():
         software_packages = "sudo apt-get install -y pgloader php-pgsql python3-pip"
         try:
             base_lib.bla(msg="- Install needed software packages via apt-get install", action="header")
+            base_lib.bla(msg="- Restart Apache2 webserver")
             base_lib.bla(msg=software_packages)
+            base_installations.check_call("sudo apt-get update".split(" "), stdout=open(os.devnull,'wb'))
             base_installations.check_call(software_packages.split(" "), stdout=open(os.devnull,'wb'))
+            base_installations.check_call("sudo service apache2 restart".split(" "), stdout=open(os.devnull,'wb'))
             return True
         except CalledProcessError as e:
             base_lib.bla(msg=e.output, action="error")
@@ -53,7 +56,14 @@ offer_pg_port = base_lib.get_user_settings(ini_user_settings_path, "current_inst
 offer_pg_dbname = base_lib.get_user_settings(ini_user_settings_path, "current_installation", 'postgresql_database', "metagrid")
 offer_location_lqb_changelog = base_lib.get_user_settings(ini_user_settings_path, "migration_sqlite_to_postgres", 'location_lqb_changelog', dirPath)
 offer_location_deploy_py = base_lib.get_user_settings(ini_user_settings_path, "migration_sqlite_to_postgres", 'location_deploy_py', dirPath)
+offer_pgloader_bin = base_lib.get_user_settings(ini_user_settings_path, "migration_sqlite_to_postgres", 'pgloader_bin', "pgloader")
 already_done = base_lib.get_user_settings(ini_user_settings_path, "migration_sqlite_to_postgres", 'migration_done', "-No-")
+
+
+
+
+
+
 
 if already_done=='Yes':
     bla(msg='Migration SQLite to PostgreSQL was already done!', action="error")
@@ -71,6 +81,8 @@ questions = [
     {"type": "filepath", "message": "Location for db.changelog-sqlite_to_postgres.xml:", "name": "location_lqb_changelog", "default": offer_location_lqb_changelog, "validate": PathValidator(is_file=True, message="Input is not a file"), "only_files": False},
     {"type": "filepath", "message": "Location for deploy.py:", "name": "location_deploy.py", "default": offer_location_deploy_py, "validate": PathValidator(is_file=True, message="Input is not a file"), "only_files": False},
 ]
+
+
 result = prompt(questions)
 
 if not os.path.isfile(result["location_lqb_changelog"]):
@@ -117,9 +129,36 @@ result2 = prompt(questions)
 if not result2["ready"]:
     sys.exit(0)
 
+
+# write back to install_settings.ini
+base_lib.set_user_settings(ini_user_settings_path, "current_installation", 'postgresql_user', result["pg_user"])
+base_lib.set_user_settings(ini_user_settings_path, "current_installation", 'postgresql_password', result["pg_pwd"])
+base_lib.set_user_settings(ini_user_settings_path, "current_installation", 'postgresql_host', result["pg_hostname"])
+base_lib.set_user_settings(ini_user_settings_path, "current_installation", 'postgresql_port', result["pg_port"])
+base_lib.set_user_settings(ini_user_settings_path, "current_installation", 'postgresql_database', result["pg_dbname"])
+base_lib.set_user_settings(ini_user_settings_path, "migration_sqlite_to_postgres", 'location_lqb_changelog', result["location_lqb_changelog"])
+base_lib.set_user_settings(ini_user_settings_path, "migration_sqlite_to_postgres", 'location_deploy_py', result["location_deploy.py"])
+
+
 if ioc[0]=="ubuntu":
     if inst_ubuntu():
         pass
+
+# Check for pgloader
+pgloader_bin = offer_pgloader_bin
+if base_lib.checkIfToolIsExecutable(offer_pgloader_bin+"x"):
+    bla("Everything OK: pgloader found!", action="OK")
+    bla("Please make sure, you are using pgloader version 3.6.9 or newer:", action="warning")
+    base_installations.check_call("pgloader --version".split(" "))
+else:
+    bla("pgloader not found!", action="NOK")
+    
+    questions = [
+        {"type": "input", "message": "Location or executable for pgloader:", "name": "pgloader_bin", "default": offer_pgloader_bin},
+    ]
+    result3 = prompt(questions)
+    pgloader_bin = result3["pgloader_bin"]
+    base_lib.set_user_settings(ini_user_settings_path, "migration_sqlite_to_postgres", 'pgloader_bin', pgloader_bin)
 
 
 folder_WorkingDir = dirPath
@@ -138,16 +177,16 @@ os.environ["METAGRID_POSTGRESQL_HOST"]=result["pg_hostname"]
 os.environ["METAGRID_POSTGRESQL_PORT"]=result["pg_port"]
 os.environ["METAGRID_POSTGRESQL_DATABASE"]=result["pg_dbname"]
 os.environ["METAGRID_SQLITE_PATH"]=folderfile_Database
+os.environ["PGLOADER_BIN"]=pgloader_bin
 
 
-# write back to install_settings.ini
-base_lib.set_user_settings(ini_user_settings_path, "current_installation", 'postgresql_user', result["pg_user"])
-base_lib.set_user_settings(ini_user_settings_path, "current_installation", 'postgresql_password', result["pg_pwd"])
-base_lib.set_user_settings(ini_user_settings_path, "current_installation", 'postgresql_host', result["pg_hostname"])
-base_lib.set_user_settings(ini_user_settings_path, "current_installation", 'postgresql_port', result["pg_port"])
-base_lib.set_user_settings(ini_user_settings_path, "current_installation", 'postgresql_database', result["pg_dbname"])
-base_lib.set_user_settings(ini_user_settings_path, "migration_sqlite_to_postgres", 'location_lqb_changelog', result["location_lqb_changelog"])
-base_lib.set_user_settings(ini_user_settings_path, "migration_sqlite_to_postgres", 'location_deploy_py', result["location_deploy.py"])
+latest_changelog_id_int=base_lib.get_latest_databasechangelog_sqlite(folderfile_Database)
+if latest_changelog_id_int>=151:
+    pass
+else:
+    bla(msg='Please update your existing installation. The SQLite database is not up-to-date!', action="error")
+    sys.exit(-1)
+
 
 
 # Change the working directory (where deploy.py is located)
@@ -178,7 +217,7 @@ try:
                                           dbpassword=result["pg_pwd"],
                                           additional_liquibase_parameter={
                                               'changesets_sqlite_to_postgres_path': os.path.join(pathname_from_LQB_Changelog, 'changesets_sqlite_to_postgres')
-                                          }
+                                            }
                                           )
     bla(msg="Successful: Created config file for LiquiBase deployment (" + dynConfigIni + ")", action="OK", withLooging=False)
 except Exception as e:
@@ -235,6 +274,9 @@ print(yii2_db_config_template)
 
 bla("...and commment or delete the settings for SQLite as in the example below:")
 print(yii2_db_config_old_settings_example)
+
+bla("If you are using data caching for Yii2, please reset your cache, otherwise it could lead to unforseen error messages.", action="warning")
+
 
 # Everything worked good
 base_lib.set_user_settings(ini_user_settings_path, "migration_sqlite_to_postgres", 'migration_done', "Yes")
