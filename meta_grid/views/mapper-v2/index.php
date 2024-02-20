@@ -74,7 +74,7 @@ echo $this->render('_search', ['model' =>$searchModel, 'from_model' => $from_mod
 		
 	    <?php
 		$dependency = new yii\caching\DbDependency();
-		$dependency->sql="SELECT max(log_datetime) FROM v_LastChangesLog_List";
+		$dependency->sql='SELECT max(log_datetime) FROM "v_LastChangesLog_List"';
 				
 		echo GridView::widget([
         'dataProvider' => $dataProvider,

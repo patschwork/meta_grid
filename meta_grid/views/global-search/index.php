@@ -32,7 +32,7 @@ $this->title = Yii::t('app', 'Search');
 echo $this->render('_search', ['model' =>$searchModel]);
 
 $dependency = new yii\caching\DbDependency();
-$dependency->sql="SELECT max(log_datetime) FROM v_LastChangesLog_List";
+$dependency->sql='SELECT max(log_datetime) FROM "v_LastChangesLog_List"';
 ?>
 	    <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -106,6 +106,14 @@ $dependency->sql="SELECT max(log_datetime) FROM v_LastChangesLog_List";
 				'label' => Yii::t('app', 'name'),
 				'value' => function($model) {
 					$value = $model->name;
+					if ($model->fk_deleted_status_id !== NULL)
+					{
+						if ($model->fk_deleted_status_id>0)
+						{
+							$value = '<del>'.'<span style="color:red;">'.$model->name.'</span>'.'</del>';
+							// .' '.'<sub>'.$model->deleted_status_name.'</sub>';
+						}
+					}
 					// $value = $model->name."<br>"."<small>".$model->detail_1_content."</small>";
 					if ($model->detail_1_content !== NULL)
 					{

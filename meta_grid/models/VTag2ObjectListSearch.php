@@ -43,7 +43,7 @@ class VTag2ObjectListSearch extends VTag2ObjectList
      */
     public function search($params)
     {
-        $dependency = new yii\caching\DbDependency();
+        $dependency = new \yii\caching\DbDependency();
         $dependency->sql="SELECT max(log_datetime) FROM map_object_2_tag_log";
 
         $query = VTag2ObjectList::find()->cache(NULL, $dependency);        

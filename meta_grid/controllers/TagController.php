@@ -381,6 +381,7 @@ class TagController extends \app\controllers\base\TagController
 	*/
 	protected function existsModelTag($id)
 	{
+		if (intval($id)==0) return false; // Bugfix T316
 		$model=Tag::find()->where(['id' => $id])->one();
 
 		if (!empty($model->id))

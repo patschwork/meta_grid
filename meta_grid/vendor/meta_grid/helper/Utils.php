@@ -49,15 +49,15 @@ class Utils
         if ($key=="dbtablefield_time_limit") $default_value=2000;
         if ($key=="dbtablefield_memory_limit") $default_value=1024;
 
-        $res_arr = ((new Query())->from('app_config')->select(['valueSTRING', 'valueINT'])->where(["key" => $key])->one());      
+        $res_arr = ((new Query())->select(['v_str'=>'valueSTRING', 'v_int'=>'valueINT'])->from('app_config')->where(["key" => $key])->one());
 
         if (! $res_arr)
         {
             return $default_value;
         }
 
-        $valueSTRING = $res_arr['valueSTRING'];
-        $valueINT = $res_arr['valueINT'];
+        $valueSTRING = $res_arr['v_str'];
+        $valueINT = $res_arr['v_int'];
 
         if ((is_null($valueSTRING) ||  $valueSTRING === "" || empty($valueSTRING)) && (is_null($valueINT)))
         {
