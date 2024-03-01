@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+		 logicalFilePath="024_to_pg/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="024_to_pg">
+
+        <sql dbms="postgresql">
+		<![CDATA[
+        SELECT remove_trigger();
+        ]]>
+		</sql>		
+		<comment>
+		<![CDATA[
+	    Run function to remove all existing log table triggers.
+		Phabricator tasks:
+			T323
+		]]>
+		</comment>
+	</changeSet>
+</databaseChangeLog>

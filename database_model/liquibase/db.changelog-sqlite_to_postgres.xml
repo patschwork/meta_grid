@@ -25,4 +25,13 @@
   <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/017_to_pg/changelog.xml"/>  <!-- REPLACE FUNCTION trig_func_do_cleanup_queue. -->
   <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/018_to_pg/changelog.xml"/>  <!-- Take over databasechangelog from SQLite (in uppercase) into PostgreSQL. -->
   <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/019_to_pg/changelog.xml"/>  <!-- DROP TABLES DATABASECHANGELOG* from SQLite (in uppercase). -->
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/020_to_pg/changelog.xml"/>  <!-- CREATE TABLE trigger_errors -->
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/021_to_pg/changelog.xml"/>  <!-- REPLACE FUNCTION trig_func_do_cleanup_queue. -->
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/022_to_pg/changelog.xml"/>  <!-- CREATE VIEW v_prepared_sql_for_log_trigger. CREATE FUNCTION trig_func_log_ins_upd_del. -->
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/023_to_pg/changelog.xml"/>  <!-- CREATE FUNCTION trig_func_log_upd_uuid. -->
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/024_to_pg/changelog.xml"/>  <!-- Run function to remove all existing log table triggers. -->
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/025_to_pg/changelog.xml"/>  <!-- CREATE FUNCTION dbdeploy_rollout_log_trigger. -->
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/026_to_pg/changelog.xml"/>  <!-- CREATE FUNCTION dbdeploy_remove_log_trigger. -->
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/027_to_pg/changelog.xml"/>  <!-- DROP and rename functions. -->
+  <include relativeToChangelogFile="true" file="changesets_sqlite_to_postgres/028_to_pg/changelog.xml"/>  <!-- DROP FUNCTION trig_func_log. -->
 </databaseChangeLog> 

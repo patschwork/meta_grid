@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+		 
+		 logicalFilePath="022_to_pg/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="022_to_pg">
+      <sqlFile dbms="postgresql"
+        encoding="UTF-8"
+        endDelimiter="\n;"
+        path="01_create_view_v_prepared_sql_for_log_trigger.sql"
+        relativeToChangelogFile="true"
+        splitStatements="true"
+        stripComments="false"/>	
+
+      <sqlFile dbms="postgresql"
+        encoding="UTF-8"
+        endDelimiter="\n;"
+        path="02_create_function_trig_func_log_ins_upd_del.sql"
+        relativeToChangelogFile="true"
+        splitStatements="true"
+        stripComments="false"/>
+
+		<comment>
+		<![CDATA[
+		CREATE VIEW v_prepared_sql_for_log_trigger. CREATE FUNCTION trig_func_log_ins_upd_del.
+		Phabricator tasks:
+			T323
+		]]>
+		</comment>
+	</changeSet>
+</databaseChangeLog>

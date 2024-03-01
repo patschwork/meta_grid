@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+		 logicalFilePath="020_to_pg/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="020_to_pg">
+
+        <sql dbms="postgresql">
+		<![CDATA[
+		CREATE TABLE trigger_errors (
+			id SERIAL NOT NULL,
+			sql_state text NULL,
+			message text NULL,
+			detail text NULL,
+			hint text NULL,
+			context text NULL,
+			trigger_name text NULL,
+			function_name text NULL,
+			table_name text NULL,
+			ts timestamp NULL DEFAULT now()
+		);
+        ]]>
+		</sql>		
+
+
+		<comment>
+		<![CDATA[
+		New table "trigger_errors" for debugging purposes.
+		Phabricator tasks:
+			T323
+		]]>
+		</comment>
+	</changeSet>
+</databaseChangeLog>

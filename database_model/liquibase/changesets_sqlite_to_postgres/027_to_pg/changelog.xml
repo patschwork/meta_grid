@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+		 logicalFilePath="027_to_pg/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="027_to_pg">
+
+        <sql dbms="postgresql">
+		<![CDATA[
+        DROP FUNCTION remove_trigger();
+        ]]>
+		</sql>		
+
+        <sql dbms="postgresql">
+		<![CDATA[
+        DROP FUNCTION rollout_trigger();
+        ]]>
+		</sql>	
+
+        <sql dbms="postgresql">
+		<![CDATA[
+        ALTER FUNCTION remove_all_trigger_4_do_cleanup_queue() RENAME TO dbdeploy_remove_all_trigger_4_do_cleanup_queue;
+        ]]>
+		</sql>	
+
+        <sql dbms="postgresql">
+		<![CDATA[
+        ALTER FUNCTION rollout_all_trigger_4_do_cleanup_queue() RENAME TO dbdeploy_rollout_all_trigger_4_do_cleanup_queue;
+        ]]>
+		</sql>		
+
+        <sql dbms="postgresql">
+		<![CDATA[
+        ALTER FUNCTION tbl_alter_uuid_default(varchar) RENAME TO dbdeploy_tbl_alter_uuid_default;
+        ]]>
+		</sql>		
+		<comment>
+		<![CDATA[
+	    Rename functions.
+		Phabricator tasks:
+			T323
+		]]>
+		</comment>
+	</changeSet>
+</databaseChangeLog>
