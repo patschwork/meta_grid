@@ -1,3 +1,9 @@
+# 3.0.6
+
+- Minor bugfixes
+- Update to Yii2 v2.0.53
+
+----------------------------------------------------------------------------------------------------
 # 3.0.5
 
 - PostgreSQL as database backend available
