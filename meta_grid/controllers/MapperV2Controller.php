@@ -50,7 +50,7 @@ class MapperV2Controller extends Controller
         						],
         						[
         								'allow' => true,
-        								'actions' => ['index','view'],
+        								'actions' => ['index','view', 'processselected', 'process'],
         								'roles' => ['author', 'global-view', 'view' ."-" . Yii::$app->controller->id],
         						],
         				],
@@ -181,46 +181,47 @@ class MapperV2Controller extends Controller
     }
 
 
-    // {... mapperv2
-	// this works so far... 
-	public function actionProcessselected()
+	public function actionProcess()
 	{
+    if (Yii::$app->request->isAjax) {
+		$select = Yii::$app->request->post('selection'); //checkbox (array)
 		$from_id = Yii::$app->request->post("from_id");
 		$from_fk_object_type_id = Yii::$app->request->post("from_fk_object_type_id");
-
-		$select = Yii::$app->request->post('selection'); //checkbox (array)
-		
 
 		// https://stackoverflow.com/questions/29272150/insert-multiple-data-into-database-in-yii-2
 		$bulkInsertArray = array();
 
-		foreach($select as $to_map_listkey)
+		if (!empty($select))
 		{
-			// VarDumper::dump($to_map_listkey); 
-
-			$ref_fk_object_id_2 = explode(";", $to_map_listkey)[0];
-			$ref_fk_object_type_id_2 = explode(";", $to_map_listkey)[1];
-
-			$already_mapped_model = $this->alreadyMapped($from_id, $from_fk_object_type_id);
-			$already_mapped_listkey = $this->convertAlreadyMappedToListkey($already_mapped_model, $from_id, $from_fk_object_type_id);
-
-			// if ($ref_fk_object_id_2 !== $from_id && $ref_fk_object_type_id_2 !== $from_fk_object_type_id) // do not map self
-			if (! array_key_exists($to_map_listkey, $already_mapped_listkey))
+			foreach($select as $to_map_listkey)
 			{
-				$bulkInsertArray[]=[
-					'ref_fk_object_id_1'=>$from_id,
-					'ref_fk_object_type_id_1'=>$from_fk_object_type_id,
-					'ref_fk_object_id_2'=>$ref_fk_object_id_2,
-					'ref_fk_object_type_id_2'=>$ref_fk_object_type_id_2,
-					// 'fk_mapping_qualifier_id'=>NULL
-					// 'fk_object_persistence_method_id'=>NULL
-					// 'fk_datamanagement_process_id'=>NULL
-				];
+				$ref_fk_object_id_2 = $to_map_listkey["id"];
+				$ref_fk_object_type_id_2 = $to_map_listkey["fk_object_type_id"];
+				$check=NULL;
+				$check[$ref_fk_object_id_2.";".$ref_fk_object_type_id_2]=$ref_fk_object_id_2.";".$ref_fk_object_type_id_2;
+				$already_mapped_model = $this->alreadyMapped($from_id, $from_fk_object_type_id);
+				$already_mapped_listkey = $this->convertAlreadyMappedToListkey($already_mapped_model, $from_id, $from_fk_object_type_id);
+	
+				// Check, if to be mapped keys are already mapped. If so, ignore it and don't insert in the bulkInsertArray
+				$keys1 = array_keys($check);
+				$commonKeys = array_intersect_key(array_flip($keys1), $already_mapped_listkey);
+	
+				if (empty($commonKeys))
+				{
+					$bulkInsertArray[]=[
+						'ref_fk_object_id_1'=>$from_id,
+						'ref_fk_object_type_id_1'=>$from_fk_object_type_id,
+						'ref_fk_object_id_2'=>$ref_fk_object_id_2,
+						'ref_fk_object_type_id_2'=>$ref_fk_object_type_id_2,
+						// 'fk_mapping_qualifier_id'=>NULL
+						// 'fk_object_persistence_method_id'=>NULL
+						// 'fk_datamanagement_process_id'=>NULL
+					];
+		
+				}
 	
 			}
-
 		}
-
 
 		if(count($bulkInsertArray)>0){
 			$columnNameArray=['ref_fk_object_id_1','ref_fk_object_type_id_1','ref_fk_object_id_2','ref_fk_object_type_id_2'];
@@ -234,12 +235,11 @@ class MapperV2Controller extends Controller
 						   ->execute();
 		}
 
-		// VarDumper::dump("Inserted rows: ". $insertCount);
+        return $this->asJson(['success' => true, 'message' => 'Items processed', 'markedRows' => $select]);
+    }
 
-		return $this->actionIndex($from_object_id=$from_id, $from_object_type_id=$from_fk_object_type_id);
-
-
+    return $this->redirect(['index']); // No AJAX calls
 	}
-	//  ...}
+
 
 }

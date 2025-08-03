@@ -434,6 +434,41 @@ echo '</div>' . "\n";
 					'value' => function ($model) {
 						return Html::a($model->location, ['dbtable/view', 'id' => $model->id], ['class' => 'btn btn-default']);
 					},
+					'headerOptions' => ['style' => 'width:40%'],
+					'format' => 'raw'
+				],
+			],
+		]);
+
+		$provider2 = new yii\data\ArrayDataProvider([
+			'allModels' => $same_name,
+			'pagination' => [
+				'pageSize' => 10,
+			],
+			'sort' => [
+				'attributes' => ['id'],
+			],
+		]);
+
+		$same_name_grid = yii\grid\GridView::widget([
+			'dataProvider' => $provider2,
+			'columns' => [
+				'id',
+				[
+					'label' => Yii::t('app', 'Project'),
+					'value' => function ($model) {
+						return $model->fkProject->name;
+					},
+					'headerOptions' => ['style' => 'width:40%'],
+				],				
+				[
+					'label' => Yii::t('app','Same name'),
+					'value' => function ($model) {
+						$title = $model->location;
+						if (trim($title) === "") $title = $model->name;
+						return Html::a($title, ['dbtable/view', 'id' => $model->id], ['class' => 'btn btn-default']);
+					},
+					'headerOptions' => ['style' => 'width:40%'],
 					'format' => 'raw'
 				],
 			],
@@ -554,6 +589,16 @@ echo '</div>' . "\n";
 			echo "\t\t\t\t	'headerOptions' => [\n";
 			echo "\t\t\t\t		'class'=> \$SQLSelectStatement === \"\" ? 'disabled' : \"\"\n";
 			echo "\t\t\t\t		]\n";
+			echo "\t\t\t\t],\n";
+
+			echo "[" . "\n";
+			echo "\t\t\t\t	'label' => Yii::t('app', 'Same name')," . "\n";
+			echo "\t\t\t\t	'content' => \$same_name_grid," . "\n";
+			echo "\t\t\t\t	'active' => false," . "\n";
+			echo "\t\t\t\t	'options' => ['id' => 'tabSameName'],  // important for shortcut" . "\n";
+			echo "\t\t\t\t	'headerOptions' => [" . "\n";
+			echo "\t\t\t\t		'class'=> false ? 'disabled' : \"\"" . "\n";
+			echo "\t\t\t\t		]" . "\n";
 			echo "\t\t\t\t],\n";
 		}
 		?>

@@ -3,7 +3,7 @@
 /*
  * This file is part of Psy Shell.
  *
- * (c) 2012-2022 Justin Hileman
+ * (c) 2012-2023 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,6 +13,8 @@ namespace Psy\CodeCleaner;
 
 use PhpParser\Node;
 use PhpParser\Node\Scalar\DNumber;
+use PhpParser\Node\Scalar\Float_;
+use PhpParser\Node\Scalar\Int_;
 use PhpParser\Node\Scalar\LNumber;
 use PhpParser\Node\Stmt\Break_;
 use PhpParser\Node\Stmt\Continue_;
@@ -28,10 +30,12 @@ use Psy\Exception\FatalErrorException;
  */
 class LoopContextPass extends CodeCleanerPass
 {
-    private $loopDepth;
+    private int $loopDepth = 0;
 
     /**
      * {@inheritdoc}
+     *
+     * @return Node[]|null Array of nodes
      */
     public function beforeTraverse(array $nodes)
     {
@@ -45,6 +49,8 @@ class LoopContextPass extends CodeCleanerPass
      * @throws FatalErrorException if the node is a break or continue and has an argument less than 1
      *
      * @param Node $node
+     *
+     * @return int|Node|null Replacement node (or special return value)
      */
     public function enterNode(Node $node)
     {
@@ -63,23 +69,29 @@ class LoopContextPass extends CodeCleanerPass
 
                 if ($this->loopDepth === 0) {
                     $msg = \sprintf("'%s' not in the 'loop' or 'switch' context", $operator);
-                    throw new FatalErrorException($msg, 0, \E_ERROR, null, $node->getLine());
+                    throw new FatalErrorException($msg, 0, \E_ERROR, null, $node->getStartLine());
                 }
 
-                if ($node->num instanceof LNumber || $node->num instanceof DNumber) {
+                // @todo Remove LNumber and DNumber once we drop support for PHP-Parser 4.x
+                if (
+                    $node->num instanceof LNumber ||
+                    $node->num instanceof DNumber ||
+                    $node->num instanceof Int_ ||
+                    $node->num instanceof Float_
+                ) {
                     $num = $node->num->value;
                     if ($node->num instanceof DNumber || $num < 1) {
                         $msg = \sprintf("'%s' operator accepts only positive numbers", $operator);
-                        throw new FatalErrorException($msg, 0, \E_ERROR, null, $node->getLine());
+                        throw new FatalErrorException($msg, 0, \E_ERROR, null, $node->getStartLine());
                     }
 
                     if ($num > $this->loopDepth) {
                         $msg = \sprintf("Cannot '%s' %d levels", $operator, $num);
-                        throw new FatalErrorException($msg, 0, \E_ERROR, null, $node->getLine());
+                        throw new FatalErrorException($msg, 0, \E_ERROR, null, $node->getStartLine());
                     }
                 } elseif ($node->num) {
                     $msg = \sprintf("'%s' operator with non-constant operand is no longer supported", $operator);
-                    throw new FatalErrorException($msg, 0, \E_ERROR, null, $node->getLine());
+                    throw new FatalErrorException($msg, 0, \E_ERROR, null, $node->getStartLine());
                 }
                 break;
         }
@@ -87,6 +99,8 @@ class LoopContextPass extends CodeCleanerPass
 
     /**
      * @param Node $node
+     *
+     * @return int|Node|Node[]|null Replacement node (or special return value)
      */
     public function leaveNode(Node $node)
     {

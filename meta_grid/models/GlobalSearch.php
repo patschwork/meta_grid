@@ -20,6 +20,7 @@ class GlobalSearch extends VAllObjectsUnion
     {
         return [
             [['id', 'fk_object_type_id', 'fk_project_id'], 'integer'],
+            [['name', 'object_type_name', 'listvalue_1', 'listvalue_2', 'listkey'], 'safe'],
             [['name', 'object_type_name', 'listvalue_1', 'listvalue_2', 'listkey', 'fk_client_id'], 'safe'],
         ];
     }

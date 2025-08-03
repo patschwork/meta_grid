@@ -54,12 +54,22 @@ class ObjectcommentController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'roles' => ['admin'],   // currently only admin may view, edit, ... @ToDo
+                        'roles' => ['admin'],
                     ],
 					[
 						'allow' => true,
-						'actions' => ['createexternal'],
+						'actions' => ['index','view'],
+						'roles' => ['author', 'global-view', 'view' ."-" . Yii::$app->controller->id],
+					],
+					[
+						'allow' => true,
+						'actions' => ['create', 'update', 'createexternal'],
 						'roles' => ['author', 'global-create', 'create' ."-" . Yii::$app->controller->id],
+					],
+					[
+						'allow' => true,
+						'actions' => ['delete'],
+						'roles' => ['author', 'global-delete', 'delete' ."-" . Yii::$app->controller->id],
 					],
                 ],
             ],			
@@ -158,10 +168,10 @@ class ObjectcommentController extends Controller
      */
     public function actionView($id)
     {
-		        return $this->render('view', [
+		return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
-		}
+	}
 
     /**
      * Creates a new Objectcomment model.
@@ -196,10 +206,7 @@ class ObjectcommentController extends Controller
      */
     public function actionUpdate($id)
     {
-				$model = $this->findModel($id);
-
-		     
-		
+		$model = $this->findModel($id);
 		
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 				            return $this->redirect(['view', 'id' => $model->id]);
@@ -219,8 +226,6 @@ class ObjectcommentController extends Controller
      */
     public function actionDelete($id)
     {
-		     
-    
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -270,4 +275,5 @@ class ObjectcommentController extends Controller
                 ]);
             }
         }
+
 }

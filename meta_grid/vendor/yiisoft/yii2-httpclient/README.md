@@ -6,21 +6,21 @@
     <br>
 </p>
 
-This extension provides the HTTP client for the [Yii framework 2.0](http://www.yiiframework.com).
+This extension provides the HTTP client for the [Yii framework 2.0](https://www.yiiframework.com).
 
 For license information check the [LICENSE](LICENSE.md)-file.
 
 Documentation is at [docs/guide/README.md](docs/guide/README.md).
 
-[![Latest Stable Version](https://poser.pugx.org/yiisoft/yii2-httpclient/v/stable.png)](https://packagist.org/packages/yiisoft/yii2-httpclient)
-[![Total Downloads](https://poser.pugx.org/yiisoft/yii2-httpclient/downloads.png)](https://packagist.org/packages/yiisoft/yii2-httpclient)
+[![Latest Stable Version](https://poser.pugx.org/yiisoft/yii2-httpclient/v)](https://packagist.org/packages/yiisoft/yii2-httpclient)
+[![Total Downloads](https://poser.pugx.org/yiisoft/yii2-httpclient/downloads)](https://packagist.org/packages/yiisoft/yii2-httpclient)
 [![Build Status](https://github.com/yiisoft/yii2-httpclient/workflows/build/badge.svg)](https://github.com/yiisoft/yii2-httpclient/actions)
 
 
 Installation
 ------------
 
-The preferred way to install this extension is through [composer](http://getcomposer.org/download/).
+The preferred way to install this extension is through [composer](https://getcomposer.org/download/).
 
 Either run
 

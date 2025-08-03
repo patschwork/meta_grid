@@ -24,6 +24,11 @@ class ShellController extends Controller
      * @var array include file(s) before starting tinker shell
      */
     public $include = [];
+    /**
+     * @var array PsySH shell configuration array
+     * @since 2.0.6
+     */
+    public $shellConfig = [];
 
 
     /**
@@ -42,6 +47,7 @@ class ShellController extends Controller
     public function actionIndex()
     {
         $config = new Configuration;
+        $config->loadConfig($this->shellConfig);
         $config->getPresenter()->addCasters(
             $this->getCasters()
         );

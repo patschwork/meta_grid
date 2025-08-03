@@ -365,6 +365,14 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
      */
     public function actionIndex()
     {
+<?php if ($generator->modelClass === 'app\models\DbTableField'): ?>
+		$Utils = new \vendor\meta_grid\helper\Utils();
+        $app_config_import_processing_time_limit = $Utils->get_app_config("dbtablefield_time_limit");
+		$app_config_import_processing_memory_limit = $Utils->get_app_config("dbtablefield_memory_limit");
+		set_time_limit($app_config_import_processing_time_limit);
+		ini_set('memory_limit', $app_config_import_processing_memory_limit."M");
+
+<?php endif; ?>
 <?php if (!empty($generator->searchModelClass)): ?>
         $searchModel = new <?= isset($searchModelAlias) ? $searchModelAlias : $searchModelClass ?>();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -408,6 +416,7 @@ $modelBracket = $this->findModel($id);
 <?php if ($generator->modelClass === 'app\models\DbTable'): ?>
 		'SQLSelectStatement' => $this->buildSQLSelectStatement($id),
 		'sameTableList' => $this->sameTableList($id),
+		'same_name' => $this->get_same_name($id),
 			<?php endif; ?>
         ]);
 		<?php endif; ?>
@@ -1744,6 +1753,18 @@ Parameter: overwrite_description_if_existing_differs=, default=Y : If there desc
 			}
 		}
 		return null;
+	}
+
+	public function get_same_name($id)
+    {
+		$model = $this->findModel($id);
+		$model_name = $model->name;
+
+		$searchModel = DbTable::find()
+			->where(['name' => $model_name])
+			->andFilterWhere(['<>','id',$id])
+			->all();
+		return $searchModel;
 	}
 
 <?php endif; ?>

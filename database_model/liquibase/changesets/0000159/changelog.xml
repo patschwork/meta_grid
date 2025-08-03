@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000159/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000159">
+
+      <sql dbms="postgresql">
+        <![CDATA[
+        DROP VIEW "v_tag_2_object_list";
+        ]]>
+		</sql>	
+
+		<createView replaceIfExists="true" viewName="v_tag_2_object_list">
+        <![CDATA[
+SELECT
+     mo2t.id
+    ,mo2t.ref_fk_object_id
+    ,mo2t.ref_fk_object_type_id
+    ,vaou.object_type_name AS object_type_name    
+    ,CASE 
+       WHEN mo2t.ref_fk_object_type_id=4 THEN dbt.location
+       WHEN mo2t.ref_fk_object_type_id=5 THEN COALESCE(dbt.location,'')||'.'||vaou.name
+       ELSE vaou.name 
+     END AS object_name
+    ,mo2t.fk_tag_id
+    ,tag.name AS tag_name
+    ,REPLACE(vaou.object_type_name, '_', '') || '/' || 'view' || '&id=' || mo2t.ref_fk_object_id AS "action"
+    ,tag.fk_project_id
+    ,tag.fk_user_id
+    ,tag.optgroup
+    ,REPLACE(vaou.object_type_name, '_', '') AS "controllername"
+    ,vaou.fk_project_id AS fk_project_id_from_object
+    ,vaou.fk_client_id  AS fk_client_id_from_object
+FROM
+    map_object_2_tag mo2t
+LEFT JOIN "v_All_Objects_Union" vaou ON 1=1
+   AND vaou.fk_object_type_id  = mo2t.ref_fk_object_type_id 
+   AND vaou.id  = mo2t.ref_fk_object_id 
+LEFT JOIN db_table_field dbtf ON 1=1
+   AND mo2t.ref_fk_object_type_id=5  -- only db_table_field
+   AND dbtf.fk_object_type_id = mo2t.ref_fk_object_type_id  -- yeah, double is better
+   AND dbtf.id = mo2t.ref_fk_object_id
+LEFT JOIN db_table dbt ON 1=1
+   AND mo2t.ref_fk_object_type_id IN (4,5)  -- only db_table_field and db_table
+   AND dbt.id = COALESCE(dbtf.fk_db_table_id, mo2t.ref_fk_object_id)
+LEFT JOIN "v_tagsOptGroup" tag ON 1=1
+   AND tag.id = mo2t.fk_tag_id 
+ORDER BY
+    tag.name
+   ,vaou.object_type_name;
+        ]]>
+		</createView>				
+       
+
+		<comment>
+		<![CDATA[
+		Take over custom implementation.
+		Used objects:
+			v_tag_2_object_list
+		Phabricator tasks:
+            T411
+            T587
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

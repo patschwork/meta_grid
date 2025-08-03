@@ -79,6 +79,13 @@ class ToolSearch extends VToolSearchinterface
             ->andFilterWhere(['like', 'version', $this->version])
             ->andFilterWhere(['like', 'comment', $this->comment]);
 
+        // {... T363
+        $db = Yii::$app->db;
+        $db->cache(function () use ($dataProvider) {
+            $dataProvider->prepare();
+        });
+        // T363 ...}
+
         return $dataProvider;
     }
 }

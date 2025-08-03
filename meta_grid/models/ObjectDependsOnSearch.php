@@ -78,6 +78,13 @@ class ObjectDependsOnSearch extends VObjectDependsOnSearchinterface
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid]);
 
+        // {... T363
+        $db = Yii::$app->db;
+        $db->cache(function () use ($dataProvider) {
+            $dataProvider->prepare();
+        });
+        // T363 ...}
+
         return $dataProvider;
     }
 }

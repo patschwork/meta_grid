@@ -1,6 +1,20 @@
 Yii Framework 2 bootstrap4 extension Change Log
 ==============================================
 
+2.0.12 February 13, 2025
+------------------------
+
+- Bug #243: Checkbox labels in inline forms are no longer hidden (BBoom)
+- Enh #237: Added `Accordion::headerToggleOptions` (nagyt234)
+
+
+2.0.11 May 22, 2023
+-------------------
+
+- Bug #181: Fix bug to avoid collisions with automatically generated IDs in ToggleButtonGroup (marcovtwout)
+- Chg #234: `yii\bootstrap4\BaseHtml::$normalizeClassAttribute` is set to `true` by default to make the package BC with Yii 2.0.44 (bizley)
+
+
 2.0.10 May 05, 2021
 -------------------
 

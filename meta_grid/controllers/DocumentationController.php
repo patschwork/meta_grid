@@ -179,6 +179,9 @@ class DocumentationController extends Controller
      */    
     public function actionCreatedocumentation($project_id)
     {
+
+		set_time_limit(500);
+
 		// Collect data
    	 
     	$dataCollection = array();

@@ -97,6 +97,7 @@ echo GridView::widget([
 			            'name:ntext',
 			            'description:html',
 			            'datatype:ntext',
+						'tags_html_li:html'
                     ],
     ]); ?>
 

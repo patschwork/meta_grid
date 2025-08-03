@@ -1,8 +1,8 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
+ * @link https://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license https://www.yiiframework.com/license/
  */
 
 namespace yii\httpclient;
@@ -37,12 +37,12 @@ class Client extends Component
     const FORMAT_JSON = 'json';
     /**
      * urlencoded by RFC1738 query string, like name1=value1&name2=value2
-     * @see http://php.net/manual/en/function.urlencode.php
+     * @see https://php.net/manual/en/function.urlencode.php
      */
     const FORMAT_URLENCODED = 'urlencoded';
     /**
      * urlencoded by PHP_QUERY_RFC3986 query string, like name1=value1&name2=value2
-     * @see http://php.net/manual/en/function.rawurlencode.php
+     * @see https://php.net/manual/en/function.rawurlencode.php
      */
     const FORMAT_RAW_URLENCODED = 'raw-urlencoded';
     /**

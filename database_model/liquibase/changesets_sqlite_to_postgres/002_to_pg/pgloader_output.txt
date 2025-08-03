@@ -1,0 +1,148 @@
+2024-01-27T13:24:12.008291-05:00 LOG pgloader version "3.6.9"
+2024-01-27T13:24:12.068097-05:00 LOG Migrating from #<SQLITE-CONNECTION sqlite:///Users/patrick/Documents/Development/dwh_meta/dwh_meta_v2/dwh_meta.sqlite {700B9BD0D3}>
+2024-01-27T13:24:12.068204-05:00 LOG Migrating into #<PGSQL-CONNECTION pgsql://patrick@localhost:5432/metagrid_lqb_env {700BB779A3}>
+2024-01-27T13:24:12.432278-05:00 ERROR PostgreSQL Database error 42703: column "id" does not exist
+QUERY: CREATE UNIQUE INDEX "idx_58303_DATABASECHANGELOGLOCK_pkey" ON "DATABASECHANGELOGLOCK" (ID);
+2024-01-27T13:24:12.446479-05:00 ERROR Bad character #\: at index 1 of "a:3:{s:2:\"id\";i:1;s:16:\"dataaccessfilter\";s:6:\"client\";s:5:\"right\";s:4:\"read\";}"
+2024-01-27T13:24:12.447227-05:00 ERROR Bad character #\: at index 1 of "O:31:\"dmstr\\helpers\\AuthenticatedRule\":3:{s:4:\"name\";s:11:\"isNotAGuest\";s:9:\"createdAt\";i:1692050732;s:9:\"updatedAt\";i:1692050732;}"
+2024-01-27T13:24:12.869011-05:00 ERROR Error while formatting a row from "\"db_table_context_log\"":
+2024-01-27T13:24:12.869145-05:00 ERROR junk in string "fk_object_type_id"
+2024-01-27T13:24:12.869608-05:00 ERROR The value
+  NIL
+is not of type
+  NUMBER
+2024-01-27T13:24:12.869746-05:00 WARNING PostgreSQL warning: there is no transaction in progress
+2024-01-27T13:24:13.241603-05:00 ERROR PostgreSQL Database error 42704: index "idx_58303_DATABASECHANGELOGLOCK_pkey" does not exist
+QUERY: ALTER TABLE "DATABASECHANGELOGLOCK" ADD PRIMARY KEY USING INDEX "idx_58303_DATABASECHANGELOGLOCK_pkey";
+2024-01-27T13:24:13.277408-05:00 ERROR PostgreSQL Database error 23503: insert or update on table "auth_item" violates foreign key constraint "auth_item_rule_name_fkey"
+DETAIL: Key (rule_name)=(isNotAGuest) is not present in table "auth_rule".
+QUERY: ALTER TABLE "auth_item" ADD FOREIGN KEY(rule_name) REFERENCES "auth_rule"(name) ON UPDATE CASCADE ON DELETE SET NULL
+2024-01-27T13:24:13.277765-05:00 ERROR PostgreSQL Database error 23503: insert or update on table "auth_item_child" violates foreign key constraint "auth_item_child_child_fkey"
+DETAIL: Key (child)=(show-bulkloader-template-in-dbdatabase) is not present in table "auth_item".
+QUERY: ALTER TABLE "auth_item_child" ADD FOREIGN KEY(child) REFERENCES "auth_item"(name) ON UPDATE CASCADE ON DELETE CASCADE
+2024-01-27T13:24:13.278509-05:00 ERROR PostgreSQL Database error 23503: insert or update on table "auth_assignment" violates foreign key constraint "auth_assignment_item_name_fkey"
+DETAIL: Key (item_name)=(client-1-read) is not present in table "auth_item".
+QUERY: ALTER TABLE "auth_assignment" ADD FOREIGN KEY(item_name) REFERENCES "auth_item"(name) ON UPDATE CASCADE ON DELETE CASCADE
+2024-01-27T13:24:13.279020-05:00 ERROR PostgreSQL Database error 23503: insert or update on table "language_translate" violates foreign key constraint "language_translate_id_fkey"
+DETAIL: Key (id)=(323) is not present in table "language_source".
+QUERY: ALTER TABLE "language_translate" ADD FOREIGN KEY(id) REFERENCES "language_source"(id) ON UPDATE NO ACTION ON DELETE NO ACTION
+2024-01-27T13:24:13.290522-05:00 ERROR PostgreSQL Database error 42703: column "fk_object_type_id_as_searchfilter" referenced in foreign key constraint does not exist
+QUERY: ALTER TABLE "bracket" ADD FOREIGN KEY(fk_object_type_id_as_searchFilter) REFERENCES "object_type"(id) ON UPDATE NO ACTION ON DELETE NO ACTION
+2024-01-27T13:24:13.325495-05:00 LOG report summary reset
+                         table name     errors       rows      bytes      total time
+-----------------------------------  ---------  ---------  ---------  --------------
+                              fetch          0          0                     0.000s
+                    fetch meta data          0        355                     0.052s
+                     Create Schemas          0          0                     0.001s
+                   Create SQL Types          0          0                     0.003s
+                      Create tables          0        194                     0.188s
+                     Set Table OIDs          0         97                     0.004s
+-----------------------------------  ---------  ---------  ---------  --------------
+                "object_depends_on"          0          1     0.1 kB          0.048s
+                         "_newUUID"          0          0                     0.046s
+            "DATABASECHANGELOGLOCK"          0          1     0.0 kB          0.031s
+                "DATABASECHANGELOG"          0        179    53.5 kB          0.016s
+                        "migration"          0          2     0.1 kB          0.017s
+            "import_stage_db_table"          0        331    63.0 kB          0.015s
+                          "profile"          0          1     0.0 kB          0.019s
+                            "token"          0          2     0.1 kB          0.031s
+                   "social_account"          0          0                     0.016s
+                        "auth_item"          1         76     6.9 kB          0.046s
+                        "auth_rule"          1          0                     0.029s
+                  "auth_item_child"          0         93     2.8 kB          0.036s
+                  "auth_assignment"          0         43     1.2 kB          0.061s
+                  "language_source"          0        674    24.6 kB          0.072s
+                         "language"          0          5     0.2 kB          0.061s
+       "export_file_db_table_queue"          0          0                     0.080s
+               "language_translate"          0        566    20.9 kB          0.068s
+      "export_file_db_table_params"          0          0                     0.075s
+      "export_file_db_table_result"          0        381   124.9 kB          0.091s
+ "export_file_db_table_field_queue"          0          0                     0.081s
+"export_file_db_table_field_params"          0          0                     0.099s
+"export_file_db_table_field_result"          0          0                     0.092s
+ "tmp_importeur_tables_and_columns"          0          0                     0.108s
+                      "object_type"          0         24     1.2 kB          0.099s
+              "map_object_2_object"          0        164     9.0 kB          0.116s
+                             "tool"          0         35     3.3 kB          0.109s
+                    "db_table_type"          0          5     0.4 kB          0.131s
+                   "object_comment"          0          5     0.5 kB          0.117s
+                         "glossary"          0          3     0.2 kB          0.143s
+                       "app_config"          0         18     2.5 kB          0.122s
+                  "object_type_log"          0          9     0.7 kB          0.146s
+          "map_object_2_object_log"          0        179    17.0 kB          0.142s
+                         "tool_log"          0         68    10.2 kB          0.152s
+            "object_depends_on_log"          0          2     0.2 kB          0.148s
+                  "db_database_log"          0          8     2.0 kB          0.160s
+                   "scheduling_log"          0          2     0.4 kB          0.157s
+                    "parameter_log"          0          0                     0.162s
+                "db_table_type_log"          0          6     0.7 kB          0.164s
+               "object_comment_log"          0          7     1.1 kB          0.169s
+                   "app_config_log"          0         18     2.5 kB          0.184s
+                     "glossary_log"          0          4     0.7 kB          0.165s
+                      "contact_log"          0          2     0.5 kB          0.191s
+                "contact_group_log"          0          2     0.5 kB          0.179s
+                 "sourcesystem_log"          0         12     4.3 kB          0.195s
+            "bracket_searchPattern"          0          5     0.3 kB          0.183s
+                        "attribute"          0          1     0.2 kB          0.188s
+                    "attribute_log"          0          3     0.8 kB          0.201s
+                          "bracket"          0          4     0.3 kB          0.195s
+                      "bracket_log"          0         19     4.3 kB          0.207s
+                           "client"          0          2     0.2 kB          0.202s
+                       "client_log"          0          8     1.0 kB          0.212s
+         "data_delivery_object_log"          0         22     8.4 kB          0.212s
+               "data_delivery_type"          0          3     0.3 kB          0.215s
+        "data_transfer_process_log"          0          5     1.4 kB          0.218s
+           "data_delivery_type_log"          0          3     0.4 kB          0.217s
+           "data_transfer_type_log"          0          4     0.5 kB          0.219s
+               "data_transfer_type"          0          4     0.4 kB          0.216s
+             "db_table_context_log"          2          0                     0.224s
+                 "db_table_context"          0          7     0.7 kB          0.225s
+               "db_table_field_log"          0       1361   375.7 kB          0.250s
+                          "project"          0          3     0.4 kB          0.239s
+                        "tool_type"          0          5     0.6 kB          0.235s
+                    "keyfigure_log"          0          8     1.8 kB          0.257s
+                      "project_log"          0         29     3.8 kB          0.224s
+                             "user"          0          2     0.4 kB          0.253s
+                    "tool_type_log"          0          5     0.8 kB          0.250s
+           "perspective_filter_log"          0          5     0.7 kB          0.253s
+        "bracket_searchPattern_log"          0         61     9.5 kB          0.258s
+            "mapping_qualifier_log"          0          2     0.3 kB          0.249s
+               "perspective_filter"          0          5     0.4 kB          0.252s
+                          "url_log"          0          0                     0.260s
+                "mapping_qualifier"          0          2     0.2 kB          0.273s
+                "cleanup_queue_log"          0        196    11.6 kB          0.268s
+                              "url"          0          0                     0.267s
+               "deleted_status_log"          0          2     0.3 kB          0.272s
+                    "cleanup_queue"          0          0                     0.291s
+                     "sourcesystem"          0          1     0.3 kB          0.279s
+                   "db_table_field"          0       1276   175.4 kB          0.295s
+                   "deleted_status"          0          2     0.2 kB          0.284s
+                        "keyfigure"          0          1     0.1 kB          0.309s
+             "data_delivery_object"          0         10     2.6 kB          0.308s
+                       "scheduling"          0          2     0.1 kB          0.287s
+                        "parameter"          0          0                     0.331s
+            "data_transfer_process"          0          1     0.5 kB          0.307s
+                      "db_database"          0          4     0.5 kB          0.330s
+                          "contact"          0          1     0.1 kB          0.306s
+                    "contact_group"          0          2     0.3 kB          0.350s
+           "datamanagement_process"          0          1     0.1 kB          0.324s
+        "object_persistence_method"          0          0                     0.347s
+       "datamanagement_process_log"          0          1     0.2 kB          0.323s
+    "object_persistence_method_log"          0          0                     0.373s
+                     "db_table_log"          0       1492   440.9 kB          0.356s
+                         "db_table"          0        151    22.5 kB          0.366s
+                              "tag"          0         10     0.5 kB          0.366s
+                 "map_object_2_tag"          0          9     0.4 kB          0.331s
+                          "tag_log"          0         27     3.4 kB          0.360s
+             "map_object_2_tag_log"          0         41     4.2 kB          0.350s
+-----------------------------------  ---------  ---------  ---------  --------------
+            COPY Threads Completion          0          4                     0.782s
+                     Create Indexes          1        105                     0.251s
+             Index Build Completion          0        106                     0.029s
+                    Reset Sequences          0         75                     0.032s
+                       Primary Keys          1         84                     0.034s
+                Create Foreign Keys          5        147                     0.049s
+                    Create Triggers          0          0                     0.000s
+                   Install Comments          0          0                     0.000s
+-----------------------------------  ---------  ---------  ---------  --------------
+                  Total import time          4       7736     1.4 MB          1.176s

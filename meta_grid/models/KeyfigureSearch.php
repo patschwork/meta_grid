@@ -92,6 +92,13 @@ class KeyfigureSearch extends VKeyfigureSearchinterface
             ->andFilterWhere(['like', 'source_definition_language', $this->source_definition_language])
             ->andFilterWhere(['like', 'source_comment', $this->source_comment]);
 
+        // {... T363
+        $db = Yii::$app->db;
+        $db->cache(function () use ($dataProvider) {
+            $dataProvider->prepare();
+        });
+        // T363 ...}
+
         return $dataProvider;
     }
 }

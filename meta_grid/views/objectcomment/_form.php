@@ -1,4 +1,10 @@
-		
+<?php
+// Prevent loading bootstrap.css v3.4.1 (see T212)
+\Yii::$app->assetManager->bundles['yii\\bootstrap\\BootstrapAsset'] = [
+    'css' => [],
+    'js' => []
+];
+?>	
 <?php
 
 use yii\helpers\Html;
@@ -21,7 +27,7 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'ref_fk_object_type_id')->textInput() ?>
 
 	<?php
-		echo $form->field($model, 'comment')->widget(\yii\redactor\widgets\Redactor::className());	?>
+		echo $form->field($model, 'comment')->widget(floor12\summernote\Summernote::class);	?>
      <?php // $form->field($model, 'comment') ?>
 
     <?= $form->field($model, 'created_at_datetime') ?>

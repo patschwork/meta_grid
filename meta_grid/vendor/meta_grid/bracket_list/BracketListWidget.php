@@ -38,7 +38,7 @@ class BracketListWidget extends Widget
     		if ($item[$object_type.'_id'] == $fk_object_id && $item[$object_type.'_fk_object_type_id'] == $fk_object_type_id)
     		{
     			$itemList[$item->fk_bracket_id]['bracket_name']=$item->bracket_name;
-    			$itemList[$item->fk_bracket_id]['bracket_searchPattern']=$item->bracket_searchPattern;
+    			$itemList[$item->fk_bracket_id]['bracket_searchpattern']=$item->bracket_searchpattern;
     		}
     	}
     	return $itemList;
@@ -100,7 +100,7 @@ class BracketListWidget extends Widget
      		echo "<br>";
      		foreach ($bracketMatchesItems as $id => $bracket)
      		{
-     			$bracket_title = $bracket['bracket_name']. " (".$bracket['bracket_searchPattern'].")";
+     			$bracket_title = $bracket['bracket_name']. " (".$bracket['bracket_searchpattern'].")";
      			 
      			echo Html::a(Yii::t('app', $bracket_title), ['bracket/view', 'id' => $id], ['class' => 'btn btn-default']);
      			echo " ";

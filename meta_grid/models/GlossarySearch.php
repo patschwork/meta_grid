@@ -80,6 +80,13 @@ class GlossarySearch extends VGlossarySearchinterface
             ->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['like', 'description', $this->description]);
 
+        // {... T363
+        $db = Yii::$app->db;
+        $db->cache(function () use ($dataProvider) {
+            $dataProvider->prepare();
+        });
+        // T363 ...}
+
         return $dataProvider;
     }
 }

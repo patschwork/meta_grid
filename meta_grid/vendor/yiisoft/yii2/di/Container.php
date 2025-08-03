@@ -157,6 +157,12 @@ class Container extends Component
      * @return object an instance of the requested class.
      * @throws InvalidConfigException if the class cannot be recognized or correspond to an invalid definition
      * @throws NotInstantiableException If resolved to an abstract class or an interface (since 2.0.9)
+     *
+     * @template T of object
+     * @psalm-param string|class-string<T>|Instance $class
+     * @phpstan-param string|class-string<T>|Instance $class
+     * @psalm-return ($class is class-string<T> ? T : object)
+     * @phpstan-return ($class is class-string<T> ? T : object)
      */
     public function get($class, $params = [], $config = [])
     {
@@ -256,7 +262,7 @@ class Container extends Component
      *   parameters, `$config` the object configuration, and `$container` the container object. The return value
      *   of the callable will be returned by [[get()]] as the object instance requested.
      * - a configuration array: the array contains name-value pairs that will be used to initialize the property
-     *   values of the newly created object when [[get()]] is called. The `class` element stands for the
+     *   values of the newly created object when [[get()]] is called. The `class` element stands for
      *   the class of the object to be created. If `class` is not specified, `$class` will be used as the class name.
      * - a string: a class name, an interface name or an alias name.
      * @param array $params the list of constructor parameters. The parameters will be passed to the class
@@ -381,7 +387,7 @@ class Container extends Component
      */
     protected function build($class, $params, $config)
     {
-        /* @var $reflection ReflectionClass */
+        /** @var ReflectionClass $reflection */
         list($reflection, $dependencies) = $this->getDependencies($class);
 
         $addDependencies = [];
@@ -677,7 +683,6 @@ class Container extends Component
                 } else {
                     $isClass = $class !== null && !$class->isBuiltin();
                 }
-
             } else {
                 $class = $param->getClass();
                 $isClass = $class !== null;

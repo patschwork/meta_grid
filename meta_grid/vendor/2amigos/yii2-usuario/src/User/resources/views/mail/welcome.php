@@ -10,6 +10,7 @@
  */
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 /**
  * @var \Da\User\Module      $module
@@ -26,7 +27,10 @@ use yii\helpers\Html;
 <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6; font-weight: normal; margin: 0 0 10px; padding: 0;">
     <?= Yii::t('usuario', 'Your account on {0} has been created', Yii::$app->name) ?>.
     <?php if ($showPassword || $module->generatePasswords): ?>
-        <?= Yii::t('usuario', 'We have generated a password for you') ?>: <strong><?= $user->password ?></strong>
+        <?= Yii::t('usuario', 'We have generated a password for you') ?>: <strong><?= Html::encode($user->password) ?></strong>
+    <?php endif ?>
+    <?php if ($module->allowPasswordRecovery): ?>
+        <?= Yii::t('usuario', 'If you haven\'t received a password, you can reset it at') ?>: <strong><?= Html::a(Html::encode(Url::to(['/user/recovery/request'], true)), Url::to(['/user/recovery/request'], true)) ?></strong>
     <?php endif ?>
 
 </p>
@@ -44,29 +48,5 @@ use yii\helpers\Html;
 <?php endif ?>
 
 <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6; font-weight: normal; margin: 0 0 10px; padding: 0;">
-    A password reset mail will be sent to you. Please set a safe password.
-</p>
-
-<p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6; font-weight: normal; margin: 0 0 10px; padding: 0;">
-    <b>Note:</b>
-    <i>
-    You can use this instance of Meta#Grid for free.
-    Although we care about the best user experience, there is no warranty or service level agreement in using the free service.
-
-    In case you need support, consulting or a premium instance of Meta#Grid please do not hesitate to send us a message via the contact form. 
-    <br>
-    Have fun &#128522;
-    <br><br>
-    <b>By using this this instance you accept this conditions.</b>
-    </i> 
-    <br><br>
-    <b>Useful Links:</b><br>
-    <i>Homepage:</i> <a href="https://meta-grid.com">Meta-Grid Homepage (https://meta-grid.com)</a><br>
-    <i>Docs:</i> <a href="https://docs.meta-grid.com">Docs (https://docs.meta-grid.com)</a><br>
-    <i>Report issues or errors:</i> <a href="https://github.com/Meta-Grid/meta-grid/issues">GitHub Issues (https://github.com/Meta-Grid/meta-grid/issues)</a><br>
-    <br><br>
-    <b>Social media:</b><br>    
-    <a href="https://www.instagram.com/meta__grid"><i>Follow on Instagram</i></a><br>
-    
-    
+    <?= Yii::t('usuario', 'You received this email because someone, possibly you or someone on your behalf, have created an account at {app_name}', ['app_name' => Yii::$app->name]) ?>.
 </p>

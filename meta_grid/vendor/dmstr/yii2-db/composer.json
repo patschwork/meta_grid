@@ -16,6 +16,7 @@
     }
   ],
   "require": {
+    "php": ">=7.1",
     "mikehaertl/php-shellcommand": "1.*",
     "yiisoft/yii2": "2.*",
     "schmunk42/retry" : "*"
@@ -23,9 +24,12 @@
   "autoload": {
     "psr-4": {
       "dmstr\\db\\": "db/",
-      "dmstr\\db\\tests\\": "db/tests/",
-      "dmstr\\console\\": "console/",
-      "dmstr\\widgets\\": "widgets/"
+      "dmstr\\console\\": "console/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "dmstr\\db\\tests\\": "db/tests/"
     }
   }
 }

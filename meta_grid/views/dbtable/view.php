@@ -124,8 +124,6 @@ $TagsWidget = \vendor\meta_grid\tag_select\TagSelectWidget::widget(
 			],
 		]);
 	
-
-
 		$provider2 = new yii\data\ArrayDataProvider([
 			'allModels' => $same_name,
 			'pagination' => [
@@ -159,8 +157,6 @@ $TagsWidget = \vendor\meta_grid\tag_select\TagSelectWidget::widget(
 				],
 			],
 		]);
-		
-
 
 			
 			// {... Kommentierung pro Object
@@ -267,6 +263,32 @@ $TagsWidget = \vendor\meta_grid\tag_select\TagSelectWidget::widget(
 				}
 				
 				document.getElementById('btn_copy_SQLSelectStatement').addEventListener('click', copyFunction);
+
+
+// Workaround 2025-06-03
+// Wähle das ul-Element aus
+const ul = document.getElementById('w1');  // Achtung, hier wird ein bestimmtes Element ausgewählt. Ggf. Anpassen für Tests!
+
+// Überprüfen, ob das ul-Element existiert
+if (ul) {
+    // CSS-Eigenschaften für das ul-Element anpassen
+    ul.style.listStyleType = 'circle'; // Ändert die Aufzählungszeichen zu Kreisen
+    ul.style.paddingLeft = '40px'; // Fügt eine Einrückung hinzu
+
+    // Alle li-Elemente anpassen
+    const listItems = ul.getElementsByTagName('li');
+    for (let i = 0; i < listItems.length; i++) {
+        listItems[i].style.paddingLeft = '10px';
+        listItems[i].style.marginLeft = '30px';
+    }
+} else {
+    console.log('Keine Liste gefunden.');
+}
+// Workaround 2025-06-03
+
+
+
+
 				",
 				yii\web\View::POS_READY,
 				null

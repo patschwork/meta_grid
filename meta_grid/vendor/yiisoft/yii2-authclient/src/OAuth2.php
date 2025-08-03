@@ -8,6 +8,7 @@
 namespace yii\authclient;
 
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\HttpException;
@@ -29,7 +30,7 @@ use yii\web\HttpException;
  * $accessToken = $oauthClient->fetchAccessToken($code); // Get access token
  * ```
  *
- * @see http://oauth.net/2/
+ * @see https://oauth.net/2/
  * @see https://tools.ietf.org/html/rfc6749
  *
  * @author Paul Klimov <klimov.paul@gmail.com>
@@ -37,6 +38,17 @@ use yii\web\HttpException;
  */
 abstract class OAuth2 extends BaseOAuth
 {
+    /**
+     * Apply the access token to the request header
+     * @since 2.2.16
+     */
+    const ACCESS_TOKEN_LOCATION_HEADER = 'header';
+    /**
+     * Apply the access token to the request body
+     * @since 2.2.16
+     */
+    const ACCESS_TOKEN_LOCATION_BODY = 'body';
+
     /**
      * @var string protocol version.
      */
@@ -70,6 +82,15 @@ abstract class OAuth2 extends BaseOAuth
      * @see https://oauth.net/2/pkce/
      */
     public $enablePkce = false;
+    /**
+     * @var string The location of the access token when it is applied to the request.
+     * NOTE: According to the OAuth2 specification this should be `header` by default,
+     * however, for backwards compatibility the default value used here is `body`.
+     * @since 2.2.16
+     *
+     * @see https://datatracker.ietf.org/doc/html/rfc6749#section-7
+     */
+    public $accessTokenLocation = self::ACCESS_TOKEN_LOCATION_BODY;
 
 
     /**
@@ -118,7 +139,11 @@ abstract class OAuth2 extends BaseOAuth
             $authState = $this->getState('authState');
             $incomingRequest = Yii::$app->getRequest();
             $incomingState = $incomingRequest->get('state', $incomingRequest->post('state'));
-            if (!isset($incomingState) || empty($authState) || strcmp($incomingState, $authState) !== 0) {
+            if (
+                !isset($incomingState)
+                || empty($authState)
+                || !Yii::$app->getSecurity()->compareString($incomingState, $authState)
+            ) {
                 throw new HttpException(400, 'Invalid auth state parameter.');
             }
             $this->removeState('authState');
@@ -131,7 +156,14 @@ abstract class OAuth2 extends BaseOAuth
         ];
 
         if ($this->enablePkce) {
-            $defaultParams['code_verifier'] = $this->getState('authCodeVerifier');
+            $authCodeVerifier = $this->getState('authCodeVerifier');
+            if (empty($authCodeVerifier)) {
+                // Prevent PKCE Downgrade Attack
+                // https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#name-pkce-downgrade-attack
+                throw new HttpException(409, 'Invalid auth code verifier.');
+            }
+            $defaultParams['code_verifier'] = $authCodeVerifier;
+            $this->removeState('authCodeVerifier');
         }
 
         $request = $this->createRequest()
@@ -156,12 +188,22 @@ abstract class OAuth2 extends BaseOAuth
 
     /**
      * {@inheritdoc}
+     * @throws InvalidConfigException
      */
     public function applyAccessTokenToRequest($request, $accessToken)
     {
-        $data = $request->getData();
-        $data['access_token'] = $accessToken->getToken();
-        $request->setData($data);
+        switch($this->accessTokenLocation) {
+            case self::ACCESS_TOKEN_LOCATION_BODY:
+                $data = $request->getData();
+                $data['access_token'] = $accessToken->getToken();
+                $request->setData($data);
+                break;
+            case self::ACCESS_TOKEN_LOCATION_HEADER:
+                $request->getHeaders()->set('Authorization', 'Bearer ' . $accessToken->getToken());
+                break;
+            default:
+                throw new InvalidConfigException('Unknown access token location: ' . $this->accessTokenLocation);
+        }
     }
 
     /**
@@ -226,7 +268,8 @@ abstract class OAuth2 extends BaseOAuth
      */
     protected function createToken(array $tokenConfig = [])
     {
-        $tokenConfig['tokenParamKey'] = 'access_token';
+        $defaultTokenConfig = ['tokenParamKey' => 'access_token'];
+        $tokenConfig = array_merge($defaultTokenConfig, $tokenConfig);
 
         return parent::createToken($tokenConfig);
     }
@@ -234,7 +277,7 @@ abstract class OAuth2 extends BaseOAuth
     /**
      * Authenticate OAuth client directly at the provider without third party (user) involved,
      * using 'client_credentials' grant type.
-     * @see http://tools.ietf.org/html/rfc6749#section-4.4
+     * @see https://tools.ietf.org/html/rfc6749#section-4.4
      * @param array $params additional request params.
      * @return OAuthToken access token.
      * @since 2.1.0

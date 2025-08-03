@@ -7,7 +7,7 @@ use Yii;
 /**
  * This is the base-model class for table "v_Bracket_Definitions".
  *
- * @property string $bracket_searchPattern
+ * @property string $bracket_searchpattern
  * @property string $bracket_name
  * @property string $bracket_description
  * @property integer $bracket_fk_attribute_id
@@ -40,7 +40,7 @@ class VBracketDefinitions extends \yii\db\ActiveRecord
     {
         return [
             [['bracket_fk_attribute_id', 'fk_object_type_id_as_searchFilter', 'bracket_fk_project_id', 'fk_bracket_id', 'db_table_field_id', 'db_table_field_fk_object_type_id', 'attribute_id', 'attribute_fk_object_type_id', 'db_table_id'], 'integer'],
-            [['bracket_searchPattern'], 'string', 'max' => 500],
+            [['bracket_searchpattern'], 'string', 'max' => 500],
             [['bracket_name', 'db_table_name', 'db_table_field_name', 'attribute_name'], 'string', 'max' => 250],
             [['bracket_description'], 'string', 'max' => 4000],
         ];
@@ -52,7 +52,7 @@ class VBracketDefinitions extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'bracket_searchPattern' => Yii::t('app', 'Bracket Search Pattern'),
+            'bracket_searchpattern' => Yii::t('app', 'Bracket Search Pattern'),
             'bracket_name' => Yii::t('app', 'Bracket Name'),
             'bracket_description' => Yii::t('app', 'Bracket Description'),
             'bracket_fk_attribute_id' => Yii::t('app', 'Bracket Fk Attribute ID'),

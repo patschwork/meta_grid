@@ -1,6 +1,20 @@
 Yii Framework 2 HTTP client extension Change Log
 ================================================
 
+2.0.16 February 13, 2025
+------------------------
+
+- Bug #240: Fixed `\yii\httpclient\Response::getIsOk()` to include entire 2xx response code range (rhertogh)
+- Enh #239: Support for PHP 8.1 (rhertogh)
+
+
+2.0.15 May 22, 2023
+-------------------
+
+- Bug #224: Parse content when it is not an empty string (pawmaster)
+- Bug #226: Fix error in debug panel due to PHP 8.1 deprecation of implicit float to int conversion (lacek)
+
+
 2.0.14 August 09, 2021
 ----------------------
 

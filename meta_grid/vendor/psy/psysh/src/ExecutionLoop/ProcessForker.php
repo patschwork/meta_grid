@@ -3,7 +3,7 @@
 /*
  * This file is part of Psy Shell.
  *
- * (c) 2012-2022 Justin Hileman
+ * (c) 2012-2023 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -23,10 +23,11 @@ use Psy\Shell;
  */
 class ProcessForker extends AbstractListener
 {
-    private $savegame;
+    private ?int $savegame = null;
+    /** @var resource */
     private $up;
 
-    private static $pcntlFunctions = [
+    private const PCNTL_FUNCTIONS = [
         'pcntl_fork',
         'pcntl_signal_dispatch',
         'pcntl_signal',
@@ -34,15 +35,13 @@ class ProcessForker extends AbstractListener
         'pcntl_wexitstatus',
     ];
 
-    private static $posixFunctions = [
+    private const POSIX_FUNCTIONS = [
         'posix_getpid',
         'posix_kill',
     ];
 
     /**
      * Process forker is supported if pcntl and posix extensions are available.
-     *
-     * @return bool
      */
     public static function isSupported(): bool
     {
@@ -54,7 +53,7 @@ class ProcessForker extends AbstractListener
      */
     public static function isPcntlSupported(): bool
     {
-        foreach (self::$pcntlFunctions as $func) {
+        foreach (self::PCNTL_FUNCTIONS as $func) {
             if (!\function_exists($func)) {
                 return false;
             }
@@ -68,7 +67,7 @@ class ProcessForker extends AbstractListener
      */
     public static function disabledPcntlFunctions()
     {
-        return self::checkDisabledFunctions(self::$pcntlFunctions);
+        return self::checkDisabledFunctions(self::PCNTL_FUNCTIONS);
     }
 
     /**
@@ -76,7 +75,7 @@ class ProcessForker extends AbstractListener
      */
     public static function isPosixSupported(): bool
     {
-        foreach (self::$posixFunctions as $func) {
+        foreach (self::POSIX_FUNCTIONS as $func) {
             if (!\function_exists($func)) {
                 return false;
             }
@@ -90,7 +89,7 @@ class ProcessForker extends AbstractListener
      */
     public static function disabledPosixFunctions()
     {
-        return self::checkDisabledFunctions(self::$posixFunctions);
+        return self::checkDisabledFunctions(self::POSIX_FUNCTIONS);
     }
 
     private static function checkDisabledFunctions(array $functions): array
@@ -250,8 +249,6 @@ class ProcessForker extends AbstractListener
      * we can.
      *
      * @param array $return
-     *
-     * @return string
      */
     private function serializeReturn(array $return): string
     {

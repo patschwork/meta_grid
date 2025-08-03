@@ -9,17 +9,16 @@ class ComposerStaticInit5c3224428ea877134f6d9d3a4cc8e57d
     public static $files = array (
         '2cffec82183ee1cea088009cef9a6fc3' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
-        '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
         'e69f7f6ee287b969198c3c9d6777bd38' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/bootstrap.php',
         'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
-        '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
-        'def43f6c87e4f8dfd0c9e1b1bab14fe8' => __DIR__ . '/..' . '/symfony/polyfill-iconv/bootstrap.php',
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
-        '2c102faa651ef8ea5874edb585946bce' => __DIR__ . '/..' . '/swiftmailer/swiftmailer/lib/swift_required.php',
-        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
+        '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         '0bd6df6f66b748fa0864bea88a58fa4a' => __DIR__ . '/..' . '/schmunk42/retry/src/retry.php',
+        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
+        'def43f6c87e4f8dfd0c9e1b1bab14fe8' => __DIR__ . '/..' . '/symfony/polyfill-iconv/bootstrap.php',
         '801c31d8ed748cfa537fa45402288c95' => __DIR__ . '/..' . '/psy/psysh/src/functions.php',
+        '2c102faa651ef8ea5874edb585946bce' => __DIR__ . '/..' . '/swiftmailer/swiftmailer/lib/swift_required.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -40,6 +39,7 @@ class ComposerStaticInit5c3224428ea877134f6d9d3a4cc8e57d
             'yii\\authclient\\' => 15,
             'yii\\' => 4,
             'yii2tech\\csvgrid\\' => 17,
+            'yetopen\\smssender\\' => 18,
         ),
         'x' => 
         array (
@@ -58,6 +58,7 @@ class ComposerStaticInit5c3224428ea877134f6d9d3a4cc8e57d
         'p' => 
         array (
             'pheme\\settings\\' => 15,
+            'pheme\\grid\\' => 11,
         ),
         'm' => 
         array (
@@ -79,12 +80,14 @@ class ComposerStaticInit5c3224428ea877134f6d9d3a4cc8e57d
             'hail812\\adminlte\\widgets\\' => 25,
             'hail812\\adminlte3\\' => 18,
         ),
+        'f' => 
+        array (
+            'floor12\\summernote\\' => 19,
+        ),
         'd' => 
         array (
             'dosamigos\\selectize\\' => 20,
-            'dmstr\\widgets\\' => 14,
             'dmstr\\helpers\\' => 14,
-            'dmstr\\db\\tests\\' => 15,
             'dmstr\\db\\' => 9,
             'dmstr\\console\\' => 14,
             'dmstr\\bootstrap\\' => 16,
@@ -99,14 +102,9 @@ class ComposerStaticInit5c3224428ea877134f6d9d3a4cc8e57d
         array (
             'bluezed\\floatThead\\' => 19,
         ),
-        '\\' => 
-        array (
-            '\\pheme\\grid\\' => 12,
-        ),
         'S' => 
         array (
             'Symfony\\Polyfill\\Php80\\' => 23,
-            'Symfony\\Polyfill\\Php72\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Polyfill\\Intl\\Normalizer\\' => 33,
             'Symfony\\Polyfill\\Intl\\Idn\\' => 26,
@@ -141,6 +139,7 @@ class ComposerStaticInit5c3224428ea877134f6d9d3a4cc8e57d
         ),
         'D' => 
         array (
+            'Doctrine\\Deprecations\\' => 22,
             'Doctrine\\Common\\Lexer\\' => 22,
             'Da\\User\\' => 8,
         ),
@@ -207,6 +206,10 @@ class ComposerStaticInit5c3224428ea877134f6d9d3a4cc8e57d
         array (
             0 => __DIR__ . '/..' . '/yii2tech/csv-grid/src',
         ),
+        'yetopen\\smssender\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/yetopen/yii2-sms-sender-interface',
+        ),
         'xtetis\\bootstrap4glyphicons\\' => 
         array (
             0 => __DIR__ . '/..' . '/xtetis/yii2-bootstrap4-glyphicons/src',
@@ -230,6 +233,10 @@ class ComposerStaticInit5c3224428ea877134f6d9d3a4cc8e57d
         'pheme\\settings\\' => 
         array (
             0 => __DIR__ . '/..' . '/pheme/yii2-settings',
+        ),
+        'pheme\\grid\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/pheme/yii2-toggle-column',
         ),
         'mikehaertl\\shellcommand\\' => 
         array (
@@ -263,21 +270,17 @@ class ComposerStaticInit5c3224428ea877134f6d9d3a4cc8e57d
         array (
             0 => __DIR__ . '/..' . '/hail812/yii2-adminlte3/src',
         ),
+        'floor12\\summernote\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/floor12/yii2-summernote/src',
+        ),
         'dosamigos\\selectize\\' => 
         array (
             0 => __DIR__ . '/..' . '/2amigos/yii2-selectize-widget/src',
         ),
-        'dmstr\\widgets\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/dmstr/yii2-db/widgets',
-        ),
         'dmstr\\helpers\\' => 
         array (
             0 => __DIR__ . '/..' . '/dmstr/yii2-helpers/src',
-        ),
-        'dmstr\\db\\tests\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/dmstr/yii2-db/db/tests',
         ),
         'dmstr\\db\\' => 
         array (
@@ -307,17 +310,9 @@ class ComposerStaticInit5c3224428ea877134f6d9d3a4cc8e57d
         array (
             0 => __DIR__ . '/..' . '/bluezed/yii2-float-thead',
         ),
-        '\\pheme\\grid\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/pheme/yii2-toggle-column',
-        ),
         'Symfony\\Polyfill\\Php80\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
-        ),
-        'Symfony\\Polyfill\\Php72\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/polyfill-php72',
         ),
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
@@ -407,9 +402,13 @@ class ComposerStaticInit5c3224428ea877134f6d9d3a4cc8e57d
         array (
             0 => __DIR__ . '/..' . '/egulias/email-validator/src',
         ),
+        'Doctrine\\Deprecations\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/deprecations/src',
+        ),
         'Doctrine\\Common\\Lexer\\' => 
         array (
-            0 => __DIR__ . '/..' . '/doctrine/lexer/lib/Doctrine/Common/Lexer',
+            0 => __DIR__ . '/..' . '/doctrine/lexer/src',
         ),
         'Da\\User\\' => 
         array (

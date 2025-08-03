@@ -21,11 +21,25 @@ $this->params['breadcrumbs'][] = $this->title;
 // 		print_r($dataProvider->query->where["ref_fk_object_type_id"]);
 // 		echo "</pre>";
 
-		echo Html::a(Yii::t('app', 'Create new comment'), ['objectcomment/createexternal', 'ref_fk_object_id' => $dataProvider->query->where["ref_fk_object_id"], 'ref_fk_object_type_id' => $dataProvider->query->where["ref_fk_object_type_id"]],['class' => 'btn btn-primary', 'id' => 'btnCreateNewComment'], [
-		'data' => [
-		'method' => 'post',
-		],
-		])
+$copy_1_dataProvider = clone $dataProvider;
+
+$ref_fk_object_id = 0;
+$ref_fk_object_type_id = 0;
+
+
+try {
+	$ref_fk_object_id = $copy_1_dataProvider->query->asArray()->where[2]['ref_fk_object_id'];
+	$ref_fk_object_type_id = $copy_1_dataProvider->query->asArray()->where[2]['ref_fk_object_type_id'];
+} catch (Exception $e) {
+	$dummy = "";
+}
+
+// echo Html::a(Yii::t('app', 'Create new comment'), ['objectcomment/createexternal', 'ref_fk_object_id' => $dataProvider->query->where["ref_fk_object_id"], 'ref_fk_object_type_id' => $dataProvider->query->where["ref_fk_object_type_id"]],['class' => 'btn btn-primary', 'id' => 'btnCreateNewComment'], [
+echo Html::a(Yii::t('app', 'Create new comment'), ['objectcomment/createexternal', 'ref_fk_object_id' => $ref_fk_object_id, 'ref_fk_object_type_id' => $ref_fk_object_type_id],['class' => 'btn btn-primary', 'id' => 'btnCreateNewComment'], [
+'data' => [
+'method' => 'post',
+],
+])
 	?>
 
     <p>
@@ -41,7 +55,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            'comment:html',
+            'comment:raw',
 			[
 				// erzeugt einen Link Kommentareintrag
 				// siehe auch: http://www.yiiframework.com/forum/index.php/topic/49595-how-to-change-buttons-in-actioncolumn/

@@ -1,8 +1,8 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
+ * @link https://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license https://www.yiiframework.com/license/
  */
 
 namespace yii\bootstrap4;
@@ -269,6 +269,9 @@ class ActiveField extends \yii\widgets\ActiveField
             Html::removeCssClass($this->labelOptions, $this->horizontalCssClasses['label']);
             Html::addCssClass($this->wrapperOptions, $this->horizontalCssClasses['offset']);
         }
+        if ($this->form->layout === ActiveForm::LAYOUT_INLINE) {
+            Html::removeCssClass($this->labelOptions, 'sr-only');
+        }
         unset($options['template']);
 
         if ($enclosedByLabel) {
@@ -415,13 +418,13 @@ class ActiveField extends \yii\widgets\ActiveField
     /**
      * {@inheritdoc}
      */
-    public function dropdownList($items, $options = [])
+    public function dropDownList($items, $options = [])
     {
         if ($this->form->layout === ActiveForm::LAYOUT_INLINE) {
             Html::removeCssClass($this->labelOptions, 'sr-only');
         }
 
-        return parent::dropdownList($items, $options);
+        return parent::dropDownList($items, $options);
     }
 
     /**

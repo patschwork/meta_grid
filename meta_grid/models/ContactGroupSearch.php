@@ -80,6 +80,13 @@ class ContactGroupSearch extends VContactGroupSearchinterface
             ->andFilterWhere(['like', 'description', $this->description])
             ->andFilterWhere(['like', 'short_name', $this->short_name]);
 
+        // {... T363
+        $db = Yii::$app->db;
+        $db->cache(function () use ($dataProvider) {
+            $dataProvider->prepare();
+        });
+        // T363 ...}
+
         return $dataProvider;
     }
 }

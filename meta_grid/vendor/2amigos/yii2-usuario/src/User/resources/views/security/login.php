@@ -43,18 +43,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ) ?>
 
-                <?php
-                // {... T199: More comfort for demo mode
-                if (Yii::$app->user->isGuest)
-                {
-                    if (stristr(Yii::$app->urlManager->createAbsoluteUrl(['/']), 'demo'))
-                    {
-                        $model->login='admin';
-                        $model->password='admin';      
-                    }
-                }
-                // ...}
-                ?>
                 <?= $form->field(
                     $model,
                     'login',

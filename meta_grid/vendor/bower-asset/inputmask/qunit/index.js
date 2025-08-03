@@ -1,95 +1,69 @@
-import "../node_modules/qunitjs/qunit/qunit.css";
-import "../css/inputmask.css";
-
-//extensions
-import "../js/inputmask.date.extensions";
-import "../js/inputmask.extensions";
-import "../js/inputmask.numeric.extensions";
-import "../js/inputmask.phone.extensions";
-import "../js/phone-codes/phone-be";
-import "../js/phone-codes/phone-nl";
-import "../js/phone-codes/phone-ru";
-import "../js/phone-codes/phone-uk";
-import "../js/phone-codes/phone";
-import "../js/jquery.inputmask";
-
-import  Inputmask from "../js/inputmask";
-import dependencyLib from "../js/dependencyLibs/inputmask.dependencyLib";
 import jQuery from "jquery";
-if (dependencyLib === jQuery)
-    window.jQuery = dependencyLib;
+import qunit from "qunit";
 
-import qunit from "qunitjs";
+import Inputmask from "../bundle";
+
 import "./prototypeExtensions.js";
-import simulator from "./simulator.js";
+import simulator from "./simulator.js"; // inject globally for the simulator to detect inputeventonly
+import testsAlternations from "./tests_alternations";
+import testsAttributes from "./tests_attributes";
+import testsBase from "./tests_base";
+import testsDate from "./tests_date";
+import testsDynamic from "./tests_dynamic";
+import testsEscape from "./tests_escape";
+import testsFormatvalidate from "./tests_formatvalidate";
+import testsInitialvalue from "./tests_initialvalue";
+import testsInputeventonly from "./tests_inputeventonly";
+import testsIp from "./tests_ip";
+import testsJitmasking from "./tests_jitmasking";
+import testsJqueryInputmask from "./tests_jquery_inputmask";
+import testsKeepStatic from "./tests_keepStatic";
+import testsMulti from "./tests_multi";
+import testsNumeric from "./tests_numeric";
+import testsNumericinput from "./tests_numericinput";
+import testsOption from "./tests_option";
+import testsOptional from "./tests_optional";
+import testsPaste from "./tests_paste";
+import testsRegex from "./tests_regex";
+import testsSetvalue from "./tests_setvalue";
 
+if (Inputmask.dependencyLib === jQuery) window.jQuery = Inputmask.dependencyLib;
 
 // android testing
-// Inputmask.extendDefaults({
-//    inputEventOnly: true
-// });
-// window.Inputmask = Inputmask; //inject globally for the simulator to detect inputeventonly
+Inputmask.extendDefaults({
+  inputEventOnly: false
+});
 
-import tests_alternations from "./tests_alternations";
-import tests_attributes from "./tests_attributes";
-import tests_base from "./tests_base";
-import tests_date from "./tests_date";
-import tests_dynamic from "./tests_dynamic";
-import tests_escape from "./tests_escape";
-import tests_formatvalidate from "./tests_formatvalidate";
-import tests_initialvalue from "./tests_initialvalue";
-import tests_inputeventonly from "./tests_inputeventonly";
-import tests_ip from "./tests_ip";
-import tests_jitmasking from "./tests_jitmasking";
-import tests_jquery_inputmask from "./tests_jquery_inputmask";
-import tests_keepStatic from "./tests_keepStatic";
-import tests_multi from "./tests_multi";
-import tests_numeric from "./tests_numeric";
-import tests_numericinput from "./tests_numericinput";
-import tests_option from "./tests_option";
-import tests_optional from "./tests_optional";
-import tests_paste from "./tests_paste";
-import tests_phone from "./tests_phone";
-import tests_regex from "./tests_regex";
-import tests_setvalue from "./tests_setvalue";
-import tests_phone_world from "./tests_phone_world";
-import tests_phonebe from "./tests_phonebe";
-import tests_phonenl from "./tests_phonenl";
-import tests_phoneru from "./tests_phoneru";
+window.Inputmask = Inputmask;
 
-//inject simulater code
-simulator(dependencyLib, Inputmask);
+// inject simulater code in the dependencies
+simulator(Inputmask.dependencyLib, Inputmask);
 simulator(jQuery, Inputmask);
 
-//load tests
-tests_alternations(qunit, dependencyLib, Inputmask);
-tests_attributes(qunit, dependencyLib, Inputmask);
-tests_base(qunit, dependencyLib, Inputmask);
-tests_date(qunit, dependencyLib, Inputmask);
-tests_dynamic(qunit, dependencyLib, Inputmask);
-tests_escape(qunit, dependencyLib, Inputmask);
-tests_formatvalidate(qunit, dependencyLib, Inputmask);
-tests_initialvalue(qunit, dependencyLib, Inputmask);
-tests_inputeventonly(qunit, dependencyLib, Inputmask);
-tests_ip(qunit, dependencyLib, Inputmask);
-tests_jitmasking(qunit, dependencyLib, Inputmask);
-tests_jquery_inputmask(qunit, jQuery, Inputmask);
-tests_keepStatic(qunit, dependencyLib, Inputmask);
-tests_multi(qunit, dependencyLib, Inputmask);
-tests_numeric(qunit, dependencyLib, Inputmask);
-tests_numericinput(qunit, dependencyLib, Inputmask);
-tests_option(qunit, dependencyLib, Inputmask);
-tests_optional(qunit, dependencyLib, Inputmask);
-tests_paste(qunit, dependencyLib, Inputmask);
-tests_phone(qunit, dependencyLib, Inputmask);
-tests_regex(qunit, dependencyLib, Inputmask);
-tests_setvalue(qunit, dependencyLib, Inputmask);
+// load tests
+if (qunit) {
+  testsAlternations(qunit, Inputmask);
+  testsAttributes(qunit, Inputmask);
+  testsBase(qunit, Inputmask);
+  testsDate(qunit, Inputmask);
+  testsDynamic(qunit, Inputmask);
+  testsEscape(qunit, Inputmask);
+  testsFormatvalidate(qunit, Inputmask);
+  testsInitialvalue(qunit, Inputmask);
+  testsInputeventonly(qunit, Inputmask);
+  testsIp(qunit, Inputmask);
+  testsJitmasking(qunit, Inputmask);
+  testsJqueryInputmask(qunit, jQuery, Inputmask);
+  testsKeepStatic(qunit, Inputmask);
+  testsMulti(qunit, Inputmask);
+  testsNumeric(qunit, Inputmask);
+  testsNumericinput(qunit, Inputmask);
+  testsOption(qunit, Inputmask);
+  testsOptional(qunit, Inputmask);
+  testsPaste(qunit, Inputmask);
+  testsRegex(qunit, Inputmask);
+  testsSetvalue(qunit, Inputmask);
 
-//phone
-// tests_phone_world(qunit, dependencyLib, Inputmask);
-// tests_phonebe(qunit, dependencyLib, Inputmask);
-// tests_phonenl(qunit, dependencyLib, Inputmask);
-// tests_phoneru(qunit, dependencyLib, Inputmask);
-
-qunit.load();
-// qunit.start();
+  qunit.load();
+  // qunit.start();
+}

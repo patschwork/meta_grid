@@ -1,8 +1,8 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
+ * @link https://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license https://www.yiiframework.com/license/
  */
 
 namespace yii\bootstrap4;
@@ -109,6 +109,19 @@ class Accordion extends Widget
      *
      */
     public $itemToggleOptions = [];
+    /**
+     * @var array the HTML options for the header toggle tag. Key 'tag' might be used here for the tag name specification.
+     * Merged to:
+     *
+     * ```php
+     * [
+     *     'tag' => 'h5',
+     *     'class' => 'mb-0',
+     * ]
+     * ```
+     *
+     */
+    public $headerToggleOptions = [];
 
 
     /**
@@ -214,7 +227,13 @@ class Accordion extends Widget
                     ]) . "\n";
             }
 
-            $header = Html::tag('h5', $headerToggle, ['class' => 'mb-0']);
+            $headerToggleOptions = array_merge([
+                'tag' => 'h5',
+                'class' => 'mb-0',
+            ], $this->headerToggleOptions);
+
+            $headerToggleTag = ArrayHelper::remove($headerToggleOptions, 'tag', 'h5');
+            $header = Html::tag($headerToggleTag, $headerToggle, $headerToggleOptions);
 
             if (is_string($item['content']) || is_numeric($item['content']) || is_object($item['content'])) {
                 $content = Html::tag('div', $item['content'], ['class' => 'card-body']) . "\n";

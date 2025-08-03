@@ -1,24 +1,12 @@
-import "./css/inputmask.css";
+import "./lib/polyfills/Object.getPrototypeOf";
+import "./lib/polyfills/Array.includes";
+import "./lib/polyfills/Object.entries";
+import "./lib/polyfills/String.includes";
 
-import "./js/inputmask.date.extensions";
-import "./js/inputmask.extensions";
-import "./js/inputmask.numeric.extensions";
-import "./js/inputmask.phone.extensions";
-//remove me later
-import "./js/inputmask.regex.extensions";
+import "./lib/extensions/inputmask.extensions";
+import "./lib/extensions/inputmask.date.extensions";
+import "./lib/extensions/inputmask.numeric.extensions";
+import "./lib/inputmaskElement";
+import Inputmask from "./lib/inputmask";
 
-// import "./js/phone-codes/phone-be";
-// import "./js/phone-codes/phone-nl";
-// import "./js/phone-codes/phone-ru";
-// import "./js/phone-codes/phone-uk";
-// import "./js/phone-codes/phone";
-
-import im from "./js/inputmask.js";
-import dependencyLib from "./js/dependencyLibs/inputmask.dependencyLib";
-import jQuery from "jquery";
-if (dependencyLib === jQuery) {
-    require("./js/jquery.inputmask");
-}
-window.Inputmask = im;
-
-
+export default Inputmask;

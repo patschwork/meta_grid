@@ -5,9 +5,6 @@
 
 use yii\helpers\Html;
 
-use xtetis\bootstrap4glyphicons\assets\GlyphiconAsset; 
-GlyphiconAsset::register($this);
-
 \hail812\adminlte3\assets\FontAwesomeAsset::register($this);
 \hail812\adminlte3\assets\AdminLteAsset::register($this);
 $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback');

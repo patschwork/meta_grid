@@ -77,6 +77,13 @@ class DbTableTypeSearch extends VDbTableTypeSearchinterface
             ->andFilterWhere(['like', 'description', $this->description])
             ->andFilterWhere(['like', 'source_definition_language', $this->source_definition_language]);
 
+        // {... T363
+        $db = Yii::$app->db;
+        $db->cache(function () use ($dataProvider) {
+            $dataProvider->prepare();
+        });
+        // T363 ...}
+
         return $dataProvider;
     }
 }

@@ -45,7 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'fk_object_type_id',
             'ref_fk_object_id',
             'ref_fk_object_type_id',
-            'comment:html',
+            'comment:raw',
             'created_at_datetime:ntext',
         ],
     ]) ?>

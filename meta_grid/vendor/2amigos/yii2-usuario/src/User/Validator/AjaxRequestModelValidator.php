@@ -14,7 +14,7 @@ namespace Da\User\Validator;
 use Da\User\Contracts\ValidatorInterface;
 use Yii;
 use yii\base\Model;
-use yii\bootstrap4\ActiveForm;
+use yii\bootstrap\ActiveForm;
 use yii\web\Response;
 
 class AjaxRequestModelValidator implements ValidatorInterface
@@ -32,9 +32,12 @@ class AjaxRequestModelValidator implements ValidatorInterface
 
         if ($request->getIsAjax() && $this->model->load($request->post())) {
             Yii::$app->response->format = Response::FORMAT_JSON;
-            Yii::$app->response->data = ActiveForm::validate($this->model);
+            $result = ActiveForm::validate($this->model);
+            Yii::$app->response->data = $result;
             Yii::$app->response->send();
             Yii::$app->end();
+            return $result;
         }
+        return false;
     }
 }

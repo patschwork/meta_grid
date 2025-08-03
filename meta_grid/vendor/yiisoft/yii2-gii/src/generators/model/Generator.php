@@ -12,6 +12,7 @@ use yii\base\InvalidConfigException;
 use yii\base\NotSupportedException;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\db\ColumnSchema;
 use yii\db\Connection;
 use yii\db\Exception;
 use yii\db\Schema;
@@ -39,19 +40,20 @@ class Generator extends \yii\gii\Generator
     /**
      * @var string
      */
-    public $tableName;
+    public $tableName = '';
     /**
      * @var string
      */
-    public $modelClass;
+    public $modelClass = '';
     /**
      * @var string
      */
     public $baseClass = 'yii\db\ActiveRecord';
     public $generateRelations = self::RELATIONS_ALL;
     public $generateJunctionRelationMode = self::JUNCTION_RELATION_VIA_TABLE;
-    public $useClassConstant = null;
+    public $useClassConstant;
     public $generateRelationsFromCurrentSchema = true;
+    public $generateRelationNameFromDestinationTable = false;
     public $generateLabelsFromComments = false;
     public $useTablePrefix = false;
     public $standardizeCapitals = false;
@@ -60,7 +62,7 @@ class Generator extends \yii\gii\Generator
     public $generateQuery = false;
     public $queryNs = 'app\models';
     /**
-     * @var string
+     * @var string|null
      */
     public $queryClass;
     /**
@@ -109,7 +111,7 @@ class Generator extends \yii\gii\Generator
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['db', 'tableName', 'modelClass', 'baseClass', 'queryClass', 'queryBaseClass'], 'filter', 'filter' => 'trim', 'skipOnEmpty' => true],
+            [['db', 'tableName', 'modelClass', 'baseClass', 'queryClass', 'queryBaseClass'], 'trim'],
             [
                 ['ns', 'queryNs'],
                 'filter',
@@ -130,7 +132,7 @@ class Generator extends \yii\gii\Generator
             [['generateRelations'], 'in', 'range' => [self::RELATIONS_NONE, self::RELATIONS_ALL, self::RELATIONS_ALL_INVERSE]],
             [['generateJunctionRelationMode'], 'in', 'range' => [self::JUNCTION_RELATION_VIA_TABLE, self::JUNCTION_RELATION_VIA_MODEL]],
             [
-                ['generateLabelsFromComments', 'useTablePrefix', 'useSchemaName', 'generateQuery', 'generateRelationsFromCurrentSchema', 'useClassConstant', 'enableI18N', 'standardizeCapitals', 'singularize'],
+                ['generateLabelsFromComments', 'useTablePrefix', 'useSchemaName', 'generateQuery', 'generateRelationsFromCurrentSchema', 'generateRelationNameFromDestinationTable', 'useClassConstant', 'enableI18N', 'standardizeCapitals', 'singularize'],
                 'boolean'
             ],
             [['messageCategory'], 'validateMessageCategory', 'skipOnEmpty' => false],
@@ -153,6 +155,7 @@ class Generator extends \yii\gii\Generator
             'generateRelations' => 'Generate Relations',
             'generateJunctionRelationMode' => 'Generate Junction Relations As',
             'generateRelationsFromCurrentSchema' => 'Generate Relations from Current Schema',
+            'generateRelationNameFromDestinationTable' => 'Generate Relation Names Using Target Table Name',
             'useClassConstant' => 'Use `::class`',
             'generateLabelsFromComments' => 'Generate Labels from DB Comments',
             'generateQuery' => 'Generate ActiveQuery',
@@ -195,6 +198,7 @@ class Generator extends \yii\gii\Generator
                 Make sure you also generate the junction models when using the "Via Model" option.
             ',
             'generateRelationsFromCurrentSchema' => 'This indicates whether the generator should generate relations from current schema or from all available schemas.',
+            'generateRelationNameFromDestinationTable' => 'This indicates whether the relation names should use target table name.',
             'useClassConstant' => 'Use the `::class` constant instead of the `::className()` method.',
             'generateLabelsFromComments' => 'This indicates whether the generator should generate attribute labels
                 by using the comments of the corresponding DB columns.',
@@ -304,6 +308,7 @@ class Generator extends \yii\gii\Generator
                 'rules' => $this->generateRules($tableSchema),
                 'relations' => $tableRelations,
                 'relationsClassHints' => $this->generateRelationsClassHints($tableRelations, $this->generateQuery),
+                'enum' => $this->getEnum($tableSchema->columns),
             ];
             $files[] = new CodeFile(
                 Yii::getAlias('@' . str_replace('\\', '/', $this->ns)) . '/' . $modelClassName . '.php',
@@ -438,12 +443,21 @@ class Generator extends \yii\gii\Generator
     {
         $types = [];
         $lengths = [];
+        $nullable = [];
+        $defaultValues = [];
         foreach ($table->columns as $column) {
             if ($column->autoIncrement) {
                 continue;
             }
             if (!$column->allowNull && $column->defaultValue === null) {
                 $types['required'][] = $column->name;
+            } elseif ($column->allowNull && $column->defaultValue === null) {
+                $nullable[] = $column->name;
+            } elseif (is_scalar($column->defaultValue)) {
+                if (array_key_exists($column->defaultValue, $defaultValues)) {
+                    $defaultValues[$column->defaultValue] = [];
+                }
+                $defaultValues[$column->defaultValue][] = $column->name;
             }
             switch ($column->type) {
                 case Schema::TYPE_SMALLINT:
@@ -477,6 +491,15 @@ class Generator extends \yii\gii\Generator
             }
         }
         $rules = [];
+        if (!empty($nullable)) {
+            $rules[] = "[['" . implode("', '", $nullable) . "'], 'default', 'value' => null]";
+        }
+        if (!empty($defaultValues)) {
+            foreach ($defaultValues as $defaultValue => $defaultValueColumns) {
+                $defaultValue = is_numeric($defaultValue) ? $defaultValue : "'$defaultValue'";
+                $rules[] = "[['" . implode("', '", $defaultValueColumns) . "'], 'default', 'value' => $defaultValue]";
+            }
+        }
         $driverName = $this->getDbDriverName();
         foreach ($types as $type => $columns) {
             if ($driverName === 'pgsql' && $type === 'integer') {
@@ -486,6 +509,11 @@ class Generator extends \yii\gii\Generator
         }
         foreach ($lengths as $length => $columns) {
             $rules[] = "[['" . implode("', '", $columns) . "'], 'string', 'max' => $length]";
+        }
+
+        $columnsEnum = $this->getEnum($table->columns);
+        foreach ($columnsEnum as $fieldName => $columnEnum) {
+            $rules['enum-' . $fieldName] = "['" . $fieldName . "', 'in', 'range' => array_keys(self::" . $columnEnum['funcOptsName'] . '())]';
         }
 
         $db = $this->getDbConnection();
@@ -684,12 +712,13 @@ class Generator extends \yii\gii\Generator
                     }
                     unset($refs[0]);
                     $fks = array_keys($refs);
+                    $relName = $this->generateRelationNameFromDestinationTable ? $refTable : $fks[0];
                     $refClassName = $this->generateClassName($refTable);
                     $refClassNameResolution = $this->generateClassNameResolution($refClassName);
 
                     // Add relation for this table
                     $link = $this->generateRelationLink(array_flip($refs));
-                    $relationName = $this->generateRelationName($relations, $table, $fks[0], false);
+                    $relationName = $this->generateRelationName($relations, $table, $relName, false);
                     $relations[$table->fullName][$relationName] = [
                         "return \$this->hasOne($refClassNameResolution, $link);",
                         $refClassName,
@@ -1055,7 +1084,7 @@ class Generator extends \yii\gii\Generator
      */
     protected function generateClassName($tableName, $useSchemaName = null)
     {
-        if (isset($this->classNames[$tableName])) {
+        if (!empty($this->classNames[$tableName])) {
             return $this->classNames[$tableName];
         }
 
@@ -1164,6 +1193,57 @@ class Generator extends \yii\gii\Generator
         }
 
         return false;
+    }
+
+    /**
+     * Prepares ENUM field values.
+     *
+     * @param ColumnSchema[] $columns
+     *
+     * @return array
+     */
+    public function getEnum($columns)
+    {
+        $enum = [];
+        foreach ($columns as $column) {
+            if (!$this->isEnum($column)) {
+                continue;
+            }
+
+            $columnCamelName = Inflector::id2camel($column->name, '_');
+            $enum[$column->name]['funcOptsName'] = 'opts' . $columnCamelName;
+            $enum[$column->name]['isFunctionPrefix'] = 'is' . $columnCamelName;
+            $enum[$column->name]['setFunctionPrefix'] = 'set' . $columnCamelName . 'To';
+            $enum[$column->name]['displayFunctionPrefix'] = 'display' . $columnCamelName;
+            $enum[$column->name]['columnName'] = $column->name;
+            $enum[$column->name]['values'] = [];
+
+            foreach ($column->enumValues as $value) {
+
+                $constantName = strtoupper(Inflector::slug($column->name . ' ' . $value, '_'));
+                $label = Inflector::camel2words($value);
+
+                $enum[$column->name]['values'][] = [
+                    'value' => $value,
+                    'constName' => $constantName,
+                    'label' => $label,
+                    'functionSuffix' => Inflector::id2camel(Inflector::slug($value))
+                ];
+            }
+        }
+
+        return $enum;
+    }
+
+    /**
+     * Checks if column is of ENUM type.
+     *
+     * @param ColumnSchema $column Column instance
+     * @return bool
+     */
+    protected function isEnum($column)
+    {
+        return !empty($column->enumValues) || stripos($column->dbType, 'ENUM') === 0;
     }
 
     /**

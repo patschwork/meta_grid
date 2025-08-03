@@ -32,7 +32,7 @@ use yii\authclient\OAuth2;
  * ]
  * ```
  *
- * @see http://developer.github.com/v3/oauth/
+ * @see https://developer.github.com/v3/oauth/
  * @see https://github.com/settings/developers
  *
  * @author Paul Klimov <klimov.paul@gmail.com>
@@ -40,6 +40,10 @@ use yii\authclient\OAuth2;
  */
 class GitHub extends OAuth2
 {
+    /**
+     * {@inheritdoc}
+     */
+    public $accessTokenLocation = OAuth2::ACCESS_TOKEN_LOCATION_HEADER;
     /**
      * {@inheritdoc}
      */

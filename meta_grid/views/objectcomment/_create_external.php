@@ -6,6 +6,14 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model app\models\Objectcomment */
 /* @var $form yii\widgets\ActiveForm */
+
+
+// Prevent loading bootstrap.css v3.4.1 (see T212)
+\Yii::$app->assetManager->bundles['yii\\bootstrap\\BootstrapAsset'] = [
+    'css' => [],
+    'js' => []
+];
+
 ?>
 
 <div class="objectcomment-form">
@@ -22,7 +30,7 @@ use yii\widgets\ActiveForm;
 
     <!-- <?= $form->field($model, 'comment')->textarea(['rows' => 6]) ?> -->
 	
-	<?= $form->field($model, 'comment')->widget(\yii\redactor\widgets\Redactor::className()) ?>
+	<?= $form->field($model, 'comment')->widget(floor12\summernote\Summernote::class) ?>
     
     <!-- <?= $form->field($model, 'created_at_datetime')->textarea(['rows' => 6]) ?>  -->
 

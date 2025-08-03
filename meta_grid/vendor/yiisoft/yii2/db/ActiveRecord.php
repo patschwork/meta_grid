@@ -156,6 +156,9 @@ class ActiveRecord extends BaseActiveRecord
      * @param string $sql the SQL statement to be executed
      * @param array $params parameters to be bound to the SQL statement during execution.
      * @return ActiveQuery the newly created [[ActiveQuery]] instance
+     *
+     * @phpstan-return ActiveQuery<static>
+     * @psalm-return ActiveQuery<static>
      */
     public static function findBySql($sql, $params = [])
     {
@@ -214,7 +217,7 @@ class ActiveRecord extends BaseActiveRecord
         $aliases = array_diff(array_keys($tables), $tables);
 
         return array_map(function ($alias) {
-            return preg_replace('/{{([\w]+)}}/', '$1', $alias);
+            return preg_replace('/{{(\w+)}}/', '$1', $alias);
         }, array_values($aliases));
     }
 
@@ -292,7 +295,7 @@ class ActiveRecord extends BaseActiveRecord
         }
         $query->where($pk);
 
-        /* @var $record BaseActiveRecord */
+        /** @var BaseActiveRecord $record */
         $record = $query->noCache()->one();
         return $this->refreshInternal($record);
     }
@@ -408,6 +411,9 @@ class ActiveRecord extends BaseActiveRecord
     /**
      * {@inheritdoc}
      * @return ActiveQuery the newly created [[ActiveQuery]] instance.
+     *
+     * @phpstan-return ActiveQuery<static>
+     * @psalm-return ActiveQuery<static>
      */
     public static function find()
     {

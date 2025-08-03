@@ -1,6 +1,27 @@
 Yii Framework 2 gii extension Change Log
 ========================================
 
+2.2.7 February 13, 2025
+-----------------------
+
+- Bug #531: Fix `yii\gii\console\GenerateAction` to use `stdout()` instead of echoing the output (egmsystems)
+- Bug #532: Return `ExitCode::USAGE` on command input validation error (egmsystems)
+- Bug #545: Fix CRUD for non-relational databases (spzgy)
+- Enh #534: Generating in model ENUM fields value constants, setter and getter methods (uldisn)
+- Enh #537: Generating rules for the fields with default values (manky)
+- Enh #542: Use the table name to create the relation (thiagotalma)
+- Enh #551: Add optional parameter `$formName` to `SearchModel::search()` method (evil1)
+
+
+2.2.6 May 22, 2023
+------------------
+
+- Bug #510: Fix possible XSS (rob006)
+- Bug #511: Fix validation for `messageCategory` in Generator (rob006)
+- Bug #525: Fix of the modal dialog visibility with a preview of generated migration (glodov)
+- Enh #514: Fix compatibility with PHP 8.1 and 8.2 (rob006)
+
+
 2.2.5 September 04, 2022
 ------------------------
 
@@ -15,7 +36,7 @@ Yii Framework 2 gii extension Change Log
 - Bug #467: Fix view `generators/crud/default/controller` (WinterSilence, cjrf)
 - Bug #476: Fix stucking datalist options in form generator (WinterSilence)
 - Bug #484: Add parent's labels and hints, fix rule for attribute `moduleClass` in module generator (WinterSilence)
-- Bug #486: Update `assets/js/bs4-native.min.js` to latest version (WinterSilence)
+- Bug #486: Update `assets/js/bs4-native.min.js` to the latest version (WinterSilence)
 - Bug #488: Fix `ActionColumn::$urlCreator` in index template of CRUD generator (WinterSilence)
 - Enh #485: Add validation rules for `enableI18N` and `messageCategory` to Generator (WinterSilence)
 

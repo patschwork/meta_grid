@@ -65,7 +65,7 @@ use yii\helpers\Url;
     <?= $form->field($model, 'ldap_cn') ?>
 
 	<?php
-		echo $form->field($model, 'description')->widget(\yii\redactor\widgets\Redactor::className());	?>
+		echo $form->field($model, 'description')->widget(floor12\summernote\Summernote::class);	?>
  <!--  	// auto commented via gii/CRUD    <?= $form->field($model, 'description') ?>  -->
 
 

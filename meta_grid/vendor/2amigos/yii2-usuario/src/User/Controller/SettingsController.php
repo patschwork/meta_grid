@@ -26,14 +26,21 @@ use Da\User\Module;
 use Da\User\Query\ProfileQuery;
 use Da\User\Query\SocialNetworkAccountQuery;
 use Da\User\Query\UserQuery;
+use Da\User\Search\SessionHistorySearch;
 use Da\User\Service\EmailChangeService;
+use Da\User\Service\SessionHistory\TerminateUserSessionsService;
+use Da\User\Service\TwoFactorEmailCodeGeneratorService;
 use Da\User\Service\TwoFactorQrCodeUriGeneratorService;
+use Da\User\Service\TwoFactorSmsCodeGeneratorService;
 use Da\User\Traits\ContainerAwareTrait;
 use Da\User\Traits\ModuleAwareTrait;
 use Da\User\Validator\AjaxRequestModelValidator;
 use Da\User\Validator\TwoFactorCodeValidator;
+use Da\User\Validator\TwoFactorEmailValidator;
+use Da\User\Validator\TwoFactorTextMessageValidator;
 use Yii;
 use yii\base\DynamicModel;
+use yii\base\InvalidParamException;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
@@ -91,7 +98,8 @@ class SettingsController extends Controller
                 'actions' => [
                     'disconnect' => ['post'],
                     'delete' => ['post'],
-                    'two-factor-disable' => ['post']
+                    'two-factor-disable' => ['post'],
+                    'terminate-sessions' => ['post'],
                 ],
             ],
             'access' => [
@@ -111,7 +119,8 @@ class SettingsController extends Controller
                             'delete',
                             'two-factor',
                             'two-factor-enable',
-                            'two-factor-disable'
+                            'two-factor-disable',
+                            'two-factor-mobile-phone'
                         ],
                         'roles' => ['@'],
                     ],
@@ -119,6 +128,11 @@ class SettingsController extends Controller
                         'allow' => true,
                         'actions' => ['confirm'],
                         'roles' => ['?', '@'],
+                    ],
+                    [
+                        'allow' => $this->getModule()->enableSessionHistory,
+                        'actions' => ['session-history', 'terminate-sessions'],
+                        'roles' => ['@'],
                     ],
                 ],
             ],
@@ -138,7 +152,11 @@ class SettingsController extends Controller
             $profile->link('user', Yii::$app->user->identity);
         }
 
-        /** @var ProfileEvent $event */
+        /**
+        *
+        *
+        * @var ProfileEvent $event
+        */
         $event = $this->make(ProfileEvent::class, [$profile]);
 
         $this->make(AjaxRequestModelValidator::class, [$profile])->validate();
@@ -170,9 +188,12 @@ class SettingsController extends Controller
         if (!$this->module->enableGdprCompliance) {
             throw new NotFoundHttpException();
         }
-        return $this->render('privacy', [
+        return $this->render(
+            'privacy',
+            [
             'module' => $this->module
-        ]);
+            ]
+        );
     }
 
     /**
@@ -189,7 +210,11 @@ class SettingsController extends Controller
         if (!$this->module->enableGdprCompliance) {
             throw new NotFoundHttpException();
         }
-        /** @var GdprDeleteForm $form */
+        /**
+        *
+        *
+        * @var GdprDeleteForm $form
+        */
         $form = $this->make(GdprDeleteForm::class);
 
         $user = $form->getUser();
@@ -211,21 +236,25 @@ class SettingsController extends Controller
                 $security = $this->make(SecurityHelper::class);
                 $anonymReplacement = $this->module->gdprAnonymizePrefix . $user->id;
 
-                $user->updateAttributes([
+                $user->updateAttributes(
+                    [
                     'email' => $anonymReplacement . "@example.com",
                     'username' => $anonymReplacement,
                     'gdpr_deleted' => 1,
                     'blocked_at' => time(),
                     'auth_key' => $security->generateRandomString()
-                ]);
-                $user->profile->updateAttributes([
+                    ]
+                );
+                $user->profile->updateAttributes(
+                    [
                     'public_email' => $anonymReplacement . "@example.com",
                     'name' => $anonymReplacement,
                     'gravatar_email' => $anonymReplacement . "@example.com",
                     'location' => $anonymReplacement,
                     'website' => $anonymReplacement . ".tld",
                     'bio' => Yii::t('usuario', 'Deleted by GDPR request')
-                ]);
+                    ]
+                );
             }
             $this->trigger(GdprEvent::EVENT_AFTER_DELETE, $event);
 
@@ -234,14 +263,21 @@ class SettingsController extends Controller
             return $this->goHome();
         }
 
-        return $this->render('gdpr-delete', [
+        return $this->render(
+            'gdpr-delete',
+            [
             'model' => $form,
-        ]);
+            ]
+        );
     }
 
     public function actionGdprConsent()
     {
-        /** @var User $user */
+        /**
+        *
+        *
+        * @var User $user
+        */
         $user = Yii::$app->user->identity;
         if ($user->gdpr_consent) {
             return $this->redirect(['profile']);
@@ -249,30 +285,40 @@ class SettingsController extends Controller
         $model = new DynamicModel(['gdpr_consent']);
         $model->addRule('gdpr_consent', 'boolean');
         $model->addRule('gdpr_consent', 'default', ['value' => 0, 'skipOnEmpty' => false]);
-        $model->addRule('gdpr_consent', 'compare', [
+        $model->addRule(
+            'gdpr_consent',
+            'compare',
+            [
             'compareValue' => true,
             'message' => Yii::t('usuario', 'Your consent is required to work with this site'),
             'when' => function () {
                 return $this->module->enableGdprCompliance;
             },
-        ]);
+            ]
+        );
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $user->updateAttributes([
+            $user->updateAttributes(
+                [
                 'gdpr_consent' => 1,
                 'gdpr_consent_date' => time(),
-            ]);
+                ]
+            );
             return $this->redirect(['profile']);
         }
 
-        return $this->render('gdpr-consent', [
+        return $this->render(
+            'gdpr-consent',
+            [
             'model' => $model,
             'gdpr_consent_hint' => $this->module->getConsentMessage(),
-        ]);
+            ]
+        );
     }
 
     /**
      * Exports the data from the current user in a mechanical readable format (csv). Properties exported can be defined
      * in the module configuration.
+     *
      * @throws NotFoundHttpException if gdpr compliance is not enabled
      * @throws \Exception
      * @throws \Throwable
@@ -317,7 +363,11 @@ class SettingsController extends Controller
 
     public function actionAccount()
     {
-        /** @var SettingsForm $form */
+        /**
+*
+         *
+ * @var SettingsForm $form
+*/
         $form = $this->make(SettingsForm::class);
         $event = $this->make(UserEvent::class, [$form->getUser()]);
 
@@ -384,7 +434,11 @@ class SettingsController extends Controller
             throw new NotFoundHttpException(Yii::t('usuario', 'Not found'));
         }
 
-        /** @var User $user */
+        /**
+        *
+        *
+        * @var User $user
+        */
         $user = Yii::$app->user->identity;
         $event = $this->make(UserEvent::class, [$user]);
         Yii::$app->user->logout();
@@ -400,6 +454,15 @@ class SettingsController extends Controller
 
     public function actionTwoFactor($id)
     {
+        if (!$this->module->enableTwoFactorAuthentication) {
+            throw new ForbiddenHttpException(Yii::t('usuario', 'Application not configured for two factor authentication.'));
+        }
+
+        if ($id != Yii::$app->user->id) {
+            throw new ForbiddenHttpException();
+        }
+
+        $choice = Yii::$app->request->post('choice');
         /** @var User $user */
         $user = $this->userQuery->whereId($id)->one();
 
@@ -407,13 +470,29 @@ class SettingsController extends Controller
             throw new NotFoundHttpException();
         }
 
-        $uri = $this->make(TwoFactorQrCodeUriGeneratorService::class, [$user])->run();
-
-        return $this->renderAjax('two-factor', ['id' => $id, 'uri' => $uri]);
+        switch ($choice) {
+            case 'google-authenticator':
+                $uri = $this->make(TwoFactorQrCodeUriGeneratorService::class, [$user])->run();
+                return $this->renderAjax('two-factor', ['id' => $id, 'uri' => $uri, 'user' => $user]);
+            case 'email':
+                $emailCode = $this->make(TwoFactorEmailCodeGeneratorService::class, [$user])->run();
+                return $this->renderAjax('two-factor-email', ['id' => $id, 'code' => $emailCode]);
+            case 'sms':
+                // get mobile phone, if exists
+                $mobilePhone = $user->getAuthTfMobilePhone();
+                $smsCode = $this->make(TwoFactorSmsCodeGeneratorService::class, [$user])->run();
+                return $this->renderAjax('two-factor-sms', ['id' => $id, 'code' => $smsCode, 'mobilePhone' => $mobilePhone]);
+            default:
+                throw new InvalidParamException("Invalid 2FA choice");
+        }
     }
 
     public function actionTwoFactorEnable($id)
     {
+        if (!$this->module->enableTwoFactorAuthentication) {
+            throw new ForbiddenHttpException(Yii::t('usuario', 'Application not configured for two factor authentication.'));
+        }
+
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         /** @var User $user */
@@ -426,31 +505,44 @@ class SettingsController extends Controller
             ];
         }
         $code = Yii::$app->request->get('code');
+        $module = Yii::$app->getModule('user');
+        $validators = $module->twoFactorAuthenticationValidators;
+        $choice = Yii::$app->request->get('choice');
+        $codeDurationTime = ArrayHelper::getValue($validators, $choice.'.codeDurationTime', 300);
+        $class = ArrayHelper::getValue($validators, $choice.'.class');
 
-        $success = $this
-            ->make(TwoFactorCodeValidator::class, [$user, $code, $this->module->twoFactorAuthenticationCycles])
-            ->validate();
-
-        $success = $success && $user->updateAttributes(['auth_tf_enabled' => '1']);
+        $object = $this
+            ->make($class, [$user, $code, $this->module->twoFactorAuthenticationCycles]);
+        $success = $object->validate();
+        $success = $success && $user->updateAttributes(['auth_tf_enabled' => '1','auth_tf_type' => $choice]);
+        $message = $success ? $object->getSuccessMessage() : $object->getUnsuccessMessage($codeDurationTime);
 
         return [
             'success' => $success,
-            'message' => $success
-                ? Yii::t('usuario', 'Two factor authentication successfully enabled.')
-                : Yii::t('usuario', 'Verification failed. Please, enter new code.')
+            'message' => $message
         ];
     }
 
     public function actionTwoFactorDisable($id)
     {
-        /** @var User $user */
+        if (!$this->module->enableTwoFactorAuthentication) {
+            throw new ForbiddenHttpException(Yii::t('usuario', 'Application not configured for two factor authentication.'));
+        }
+
+        if ($id != Yii::$app->user->id) {
+            throw new ForbiddenHttpException();
+        }
+
+        /**
+        * @var User $user
+        */
         $user = $this->userQuery->whereId($id)->one();
 
         if (null === $user) {
             throw new NotFoundHttpException();
         }
 
-        if ($user->updateAttributes(['auth_tf_enabled' => '0'])) {
+        if ($user->updateAttributes(['auth_tf_enabled' => '0', 'auth_tf_key' => null])) {
             Yii::$app
                 ->getSession()
                 ->setFlash('success', Yii::t('usuario', 'Two factor authentication has been disabled.'));
@@ -464,6 +556,67 @@ class SettingsController extends Controller
     }
 
     /**
+     * Display list session history.
+     */
+    public function actionSessionHistory()
+    {
+        $searchModel = new SessionHistorySearch([
+            'user_id' => Yii::$app->user->id,
+        ]);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('session-history', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Terminate all session user
+     */
+    public function actionTerminateSessions()
+    {
+        $this->make(TerminateUserSessionsService::class, [Yii::$app->user->id])->run();
+
+        return $this->redirect(['session-history']);
+    }
+
+    public function actionTwoFactorMobilePhone($id)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        /**
+        *
+        *
+        * @var User $user
+        */
+        $user = $this->userQuery->whereId($id)->one();
+
+        if (null === $user) {
+            return [
+                'success' => false,
+                'message' => Yii::t('usuario', 'User not found.')
+            ];
+        }
+        $mobilePhone = Yii::$app->request->get('mobilephone');
+        $currentMobilePhone = $user->getAuthTfMobilePhone();
+        $success = false;
+        if ($currentMobilePhone == $mobilePhone) {
+            $success = true;
+        } else {
+            $success = $user->updateAttributes(['auth_tf_mobile_phone' => $mobilePhone]);
+            $success = $success && $this->make(TwoFactorSmsCodeGeneratorService::class, [$user])->run();
+        }
+
+        return [
+                    'success' => $success,
+                    'message' => $success
+                    ? Yii::t('usuario', 'Mobile phone number successfully enabled.')
+                    : Yii::t('usuario', 'Error while enabling SMS two factor authentication. Please reload the page.'),
+                ];
+    }
+
+    /**
      * @param $id
      * @throws ForbiddenHttpException
      * @throws NotFoundHttpException
@@ -473,7 +626,11 @@ class SettingsController extends Controller
      */
     protected function disconnectSocialNetwork($id)
     {
-        /** @var SocialNetworkAccount $account */
+        /**
+        *
+        *
+        * @var SocialNetworkAccount $account
+        */
         $account = $this->socialNetworkAccountQuery->whereId($id)->one();
 
         if ($account === null) {

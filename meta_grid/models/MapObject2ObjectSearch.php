@@ -79,6 +79,13 @@ class MapObject2ObjectSearch extends VMapObject2ObjectSearchinterface
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid]);
 
+        // {... T363
+        $db = Yii::$app->db;
+        $db->cache(function () use ($dataProvider) {
+            $dataProvider->prepare();
+        });
+        // T363 ...}
+
         return $dataProvider;
     }
 }

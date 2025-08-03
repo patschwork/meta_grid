@@ -1,6 +1,48 @@
 Yii Framework 2 debug extension Change Log
 ==========================================
 
+2.1.27 June 08, 2025
+--------------------
+
+- no changes in this release.
+
+
+2.1.26 February 13, 2025
+------------------------
+
+- Bug #528: Fix `yii\debug\Panel::getTraceLine()` to handle backtrace for internal PHP functions (zymeli)
+- Enh #430: Allow to configure toolbar position via `Module::$toolbarPosition` property (sasha-x)
+- Enh #459: Add `yii\debug\Module::$authManager` to select RBAC manager used by UserPanel (default is `authManager`) (jafaripur)
+
+
+2.1.25 September 26, 2023
+-------------------------
+
+- Bug #503: Fix accessing toolbar data if it's not available (xepozz)
+
+
+2.1.24 July 10, 2023
+--------------------
+
+- Bug #504: Reduced db panel warnings for "critical query threshold" and "excessive callers" (rhertogh)
+- Bug #506: Correctly handle null values for `DbPanel::$criticalQueryThreshold` and `::$excessiveCallerThreshold` (MarkoNV, rhertogh)
+- Bug #507: Convert Symfony mailer headers to string in Mail panel (squio)
+- Enh #512: Changed default value for `yii\debug\panels\DbPanel::$excessiveCallerThreshold` to `null` (rhertogh)
+
+
+2.1.23 May 22, 2023
+-------------------
+
+- Enh #498: Add yii2-symfonymailer Support in src/panels/MailPanel.php (vansari)
+- Enh #501: Show DB query call location in DB panel (rhertogh)
+
+
+2.1.22 November 18, 2022
+------------------------
+
+- Enh #493: Extend variable masking to `requestBody` (yus-ham)
+
+
 2.1.21 September 06, 2022
 -------------------------
 

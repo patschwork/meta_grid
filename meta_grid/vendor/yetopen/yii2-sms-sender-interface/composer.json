@@ -1,0 +1,21 @@
+{
+    "name": "yetopen/yii2-sms-sender-interface",
+    "description": "It implements SmsSenderInterface that should be implemented by text message sender classes",
+    "type": "yii2-extension",
+    "keywords": ["yii2","extension","interface"],
+    "license": "GPL-2.0+",
+    "authors": [
+        {
+            "name": "Yetopen",
+            "email": "marco.piazza@yetopen.com"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "~2.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "yetopen\\smssender\\": ""
+        }
+    }
+}

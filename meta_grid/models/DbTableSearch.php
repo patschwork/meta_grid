@@ -50,7 +50,6 @@ class DbTableSearch extends VDbTableSearchinterface
 						'pageSize' => 100,
 					]
         ]);
-        // $dataProvider->setTotalCount(1000);
 
 		// this is the case, when the user makes his own filter criteria.
 		if (array_key_exists(\yii\helpers\StringHelper::basename(get_class($this)),$params) === true)
@@ -90,13 +89,13 @@ class DbTableSearch extends VDbTableSearchinterface
             ->andFilterWhere(['like', 'source_definition', $this->source_definition])
             ->andFilterWhere(['like', 'source_comment', $this->source_comment]);
 
-
+        // {... T363
         $db = Yii::$app->db;
         $db->cache(function () use ($dataProvider) {
-            $dataProvider->prepare();  // trigger DB query
-            // or if you want to db AR queries, you can do like this:
-            // $customers = Customer::find()->all();
+            $dataProvider->prepare();
         });
+        // T363 ...}
+
         return $dataProvider;
     }
 }

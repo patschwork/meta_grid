@@ -6,7 +6,7 @@
     <br>
 </p>
 
-This extension provides an interactive shell for [Yii framework 2.0](http://www.yiiframework.com) based on [psysh](http://psysh.org/).
+This extension provides an interactive shell for [Yii framework 2.0](https://www.yiiframework.com) based on [psysh](https://psysh.org/).
 
 For license information check the [LICENSE](LICENSE.md)-file.
 
@@ -17,7 +17,7 @@ For license information check the [LICENSE](LICENSE.md)-file.
 Installation
 ------------
 
-The preferred way to install this extension is through [composer](http://getcomposer.org/download/).
+The preferred way to install this extension is through [composer](https://getcomposer.org/download/).
 
 Either run
 
@@ -47,7 +47,30 @@ cd path/to/myapp
 
 You can access the application object using `Yii::$app`. Additionally you have access to all your and your dependencies' classes.
 
-See [psysh's website](http://psysh.org/#features) for a list of available features.
+See [psysh's website](https://psysh.org/#features) for a list of available features.
+
+
+Configuration
+-------------
+
+You can configure the PsySH shell by setting options via the `shellConfig` variable in the controller, i.e. add this to your console application configuration:
+
+
+```
+'controllerMap' => [
+    'shell' => [
+        'shellConfig' => [
+            'updateCheck' => 'weekly',
+            'verbosity' => \Psy\Configuration::VERBOSITY_VERBOSE,
+        ],
+    ],
+],
+```
+
+See https://github.com/bobthecow/psysh/wiki/Config-options for a list of PsySH configurable options.
+
+**Note**: `updateCheck` is explictly set to _never_ by yii2-shell. All other PsySH options use default values.
+
 
 Screenshot
 ----------

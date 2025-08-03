@@ -184,7 +184,7 @@ class AttributeTypecastBehavior extends Behavior
      * @var array internal static cache for auto detected [[attributeTypes]] values
      * in format: ownerClassName => attributeTypes
      */
-    private static $autoDetectedAttributeTypes = [];
+    private static $_autoDetectedAttributeTypes = [];
 
 
     /**
@@ -193,7 +193,7 @@ class AttributeTypecastBehavior extends Behavior
      */
     public static function clearAutoDetectedAttributeTypes()
     {
-        self::$autoDetectedAttributeTypes = [];
+        self::$_autoDetectedAttributeTypes = [];
     }
 
     /**
@@ -205,10 +205,10 @@ class AttributeTypecastBehavior extends Behavior
 
         if ($this->attributeTypes === null) {
             $ownerClass = get_class($this->owner);
-            if (!isset(self::$autoDetectedAttributeTypes[$ownerClass])) {
-                self::$autoDetectedAttributeTypes[$ownerClass] = $this->detectAttributeTypes();
+            if (!isset(self::$_autoDetectedAttributeTypes[$ownerClass])) {
+                self::$_autoDetectedAttributeTypes[$ownerClass] = $this->detectAttributeTypes();
             }
-            $this->attributeTypes = self::$autoDetectedAttributeTypes[$ownerClass];
+            $this->attributeTypes = self::$_autoDetectedAttributeTypes[$ownerClass];
         }
     }
 
@@ -267,9 +267,16 @@ class AttributeTypecastBehavior extends Behavior
                         return StringHelper::floatToString($value);
                     }
                     return (string) $value;
-                default:
-                    throw new InvalidArgumentException("Unsupported type '{$type}'");
             }
+
+            if (PHP_VERSION_ID >= 80100 && is_subclass_of($type, \BackedEnum::class)) {
+                if ($value instanceof $type) {
+                    return $value;
+                }
+                return $type::from($value);
+            }
+
+            throw new InvalidArgumentException("Unsupported type '{$type}'");
         }
 
         return call_user_func($type, $value);
@@ -293,9 +300,7 @@ class AttributeTypecastBehavior extends Behavior
             }
 
             if ($type !== null) {
-                foreach ((array) $validator->attributes as $attribute) {
-                    $attributeTypes[ltrim($attribute, '!')] = $type;
-                }
+                $attributeTypes += array_fill_keys($validator->getAttributeNames(), $type);
             }
         }
 
@@ -364,5 +369,25 @@ class AttributeTypecastBehavior extends Behavior
     public function afterFind($event)
     {
         $this->typecastAttributes();
+
+        $this->resetOldAttributes();
+    }
+
+    /**
+     * Resets the old values of the named attributes.
+     */
+    protected function resetOldAttributes()
+    {
+        if ($this->attributeTypes === null) {
+            return;
+        }
+
+        $attributes = array_keys($this->attributeTypes);
+
+        foreach ($attributes as $attribute) {
+            if ($this->owner->canSetOldAttribute($attribute)) {
+                $this->owner->setOldAttribute($attribute, $this->owner->{$attribute});
+            }
+        }
     }
 }

@@ -36,7 +36,8 @@
         "bluezed/yii2-float-thead": "*",
         "yii2tech/csv-grid": "^1.0",
         "hail812/yii2-adminlte3": "~1.1",
-        "xtetis/yii2-bootstrap4-glyphicons": "@dev"
+        "xtetis/yii2-bootstrap4-glyphicons": "@dev",
+        "floor12/yii2-summernote": "^1.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "*",

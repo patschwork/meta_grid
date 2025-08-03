@@ -38,6 +38,24 @@ use yii\helpers\Url;
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
+ *
+ * @phpstan-type PublishOptions array{
+ *     only?: string[],
+ *     except?: string[],
+ *     caseSensitive?: bool,
+ *     beforeCopy?: callable,
+ *     afterCopy?: callable,
+ *     forceCopy?: bool,
+ * }
+ *
+ * @psalm-type PublishOptions = array{
+ *     only?: string[],
+ *     except?: string[],
+ *     caseSensitive?: bool,
+ *     beforeCopy?: callable,
+ *     afterCopy?: callable,
+ *     forceCopy?: bool,
+ * }
  */
 class AssetManager extends Component
 {
@@ -58,7 +76,7 @@ class AssetManager extends Component
      *
      * ```php
      * [
-     *     'yii\bootstrap4\BootstrapAsset' => [
+     *     'yii\bootstrap\BootstrapAsset' => [
      *         'css' => [],
      *     ],
      * ]
@@ -288,7 +306,7 @@ class AssetManager extends Component
         if (!isset($config['class'])) {
             $config['class'] = $name;
         }
-        /* @var $bundle AssetBundle */
+        /** @var AssetBundle $bundle */
         $bundle = Yii::createObject($config);
         if ($publish) {
             $bundle->publish($this);
@@ -463,6 +481,9 @@ class AssetManager extends Component
      * @return array the path (directory or file path) and the URL that the asset is published as.
      * @throws InvalidArgumentException if the asset to be published does not exist.
      * @throws InvalidConfigException if the target directory [[basePath]] is not writeable.
+     *
+     * @phpstan-param PublishOptions $options
+     * @psalm-param PublishOptions $options
      */
     public function publish($path, $options = [])
     {
@@ -474,6 +495,10 @@ class AssetManager extends Component
 
         if (!is_string($path) || ($src = realpath($path)) === false) {
             throw new InvalidArgumentException("The file or directory to be published does not exist: $path");
+        }
+
+        if (!is_readable($path)) {
+            throw new InvalidArgumentException("The file or directory to be published is not readable: $path");
         }
 
         if (is_file($src)) {

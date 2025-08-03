@@ -1,12 +1,13 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
+ * @link https://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license https://www.yiiframework.com/license/
  */
 
 namespace yii\httpclient;
 
+use yii\base\InvalidCallException;
 use yii\helpers\ArrayHelper;
 use yii\helpers\FileHelper;
 
@@ -15,8 +16,9 @@ use yii\helpers\FileHelper;
  *
  * @property string $fullUrl Full target URL.
  * @property string $method Request method.
- * @property-read array $options Request options. This property is read-only.
- * @property string|array $url Target URL or URL parameters.
+ * @property-read array $options Request options.
+ * @property string|array|null $url Target URL or URL parameters. Note that the type of this property differs
+ * in getter and setter. See [[getUrl()]] and [[setUrl()]] for details.
  *
  * @author Paul Klimov <klimov.paul@gmail.com>
  * @since 2.0
@@ -86,7 +88,7 @@ class Request extends Message
 
     /**
      * Returns target URL.
-     * @return string|array target URL or URL parameters
+     * @return string|array|null target URL or URL parameters
      */
     public function getUrl()
     {
@@ -335,6 +337,10 @@ class Request extends Message
                 $url .= '&';
             }
             $url .= http_build_query($params);
+        }
+
+        if ($url === null) {
+            throw new InvalidCallException('Either the $url or the $client->baseUrl must be set.');
         }
 
         return $url;

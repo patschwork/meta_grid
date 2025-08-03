@@ -3,7 +3,7 @@
 use yii\helpers\Inflector;
 use yii\helpers\StringHelper;
 
-/*
+/**
  * @var yii\web\View $this
  * @var yii\gii\generators\crud\Generator $generator
  */
@@ -11,7 +11,7 @@ use yii\helpers\StringHelper;
 /** @var \yii\db\ActiveRecord $model */
 $model = new $generator->modelClass();
 $model->setScenario('crud');
-$modelName = Inflector::camel2words(StringHelper::basename($model::className()));
+$modelName = Inflector::camel2words(StringHelper::basename($model::class));
 
 
 echo "<?php\n";
@@ -43,7 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= '<?= ' ?>
             Html::a(
             <?= $generator->generateString('Cancel') ?>,
-            \yii\helpers\Url::previous(),
+            ['index'],
             ['class' => 'btn btn-default']) ?>
         </div>
     </div>

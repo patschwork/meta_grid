@@ -4,6 +4,7 @@ namespace schmunk42\giiant\commands;
 
 use schmunk42\giiant\generators\crud\Generator;
 use schmunk42\giiant\generators\model\Generator as ModelGenerator;
+use yii\console\Application;
 use yii\console\Controller;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
@@ -14,6 +15,11 @@ use Yii;
  */
 class BatchController extends Controller
 {
+    /**
+     * @var string Console application class
+     */
+    public $applicationClass = 'yii\\console\\Application';
+
     /**
      * @var string the generator template name
      */
@@ -156,6 +162,16 @@ class BatchController extends Controller
     public $enableI18N = true;
 
     /**
+     * @var bool whether to enable or disable the pluralization of the models name
+     */
+    public $disablePluralization = false;
+
+    /**
+     * @var string prefix to prepend to the many many relation methods
+     */
+    public $modelManyManyRelationSuffix = '';
+
+    /**
      * @var bool whether the entity names will be singular or the same as the table name
      */
     public $singularEntities = true;
@@ -250,6 +266,11 @@ class BatchController extends Controller
     public $crudActionButtonColumnPosition = 'left';
 
     /**
+     * @var string Class name of the model generator
+     */
+    public $modelGeneratorClass = 'schmunk42\giiant\generators\model\Generator';
+
+    /**
      * @var bool indicates whether to generate ActiveQuery for the ActiveRecord class
      */
     public $modelGenerateQuery = true;
@@ -263,6 +284,11 @@ class BatchController extends Controller
      * @var bool whether to fix generated code (PSR-2). Note: May take some time, depending on file size and numbers.
      */
     public $crudFixOutput = false;
+
+    /**
+     * @var integer number of grid columns in crud generator
+     */
+    public $crudGridMaxColumns = 8;
 
     /**
      * @var string the namespace of the ActiveQuery class to be generated
@@ -283,13 +309,26 @@ class BatchController extends Controller
      * @var bool This indicates whether the generator should generate attribute hints by using the comments of the corresponding DB columns
      */
     public $modelGenerateHintsFromComments = true;
+
+    /**
+     * @var bool Generate Relations from Current Schema
+    */
+    public $modelGenerateRelationsFromCurrentSchema = true;
+
+    public $modelTranslationTableAdditions = ['name' => 'meta', 'fallbackLanguage' => false];
+
+    /**
+     * Whether the copy functionality for a crud should be created or not
+    */
+    public $crudEnableCopy = true;
+
     /**
      * @var array application configuration for creating temporary applications
      */
     protected $appConfig;
 
     /**
-     * @var instance of class schmunk42\giiant\generators\model\Generator
+     * @var \schmunk42\giiant\generators\model\Generator instance of class schmunk42\giiant\generators\model\Generator
      */
     protected $modelGenerator;
 
@@ -329,6 +368,8 @@ class BatchController extends Controller
                 'modelRemoveDuplicateRelations',
                 'modelCacheRelationsData',
                 'modelGenerateRelations',
+                'modelGenerateRelationsFromCurrentSchema',
+                'modelTranslationTableAdditions',
                 'modelGenerateJunctionRelationMode',
                 'modelGenerateQuery',
                 'modelQueryNamespace',
@@ -351,7 +392,9 @@ class BatchController extends Controller
                 'crudOverwriteSearchModelClass',
                 'crudOverwriteRestControllerClass',
                 'crudOverwriteControllerClass',
-                'generateAccessFilterMigrations'
+                'generateAccessFilterMigrations',
+                'disablePluralization',
+                'crudEnableCopy'
             ]
         );
     }
@@ -367,7 +410,7 @@ class BatchController extends Controller
     {
         $this->appConfig = $this->getYiiConfiguration();
         $this->appConfig['id'] = 'temp';
-        $this->modelGenerator = new ModelGenerator(['db' => $this->modelDb]);
+        $this->modelGenerator = Yii::createObject($this->modelGeneratorClass, ['db' => $this->modelDb]);
 
         if ($this->tables && $this->skipTables) {
             $this->stderr("Only one property of 'tables' or 'skipTables' can be set." . PHP_EOL);
@@ -447,6 +490,8 @@ class BatchController extends Controller
                 'removeDuplicateRelations' => $this->modelRemoveDuplicateRelations,
                 'cacheRelationsData' => $this->modelCacheRelationsData,
                 'generateRelations' => $this->modelGenerateRelations,
+                'generateRelationsFromCurrentSchema' => $this->modelGenerateRelationsFromCurrentSchema,
+                'translationTableAdditions' => $this->modelTranslationTableAdditions,
                 'generateJunctionRelationMode' => $this->modelGenerateJunctionRelationMode,
                 'tableNameMap' => $this->tableNameMap,
                 'generateQuery' => $this->modelGenerateQuery,
@@ -454,17 +499,15 @@ class BatchController extends Controller
                 'queryBaseClass' => $this->modelQueryBaseClass,
                 'generateLabelsFromComments' => $this->modelGenerateLabelsFromComments,
                 'generateHintsFromComments' => $this->modelGenerateHintsFromComments,
+                'disablePluralization' => $this->disablePluralization,
+                'manyManyRelationSuffix' => $this->modelManyManyRelationSuffix
             ];
             $route = 'gii/giiant-model';
 
             $app = \Yii::$app;
-            $temp = new \yii\console\Application($this->appConfig);
+            $temp = new $this->applicationClass($this->appConfig);
             $temp->runAction(ltrim($route, '/'), $params);
-            if (\Yii::$container->has($this->modelDb)) {
-                \Yii::$container->get($this->modelDb)->close();
-            } else {
-                $temp->get($this->modelDb)->close();
-            }
+            $this->closeTempAppConnections($temp);
             unset($temp);
             \Yii::$app = $app;
             \Yii::$app->log->logger->flush(true);
@@ -502,7 +545,6 @@ class BatchController extends Controller
                 'overwriteSearchModelClass' => $this->crudOverwriteSearchModelClass,
                 'overwriteRestControllerClass' => $this->crudOverwriteRestControllerClass,
                 'overwriteControllerClass' => $this->crudOverwriteControllerClass,
-                'template' => $this->template,
                 'modelClass' => $this->modelNamespace . '\\' . $name,
                 'searchModelClass' => $this->crudSearchModelNamespace . '\\' . $name . $this->crudSearchModelSuffix,
                 'controllerNs' => $this->crudControllerNamespace,
@@ -526,13 +568,18 @@ class BatchController extends Controller
                 'indexWidgetType' => $this->crudIndexWidgetType,
                 'indexGridClass' => $this->crudIndexGridClass,
                 'formLayout' => $this->crudFormLayout,
+                'gridMaxColumns' => $this->crudGridMaxColumns,
                 'generateAccessFilterMigrations' => $this->generateAccessFilterMigrations,
                 'actionButtonColumnPosition' => $this->crudActionButtonColumnPosition,
+                'disablePluralization' => $this->disablePluralization,
+                'gridMaxColumns' => $this->crudGridMaxColumns,
+                'enableCopy' => $this->crudEnableCopy
             ];
             $route = 'gii/giiant-crud';
             $app = \Yii::$app;
-            $temp = new \yii\console\Application($this->appConfig);
+            $temp = new $this->applicationClass($this->appConfig);
             $temp->runAction(ltrim($route, '/'), $params);
+            $this->closeTempAppConnections($temp);
             unset($temp);
             \Yii::$app = $app;
             \Yii::$app->log->logger->flush(true);
@@ -576,6 +623,40 @@ class BatchController extends Controller
         echo \Yii::getRootAlias($ns);
         $dir = \Yii::getAlias('@' . str_replace('\\', '/', ltrim($ns, '\\')));
         @mkdir($dir);
+    }
+
+    /**
+     * close modelDb and all defined yii\db\Connection components to prevent 'too many connections'
+     *
+     * @param $app
+     *
+     * @return void
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\di\NotInstantiableException
+     */
+    private function closeTempAppConnections(Application $app)
+    {
+        // if modelDb is set via DI - close
+        if (\Yii::$container->has($this->modelDb)) {
+            \Yii::$container->get($this->modelDb)->close();
+        } elseif($app->get($this->modelDb)) {
+            $app->get($this->modelDb)->close();
+        }
+        // and then we close all defined yii\db\Connection components to be on the safe side,
+        // since we don't know if there are any other than the "known" modelDb
+        if (isset($app->components)) {
+            foreach ($app->components as $cid => $component) {
+                try {
+                    $cObj = $app->get($cid);
+                    if ($cObj instanceof \yii\db\Connection) {
+                        $cObj->close();
+                    }
+                } catch (\Throwable $e) {
+                    // ignore because we don't know if the component is a db connection
+                    Yii::warning($e->getMessage());
+                }
+            }
+        }
     }
 }
 

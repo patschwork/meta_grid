@@ -10,11 +10,14 @@
  */
 
 /**
- * @var \Da\User\Model\User  $user
+ * @var \Da\User\Model\User $user
  * @var \Da\User\Model\Token $token
- * @var \Da\User\Module      $module
- * @var bool                 $showPassword
+ * @var \Da\User\Module $module
+ * @var bool $showPassword
  */
+
+use yii\helpers\Url;
+
 ?>
 <?= Yii::t('usuario', 'Hello') ?>,
 
@@ -23,6 +26,10 @@
     <?= Yii::t('usuario', 'We have generated a password for you') ?>:
     <?= $user->password ?>
 <?php endif ?>
+<?php if ($module->allowPasswordRecovery): ?>
+    <?= Yii::t('usuario', 'If you haven\'t received a password, you can reset it at') ?>:
+    <?= Url::to(['/user/recovery/request'], true) ?>
+<?php endif ?>
 
 <?php if ($token !== null): ?>
     <?= Yii::t('usuario', 'In order to complete your registration, please click the link below') ?>.
@@ -30,4 +37,4 @@
     <?= Yii::t('usuario', 'If you cannot click the link, please try pasting the text into your browser') ?>.
 <?php endif ?>
 
-<?= Yii::t('usuario', 'If you did not make this request you can ignore this email') ?>.
+<?= Yii::t('usuario', 'You received this email because someone, possibly you or someone on your behalf, have created an account at {app_name}', ['app_name' => Yii::$app->name]) ?>.

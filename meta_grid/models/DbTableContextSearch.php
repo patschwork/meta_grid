@@ -81,6 +81,13 @@ class DbTableContextSearch extends VDbTableContextSearchinterface
             ->andFilterWhere(['like', 'description', $this->description])
             ->andFilterWhere(['like', 'prefix', $this->prefix]);
 
+        // {... T363
+        $db = Yii::$app->db;
+        $db->cache(function () use ($dataProvider) {
+            $dataProvider->prepare();
+        });
+        // T363 ...}
+
         return $dataProvider;
     }
 }

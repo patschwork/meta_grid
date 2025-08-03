@@ -81,6 +81,13 @@ class AttributeSearch extends VAttributeSearchinterface
             ->andFilterWhere(['like', 'description', $this->description])
             ->andFilterWhere(['like', 'formula', $this->formula]);
 
+        // {... T363
+        $db = Yii::$app->db;
+        $db->cache(function () use ($dataProvider) {
+            $dataProvider->prepare();
+        });
+        // T363 ...}
+
         return $dataProvider;
     }
 }

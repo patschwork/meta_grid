@@ -1,8 +1,8 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
+ * @link https://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license https://www.yiiframework.com/license/
  */
 
 namespace yii\bootstrap4;
@@ -58,7 +58,7 @@ class Modal extends Widget
     public $title;
     /**
      * @var array additional title options
-     * @see \yii\helpers\Html::renderTagAttributes() for details on how attributes are being rendered.
+     * @see \yii\helpers\Html::renderTagAttributes() for details on how attributes are being rendered. Key 'tag' might be used here for the tag name specification.
      */
     public $titleOptions = [];
     /**
@@ -95,7 +95,7 @@ class Modal extends Widget
      * - label: string, the label of the button. Defaults to '&times;'.
      *
      * The rest of the options will be rendered as the HTML attributes of the button tag.
-     * Please refer to the [Modal plugin help](http://getbootstrap.com/javascript/#modals)
+     * Please refer to the [Modal plugin help](https://getbootstrap.com/javascript/#modals)
      * for the supported HTML attributes.
      */
     public $closeButton = [];
@@ -110,7 +110,7 @@ class Modal extends Widget
      * - label: string, the label of the button. Defaults to 'Show'.
      *
      * The rest of the options will be rendered as the HTML attributes of the button tag.
-     * Please refer to the [Modal plugin help](http://getbootstrap.com/javascript/#modals)
+     * Please refer to the [Modal plugin help](https://getbootstrap.com/javascript/#modals)
      * for the supported HTML attributes.
      */
     public $toggleButton = false;
@@ -176,7 +176,8 @@ class Modal extends Widget
         $button = $this->renderCloseButton();
         if ($this->title !== null) {
             Html::addCssClass($this->titleOptions, ['widget' => 'modal-title']);
-            $header = Html::tag('h5', $this->title, $this->titleOptions);
+            $titleTag = ArrayHelper::remove($this->titleOptions, 'tag', 'h5');
+            $header = Html::tag($titleTag, $this->title, $this->titleOptions);
         } else {
             $header = '';
         }

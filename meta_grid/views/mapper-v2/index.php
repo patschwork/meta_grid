@@ -1,4 +1,3 @@
-
 <?php
 
 use yii\helpers\Html;
@@ -12,6 +11,8 @@ use app\models\Objectcomment;
 use app\models\ObjectType;
 use Symfony\Component\VarDumper\VarDumper;
 use yii\widgets\DetailView;
+use yii\widgets\ActiveForm;
+
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\GlobalSearch */
@@ -65,18 +66,26 @@ $this->title = Yii::t('app', 'Mapping');
 echo $this->render('_search', ['model' =>$searchModel, 'from_model' => $from_model]);
 ?>
 		<?php // {... mapperv2 ?>
-		<?=Html::beginForm(['processselected'],'post');?>
-		<?=Html::submitButton(Yii::t('app','Add mapping'), ['class' => 'btn btn-success']);?>
+
+		<?php $form = ActiveForm::begin(['id' => 'item-form']); ?>
+		
+		<div class="form-group">
+		<?php $translation_addmapping =  Yii::t('app', 'Add mapping');?>
+    	<?= Html::button($translation_addmapping, ['class' => 'btn btn-success', 'id' => 'submit-button']) ?>
+		</div>
+		
 		<?php // ...} ?>
 
 		<?=Html::hiddenInput($name="from_id", $value=$from_model->id);?>
 		<?=Html::hiddenInput($name="from_fk_object_type_id", $value=$from_model->fk_object_type_id);?>
+		<?=Html::hiddenInput($name="from_url", $value=$from_url);?>
 		
 	    <?php
 		$dependency = new yii\caching\DbDependency();
 		$dependency->sql='SELECT max(log_datetime) FROM "v_LastChangesLog_List"';
 				
 		echo GridView::widget([
+			'id' => 'gridview_mappings',
         'dataProvider' => $dataProvider,
 		'pager' => [
 			'firstPageLabel' => '<span class="glyphicon glyphicon-chevron-left"></span><span class="glyphicon glyphicon-chevron-left"></span>',
@@ -90,9 +99,10 @@ echo $this->render('_search', ['model' =>$searchModel, 'from_model' => $from_mod
         'columns' => [
 			// {... mapperv2 
 			[
-				'class' => 'yii\grid\CheckboxColumn', 'checkboxOptions' => function($model) {
+				'class' => 'yii\grid\CheckboxColumn'
+						, 'checkboxOptions' => function($model) {
 					  return ['value' => $model->listkey];
-				  },
+				  		},
 			], 
 			// ...} 
             [
@@ -251,12 +261,64 @@ echo $this->render('_search', ['model' =>$searchModel, 'from_model' => $from_mod
     ]); ?>
 
 	<?php // {... mapperv2 ?>
-	<?= Html::endForm();?> 
+	<?php ActiveForm::end(); ?>
 	<?php // ...} ?>
 
 </div>
+
+<?php
+// Prepare needed translations
+$translations = [
+    'processed' => Yii::t('app', 'Selection has been processed'),
+    'error' => Yii::t('app', 'Error occured while processing the selected items!'),
+    'already_mapped' => Yii::t('app', 'Already mapped'),
+    'just_mapped' => Yii::t('app', 'just mapped'),
+];
+$translations_json =  json_encode($translations);
+?>
+
 <?php 
 $js = <<<SCRIPT
+
+function updateGridView(response) {
+    if (response.success) {
+        // Angenommen, die GridView hat eine Spalte mit der Klasse 'info'
+        response.markedRows.forEach(function(rowId) {
+
+			var inputValue = rowId.id + ';' + rowId.fk_object_type_id;
+
+			// Selector for the input element with the corresponding value
+			var selector = 'input[type="checkbox"][value="' + inputValue + '"]';
+
+			// Find the input element and then the corresponding row
+			var row = $(selector).closest('tr'); // Go to the next <tr> over the <input>
+
+			// Function to briefly flash the background color, set the text color to green, and change the text
+			function flashRow(row) {
+				// Set the background color to #A5FF7F
+				row.css('background-color', '#A5FF7F');
+
+				// Reset the background color after 1500ms
+				setTimeout(function() {
+					row.css('background-color', ''); // Reset the background color
+					row.css('color', 'green'); // Set the text color to green
+					
+					// Change the text in the second to last column (assuming it is the 5th column, index 4)
+					var cell = row.find('td').eq(4); // Find the second to last column
+					if (cell.text() !== translations.already_mapped) { // Check if the text is not "Already mapped"
+						cell.text(translations.just_mapped); // Change the text
+					}
+				}, 1500); // Duration of the flash in milliseconds
+			}
+
+			// Call the function
+			flashRow(row);
+        });
+    }
+}
+
+var translations = $translations_json;
+
 /* To initialize BS3 tooltips set this below */
 $(function () { 
    $('body').tooltip({
@@ -264,6 +326,26 @@ $(function () {
         html:true
     });
 });
+
+
+$('#submit-button').on('click', function() {
+    var keys = $('#gridview_mappings').yiiGridView('getSelectedRows');
+
+    $.ajax({
+        url: 'index.php?r=mapper-v2/process', // URL to process
+        type: 'POST',
+        data: {selection: keys, from_id: $from_model->id, from_fk_object_type_id: $from_model->fk_object_type_id},
+        success: function(response) {
+            // alert(translations.processed);
+            // Optional: Seite neu laden oder andere Aktionen durchführen
+			updateGridView(response);
+        },
+        error: function() {
+            alert(translations.error);
+        }
+    });
+});
+
 SCRIPT;
 // Register tooltip/popover initialization javascript
 $this->registerJs ( $js );

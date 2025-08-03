@@ -3,7 +3,7 @@
 /*
  * This file is part of Psy Shell.
  *
- * (c) 2012-2022 Justin Hileman
+ * (c) 2012-2023 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -16,19 +16,19 @@ namespace Psy\Exception;
  */
 class ErrorException extends \ErrorException implements Exception
 {
-    private $rawMessage;
+    private string $rawMessage;
 
     /**
      * Construct a Psy ErrorException.
      *
-     * @param string         $message  (default: "")
-     * @param int            $code     (default: 0)
-     * @param int            $severity (default: 1)
-     * @param string|null    $filename (default: null)
-     * @param int|null       $lineno   (default: null)
-     * @param Exception|null $previous (default: null)
+     * @param string          $message  (default: "")
+     * @param int             $code     (default: 0)
+     * @param int             $severity (default: 1)
+     * @param string|null     $filename (default: null)
+     * @param int|null        $lineno   (default: null)
+     * @param \Throwable|null $previous (default: null)
      */
-    public function __construct($message = '', $code = 0, $severity = 1, $filename = null, $lineno = null, $previous = null)
+    public function __construct($message = '', $code = 0, $severity = 1, $filename = null, $lineno = null, ?\Throwable $previous = null)
     {
         $this->rawMessage = $message;
 
@@ -37,10 +37,6 @@ class ErrorException extends \ErrorException implements Exception
         }
 
         switch ($severity) {
-            case \E_STRICT:
-                $type = 'Strict error';
-                break;
-
             case \E_NOTICE:
             case \E_USER_NOTICE:
                 $type = 'Notice';
@@ -63,6 +59,10 @@ class ErrorException extends \ErrorException implements Exception
                 break;
 
             default:
+                if (\PHP_VERSION_ID < 80400 && $severity === \E_STRICT) {
+                    $type = 'Strict error';
+                    break;
+                }
                 $type = 'Error';
                 break;
         }
@@ -73,8 +73,6 @@ class ErrorException extends \ErrorException implements Exception
 
     /**
      * Get the raw (unformatted) message for this error.
-     *
-     * @return string
      */
     public function getRawMessage(): string
     {
@@ -103,12 +101,12 @@ class ErrorException extends \ErrorException implements Exception
     /**
      * Create an ErrorException from an Error.
      *
-     * @param \Error $e
+     * @deprecated PsySH no longer wraps Errors
      *
-     * @return self
+     * @param \Error $e
      */
-    public static function fromError(\Error $e): self
+    public static function fromError(\Error $e)
     {
-        return new self($e->getMessage(), $e->getCode(), 1, $e->getFile(), $e->getLine(), $e);
+        @\trigger_error('PsySH no longer wraps Errors', \E_USER_DEPRECATED);
     }
 }

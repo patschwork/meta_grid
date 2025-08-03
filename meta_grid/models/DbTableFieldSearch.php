@@ -22,7 +22,7 @@ class DbTableFieldSearch extends VDbTableFieldSearchinterface
             [['uuid', 'name', 'description', 'datatype', 'bulk_load_checksum', 'source_definition', 'source_comment'], 'safe'],
             [['is_PrimaryKey', 'is_BusinessKey', 'is_GDPR_relevant'], 'boolean'],
             [['fk_client_id'], 'integer'],
-            [['databaseInfoFromLocation','schemaInfoFromLocation'], 'safe'],
+            [['databaseInfoFromLocation','schemaInfoFromLocation','tags_csv','tags_html_li'], 'safe'],
         ];
     }
 

@@ -1,6 +1,35 @@
 Yii Framework 2 authclient extension Change Log
 ===============================================
 
+2.2.17 February 13, 2025
+------------------------
+
+- Bug #392: Now using array as default value for `token_endpoint_auth_methods_supported` in `OpenIdConnect::applyClientCredentialsToRequest()` (strtob, rhertogh)
+
+
+2.2.16 May 10, 2024
+-------------------
+
+- Enh #387: Use appropriate exception if client does not exist (eluhr)
+- Enh #388: Added support to configure the OAuth2 access token location in requests and added a generic OAuth2 client (rhertogh)
+- Enh #389: Added ability to configure OpenIdConnect cache duration, default is 1 week (viktorprogger)
+
+
+2.2.15 December 16, 2023
+------------------------
+
+- Enh GHSA-w8vh-p74j-x9xp: Improved security for OAuth1, OAuth2 and OpenID Connect clients by using timing attack safe string comparsion (rhertogh)
+- Enh GHSA-rw54-6826-c8j5: Improved security for OAuth2 client by requiring an `authCodeVerifier` if PKCE is enabled and clearing it after usage (rhertogh)
+- Bug #364: Use issuer claim from OpenID Configuration (radwouters)
+- Enh #367: Throw more specific `ClientErrorResponseException` when the response code in `BaseOAuth::sendRequest()` is a 4xx (rhertogh)
+
+
+2.2.14 November 18, 2022
+------------------------
+
+- Bug #351: Unable to set TokenParamKey in OAuth2 config, gets hard overwritten in OAuth2::createToken() (DSTester)
+
+
 2.2.13 September 04, 2022
 -------------------------
 
@@ -144,7 +173,7 @@ Yii Framework 2 authclient extension Change Log
 
 - Bug #152: Fixed `\yii\authclient\OAuth1::fetchRequestToken()` skips formatting for `yii\httpclient\Request` (klimov-paul)
 - Bug #160: Fixed `\yii\authclient\OAuth1::composeSignatureBaseString()` does not take URL query string into account (klimov-paul)
-- Enh #155: Added `\yii\authclient\OpenIdConnect` supporting [OpenID Connect](http://openid.net/connect/) protocol (klimov-paul)
+- Enh #155: Added `\yii\authclient\OpenIdConnect` supporting [OpenID Connect](https://openid.net/connect/) protocol (klimov-paul)
 - Enh #156: Added `\yii\authclient\signature\RsaSha` and `\yii\authclient\signature\HmacSha` supporting general 'SHAwithRSA' and 'HMAC SHA' signature methods (klimov-paul)
 - Enh #157: Added `\yii\authclient\OAuth2::authenticateUserJwt()` supporting authentication via JSON Web Token (JWT) (klimov-paul)
 - Enh #163: Added support for exchanging access token at `yii\authclient\clients\Facebook` (klimov-paul)
@@ -254,6 +283,3 @@ Yii Framework 2 authclient extension Change Log
 -------------------------
 
 - Initial release.
-
-
-

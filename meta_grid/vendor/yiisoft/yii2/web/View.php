@@ -41,6 +41,28 @@ use yii\helpers\Url;
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
+ *
+ * @phpstan-type RegisterJsFileOptions array{
+ *     depends?: class-string[],
+ *     position?: int,
+ *     appendTimestamp?: boolean
+ * }
+ *
+ * @psalm-type RegisterJsFileOptions = array{
+ *     depends?: class-string[],
+ *     position?: int,
+ *     appendTimestamp?: boolean
+ * }
+ *
+ * @phpstan-type RegisterCssFileOptions array{
+ *     depends?: class-string[],
+ *     appendTimestamp?: boolean
+ * }
+ *
+ * @psalm-type RegisterCssFileOptions = array{
+ *     depends?: class-string[],
+ *     appendTimestamp?: boolean
+ * }
  */
 class View extends \yii\base\View
 {
@@ -121,6 +143,11 @@ class View extends \yii\base\View
      */
     public $cssFiles = [];
     /**
+     * @since 2.0.53
+     * @var array the style tag options.
+     */
+    public $styleOptions = [];
+    /**
      * @var array the registered JS code blocks
      * @see registerJs()
      */
@@ -130,14 +157,21 @@ class View extends \yii\base\View
      * @see registerJsFile()
      */
     public $jsFiles = [];
+    /**
+     * @since 2.0.50
+     * @var array the script tag options.
+     */
+    public $scriptOptions = [];
 
     private $_assetManager;
+
+
     /**
      * Whether [[endPage()]] has been called and all files have been registered
      * @var bool
+     * @since 2.0.44
      */
-    private $_isPageEnded = false;
-
+    protected $isPageEnded = false;
 
     /**
      * Marks the position of an HTML head section.
@@ -179,7 +213,7 @@ class View extends \yii\base\View
     {
         $this->trigger(self::EVENT_END_PAGE);
 
-        $this->_isPageEnded = true;
+        $this->isPageEnded = true;
 
         $content = ob_get_clean();
 
@@ -431,6 +465,9 @@ class View extends \yii\base\View
      * $url as the key. If two CSS files are registered with the same key, the latter
      * will overwrite the former.
      * @throws InvalidConfigException
+     *
+     * @phpstan-param RegisterCssFileOptions $options
+     * @psalm-param RegisterCssFileOptions $options
      */
     public function registerCssFile($url, $options = [], $key = null)
     {
@@ -497,8 +534,8 @@ class View extends \yii\base\View
         }
         $appendTimestamp = ArrayHelper::remove($options, 'appendTimestamp', $assetManagerAppendTimestamp);
 
-        if ($this->_isPageEnded) {
-            Yii::warning('You\'re trying to register a file after View::endPage() has been called');
+        if ($this->isPageEnded) {
+            Yii::warning('You\'re trying to register a file after View::endPage() has been called.');
         }
 
         if (empty($depends)) {
@@ -555,6 +592,9 @@ class View extends \yii\base\View
      * will overwrite the former. Note that position option takes precedence, thus files registered with the same key,
      * but different position option will not override each other.
      * @throws InvalidConfigException
+     *
+     * @phpstan-param RegisterJsFileOptions $options
+     * @psalm-param RegisterJsFileOptions $options
      */
     public function registerJsFile($url, $options = [], $key = null)
     {

@@ -93,9 +93,6 @@ def getAdditionalLiquibaseParameter(Config, section='additional_liquibase_parame
 
 cli_params()
 
-if CONFIGFOLDER == "":
-    CONFIGFOLDER = "D:\\Entwicklung\\_Privat\\meta_grid\\DWH_Meta_wrkCpy_DEV\\dwh_meta_v2\\database_model\\liquibase\\"
-
 
 if (os.path.isfile(getConfigFilePath(CONFIGFOLDER, ENVKEY))):
     print("Config file found: " + getConfigFilePath(CONFIGFOLDER, ENVKEY))
@@ -128,6 +125,12 @@ liquibaseDriver = Config.get("liquibase", "liquibaseDriver")
 liquibaseChangeLogFile = Config.get("liquibase", "liquibaseChangeLogFile")
 liquibaseAction = Config.get("liquibase", "liquibaseAction")
 liquibaseActionValue = Config.get("liquibase", "liquibaseActionValue")
+
+# {... rate_me
+liquibasePropertiesFile = Config.get("liquibase", "liquibasePropertiesFile", fallback='')
+liquibasePromptForDBPassword = Config.get("liquibase", "liquibasePromptForDBPassword", fallback='0')
+# rate_me ...}
+
 sqliteBin = Config.get("sqlite", "sqliteBin")
 dbpath = Config.get("environment", "dbpath")
 dbuser = Config.get("environment", "dbuser", fallback='')
@@ -155,6 +158,13 @@ printCurrentEnvSettings("liquibaseChangeLogFile", liquibaseChangeLogFile)
 printCurrentEnvSettings("Absolute liquibaseChangeLogFile", getFilePathRelativeScriptPath(liquibaseChangeLogFile))
 printCurrentEnvSettings("liquibaseAction", liquibaseAction)
 printCurrentEnvSettings("liquibaseActionValue", liquibaseActionValue)
+
+# {... rate_me
+printCurrentEnvSettings("liquibasePropertiesFile", liquibasePropertiesFile)
+printCurrentEnvSettings("liquibasePromptForDBPassword", liquibasePromptForDBPassword)
+printCurrentEnvSettings("Absolute liquibasePropertiesFile", getFilePathRelativeScriptPath(liquibasePropertiesFile))
+# rate_me ...}
+
 printCurrentEnvSettings("sqliteBin", sqliteBin)
 printCurrentEnvSettings("dbpath", dbpath)
 printCurrentEnvSettings("dbuser", dbuser)
@@ -171,6 +181,14 @@ if liquibaseDriver == "org.sqlite.JDBC":
         raise Exception("SQLite File not found!")
         sys.exit(1)
 
+# {... rate_me
+if liquibasePromptForDBPassword == "1":
+    from getpass import getpass
+    dbpassword = getpass()
+# rate_me ...}
+
+
+
 # Liquibase parameter
 liquibase_parameter=[]
 liquibase_parameter.append(liquibasePathExe)
@@ -184,6 +202,12 @@ if (dbuser != ""):
     liquibase_parameter.append("--username=" + dbuser)
 if (dbpassword != ""):
     liquibase_parameter.append("--password=" + dbpassword)
+
+# {... rate_me
+if (liquibasePropertiesFile != ""):
+    liquibase_parameter.append("--defaultsFile=" + getFilePathRelativeScriptPath(liquibasePropertiesFile))
+# rate_me ...}
+
 if DEBUG:
     liquibase_parameter.append("--logLevel=" + "FINE")
 liquibase_parameter.append(liquibaseAction)

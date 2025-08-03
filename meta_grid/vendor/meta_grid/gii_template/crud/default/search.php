@@ -115,6 +115,13 @@ class <?= $searchModelClass ?> extends <?= $searchInterfaceModelClassName ?>
 
         <?= implode("\n        ", $searchConditions) ?>
 
+        // {... T363
+        $db = Yii::$app->db;
+        $db->cache(function () use ($dataProvider) {
+            $dataProvider->prepare();
+        });
+        // T363 ...}
+
         return $dataProvider;
     }
 }

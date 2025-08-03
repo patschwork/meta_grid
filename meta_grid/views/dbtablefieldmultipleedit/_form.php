@@ -44,6 +44,7 @@ use kartik\depdrop\DepDrop;			// Patrick, 2020-03-21
     <?= $form->field($modelDbTable, 'name') ?>
 
 	<?php
+			// echo $form->field($modelDbTable, 'description')->widget(floor12\summernote\Summernote::class);  
 			echo $form->field($modelDbTable, 'description')->widget(\yii\redactor\widgets\Redactor::className());  
 	?>
 
@@ -171,6 +172,7 @@ use kartik\depdrop\DepDrop;			// Patrick, 2020-03-21
                             </div>
                         </div><!-- end:row -->
 
+							<?php // echo $form->field($modelDbTableField, "[{$i}]description")->widget(floor12\summernote\Summernote::class); ?>
 							<?php echo $form->field($modelDbTableField, "[{$i}]description")->widget(\yii\redactor\widgets\Redactor::className()); ?>
 
 

@@ -44,7 +44,7 @@ use yii\helpers\Url;
     <?= $form->field($model, 'version') ?>
 
 	<?php
-		echo $form->field($model, 'comment')->widget(\yii\redactor\widgets\Redactor::className());	?>
+		echo $form->field($model, 'comment')->widget(floor12\summernote\Summernote::class);	?>
  <!--  	// auto commented via gii/CRUD    <?= $form->field($model, 'comment') ?>  -->
 
 

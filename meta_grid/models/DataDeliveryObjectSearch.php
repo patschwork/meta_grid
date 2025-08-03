@@ -86,6 +86,13 @@ class DataDeliveryObjectSearch extends VDataDeliveryObjectSearchinterface
             ->andFilterWhere(['like', 'source_definition', $this->source_definition])
             ->andFilterWhere(['like', 'source_comment', $this->source_comment]);
 
+        // {... T363
+        $db = Yii::$app->db;
+        $db->cache(function () use ($dataProvider) {
+            $dataProvider->prepare();
+        });
+        // T363 ...}
+
         return $dataProvider;
     }
 }

@@ -1,10 +1,16 @@
 Changelog
 =========
 
-### 1.0.0-beta
+### 1.0.1
+
+- Cancel url in create form now points to overview
+- Fix bug in Html provider for type string
+
+### 1.0.0
 
 - do not use auto-pluralization in views, pluralize via I18N
 - Improved model generation performance (see`modelCacheRelationsData`)
+- updated php-cs-fixer to version 3
 
 ### 0.13.0
 

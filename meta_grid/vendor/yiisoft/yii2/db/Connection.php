@@ -1013,7 +1013,7 @@ class Connection extends Component
             if (($pos = strpos((string)$this->dsn, ':')) !== false) {
                 $this->_driverName = strtolower(substr($this->dsn, 0, $pos));
             } else {
-                $this->_driverName = strtolower($this->getSlavePdo()->getAttribute(PDO::ATTR_DRIVER_NAME));
+                $this->_driverName = strtolower($this->getSlavePdo(true)->getAttribute(PDO::ATTR_DRIVER_NAME));
             }
         }
 
@@ -1210,7 +1210,7 @@ class Connection extends Component
                 continue;
             }
 
-            /* @var $db Connection */
+            /** @var self $db */
             $db = Yii::createObject($config);
 
             try {
@@ -1232,8 +1232,7 @@ class Connection extends Component
             // ignore the cache and try to connect anyway
             // $pool now only contains servers we did not already try in the loop above
             foreach ($pool as $config) {
-
-                /* @var $db Connection */
+                /** @var self $db */
                 $db = Yii::createObject($config);
                 try {
                     $db->open();

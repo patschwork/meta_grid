@@ -1,22 +1,19 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: tobias
- * Date: 09.06.15
- * Time: 22:40.
+ * Deprecated. Use schmunk42\giiant\generators\crud\callbacks\kdn\Jsoneditor instead
  */
 namespace schmunk42\giiant\generators\crud\callbacks\devgroup;
 
 use dmstr\modules\widgets\helpers\StringFormatter;
-use yii\bootstrap4\Collapse;
+use yii\bootstrap\Collapse;
 
 class Jsoneditor
 {
     public static function field()
     {
         return function ($attribute) {
-            $collapse = Collapse::className();
-            $editor = \devgroup\jsoneditor\Jsoneditor::className();
+            $collapse = Collapse::class;
+            $editor = \devgroup\jsoneditor\Jsoneditor::class;
 
             return <<<FORMAT
 '<div class="field-widget-{$attribute}">'.
@@ -42,7 +39,7 @@ FORMAT;
     public static function attribute()
     {
         return function ($attribute, $generator) {
-            $formattter = StringFormatter::className();
+            $formattter = StringFormatter::class;
             $method = __METHOD__;
 
             return <<<FORMAT

@@ -17,6 +17,7 @@ use Da\User\Event\UserEvent;
 use Da\User\Factory\MailFactory;
 use Da\User\Form\RegistrationForm;
 use Da\User\Form\ResendForm;
+use Da\User\Helper\SecurityHelper;
 use Da\User\Model\SocialNetworkAccount;
 use Da\User\Model\User;
 use Da\User\Query\SocialNetworkAccountQuery;
@@ -110,13 +111,13 @@ class RegistrationController extends Controller
 
             // Create a temporay $user so we can get the attributes, then get
             // the intersection between the $form fields  and the $user fields.
-            $user = $this->make(User::class, [] );
+            $user = $this->make(User::class, []);
             $fields = array_intersect_key($form->attributes, $user->attributes);
 
-             // Becomes password_hash
+            // Becomes password_hash
             $fields['password'] = $form['password'];
 
-            $user = $this->make(User::class, [], $fields );
+            $user = $this->make(User::class, [], $fields);
 
             $user->setScenario('register');
             $mailService = MailFactory::makeWelcomeMailerService($user);
@@ -143,6 +144,10 @@ class RegistrationController extends Controller
                 );
             }
             Yii::$app->session->setFlash('danger', Yii::t('usuario', 'User could not be registered.'));
+        } else {
+            if (Yii::$app->request->isPost && $form->getErrorSummary(false)) {
+                Yii::$app->session->setFlash('danger', implode(', ', $form->getErrorSummary(false)));
+            }
         }
         return $this->render('register', ['model' => $form, 'module' => $this->module]);
     }
@@ -152,6 +157,10 @@ class RegistrationController extends Controller
      */
     public function actionConnect($code)
     {
+        if (!$this->module->enableSocialNetworkRegistration) {
+            throw new NotFoundHttpException();
+        }
+
         /** @var SocialNetworkAccount $account */
         $account = $this->socialNetworkAccountQuery->whereCode($code)->one();
         if ($account === null || $account->getIsConnected()) {
@@ -171,7 +180,11 @@ class RegistrationController extends Controller
         if ($user->load(Yii::$app->request->post()) && $user->validate()) {
             $this->trigger(SocialNetworkConnectEvent::EVENT_BEFORE_CONNECT, $event);
 
-            $mailService = MailFactory::makeWelcomeMailerService($user);
+            if ($this->module->sendWelcomeMailAfterSocialNetworkRegistration) {
+                $mailService = MailFactory::makeWelcomeMailerService($user);
+            } else {
+                $mailService = null;
+            }
             if ($this->make(UserCreateService::class, [$user, $mailService])->run()) {
                 $account->connect($user);
                 $this->trigger(SocialNetworkConnectEvent::EVENT_AFTER_CONNECT, $event);
