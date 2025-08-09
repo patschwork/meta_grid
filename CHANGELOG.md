@@ -1,4 +1,8 @@
-# 3.0.6
+# 3.0.7
+
+- New object_types: sink, landscape (SQLite database only)
+
+----------------------------------------------------------------------------------------------------# 3.0.6
 
 - Minor bugfixes
 - Update to Yii2 v2.0.53
