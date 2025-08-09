@@ -1677,4 +1677,166 @@ Are used for mapping_objects_2_objects only.</comment>
 </key>
 <comment>Mapping for tagged objects</comment>
 </table>
+<table x="2000" y="1800" name="sink">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_object_type_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>28</default><relation table="object_type" row="id" />
+</row>
+<row name="fk_project_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="project" row="id" />
+</row>
+<row name="name" null="0" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+</row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT(4000)</datatype>
+<default>NULL</default></row>
+<row name="fk_db_database_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="db_database" row="id" />
+<comment>optional (maybe for modelling)</comment>
+</row>
+<row name="sink_is_also_sourcesystem" null="1" autoincrement="0">
+<datatype>BOOLEAN</datatype>
+<default>0</default><comment>if True, then fk_sourcesystem_id must be set</comment>
+</row>
+<row name="fk_sourcesystem_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="sourcesystem" row="id" />
+<comment>only if sink_is_also_sourcesystem is set to TRUE</comment>
+</row>
+<row name="fk_deleted_status_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="deleted_status" row="id" />
+</row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
+<key type="PRIMARY" name="PK">
+<part>id</part>
+</key>
+</table>
+<table x="2296" y="1802" name="landscape">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_object_type_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>29</default><relation table="object_type" row="id" />
+</row>
+<row name="scope" null="0" autoincrement="0">
+<datatype>TEXT(100)</datatype>
+<default>'NULL'</default><comment>if client, all objects within a project can be used</comment>
+</row>
+<row name="fk_client_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="client" row="id" />
+<comment>client or project</comment>
+</row>
+<row name="fk_project_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="project" row="id" />
+<comment>client or project</comment>
+</row>
+<row name="name" null="0" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<comment>Name of the landscape (will be shown as title)</comment>
+</row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT(4000)</datatype>
+<default>NULL</default></row>
+<row name="fk_deleted_status_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="deleted_status" row="id" />
+</row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
+<key type="PRIMARY" name="PK">
+<part>id</part>
+</key>
+</table>
+<table x="2595" y="1803" name="landscape_composing">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="uuid" null="1" autoincrement="0">
+<datatype>TEXT</datatype>
+<default>NULL</default></row>
+<row name="fk_object_type_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>30</default><relation table="object_type" row="id" />
+</row>
+<row name="name" null="1" autoincrement="0">
+<datatype>TEXT(250)</datatype>
+<default>NULL</default><comment>The "link" can also have a name (e.g. 2FA Auth or VPN only, a.s.o)</comment>
+</row>
+<row name="description" null="1" autoincrement="0">
+<datatype>TEXT(4000)</datatype>
+<default>NULL</default></row>
+<row name="ref_fk_object_id_1" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="ref_fk_object_type_id_1" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_type" row="id" />
+<comment>only sourcesystem or sink</comment>
+</row>
+<row name="ref_fk_object_id_2" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="ref_fk_object_type_id_2" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_type" row="id" />
+<comment>only sourcesystem or sink</comment>
+</row>
+<row name="fk_landscape_id" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="landscape" row="id" />
+</row>
+<row name="fk_tool_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="tool" row="id" />
+<comment>optional, for naming something like Apache Hop, Azure Datafactory, Apache Beam, Google Dataflow, Airflow DAG, ...</comment>
+</row>
+<row name="fk_data_transfer_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="data_transfer_process" row="id" />
+</row>
+<row name="fk_deleted_status_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="deleted_status" row="id" />
+</row>
+<row name="fk_object_persistence_method_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="object_persistence_method" row="id" />
+</row>
+<row name="fk_datamanagement_process_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="datamanagement_process" row="id" />
+</row>
+<key type="PRIMARY" name="PK">
+<part>id</part>
+</key>
+</table>
 </sql>

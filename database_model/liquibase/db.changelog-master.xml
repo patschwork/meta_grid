@@ -185,4 +185,8 @@
   <include relativeToChangelogFile="true" file="changesets/0000157/changelog.xml"/>  <!-- Update view | v_All_Objects_Union -->
   <include relativeToChangelogFile="true" file="changesets/0000158/changelog.xml"/>  <!-- Update view | v_db_table_field_SearchInterface -->
   <include relativeToChangelogFile="true" file="changesets/0000159/changelog.xml"/>  <!-- Update view | v_tag_2_object_list -->
+  <include relativeToChangelogFile="true" file="changesets/0000160/changelog.xml"/>  <!-- SQL INSERT | object_type -->
+  <include relativeToChangelogFile="true" file="changesets/0000161/changelog.xml"/>  <!-- SQL Create table SQLite | sink;landscape;landscape_composing -->
+  <include relativeToChangelogFile="true" file="changesets/0000162/changelog.xml"/>  <!-- SQL Create table and CREATE trigger SQLite | sink_log;landscape_log;landscape_composing_log;TRIG_landscape_composing_log_DELETE;TRIG_landscape_composing_log_UPDATE;TRIG_landscape_composing_log_INSERT;TRIG_landscape_log_DELETE;TRIG_landscape_log_UPDATE;TRIG_landscape_log_INSERT;TRIG_sink_log_DELETE;TRIG_sink_log_UPDATE;TRIG_sink_log_INSERT; -->
+  <include relativeToChangelogFile="true" file="changesets/0000163/changelog.xml"/>  <!-- Create view | v_landscape_mermaid_output -->
 </databaseChangeLog> 

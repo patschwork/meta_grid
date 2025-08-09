@@ -1,5 +1,5 @@
 -- Diese Datei wurde automatisiert ueber das Python-Script create_wwwsqldesigner_model_additional.py erstellt
--- 2022-07-07 03:03:11
+-- 2025-08-08 04:13:19
 
 PRAGMA foreign_keys = ON;
 
@@ -2099,4 +2099,177 @@ BEGIN
 
    INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
 END;
+
+
+DROP TABLE IF EXISTS sink_log;
+CREATE TABLE sink_log (
+   log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+   log_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+   log_action TEXT,
+   id INTEGER,
+   uuid TEXT,
+   fk_object_type_id INTEGER,
+   fk_object_type_uuid TEXT,
+   fk_project_id INTEGER,
+   fk_project_uuid TEXT,
+   name TEXT(250),
+   description TEXT(4000),
+   fk_db_database_id INTEGER,
+   fk_db_database_uuid TEXT,
+   sink_is_also_sourcesystem BOOLEAN,
+   fk_sourcesystem_id INTEGER,
+   fk_sourcesystem_uuid TEXT,
+   fk_deleted_status_id INTEGER,
+   fk_deleted_status_uuid TEXT,
+   fk_object_persistence_method_id INTEGER,
+   fk_object_persistence_method_uuid TEXT,
+   fk_datamanagement_process_id INTEGER,
+   fk_datamanagement_process_uuid TEXT
+);
+
+DROP TRIGGER IF EXISTS TRIG_sink_log_INSERT;
+CREATE TRIGGER TRIG_sink_log_INSERT AFTER INSERT
+ON sink
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   INSERT INTO sink_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_db_database_id, fk_db_database_uuid,sink_is_also_sourcesystem,fk_sourcesystem_id, fk_sourcesystem_uuid,fk_deleted_status_id, fk_deleted_status_uuid,fk_object_persistence_method_id, fk_object_persistence_method_uuid,fk_datamanagement_process_id, fk_datamanagement_process_uuid) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_db_database_id, (SELECT uuid FROM db_database WHERE id=new.fk_db_database_id),new.sink_is_also_sourcesystem,new.fk_sourcesystem_id, (SELECT uuid FROM sourcesystem WHERE id=new.fk_sourcesystem_id),new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id),new.fk_object_persistence_method_id, (SELECT uuid FROM object_persistence_method WHERE id=new.fk_object_persistence_method_id),new.fk_datamanagement_process_id, (SELECT uuid FROM datamanagement_process WHERE id=new.fk_datamanagement_process_id));
+   UPDATE sink SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   DELETE FROM _newUUID;
+   DELETE FROM sink_log WHERE log_id=(SELECT MAX(log_id)+1 FROM sink_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
+END;
+
+DROP TRIGGER IF EXISTS TRIG_sink_log_UPDATE;
+CREATE TRIGGER TRIG_sink_log_UPDATE AFTER UPDATE
+ON sink
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   UPDATE sink SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   INSERT INTO sink_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_db_database_id, fk_db_database_uuid,sink_is_also_sourcesystem,fk_sourcesystem_id, fk_sourcesystem_uuid,fk_deleted_status_id, fk_deleted_status_uuid,fk_object_persistence_method_id, fk_object_persistence_method_uuid,fk_datamanagement_process_id, fk_datamanagement_process_uuid) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_db_database_id, (SELECT uuid FROM db_database WHERE id=new.fk_db_database_id),new.sink_is_also_sourcesystem,new.fk_sourcesystem_id, (SELECT uuid FROM sourcesystem WHERE id=new.fk_sourcesystem_id),new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id),new.fk_object_persistence_method_id, (SELECT uuid FROM object_persistence_method WHERE id=new.fk_object_persistence_method_id),new.fk_datamanagement_process_id, (SELECT uuid FROM datamanagement_process WHERE id=new.fk_datamanagement_process_id));
+   DELETE FROM _newUUID;
+END;
+
+DROP TRIGGER IF EXISTS TRIG_sink_log_DELETE;
+CREATE TRIGGER TRIG_sink_log_DELETE AFTER DELETE
+ON sink
+BEGIN
+   INSERT INTO sink_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,fk_project_id, fk_project_uuid,name,description,fk_db_database_id, fk_db_database_uuid,sink_is_also_sourcesystem,fk_sourcesystem_id, fk_sourcesystem_uuid,fk_deleted_status_id, fk_deleted_status_uuid,fk_object_persistence_method_id, fk_object_persistence_method_uuid,fk_datamanagement_process_id, fk_datamanagement_process_uuid) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_db_database_id, (SELECT uuid FROM db_database WHERE id=old.fk_db_database_id),old.sink_is_also_sourcesystem,old.fk_sourcesystem_id, (SELECT uuid FROM sourcesystem WHERE id=old.fk_sourcesystem_id),old.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=old.fk_deleted_status_id),old.fk_object_persistence_method_id, (SELECT uuid FROM object_persistence_method WHERE id=old.fk_object_persistence_method_id),old.fk_datamanagement_process_id, (SELECT uuid FROM datamanagement_process WHERE id=old.fk_datamanagement_process_id));
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+
+
+DROP TABLE IF EXISTS landscape_log;
+CREATE TABLE landscape_log (
+   log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+   log_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+   log_action TEXT,
+   id INTEGER,
+   uuid TEXT,
+   fk_object_type_id INTEGER,
+   fk_object_type_uuid TEXT,
+   scope TEXT(100),
+   fk_client_id INTEGER,
+   fk_client_uuid TEXT,
+   fk_project_id INTEGER,
+   fk_project_uuid TEXT,
+   name TEXT(250),
+   description TEXT(4000),
+   fk_deleted_status_id INTEGER,
+   fk_deleted_status_uuid TEXT,
+   fk_object_persistence_method_id INTEGER,
+   fk_object_persistence_method_uuid TEXT,
+   fk_datamanagement_process_id INTEGER,
+   fk_datamanagement_process_uuid TEXT
+);
+
+DROP TRIGGER IF EXISTS TRIG_landscape_log_INSERT;
+CREATE TRIGGER TRIG_landscape_log_INSERT AFTER INSERT
+ON landscape
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   INSERT INTO landscape_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,scope,fk_client_id, fk_client_uuid,fk_project_id, fk_project_uuid,name,description,fk_deleted_status_id, fk_deleted_status_uuid,fk_object_persistence_method_id, fk_object_persistence_method_uuid,fk_datamanagement_process_id, fk_datamanagement_process_uuid) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.scope,new.fk_client_id, (SELECT uuid FROM client WHERE id=new.fk_client_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id),new.fk_object_persistence_method_id, (SELECT uuid FROM object_persistence_method WHERE id=new.fk_object_persistence_method_id),new.fk_datamanagement_process_id, (SELECT uuid FROM datamanagement_process WHERE id=new.fk_datamanagement_process_id));
+   UPDATE landscape SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   DELETE FROM _newUUID;
+   DELETE FROM landscape_log WHERE log_id=(SELECT MAX(log_id)+1 FROM landscape_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
+END;
+
+DROP TRIGGER IF EXISTS TRIG_landscape_log_UPDATE;
+CREATE TRIGGER TRIG_landscape_log_UPDATE AFTER UPDATE
+ON landscape
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   UPDATE landscape SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   INSERT INTO landscape_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,scope,fk_client_id, fk_client_uuid,fk_project_id, fk_project_uuid,name,description,fk_deleted_status_id, fk_deleted_status_uuid,fk_object_persistence_method_id, fk_object_persistence_method_uuid,fk_datamanagement_process_id, fk_datamanagement_process_uuid) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.scope,new.fk_client_id, (SELECT uuid FROM client WHERE id=new.fk_client_id),new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.name,new.description,new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id),new.fk_object_persistence_method_id, (SELECT uuid FROM object_persistence_method WHERE id=new.fk_object_persistence_method_id),new.fk_datamanagement_process_id, (SELECT uuid FROM datamanagement_process WHERE id=new.fk_datamanagement_process_id));
+   DELETE FROM _newUUID;
+END;
+
+DROP TRIGGER IF EXISTS TRIG_landscape_log_DELETE;
+CREATE TRIGGER TRIG_landscape_log_DELETE AFTER DELETE
+ON landscape
+BEGIN
+   INSERT INTO landscape_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,scope,fk_client_id, fk_client_uuid,fk_project_id, fk_project_uuid,name,description,fk_deleted_status_id, fk_deleted_status_uuid,fk_object_persistence_method_id, fk_object_persistence_method_uuid,fk_datamanagement_process_id, fk_datamanagement_process_uuid) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.scope,old.fk_client_id, (SELECT uuid FROM client WHERE id=old.fk_client_id),old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.name,old.description,old.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=old.fk_deleted_status_id),old.fk_object_persistence_method_id, (SELECT uuid FROM object_persistence_method WHERE id=old.fk_object_persistence_method_id),old.fk_datamanagement_process_id, (SELECT uuid FROM datamanagement_process WHERE id=old.fk_datamanagement_process_id));
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+
+
+DROP TABLE IF EXISTS landscape_composing_log;
+CREATE TABLE landscape_composing_log (
+   log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+   log_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+   log_action TEXT,
+   id INTEGER,
+   uuid TEXT,
+   fk_object_type_id INTEGER,
+   fk_object_type_uuid TEXT,
+   name TEXT(250),
+   description TEXT(4000),
+   ref_fk_object_id_1 INTEGER,
+   ref_fk_object_type_id_1 INTEGER,
+   ref_fk_object_id_2 INTEGER,
+   ref_fk_object_type_id_2 INTEGER,
+   fk_landscape_id INTEGER,
+   fk_landscape_uuid TEXT,
+   fk_tool_id INTEGER,
+   fk_tool_uuid TEXT,
+   fk_data_transfer_process_id INTEGER,
+   fk_data_transfer_process_uuid TEXT,
+   fk_deleted_status_id INTEGER,
+   fk_deleted_status_uuid TEXT,
+   fk_object_persistence_method_id INTEGER,
+   fk_object_persistence_method_uuid TEXT,
+   fk_datamanagement_process_id INTEGER,
+   fk_datamanagement_process_uuid TEXT
+);
+
+DROP TRIGGER IF EXISTS TRIG_landscape_composing_log_INSERT;
+CREATE TRIGGER TRIG_landscape_composing_log_INSERT AFTER INSERT
+ON landscape_composing
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   INSERT INTO landscape_composing_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,name,description,ref_fk_object_id_1,ref_fk_object_type_id_1,ref_fk_object_id_2,ref_fk_object_type_id_2,fk_landscape_id, fk_landscape_uuid,fk_tool_id, fk_tool_uuid,fk_data_transfer_process_id, fk_data_transfer_process_uuid,fk_deleted_status_id, fk_deleted_status_uuid,fk_object_persistence_method_id, fk_object_persistence_method_uuid,fk_datamanagement_process_id, fk_datamanagement_process_uuid) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.name,new.description,new.ref_fk_object_id_1,new.ref_fk_object_type_id_1,new.ref_fk_object_id_2,new.ref_fk_object_type_id_2,new.fk_landscape_id, (SELECT uuid FROM landscape WHERE id=new.fk_landscape_id),new.fk_tool_id, (SELECT uuid FROM tool WHERE id=new.fk_tool_id),new.fk_data_transfer_process_id, (SELECT uuid FROM data_transfer_process WHERE id=new.fk_data_transfer_process_id),new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id),new.fk_object_persistence_method_id, (SELECT uuid FROM object_persistence_method WHERE id=new.fk_object_persistence_method_id),new.fk_datamanagement_process_id, (SELECT uuid FROM datamanagement_process WHERE id=new.fk_datamanagement_process_id));
+   UPDATE landscape_composing SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   DELETE FROM _newUUID;
+   DELETE FROM landscape_composing_log WHERE log_id=(SELECT MAX(log_id)+1 FROM landscape_composing_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
+END;
+
+DROP TRIGGER IF EXISTS TRIG_landscape_composing_log_UPDATE;
+CREATE TRIGGER TRIG_landscape_composing_log_UPDATE AFTER UPDATE
+ON landscape_composing
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   UPDATE landscape_composing SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   INSERT INTO landscape_composing_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,name,description,ref_fk_object_id_1,ref_fk_object_type_id_1,ref_fk_object_id_2,ref_fk_object_type_id_2,fk_landscape_id, fk_landscape_uuid,fk_tool_id, fk_tool_uuid,fk_data_transfer_process_id, fk_data_transfer_process_uuid,fk_deleted_status_id, fk_deleted_status_uuid,fk_object_persistence_method_id, fk_object_persistence_method_uuid,fk_datamanagement_process_id, fk_datamanagement_process_uuid) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.name,new.description,new.ref_fk_object_id_1,new.ref_fk_object_type_id_1,new.ref_fk_object_id_2,new.ref_fk_object_type_id_2,new.fk_landscape_id, (SELECT uuid FROM landscape WHERE id=new.fk_landscape_id),new.fk_tool_id, (SELECT uuid FROM tool WHERE id=new.fk_tool_id),new.fk_data_transfer_process_id, (SELECT uuid FROM data_transfer_process WHERE id=new.fk_data_transfer_process_id),new.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=new.fk_deleted_status_id),new.fk_object_persistence_method_id, (SELECT uuid FROM object_persistence_method WHERE id=new.fk_object_persistence_method_id),new.fk_datamanagement_process_id, (SELECT uuid FROM datamanagement_process WHERE id=new.fk_datamanagement_process_id));
+   DELETE FROM _newUUID;
+END;
+
+DROP TRIGGER IF EXISTS TRIG_landscape_composing_log_DELETE;
+CREATE TRIGGER TRIG_landscape_composing_log_DELETE AFTER DELETE
+ON landscape_composing
+BEGIN
+   INSERT INTO landscape_composing_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,name,description,ref_fk_object_id_1,ref_fk_object_type_id_1,ref_fk_object_id_2,ref_fk_object_type_id_2,fk_landscape_id, fk_landscape_uuid,fk_tool_id, fk_tool_uuid,fk_data_transfer_process_id, fk_data_transfer_process_uuid,fk_deleted_status_id, fk_deleted_status_uuid,fk_object_persistence_method_id, fk_object_persistence_method_uuid,fk_datamanagement_process_id, fk_datamanagement_process_uuid) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.name,old.description,old.ref_fk_object_id_1,old.ref_fk_object_type_id_1,old.ref_fk_object_id_2,old.ref_fk_object_type_id_2,old.fk_landscape_id, (SELECT uuid FROM landscape WHERE id=old.fk_landscape_id),old.fk_tool_id, (SELECT uuid FROM tool WHERE id=old.fk_tool_id),old.fk_data_transfer_process_id, (SELECT uuid FROM data_transfer_process WHERE id=old.fk_data_transfer_process_id),old.fk_deleted_status_id, (SELECT uuid FROM deleted_status WHERE id=old.fk_deleted_status_id),old.fk_object_persistence_method_id, (SELECT uuid FROM object_persistence_method WHERE id=old.fk_object_persistence_method_id),old.fk_datamanagement_process_id, (SELECT uuid FROM datamanagement_process WHERE id=old.fk_datamanagement_process_id));
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+
 

@@ -537,3 +537,51 @@ ref_fk_object_type_id INTEGER NOT NULL  REFERENCES object_type (id),
 fk_tag_id INTEGER NOT NULL  REFERENCES tag (id),
 UNIQUE (ref_fk_object_id, ref_fk_object_type_id, fk_tag_id)
 );
+
+CREATE TABLE sink (
+id INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+uuid TEXT DEFAULT NULL,
+fk_object_type_id INTEGER NOT NULL  DEFAULT 28 REFERENCES object_type (id),
+fk_project_id INTEGER NOT NULL  DEFAULT NULL REFERENCES project (id),
+name TEXT(250) NOT NULL ,
+description TEXT(4000) DEFAULT NULL,
+fk_db_database_id INTEGER DEFAULT NULL REFERENCES db_database (id),
+sink_is_also_sourcesystem BOOLEAN DEFAULT 0,
+fk_sourcesystem_id INTEGER DEFAULT NULL REFERENCES sourcesystem (id),
+fk_deleted_status_id INTEGER DEFAULT NULL REFERENCES deleted_status (id),
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id)
+);
+
+CREATE TABLE landscape (
+id INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+uuid TEXT DEFAULT NULL,
+fk_object_type_id INTEGER NOT NULL  DEFAULT 29 REFERENCES object_type (id),
+scope TEXT(100) NOT NULL  DEFAULT 'NULL',
+fk_client_id INTEGER DEFAULT NULL REFERENCES client (id),
+fk_project_id INTEGER DEFAULT NULL REFERENCES project (id),
+name TEXT(250) NOT NULL ,
+description TEXT(4000) DEFAULT NULL,
+fk_deleted_status_id INTEGER DEFAULT NULL REFERENCES deleted_status (id),
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id)
+);
+
+CREATE TABLE landscape_composing (
+id INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+uuid TEXT DEFAULT NULL,
+fk_object_type_id INTEGER NOT NULL  DEFAULT 30 REFERENCES object_type (id),
+name TEXT(250) DEFAULT NULL,
+description TEXT(4000) DEFAULT NULL,
+ref_fk_object_id_1 INTEGER NOT NULL  DEFAULT NULL,
+ref_fk_object_type_id_1 INTEGER NOT NULL  DEFAULT NULL REFERENCES object_type (id),
+ref_fk_object_id_2 INTEGER NOT NULL  DEFAULT NULL,
+ref_fk_object_type_id_2 INTEGER NOT NULL  DEFAULT NULL REFERENCES object_type (id),
+fk_landscape_id INTEGER NOT NULL  DEFAULT NULL REFERENCES landscape (id),
+fk_tool_id INTEGER DEFAULT NULL REFERENCES tool (id),
+fk_data_transfer_process_id INTEGER DEFAULT NULL REFERENCES data_transfer_process (id),
+fk_deleted_status_id INTEGER DEFAULT NULL REFERENCES deleted_status (id),
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id)
+);
+
