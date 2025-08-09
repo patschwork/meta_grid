@@ -189,4 +189,5 @@
   <include relativeToChangelogFile="true" file="changesets/0000161/changelog.xml"/>  <!-- SQL Create table SQLite | sink;landscape;landscape_composing -->
   <include relativeToChangelogFile="true" file="changesets/0000162/changelog.xml"/>  <!-- SQL Create table and CREATE trigger SQLite | sink_log;landscape_log;landscape_composing_log;TRIG_landscape_composing_log_DELETE;TRIG_landscape_composing_log_UPDATE;TRIG_landscape_composing_log_INSERT;TRIG_landscape_log_DELETE;TRIG_landscape_log_UPDATE;TRIG_landscape_log_INSERT;TRIG_sink_log_DELETE;TRIG_sink_log_UPDATE;TRIG_sink_log_INSERT; -->
   <include relativeToChangelogFile="true" file="changesets/0000163/changelog.xml"/>  <!-- Create view | v_landscape_mermaid_output -->
+  <include relativeToChangelogFile="true" file="changesets/0000164/changelog.xml"/>  <!-- Update view | v_landscape_mermaid_output -->
 </databaseChangeLog> 
