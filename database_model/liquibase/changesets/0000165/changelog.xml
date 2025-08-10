@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000165/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000165" context="landscape">
+		<sql stripComments="false" splitStatements="false" dbms="sqlite">
+		<![CDATA[
+DROP VIEW v_landscape_mermaid_output
+;
+		]]>		
+		</sql>
+
+		<sql stripComments="false" splitStatements="false" dbms="sqlite">
+		<![CDATA[
+CREATE VIEW v_landscape_mermaid_output
+AS
+WITH sources_and_sinks AS (
+    SELECT so_and_si.*, fk_client_id
+    FROM
+    (
+        SELECT id, fk_project_id, fk_object_type_id, name, description, NULL AS fk_db_database_id, NULL AS is_database FROM sourcesystem so
+        UNION ALL
+        SELECT id, fk_project_id, fk_object_type_id, name, description, fk_db_database_id, CASE WHEN fk_db_database_id IS NOT NULL THEN TRUE ELSE FALSE END AS is_database FROM sink si
+    ) AS so_and_si
+    INNER JOIN project p ON 1=1
+       AND p.id = so_and_si.fk_project_id
+)
+,zwischenstand AS (
+    SELECT 
+         sas_1.name AS name_1
+        ,sas_1.id AS id_1
+        ,sas_1.fk_object_type_id AS fk_object_type_id_1
+        ,sas_1.fk_db_database_id AS fk_db_database_id_1
+        ,sas_1.is_database AS is_database_1
+        ,CASE 
+            WHEN sas_1.is_database THEN CONCAT('id_',sas_1.fk_object_type_id,'_',sas_1.id,'[("', sas_1.name ,'")]')
+            ELSE CONCAT('id_',sas_1.fk_object_type_id,'_',sas_1.id,'["', sas_1.name ,'"]') 
+         END AS mermaid_object_id_with_name_1
+        ,CASE 
+            WHEN sas_1.is_database THEN CONCAT('id_',sas_1.fk_object_type_id,'_',sas_1.id)
+            ELSE CONCAT('id_',sas_1.fk_object_type_id,'_',sas_1.id) 
+         END AS mermaid_object_id_1
+        ,sas_2.name AS name_2
+        ,sas_2.id AS id_2
+        ,sas_2.fk_object_type_id AS fk_object_type_id_2
+        ,sas_2.fk_db_database_id AS fk_db_database_id_2
+        ,sas_2.is_database AS is_database_2
+        ,CASE 
+            WHEN sas_2.is_database THEN CONCAT('id_',sas_2.fk_object_type_id,'_',sas_2.id,'[("', sas_2.name ,'")]')
+            ELSE CONCAT('id_',sas_2.fk_object_type_id,'_',sas_2.id,'["', sas_2.name ,'"]') 
+         END AS mermaid_object_id_with_name_2
+        ,CASE 
+            WHEN sas_2.is_database THEN CONCAT('id_',sas_2.fk_object_type_id,'_',sas_2.id)
+            ELSE CONCAT('id_',sas_2.fk_object_type_id,'_',sas_2.id) 
+         END AS mermaid_object_id_2
+        ,lc.name AS landscape_composing_name
+        ,lc.description AS landscape_composing_description
+        ,lc.fk_tool_id
+        ,t.tool_name
+        ,dtp.name AS dtp_name
+        ,dtt.name AS dtt_nanme
+        ,CONCAT(dtp.name, CASE WHEN dtp.fk_data_transfer_type_id IS NOT NULL THEN CONCAT(' (', dtt.name, ')') ELSE '' END) AS data_transfer_process__and__data_transfer_type
+        ,l.name AS landscape_name
+        ,l.id AS fk_landscape_id
+        ,l.description AS landscape_description
+    FROM landscape_composing lc
+    INNER JOIN landscape l ON 1=1
+       AND l.id = lc.fk_landscape_id
+    INNER JOIN sources_and_sinks sas_1 ON 1=1
+       AND 
+       (
+        sas_1.fk_project_id = l.fk_project_id AND l."scope" = 'project'
+        OR
+        sas_1.fk_client_id = l.fk_client_id AND l."scope" = 'client'    
+       )
+       AND lc.ref_fk_object_id_1 = sas_1.id
+       AND lc.ref_fk_object_type_id_1 = sas_1.fk_object_type_id
+    INNER JOIN sources_and_sinks sas_2 ON 1=1
+       AND 
+       (
+        sas_2.fk_project_id = l.fk_project_id AND l."scope" = 'project'
+        OR
+        sas_2.fk_client_id = l.fk_client_id AND l."scope" = 'client'    
+       )
+       AND lc.ref_fk_object_id_2 = sas_2.id
+       AND lc.ref_fk_object_type_id_2 = sas_2.fk_object_type_id
+    LEFT JOIN tool t ON 1=1
+       AND t.id = lc.fk_tool_id
+    LEFT JOIN data_transfer_process dtp ON 1=1
+       AND dtp.id = lc.fk_data_transfer_process_id
+    LEFT JOIN data_transfer_type dtt ON 1=1
+       AND dtt.id = dtp.fk_data_transfer_type_id
+)
+,mermaid_objects_with_name AS (
+    SELECT
+        DISTINCT
+            fk_landscape_id, landscape_name, mermaid_object_id_with_name_1 AS mermaid_objects
+    FROM zwischenstand
+    UNION
+    SELECT
+        DISTINCT
+            fk_landscape_id, landscape_name, mermaid_object_id_with_name_2 AS mermaid_objects
+    FROM zwischenstand
+)
+,mermaid_composing AS
+(
+    SELECT
+        fk_landscape_id
+       ,CONCAT
+        (
+            mermaid_object_id_1, 
+            '-->', 
+            '|"<html>',
+            landscape_composing_name, 
+            CASE WHEN landscape_composing_description IS NOT NULL THEN '<br/><small>'||landscape_composing_description||'</small>' ELSE '' END,
+            CASE WHEN dtp_name IS NOT NULL THEN '<br/><small>'||data_transfer_process__and__data_transfer_type||'</small>' ELSE '' END,
+            CASE WHEN fk_tool_id IS NOT NULL THEN '<br/><i>'||tool_name||'</i>' ELSE '' END, 
+            '</html>"| ', 
+            mermaid_object_id_2
+        ) AS connector
+    FROM zwischenstand
+)
+,mermaid_composing_compatible_v8_13_3 AS
+(
+    SELECT
+        fk_landscape_id
+       ,CONCAT
+        (
+            mermaid_object_id_1, 
+            '-->', 
+            '|"<html>',
+            landscape_composing_name, 
+            CASE WHEN landscape_composing_description IS NOT NULL THEN '<br/>'||landscape_composing_description||'' ELSE '' END,
+            CASE WHEN dtp_name IS NOT NULL THEN '<br/>'||data_transfer_process__and__data_transfer_type||'' ELSE '' END,
+            CASE WHEN fk_tool_id IS NOT NULL THEN '<br/>'||tool_name||'' ELSE '' END, 
+            '</html>"| ', 
+            mermaid_object_id_2
+        ) AS connector
+    FROM zwischenstand
+)
+,header_template AS (
+    SELECT CONCAT('---
+title: ', '{{{title}}}', '
+config:
+   theme: dark
+   themeVariables:
+   primaryColor: "#00ff00"
+---
+flowchart LR
+    ') AS header_textline
+)
+,textlines_per_fk_landscape_id AS 
+(
+    SELECT 
+        DISTINCT 
+             header.fk_landscape_id 
+            ,REPLACE(ht.header_textline, '{{{title}}}', header.landscape_name) AS textline_1
+            ,objects.textline_2
+            ,connections_between_objects.textline_3
+            ,connections_between_objects_v8_13_3.textline_3_v8_13_3         
+    FROM mermaid_objects_with_name header
+    LEFT JOIN header_template ht ON 1=1
+    LEFT JOIN (
+        SELECT mown.fk_landscape_id, GROUP_CONCAT(mown.mermaid_objects, CONCAT(CHAR(13),CHAR(10))) AS textline_2 FROM mermaid_objects_with_name mown GROUP BY mown.fk_landscape_id
+    ) objects ON 1=1
+       AND objects.fk_landscape_id = header.fk_landscape_id
+    LEFT JOIN (
+        SELECT mc.fk_landscape_id, GROUP_CONCAT(connector, CONCAT(CHAR(13),CHAR(10))) AS textline_3 FROM mermaid_composing mc GROUP BY mc.fk_landscape_id
+    ) connections_between_objects ON 1=1
+      AND connections_between_objects.fk_landscape_id = header.fk_landscape_id
+    LEFT JOIN (
+        SELECT mc.fk_landscape_id, GROUP_CONCAT(connector, CONCAT(CHAR(13),CHAR(10))) AS textline_3_v8_13_3 FROM mermaid_composing_compatible_v8_13_3 mc GROUP BY mc.fk_landscape_id
+    ) connections_between_objects_v8_13_3 ON 1=1
+      AND connections_between_objects_v8_13_3.fk_landscape_id = header.fk_landscape_id
+)
+SELECT
+     fk_landscape_id
+    ,CONCAT(
+         textline_1
+        ,textline_2,CONCAT(CHAR(13),CHAR(10))
+        ,textline_3
+    ) AS mermaid_diagramm
+    ,REPLACE(CONCAT(
+         'flowchart LR',CONCAT(CHAR(13),CHAR(10))
+        ,textline_2,CONCAT(CHAR(13),CHAR(10))
+        ,textline_3_v8_13_3
+    ),'|"<html></html>"|', '') AS mermaid_diagramm_v8_13_3
+FROM textlines_per_fk_landscape_id
+;
+		]]>		
+		</sql>
+
+		<comment>
+		<![CDATA[
+		Update view for generating Mermaid diagram output.
+		Used objects:
+			v_landscape_mermaid_output
+		Phabricator tasks:
+			T585
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>
