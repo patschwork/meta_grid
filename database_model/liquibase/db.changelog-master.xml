@@ -191,4 +191,5 @@
   <include relativeToChangelogFile="true" file="changesets/0000163/changelog.xml"/>  <!-- Create view | v_landscape_mermaid_output -->
   <include relativeToChangelogFile="true" file="changesets/0000164/changelog.xml"/>  <!-- Update view | v_landscape_mermaid_output -->
   <include relativeToChangelogFile="true" file="changesets/0000165/changelog.xml"/>  <!-- Update view | v_landscape_mermaid_output -->
+  <include relativeToChangelogFile="true" file="changesets/0000166/changelog.xml"/>  <!-- Update view | v_landscape_mermaid_output -->
 </databaseChangeLog> 
