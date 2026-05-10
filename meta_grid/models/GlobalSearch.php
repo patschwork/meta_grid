@@ -95,14 +95,23 @@ class GlobalSearch extends VAllObjectsUnion
 
         $search_term = '%'.str_replace("*", "%", $this->name).'%';        
         $query->andWhere(
+            // ['or',
+            //         ['ilike', 'name', $search_term, false],
+            //         ['ilike', 'detail_1_content', $search_term, false],
+            //         ['ilike', 'detail_2_content', $search_term, false],
+            //         ['ilike', 'detail_3_content', $search_term, false],
+            //         ['ilike', 'detail_4_content', $search_term, false],
+            //         ['ilike', 'detail_5_content', $search_term, false],
+            //         ['ilike', 'description', $search_term, false]
+            // ]
             ['or',
-                    ['like', 'name', $search_term, false],
-                    ['like', 'detail_1_content', $search_term, false],
-                    ['like', 'detail_2_content', $search_term, false],
-                    ['like', 'detail_3_content', $search_term, false],
-                    ['like', 'detail_4_content', $search_term, false],
-                    ['like', 'detail_5_content', $search_term, false],
-                    ['like', 'description', $search_term, false]
+                    ['like', 'lower(name)', strtolower($search_term), false],
+                    ['like', 'lower(detail_1_content)', strtolower($search_term), false],
+                    ['like', 'lower(detail_2_content)', strtolower($search_term), false],
+                    ['like', 'lower(detail_3_content)', strtolower($search_term), false],
+                    ['like', 'lower(detail_4_content)', strtolower($search_term), false],
+                    ['like', 'lower(detail_5_content)', strtolower($search_term), false],
+                    ['like', 'lower(description)', strtolower($search_term), false]
             ]
         );
 

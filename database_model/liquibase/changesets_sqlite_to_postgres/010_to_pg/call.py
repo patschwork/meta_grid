@@ -7,6 +7,16 @@ from sqlalchemy import create_engine
 import psycopg2
 import sys
 
+import logging
+log_file_path = os.path.join(os.path.dirname(__file__), 'call_py.log')
+
+# Logger
+logging.basicConfig(
+    filename=log_file_path,
+    level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
 def create_connection(db_file):
     """ create a database connection to the SQLite database
         specified by the db_file
@@ -53,6 +63,11 @@ sql2 = """
 SELECT * FROM auth_item_child;
 """
 df2 = pd.read_sql(sql=sql2, con=conn)
+
+logging.info(f'pg_user: {pg_user}')
+logging.info(f'pg_host: {pg_host}')
+logging.info(f'pg_port: {pg_port}')
+logging.info(f'pg_db: {pg_db}')
 
 conn_pgsql = create_connect_postgres(postgres_url)
 

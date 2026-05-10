@@ -1,5 +1,5 @@
 -- Diese Datei wurde automatisiert ueber das Python-Script create_wwwsqldesigner_model_additional.py erstellt
--- 2025-08-08 04:13:19
+-- 2026-04-29 01:15:42
 
 PRAGMA foreign_keys = ON;
 
@@ -2056,6 +2056,58 @@ BEGIN
 END;
 
 
+DROP TABLE IF EXISTS wiki_log;
+CREATE TABLE wiki_log (
+   log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+   log_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+   log_action TEXT,
+   id INTEGER,
+   uuid TEXT,
+   fk_object_type_id INTEGER,
+   fk_object_type_uuid TEXT,
+   name TEXT(250),
+   description TEXT,
+   fk_project_id INTEGER,
+   fk_project_uuid TEXT,
+   fk_user_id INTEGER,
+   fk_object_persistence_method_id INTEGER,
+   fk_object_persistence_method_uuid TEXT,
+   fk_datamanagement_process_id INTEGER,
+   fk_datamanagement_process_uuid TEXT
+-- Wegen des UNIQUE muss das Komma immer am Ende entfernt werden! Siehe auch TRIGGER!
+);
+
+DROP TRIGGER IF EXISTS TRIG_wiki_log_INSERT;
+CREATE TRIGGER TRIG_wiki_log_INSERT AFTER INSERT
+ON wiki
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   INSERT INTO wiki_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,name,description,fk_project_id, fk_project_uuid,fk_user_id,fk_object_persistence_method_id, fk_object_persistence_method_uuid,fk_datamanagement_process_id, fk_datamanagement_process_uuid) VALUES ('INSERT',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.name,new.description,new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.fk_user_id,new.fk_object_persistence_method_id, (SELECT uuid FROM object_persistence_method WHERE id=new.fk_object_persistence_method_id),new.fk_datamanagement_process_id, (SELECT uuid FROM datamanagement_process WHERE id=new.fk_datamanagement_process_id));
+   UPDATE wiki SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   DELETE FROM _newUUID;
+   DELETE FROM wiki_log WHERE log_id=(SELECT MAX(log_id)+1 FROM wiki_log WHERE log_action='INSERT' AND id=new.id) AND log_action='UPDATE' AND id=new.id; --Aufraeumen des ungewollten Datensatz beim INSERT (erzeugt durch den UPDATE TRIGGER)
+END;
+
+DROP TRIGGER IF EXISTS TRIG_wiki_log_UPDATE;
+CREATE TRIGGER TRIG_wiki_log_UPDATE AFTER UPDATE
+ON wiki
+BEGIN
+   INSERT INTO _newUUID (uuid) VALUES (hex(randomblob(16)));
+   UPDATE wiki SET uuid=(SELECT uuid FROM _newUUID) WHERE id=new.id;
+   INSERT INTO wiki_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,name,description,fk_project_id, fk_project_uuid,fk_user_id,fk_object_persistence_method_id, fk_object_persistence_method_uuid,fk_datamanagement_process_id, fk_datamanagement_process_uuid) VALUES ('UPDATE',new.id,(SELECT uuid FROM _newUUID),new.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=new.fk_object_type_id),new.name,new.description,new.fk_project_id, (SELECT uuid FROM project WHERE id=new.fk_project_id),new.fk_user_id,new.fk_object_persistence_method_id, (SELECT uuid FROM object_persistence_method WHERE id=new.fk_object_persistence_method_id),new.fk_datamanagement_process_id, (SELECT uuid FROM datamanagement_process WHERE id=new.fk_datamanagement_process_id));
+   DELETE FROM _newUUID;
+END;
+
+DROP TRIGGER IF EXISTS TRIG_wiki_log_DELETE;
+CREATE TRIGGER TRIG_wiki_log_DELETE AFTER DELETE
+ON wiki
+BEGIN
+   INSERT INTO wiki_log (log_action, id,uuid,fk_object_type_id, fk_object_type_uuid,name,description,fk_project_id, fk_project_uuid,fk_user_id,fk_object_persistence_method_id, fk_object_persistence_method_uuid,fk_datamanagement_process_id, fk_datamanagement_process_uuid) VALUES ('DELETE',old.id,old.uuid,old.fk_object_type_id, (SELECT uuid FROM object_type WHERE id=old.fk_object_type_id),old.name,old.description,old.fk_project_id, (SELECT uuid FROM project WHERE id=old.fk_project_id),old.fk_user_id,old.fk_object_persistence_method_id, (SELECT uuid FROM object_persistence_method WHERE id=old.fk_object_persistence_method_id),old.fk_datamanagement_process_id, (SELECT uuid FROM datamanagement_process WHERE id=old.fk_datamanagement_process_id));
+
+   INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
+END;
+
+
 DROP TABLE IF EXISTS map_object_2_tag_log;
 CREATE TABLE map_object_2_tag_log (
    log_id INTEGER NOT NULL  DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
@@ -2271,5 +2323,4 @@ BEGIN
 
    INSERT INTO cleanup_queue (ref_fk_object_id, ref_fk_object_type_id) VALUES (old.id, old.fk_object_type_id);
 END;
-
 

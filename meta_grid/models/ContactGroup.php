@@ -50,4 +50,19 @@ class ContactGroup extends \app\models\base\ContactGroup
     	return null;
     
     }
+
+
+
+	// T758 {...
+	public function behaviors(): array
+    {
+        return [
+            [
+                'class' => \vendor\meta_grid\model_behavior\EnsureDataManagementProcessBehavior::class,
+                'attribute' => 'fk_datamanagement_process_id',
+                'processName' => 'Yii2 GUI',
+            ],
+        ];
+    }
+	// T758 ...} 
 }

@@ -46,6 +46,7 @@ def get_all_objects(conn, type, tbl_name=None, return_df = True):
         {"" if tbl_name is None else f"AND tbl_name='{tbl_name}'"}
         ORDER BY
             CASE 
+               WHEN tbl_name LIKE '%CUSTOM_VIEW' THEN 1000
                WHEN tbl_name='v_tag_2_object_list' THEN 999
                WHEN sql LIKE '%v_All_Mappings_Union%' AND tbl_name<>'v_All_Mappings_Union' THEN 998
                WHEN sql LIKE '%v_All_Objects_Union%' AND tbl_name<>'v_All_Objects_Union' THEN 997
@@ -120,6 +121,9 @@ for index, row in df.iterrows():
         continue
     if True:
         new_sql = sql.replace("IFNULL", "COALESCE")
+        new_sql = new_sql.replace("GROUP_CONCAT(", "STRING_AGG(") # T651
+        new_sql = new_sql.replace("(CHAR(", "(CHR(") # T651
+        new_sql = new_sql.replace(",CHAR(", ",CHR(") # T651
         if not 'CREATE VIEW "' in new_sql:
             create_view_stmt_old = new_sql.split(" ")[0] + " " + new_sql.split(" ")[1] + " " + new_sql.split(" ")[2]
             create_view_stmt_new = new_sql.split(" ")[0] + " " + new_sql.split(" ")[1] + ' "' + new_sql.split(' ')[2] + '"'

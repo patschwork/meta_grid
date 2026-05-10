@@ -35,7 +35,7 @@ import ctypes
 
 # That gives the version of the Installer/Updater
 def myVersion():
-    return "1.8.5"
+    return "1.9"
 
 # Print messages in different color (with, or without logging)
 def bla(msg, action=None, withLooging=True, logfilepath="", logfile=""):

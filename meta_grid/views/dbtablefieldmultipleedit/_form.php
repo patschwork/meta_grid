@@ -29,7 +29,10 @@ use kartik\depdrop\DepDrop;			// Patrick, 2020-03-21
 
 <div class="dbtablefieldmultiple-form">
 
-    <?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
+    <?php 
+		// $form = ActiveForm::begin(['id' => 'dynamic-form']); 
+		$form = ActiveForm::begin(['id' => Yii::$app->controller->id ]); 
+	?>
 
 	<div class="form-group">
         <?= Html::submitButton($modelDbTable->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $modelDbTable->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

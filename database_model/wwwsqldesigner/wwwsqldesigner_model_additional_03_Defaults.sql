@@ -27,6 +27,7 @@ INSERT INTO object_type (id,name) VALUES (27,'datamanagement_process');
 INSERT INTO object_type (id,name) VALUES (28,'sink');
 INSERT INTO object_type (id,name) VALUES (29,'landscape');
 INSERT INTO object_type (id,name) VALUES (30,'landscape_composing');
+INSERT INTO object_type (id,name) VALUES (31,'wiki');
 
 -- app_config
 INSERT INTO app_config (key,valueINT,description) VALUES ('project_filter',2,'Set a filter to a specific project id (INT). Maybe more than one row/entry.');

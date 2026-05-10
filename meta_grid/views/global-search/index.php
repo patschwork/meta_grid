@@ -59,14 +59,23 @@ $dependency->sql='SELECT max(log_datetime) FROM "v_LastChangesLog_List"';
 				// siehe auch: http://www.yiiframework.com/forum/index.php/topic/49595-how-to-change-buttons-in-actioncolumn/
 	            'class' => 'yii\grid\ActionColumn',
 	            'template' => '{view}',
-	            'buttons' => [
-	            		'view' => function ($url, $model) {
-	            			return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', $url, [
-									'target' => '_blank',
-	            					'title' => Yii::t('app', "Open detail view of object"),
-	            			]);
-	            		}
-	            ],
+				// T741 Bugfix {...
+				'buttons' => [
+					'view' => function ($url, $model) {
+						if ($url === null) {
+							return Html::a('<span class="glyphicon glyphicon-eye-close"></span>', null, [
+								'title' => Yii::t('app', "Detail view not available"),
+								'onclick' => 'return false;', // Avoid standard action of the link
+							]);
+						} else {
+							return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', $url, [
+								'target' => '_blank',
+								'title' => Yii::t('app', "Open detail view of object"),
+							]);
+						}
+					}
+				],
+				// T741 Bugfix ...}
 	            'urlCreator' => function ($action, $model, $key, $index) {
 	            	if ($action === 'view') {
 	            		$cntrl="";
@@ -78,16 +87,26 @@ $dependency->sql='SELECT max(log_datetime) FROM "v_LastChangesLog_List"';
 	            		// Wenn es ein Kommentar ist, dann zu dem ObjectTyp des Kommentars linken.
 	            		if ($link_to_objTypeId==12)
 	            		{
-	            			$comment_model  = Objectcomment::findOne($link_to_objId);
-	            			
-	            			$objIdFromComment = $comment_model->ref_fk_object_id;
-	            			$objIdTypeFromComment = $comment_model->ref_fk_object_type_id;
-	            			
-	            			$object_type_model = ObjectType::findOne($objIdTypeFromComment);
-	            			
-	            			// Variablen f�r Link URL neu setzen
-	            			$link_to_objId = $objIdFromComment;
-	            			$cntrl=str_replace("_","",$object_type_model->name);
+							// T741 Bugfix {...
+							try 
+							{
+								$comment_model  = Objectcomment::findOne($link_to_objId);
+								
+								$objIdFromComment = $comment_model->ref_fk_object_id;
+								$objIdTypeFromComment = $comment_model->ref_fk_object_type_id;
+								
+								$object_type_model = ObjectType::findOne($objIdTypeFromComment);
+								
+								// Variablen f�r Link URL neu setzen
+								$link_to_objId = $objIdFromComment;
+								$cntrl=str_replace("_","",$object_type_model->name);
+							} 
+							catch (\Exception $e) 
+							{
+								Yii::warning("Parent object from comment is not available here! ObjectComment.id=$link_to_objId", __METHOD__);
+								return null;
+							}
+							// T741 Bugfix ...}
 	            		}
 	            		
 	            		$url = "?r=$cntrl/view&id=".$link_to_objId; // your own url generation logic
@@ -105,6 +124,24 @@ $dependency->sql='SELECT max(log_datetime) FROM "v_LastChangesLog_List"';
 			[
 				'label' => Yii::t('app', 'name'),
 				'value' => function($model) {
+
+					// T741 Bugfix {...
+					$link_to_objId=explode(";",$model->listkey)[0];
+					$link_to_objTypeId=explode(";",$model->listkey)[1];
+					if ($link_to_objTypeId==12)
+					{
+						try 
+						{
+							$comment_model  = Objectcomment::findOne($link_to_objId);
+							$objIdFromComment = $comment_model->ref_fk_object_id;
+						} 
+						catch (\Exception $e) 
+						{
+							return null; // maybe not allowed to see the content. Just in case, do not show!
+						}
+					}
+					// T741 Bugfix ...}
+
 					$value = $model->name;
 					if ($model->fk_deleted_status_id !== NULL)
 					{
@@ -140,6 +177,24 @@ $dependency->sql='SELECT max(log_datetime) FROM "v_LastChangesLog_List"';
 					},
 				'format' => 'html',
                 'contentOptions' => function($model) {
+
+					// T741 Bugfix {...
+					$link_to_objId=explode(";",$model->listkey)[0];
+					$link_to_objTypeId=explode(";",$model->listkey)[1];
+					if ($link_to_objTypeId==12)
+					{
+						try 
+						{
+							$comment_model  = Objectcomment::findOne($link_to_objId);
+							$objIdFromComment = $comment_model->ref_fk_object_id;
+						} 
+						catch (\Exception $e) 
+						{
+							return []; // maybe not allowed to see the content. Just in case, do not show!
+						}
+					}
+					// T741 Bugfix ...}
+
                     // needs to be closure because of title
 					if (($model->description !== NULL) && ($model->description !== '(Added via Bulk Import)'))
 					{
@@ -154,9 +209,6 @@ $dependency->sql='SELECT max(log_datetime) FROM "v_LastChangesLog_List"';
 					} else return [];
                 }
 			],
-
-
-
 			[
 			    'label' => Yii::t('app', 'object_type_name'),
 				'filter' => Select2::widget([
@@ -196,6 +248,24 @@ $dependency->sql='SELECT max(log_datetime) FROM "v_LastChangesLog_List"';
 			[
 				'label' => Yii::t('app', 'Project'),
 				'value' => function($model) {
+
+						// T741 Bugfix {...
+						$link_to_objId=explode(";",$model->listkey)[0];
+						$link_to_objTypeId=explode(";",$model->listkey)[1];
+						if ($link_to_objTypeId==12)
+						{
+							try 
+							{
+								$comment_model  = Objectcomment::findOne($link_to_objId);
+								$objIdFromComment = $comment_model->ref_fk_object_id;
+							} 
+							catch (\Exception $e) 
+							{
+								return null; // maybe not allowed to see the content. Just in case, do not show!
+							}
+						}
+						// T741 Bugfix ...}
+					
 						return $model->fk_project_id == "" ? $model->fk_project_id : $model->fkProject->name . " (" . $model->fkProject->fkClient->name .")";
 						},
 			'filter' => Select2::widget([

@@ -52,4 +52,17 @@ class DbTableField extends \app\models\base\DbTableField
 		$addionalRules = array([['name'], 'required']);
 		return array_merge(parent::rules(), $addionalRules);
     }
+
+	// T758 {...
+	public function behaviors(): array
+    {
+        return [
+            [
+                'class' => \vendor\meta_grid\model_behavior\EnsureDataManagementProcessBehavior::class,
+                'attribute' => 'fk_datamanagement_process_id',
+                'processName' => 'Yii2 GUI',
+            ],
+        ];
+    }
+	// T758 ...} 
 }

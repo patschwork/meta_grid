@@ -91,3 +91,16 @@ WHEN (
 BEGIN
     SELECT RAISE(ABORT, 'Invalid combination: Only scope project or user or none of them then it is global. Each tag must be unique for every scope.');
 END;
+
+CREATE TRIGGER TRIG_wiki_Check_Business_Rule
+BEFORE INSERT ON wiki
+FOR EACH ROW
+WHEN (
+      (IFNULL(NEW.fk_project_id,-1) >0 AND IFNULL(NEW.fk_user_id,-1) >0) 
+      OR
+      ((SELECT COUNT(name) FROM wiki WHERE name=NEW.name AND IFNULL(fk_project_id,-1)=IFNULL(NEW.fk_project_id,-1) AND IFNULL(fk_user_id,-1)=IFNULL(NEW.fk_user_id,-1))>0)
+     ) 
+BEGIN
+    SELECT RAISE(ABORT, 'Invalid combination: Only scope project or user or none of them then it is global. Each wiki must be unique for every scope.')
+;
+END;

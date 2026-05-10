@@ -48,6 +48,8 @@ class Utils
         if ($key=="mapper_createext_memory_limit") $default_value=1024;
         if ($key=="dbtablefield_time_limit") $default_value=2000;
         if ($key=="dbtablefield_memory_limit") $default_value=1024;
+        if ($key=="docs_url") $default_value="https://docs.meta-grid.com/";
+        if ($key=="docs_url_path_userguide") $default_value="en/user_guide/";
 
         $res_arr = ((new Query())->select(['v_str'=>'valueSTRING', 'v_int'=>'valueINT'])->from('app_config')->where(["key" => $key])->one());
 

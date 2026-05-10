@@ -80,6 +80,7 @@ $TagsWidget = \vendor\meta_grid\tag_select\TagSelectWidget::widget(
             ],
             'name:ntext',
             'description:html',
+            'source_comment:ntext',
             'location:ntext',
             [
              'label' => Yii::t('app', 'Db Table Context'),

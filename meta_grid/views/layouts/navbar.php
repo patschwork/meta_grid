@@ -16,6 +16,25 @@ use yii\helpers\Html;
         </li>
         <?php $Utils = new \vendor\meta_grid\helper\Utils(); echo $Utils->adminlte_widgets_Navbar_items(); ?>
         <?= vendor\meta_grid\helper\PerspectiveHelper::getReadyToUseNavDropDownElementsAdminLTE3() ?>
+
+        
+        <?php
+        // Sonderfall als Experiment für dbtablefieldmultipleedit: Speichern-Button in der Headerzeile
+        ?>
+        <?php if(Yii::$app->controller->route=='dbtablefieldmultipleedit/update' || Yii::$app->controller->route=='dbtablefieldmultipleedit/create'): ?>
+            <li class="nav-item">
+                <?= Html::button('<i class="fas fa-save"></i>', [
+                    'class' => 'btn nav-link',
+                    'onclick' => 'document.getElementById("' . Yii::$app->controller->id . '").submit();',
+                    'title' => 'Save: Create or update'
+                ]) ?>
+            </li>
+        <?php endif; ?>
+
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="<?= $Utils->get_app_config("docs_url") . $Utils->get_app_config("docs_url_path_userguide") . "object_types/" . Yii::$app->controller->id ?>" class="nav-link"><i class="fas fa-question"></i></a>
+        </li>
+
     </ul>
 
 

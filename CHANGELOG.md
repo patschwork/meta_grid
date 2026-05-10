@@ -1,3 +1,10 @@
+# 3.0.8
+
+- New object_types: wiki
+- Minor bugfixes
+
+----------------------------------------------------------------------------------------------------
+
 # 3.0.7
 
 - New object_types: sink, landscape (SQLite database only)

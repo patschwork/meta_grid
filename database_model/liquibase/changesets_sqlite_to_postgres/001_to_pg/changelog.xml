@@ -8,13 +8,21 @@
 		 logicalFilePath="001_to_pg/changelog.xml">
 
 	<changeSet author="patrick_schmitz" id="001_to_pg">
-		<executeCommand executable="pip3"> 
-			<arg value="install"/>
-			<arg value="pandas"/>
-		</executeCommand>
 
 		<executeCommand executable="python3"> 
-			<arg value="${changesets_sqlite_to_postgres_path}/001_to_pg/sqlite_correct_not_null_default_null.py"/>
+			<arg value="-m"/>
+			<arg value="venv"/>
+			<arg value=".venv_mg_sqlite_to_postgres"/>
+		</executeCommand>
+
+		<executeCommand executable="/bin/sh"> 
+			<arg value="-c"/>
+			<arg value=". .venv_mg_sqlite_to_postgres/bin/activate; pip install pandas"/>
+		</executeCommand>
+
+		<executeCommand executable="/bin/sh"> 
+			<arg value="-c"/>
+			<arg value=". .venv_mg_sqlite_to_postgres/bin/activate; python3 ${changesets_sqlite_to_postgres_path}/001_to_pg/sqlite_correct_not_null_default_null.py"/>
 		</executeCommand>
 
 		<comment>

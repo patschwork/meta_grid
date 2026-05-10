@@ -96,6 +96,7 @@ echo GridView::widget([
 			            ['class' => 'yii\grid\SerialColumn'],
 			            'name:ntext',
 			            'description:html',
+						'source_comment:ntext',
 			            'datatype:ntext',
 						'tags_html_li:html'
                     ],

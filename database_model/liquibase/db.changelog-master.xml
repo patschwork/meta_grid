@@ -192,4 +192,11 @@
   <include relativeToChangelogFile="true" file="changesets/0000164/changelog.xml"/>  <!-- Update view | v_landscape_mermaid_output -->
   <include relativeToChangelogFile="true" file="changesets/0000165/changelog.xml"/>  <!-- Update view | v_landscape_mermaid_output -->
   <include relativeToChangelogFile="true" file="changesets/0000166/changelog.xml"/>  <!-- Update view | v_landscape_mermaid_output -->
+  <include relativeToChangelogFile="true" file="changesets/0000167/changelog.xml"/>  <!-- Update view | v_db_table_field_SearchInterface -->
+  <include relativeToChangelogFile="true" file="changesets/0000168/changelog.xml"/>  <!-- Update view | v_landscape_mermaid_output -->
+  <include relativeToChangelogFile="true" file="changesets/0000169/changelog.xml"/>  <!-- SQL ALTER TABLE | user -->
+  <include relativeToChangelogFile="true" file="changesets/0000170/changelog.xml"/>  <!-- SQL Create table and CREATE trigger SQLite | wiki;wiki_log -->
+  <include relativeToChangelogFile="true" file="changesets/0000171/changelog.xml"/>  <!-- Update view | v_LastChangesLog_List -->
+  <include relativeToChangelogFile="true" file="changesets/0000172/changelog.xml"/>  <!-- Update view | v_All_Objects_Union -->
+  <include relativeToChangelogFile="true" file="changesets/0000173/changelog.xml"/>  <!-- Update view | v_All_Objects_Union -->
 </databaseChangeLog> 

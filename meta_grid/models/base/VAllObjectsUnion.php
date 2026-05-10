@@ -48,7 +48,7 @@ class VAllObjectsUnion extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'fk_object_type_id', 'fk_project_id', 'fk_deleted_status_id'], 'integer'],
+            [['id', 'fk_object_type_id', 'fk_project_id', 'fk_deleted_status_id', 'fk_user_id', 'is_global'], 'integer'],
             [['listvalue_1', 'listvalue_2', 'listkey', 'fk_client_id', 'listvalue_1_with_client_or_project', 'listvalue_2_with_client_or_project', 'description', 'detail_1_name', 'detail_1_content', 'detail_2_name', 'detail_2_content', 'detail_3_name', 'detail_3_content', 'detail_4_name', 'detail_4_content', 'detail_5_name', 'detail_5_content'], 'string'],
             [['name'], 'string', 'max' => 500],
             [['object_type_name', 'deleted_status_name'], 'string', 'max' => 250],

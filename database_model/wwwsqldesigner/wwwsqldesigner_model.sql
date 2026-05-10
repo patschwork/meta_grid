@@ -529,6 +529,19 @@ fk_user_id INTEGER DEFAULT NULL,
 UNIQUE (name, fk_project_id, fk_user_id)
 );
 
+CREATE TABLE wiki (
+id INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
+uuid TEXT DEFAULT NULL,
+fk_object_type_id INTEGER DEFAULT 31 REFERENCES object_type (id),
+name TEXT(250) NOT NULL ,
+description TEXT DEFAULT NULL,
+fk_project_id INTEGER DEFAULT NULL REFERENCES project (id),
+fk_user_id INTEGER DEFAULT NULL,
+fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
+fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id),
+UNIQUE (name, fk_project_id, fk_user_id)
+);
+
 CREATE TABLE map_object_2_tag (
 id INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT,
 uuid TEXT DEFAULT NULL,
@@ -584,4 +597,3 @@ fk_deleted_status_id INTEGER DEFAULT NULL REFERENCES deleted_status (id),
 fk_object_persistence_method_id INTEGER DEFAULT NULL REFERENCES object_persistence_method (id),
 fk_datamanagement_process_id INTEGER DEFAULT NULL REFERENCES datamanagement_process (id)
 );
-

@@ -35,11 +35,14 @@ class VAllObjectsUnion extends \app\models\base\VAllObjectsUnion
     	$permProjectsCanSee = Yii::$app->User->identity->permProjectsCanSee;
     
     	$obj=Yii::createObject(yii\db\ActiveQuery::className(), [get_called_class()]);
-    	if (!Yii::$app->User->identity->isAdmin)
+    	// if (!Yii::$app->User->identity->isAdmin) // T845 commented
+    	if (true) // same search experience for admin that for regular users
     	{
 			$obj->Where(['or',
 				['in','fk_client_id', $permClientsCanSee],
-				['in','fk_project_id', $permProjectsCanSee]
+				['in','fk_project_id', $permProjectsCanSee],
+				['=','fk_user_id', Yii::$app->user->id],
+				['=','is_global', 1]
 				]);
 
 			$allObjTypes = ObjectType::find()->select('name')->distinct()->asArray()->all();

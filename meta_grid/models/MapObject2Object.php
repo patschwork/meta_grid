@@ -53,4 +53,18 @@ class MapObject2Object extends \app\models\base\MapObject2Object
 		$addionalRules = array([['ref_fk_object_type_id_2'], 'required', 'message'=>Yii::t('app', 'Please choose a mapping object.')]);
 		return array_merge(parent::rules(), $addionalRules);
     }
+
+
+	// T758 {...
+	public function behaviors(): array
+    {
+        return [
+            [
+                'class' => \vendor\meta_grid\model_behavior\EnsureDataManagementProcessBehavior::class,
+                'attribute' => 'fk_datamanagement_process_id',
+                'processName' => 'Yii2 GUI',
+            ],
+        ];
+    }
+	// T758 ...} 
 }

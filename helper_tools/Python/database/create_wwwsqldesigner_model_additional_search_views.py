@@ -12,7 +12,7 @@ wwwsqldesignermodelfile = "../../../database_model/wwwsqldesigner/wwwsqldesigner
 output = "liquibase" # sql or liquibase
 replaceIfExists = True
 folderForYii2ModelClasses = "../../../frontend/yii/basic/models"
-filterOnSpecificDbObject = "mapping_qualifier" # Table
+filterOnSpecificDbObject = "wiki" # Table
 # filterOnSpecificDbObject = "" # Table
 
 isLinuxOrDarwin = False
@@ -147,7 +147,7 @@ if output=="liquibase":
 
 # Start Model-Class Generation for yii2 for the the views created above
 
-template ="""<?php
+template =r"""<?php
 
 namespace app\models;
 

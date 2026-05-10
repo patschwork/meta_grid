@@ -49,7 +49,7 @@ class Objectcomment extends \app\models\base\Objectcomment
             ])
         ->from('object_comment')
         ->leftJoin('object_type', 'object_comment.ref_fk_object_type_id = object_type.id')
-        ->leftJoin('v_All_Objects_Union', 'object_comment.id = v_All_Objects_Union.id AND object_comment.fk_object_type_id = v_All_Objects_Union.fk_object_type_id')
+        ->leftJoin('v_All_Objects_Union', 'object_comment.id = "v_All_Objects_Union".id AND object_comment.fk_object_type_id = "v_All_Objects_Union".fk_object_type_id')
         ->where(['or',
             ['in','fk_client_id', $permClientsCanSeeString],
             ['in','fk_project_id', $permProjectsCanSeeString]
@@ -71,4 +71,18 @@ class Objectcomment extends \app\models\base\Objectcomment
 		return null;
 			
 	}
+
+
+	// T758 {...
+	public function behaviors(): array
+    {
+        return [
+            [
+                'class' => \vendor\meta_grid\model_behavior\EnsureDataManagementProcessBehavior::class,
+                'attribute' => 'fk_datamanagement_process_id',
+                'processName' => 'Yii2 GUI',
+            ],
+        ];
+    }
+	// T758 ...} 
 }

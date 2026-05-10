@@ -10,8 +10,10 @@
 
 	<changeSet author="patrick_schmitz" id="004_to_pg">
 		<validCheckSum>ANY</validCheckSum>
-		<executeCommand executable="python3"> 
-			<arg value="${changesets_sqlite_to_postgres_path}/004_to_pg/sqlite_views_ifnull_coalesce.py"/>
+
+		<executeCommand executable="/bin/sh"> 
+			<arg value="-c"/>
+			<arg value=". .venv_mg_sqlite_to_postgres/bin/activate; python3 ${changesets_sqlite_to_postgres_path}/004_to_pg/sqlite_views_ifnull_coalesce.py"/>
 		</executeCommand>
 
       	<sqlFile dbms="postgresql"
@@ -31,6 +33,24 @@
 		<!-- 	<arg value="-c"/> -->
 		<!-- 	<arg value="import os; os.remove(os.path.join('..','database','create_everything_for_all_views.sql'))"/> -->
 		<!-- </executeCommand> -->
+
+		<!-- klappt nicht, falsches Verzeichnis:		 -->
+		<!-- <executeCommand executable="python3"> -->
+			<!-- <arg value="-c"/> -->
+			<!-- <arg value="import os; output_file = os.path.join('create_everything_for_all_views.sql'); f = open(output_file, 'w'); f.write('__ This file will be overwritten by the changelog -> sqlite_views_ifnull_coalesce.py\n'); f.write('SELECT 1/0 AS forcing_error'); f.close()"/> -->
+		<!-- </executeCommand> -->
+
+		<!-- Klappt nicht. Es gibt keinen output bzw. Datei bleibt wie sie ist... Keine Wirkung: -->
+		<!-- <executeCommand executable="/bin/sh">  -->
+			<!-- <arg value="-c"/> -->
+			<!-- <arg value="echo '__This file will be overwritten by the changelog -> sqlite_views_ifnull_coalesce.py\nSELECT 1/0 AS forcing_error' > create_everything_for_all_views.sql"/> -->
+		<!-- </executeCommand> -->
+
+		<executeCommand executable="/bin/sh"> 
+			<arg value="-c"/>
+			<arg value=". .venv_mg_sqlite_to_postgres/bin/activate; python3 ${changesets_sqlite_to_postgres_path}/004_to_pg/reset_file_sqlite_views_ifnull_coalesce.py"/>
+		</executeCommand>
+
 
 		<comment>
 		<![CDATA[

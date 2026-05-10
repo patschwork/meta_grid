@@ -51,7 +51,7 @@ ini_user_settings_path = os.path.join(dirPath,"install_settings.ini")
 
 offer_pg_user = base_lib.get_user_settings(ini_user_settings_path, "current_installation", 'postgresql_user', "pg_metagrid_usr")
 offer_pg_pwd = base_lib.get_user_settings(ini_user_settings_path, "current_installation", 'postgresql_password', r"pg_metagrid_pwd")
-offer_pg_hostname = base_lib.get_user_settings(ini_user_settings_path, "current_installation", 'postgresql_host', "localhost")
+offer_pg_hostname = base_lib.get_user_settings(ini_user_settings_path, "current_installation", 'postgresql_host', "127.0.0.1")
 offer_pg_port = base_lib.get_user_settings(ini_user_settings_path, "current_installation", 'postgresql_port', "5432")
 offer_pg_dbname = base_lib.get_user_settings(ini_user_settings_path, "current_installation", 'postgresql_database', "metagrid")
 offer_location_lqb_changelog = base_lib.get_user_settings(ini_user_settings_path, "migration_sqlite_to_postgres", 'location_lqb_changelog', dirPath)
@@ -73,7 +73,7 @@ ioc = base_lib.get_installation_os_candidate()
 print("Please enter the configuration for the PostgreSQL database server:")
 questions = [
     {"type": "confirm", "message": "Show SQL commands to setup database before migration start?", "name": "show_sql", "default": True},
-    {"type": "input", "message": "Hostname:", "name": "pg_hostname", "default": offer_pg_hostname},
+    {"type": "input", "message": "Hostname (use 127.0.0.1 for localhost to avoid IPv6 issues):", "name": "pg_hostname", "default": offer_pg_hostname},
     {"type": "input", "message": "Port:", "name": "pg_port", "validate": NumberValidator(), "default": offer_pg_port},
     {"type": "input", "message": "Database:", "name": "pg_dbname", "default": offer_pg_dbname},
     {"type": "input", "message": "Postgres user:", "name": "pg_user", "default": offer_pg_user},
@@ -210,7 +210,7 @@ try:
                                           dbpath=f'//{result["pg_hostname"]}:{result["pg_port"]}/{result["pg_dbname"]}',
                                           liquibaseDriver="org.postgresql.Driver",
                                           liquibaseAction='updateCount',
-                                          liquibaseActionValue='30',
+                                          liquibaseActionValue='999',
                                           liquibaseDriverUrlprefix=r'jdbc:postgresql:%(dbpath)s',
                                           comment="Generated for SQLite to PostgreSQL migration",
                                           dbuser=result["pg_user"],

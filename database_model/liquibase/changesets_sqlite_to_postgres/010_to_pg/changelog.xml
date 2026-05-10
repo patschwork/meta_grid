@@ -8,21 +8,30 @@
 		 logicalFilePath="010_to_pg/changelog.xml">
 
 	<changeSet author="patrick_schmitz" id="010_to_pg">
-		<executeCommand executable="pip3"> 
-			<arg value="install"/>
-			<arg value="psycopg2-binary"/>
-		</executeCommand>
-		
-		<executeCommand executable="pip3"> 
-			<arg value="install"/>
-			<arg value="sqlalchemy"/>
+
+
+		<executeCommand executable="/bin/sh"> 
+			<arg value="-c"/>
+			<arg value=". .venv_mg_sqlite_to_postgres/bin/activate; pip install psycopg2-binary"/>
 		</executeCommand>
 
-		<executeCommand executable="python3"> 
-			<arg value="${changesets_sqlite_to_postgres_path}/010_to_pg/call.py"/>
+		<executeCommand executable="/bin/sh"> 
+			<arg value="-c"/>
+			<arg value=". .venv_mg_sqlite_to_postgres/bin/activate; pip install sqlalchemy"/>
+		</executeCommand>
+
+
+
+		<executeCommand executable="/bin/sh"> 
+			<arg value="-c"/>
+			<arg value=". .venv_mg_sqlite_to_postgres/bin/activate; python3 ${changesets_sqlite_to_postgres_path}/010_to_pg/call.py"/>
+		</executeCommand>
+
+		<!-- <executeCommand executable="python3">  -->
+			<!-- <arg value="${changesets_sqlite_to_postgres_path}/010_to_pg/call.py"/> -->
 			<!-- <arg value="-c"/> -->
 			<!-- <arg value="import os; f = open(os.path.join('/tmp/test.txt'), 'w');  f.write(os.getcwd())"/> -->
-		</executeCommand>
+		<!-- </executeCommand> -->
 
 		<comment>
 		<![CDATA[

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	
+	logicalFilePath="000169/changelog.xml">
+
+	<changeSet author="patrick_schmitz" id="000169">
+		<sql splitStatements="true">
+		<![CDATA[
+		ALTER TABLE "user" ADD COLUMN auth_tf_type VARCHAR(20) DEFAULT NULL;
+		]]>
+		</sql>
+
+		<sql splitStatements="true">
+		<![CDATA[
+		ALTER TABLE "user" ADD COLUMN auth_tf_mobile_phone VARCHAR(20) DEFAULT NULL;
+		]]>
+		</sql>
+			
+		<comment>
+		<![CDATA[
+		Add new fields auth_tf_type, auth_tf_mobile_phone to table user.
+		(Taken from vendor/2amigos/yii2-usuario/src/User/Migration/m000000_000010_add_auth_tf_type_auth_tf_mobile_phone_columns_to_user_table.php)
+		Used objects:
+			user
+		Phabricator tasks:
+			T800
+		]]>
+		</comment>
+</changeSet>
+</databaseChangeLog>

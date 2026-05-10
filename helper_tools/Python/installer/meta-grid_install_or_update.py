@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # Instllation or update meta#grid
 # on every OS
-# v1.8.5
+# v1.9
 
 import base_lib
 import shutil
@@ -17,6 +17,7 @@ simulate_alternate_folder=False
 ## ###################################################
 
 const_sqlite = "sqlite"
+const_postgres = "postgres"
 const_inst_mode_installation = "inst"
 const_inst_mode_update = "upd"
 
@@ -25,7 +26,7 @@ behaviour = const_inst_mode_update
 git_repo_url = "https://github.com/patschwork/meta_grid.git"
 git_repo_zip_url = "https://github.com/patschwork/meta_grid/archive/master.zip"
 min_php_version = "7.0"
-max_php_version = "8.1.2" # Upper version limit for PHP (depends on the used Yii2 framework)
+max_php_version = "8.3.6" # Upper version limit for PHP (depends on the used Yii2 framework)
 used_rdbms = const_sqlite
 folderfile_Database = "/opt/meta_grid/db/dwh_meta.sqlite"
 folder_Frontend = "/opt/meta_grid/frontend"
@@ -218,11 +219,51 @@ else:
     git_repo_url=base_lib.get_input_color("URL for GitHub meta#grid repository", actual_value, git_repo_url)
     base_lib.set_user_settings(ini_user_settings_path, section, 'git_repo_url', git_repo_url)
 
+# Check if PostgreSQL is used:
+section="current_installation"
+postgresql_user=base_lib.get_user_settings(ini_user_settings_path, section, 'postgresql_user', "Not set")
+section="migration_sqlite_to_postgres"
+migration_done=base_lib.get_user_settings(ini_user_settings_path, section, 'migration_done', "Not set")
+if behaviour==const_inst_mode_update:
+    if (migration_done=='Yes' or postgresql_user!="Not set"):
+        used_rdbms = const_postgres
+
+# New installation. Ask user which DBMS shall be used
+if behaviour==const_inst_mode_installation:
+    pass # Not implemented yet...
+
 if (used_rdbms == const_sqlite):
     section="current_installation"
     actual_value=base_lib.get_user_settings(ini_user_settings_path, section, 'folderfile_Database', folderfile_Database)
     folderfile_Database=base_lib.get_input_color("File location for the SQLite database file", actual_value, user_option_search_file=os.path.basename(folderfile_Database), no_input_just_inform_user=param_use_unattended_mode)
     base_lib.set_user_settings(ini_user_settings_path, section, 'folderfile_Database', folderfile_Database)
+
+if (used_rdbms == const_postgres):
+    section="current_installation"
+
+    fallback_value_pg_user="tec_metagrid"
+    offer_pg_user = base_lib.get_user_settings(ini_user_settings_path, section, 'postgresql_user', fallback_value_pg_user)
+    pg_user=base_lib.get_input_color(msg="Postgres user", default_value=offer_pg_user, init_value=fallback_value_pg_user, no_input_just_inform_user=param_use_unattended_mode)
+    base_lib.set_user_settings(ini_user_settings_path, section, 'postgresql_user', pg_user)
+
+    fallback_value_pg_pwd="tec_metagrid_pwd"
+    offer_pg_pwd = base_lib.get_user_settings(ini_user_settings_path, section, 'postgresql_password', fallback_value_pg_pwd)
+    pg_pwd=base_lib.get_input_color("Postgres password", default_value=offer_pg_pwd, init_value=fallback_value_pg_pwd, no_input_just_inform_user=param_use_unattended_mode)
+    base_lib.set_user_settings(ini_user_settings_path, section, 'postgresql_password', pg_pwd)
+
+    offer_pg_hostname = base_lib.get_user_settings(ini_user_settings_path, section, 'postgresql_host', "127.0.0.1")
+    pg_hostname=base_lib.get_input_color("Postgres hostname", default_value=offer_pg_hostname, init_value="127.0.0.1", no_input_just_inform_user=param_use_unattended_mode)
+    base_lib.set_user_settings(ini_user_settings_path, section, 'postgresql_host', pg_hostname)
+
+    offer_pg_port = base_lib.get_user_settings(ini_user_settings_path, section, 'postgresql_port', "5432")
+    pg_port=base_lib.get_input_color("Postgres port", default_value=offer_pg_port, init_value="5432", no_input_just_inform_user=param_use_unattended_mode)
+    base_lib.set_user_settings(ini_user_settings_path, section, 'postgresql_port', pg_port)
+
+    offer_pg_dbname = base_lib.get_user_settings(ini_user_settings_path, section, 'postgresql_database', "metagrid")
+    pg_dbname=base_lib.get_input_color("Postgres database", default_value=offer_pg_dbname, init_value="metagrid", no_input_just_inform_user=param_use_unattended_mode)
+    base_lib.set_user_settings(ini_user_settings_path, section, 'postgresql_database', pg_dbname)
+
+
 
 section="current_installation"
 actual_value=base_lib.get_user_settings(ini_user_settings_path, section, 'folder_Frontend', folder_Frontend)
@@ -589,10 +630,28 @@ if (simulate_alternate_folder):
 
 abspath_db = base_lib.getFilePathRelativeScriptPath(os.path.dirname(folderfile_Database), os.path.basename(folderfile_Database))
 try:
-    base_lib.createLQBConfigDeployIniFile(cfgFile=dynConfigIni, liquibasePathExe=liquibasePathExe, liquibaseChangeLogFile=abs_folderfile_Fresh_LQB_Changelog, dbpath=abspath_db)
-    bla("Successful: Created config file for LiquiBase deployment (" + dynConfigIni + ")", "OK", True)
+    if (used_rdbms == const_sqlite):
+        base_lib.createLQBConfigDeployIniFile(
+            cfgFile=dynConfigIni, 
+            liquibasePathExe=liquibasePathExe, 
+            liquibaseChangeLogFile=abs_folderfile_Fresh_LQB_Changelog, 
+            dbpath=abspath_db
+        )
+    if (used_rdbms == const_postgres):
+        dbpath_psql=f"//{pg_hostname}:{pg_port}/{pg_dbname}"
+        base_lib.createLQBConfigDeployIniFile(
+            cfgFile=dynConfigIni, 
+            liquibasePathExe=liquibasePathExe, 
+            liquibaseChangeLogFile=abs_folderfile_Fresh_LQB_Changelog, 
+            dbpath=dbpath_psql, 
+            liquibaseDriver="org.postgresql.Driver", 
+            liquibaseDriverUrlprefix='jdbc:postgresql:%(dbpath)s', 
+            dbuser=pg_user, 
+            dbpassword=pg_pwd 
+        )
+    bla(f"Successful: Created config file for LiquiBase ({used_rdbms}) deployment ({dynConfigIni})", "OK", True)
 except Exception as e:
-    errMsg="Error on creating a deployment config file for LiquiBase deployment! LiquiBase deployment will not work correctly. Installatation/Update not completed!"
+    errMsg=f"Error on creating a deployment config file for LiquiBase ({used_rdbms}) deployment! LiquiBase deployment will not work correctly. Installatation/Update not completed!"
     bla(str(e), "error", True)
     bla(errMsg, "error", True, True)
     exit()
